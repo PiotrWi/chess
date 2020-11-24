@@ -1,5 +1,10 @@
 #include "Board.hpp"
 
+#include <algorithm>
+#include <initializer_list>
+
+#include <NotationConversions.hpp>
+
 unsigned char& Board::operator[](const char* field)
 {
         unsigned char collumn = field[0] - 'a';
@@ -8,56 +13,91 @@ unsigned char& Board::operator[](const char* field)
         return fields[row*8u + collumn];
 }
 
-
 unsigned char& Board::operator[](const unsigned char field)
 {
         return fields[field];
 }
 
-bool validateMove(const Board, const Move)
+const unsigned char& Board::operator[](const char* field) const
+{
+	return const_cast<Board&>(*this)[field];
+}
+
+const unsigned char& Board::operator[](const unsigned char field) const
+{
+	return const_cast<Board&>(*this)[field];
+}
+
+bool validateMove(const Board&, const Move)
 {
 	// Not implemented
-	throw 1;	
+	throw 1;
 }
 
 namespace
 {
-	namespace COLUMN
+bool isRowInBoard(unsigned char row)
+{
+	return row < 8u;
+}
+bool isCollumnInBoard(unsigned char col)
+{
+	return col < 8u;
+}
+
+bool isAttackedByOpositePawn(const Board& board,
+		unsigned char row,
+		unsigned char col)
+{
+	auto pawnColor = switchColor(
+			static_cast<NOTATION::COLOR::color>(
+					board[getFieldNum(row, col)] & NOTATION::COLOR::COLOR_MASK));
+
+	auto pawnRow = 0;
+	auto pawnMask = NOTATION::PIECES::PAWN;
+	if (pawnColor == NOTATION::COLOR::color::white)
 	{
-		constexpr unsigned char A = 0;
-		constexpr unsigned char B = 1;
-		constexpr unsigned char C = 2;
-		constexpr unsigned char D = 3;
-		constexpr unsigned char E = 4;
-                constexpr unsigned char F = 5;
-                constexpr unsigned char G = 6;
-                constexpr unsigned char H = 7;
+		pawnRow = row+1;
+		pawnMask |= NOTATION::COLOR::WHITE;
 	}
-	unsigned char getColumnNum(unsigned char field)
+	if (pawnColor == NOTATION::COLOR::color::black)
 	{
-		return field % 8u;
+		pawnRow = row-1;
+		pawnMask |= NOTATION::COLOR::BLACK;
 	}
-	unsigned char getRow(unsigned char field)
-	{
-		return (field >> 3u);
-	}
-	color switchColor(color c)
-	{
-		auto colorNum = static_cast<unsigned char>(c);
-		return color(++colorNum & COLOR_MASK);
-	}
-	unsigned getFieldNum(const unsigned char row, const unsigned char col)
-	{
-		return (row << 3u) | col;
-	}
+
+	bool rowInBoard = false;
+	auto leftColumn = col - 1;
+	auto rightColumn = col + 1;
+	return isRowInBoard(pawnRow) and
+			((isCollumnInBoard(leftColumn) and board[getFieldNum(pawnRow, leftColumn)] == pawnMask)
+			or (isCollumnInBoard(rightColumn) and board[getFieldNum(pawnRow, leftColumn)] == pawnMask));
+}
+
+bool isAttackedOnDiagonalByBishopOrQueen(const Board& board, unsigned char row, unsigned char col);
+bool isAttackedByRookOrQueen(const Board& board, unsigned char row, unsigned char col);
+bool isAttackedByKing(const Board& board, unsigned char row, unsigned char col);
+bool isAttackedByKnight(const Board& board, unsigned char row, unsigned char col);
+
+}
+
+bool isCheckOn(const Board& board, const NOTATION::COLOR::color c)
+{
+	unsigned char KING_MASQ = static_cast<unsigned char>(c) | NOTATION::PIECES::KING;
+	unsigned char kingPos = std::find(board.fields, board.fields + 64, KING_MASQ) - board.fields;
+
+	auto kingRow = getRow(kingPos);
+	auto kingColumn = getColumnNum(kingPos);
+
+	throw 1;
 }
 
 void applyMove(Board& board, const Move& move)
 {
-	bool isCastle = (board[move.source] == KING
-		and getColumnNum(move.source) == COLUMN::E
-		and (getColumnNum(move.source) == COLUMN::C
-			or getColumnNum(move.source) == COLUMN::G));
+	bool isCastle = (board[move.source] == NOTATION::PIECES::KING
+		and getColumnNum(move.source) == NOTATION::COORDINATES::COLUMN::E
+		and (getColumnNum(move.source) == NOTATION::COORDINATES::COLUMN::C
+			or getColumnNum(move.source) == NOTATION::COORDINATES::COLUMN::G));
 
 	board[move.destination] = board[move.source];
 	board[move.source] = 0;
@@ -65,20 +105,20 @@ void applyMove(Board& board, const Move& move)
 	if (isCastle)
 	{
 		auto row = getRow(move.source);
-		bool isLongCastle = getColumnNum(move.source) == COLUMN::C;
+		bool isLongCastle = getColumnNum(move.source) == NOTATION::COORDINATES::COLUMN::C;
 		if (isLongCastle)
 		{
-			auto rockSource = getFieldNum(row, COLUMN::A);	
-			auto rockDestination = getFieldNum(row, COLUMN::D);
+			auto rockSource = getFieldNum(row, NOTATION::COORDINATES::COLUMN::A);
+			auto rockDestination = getFieldNum(row, NOTATION::COORDINATES::COLUMN::D);
 			board[rockDestination] = board[rockSource];
 			board[rockSource] = 0u;
 		}
 		else
 		{
-                        auto rockSource = getFieldNum(row, COLUMN::A);
-                        auto rockDestination = getFieldNum(row, COLUMN::D);
-                        board[rockDestination] = board[rockSource];
-                        board[rockSource] = 0u;
+            auto rockSource = getFieldNum(row, NOTATION::COORDINATES::COLUMN::A);
+            auto rockDestination = getFieldNum(row, NOTATION::COORDINATES::COLUMN::D);
+            board[rockDestination] = board[rockSource];
+            board[rockSource] = 0u;
 
 		}
 	}
@@ -88,36 +128,35 @@ void applyMove(Board& board, const Move& move)
 
 void initDefault(Board& board)
 {
-        board["a1"] = WHITE | ROCK;
-        board["b1"] = WHITE | KNIGHT;
-        board["c1"] = WHITE | BISHOP;
-        board["d1"] = WHITE | QUEEN;
-        board["e1"] = WHITE | KING;
-        board["f1"] = WHITE | BISHOP;
-        board["g1"] = WHITE | KNIGHT;
-        board["h1"] = WHITE | ROCK;
+        board["a1"] = NOTATION::COLOR::WHITE | NOTATION::PIECES::ROCK;
+        board["b1"] = NOTATION::COLOR::WHITE | NOTATION::PIECES::KNIGHT;
+        board["c1"] = NOTATION::COLOR::WHITE | NOTATION::PIECES::BISHOP;
+        board["d1"] = NOTATION::COLOR::WHITE | NOTATION::PIECES::QUEEN;
+        board["e1"] = NOTATION::COLOR::WHITE | NOTATION::PIECES::KING;
+        board["f1"] = NOTATION::COLOR::WHITE | NOTATION::PIECES::BISHOP;
+        board["g1"] = NOTATION::COLOR::WHITE | NOTATION::PIECES::KNIGHT;
+        board["h1"] = NOTATION::COLOR::WHITE | NOTATION::PIECES::ROCK;
 
         char field[3] = "a2";
-        for (auto&& c: "abcdefgh")
+        for (auto&& c: {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'})
         {
                 field[0] = c;
-                board[field] = WHITE | PAWN;
+                board[field] = NOTATION::COLOR::WHITE | NOTATION::PIECES::PAWN;
         }
 
-        board["a8"] = BLACK | ROCK;
-        board["b8"] = BLACK | KNIGHT;
-        board["c8"] = BLACK | BISHOP;
-        board["d8"] = BLACK | QUEEN;
-        board["e8"] = BLACK | KING;
-        board["f8"] = BLACK | BISHOP;
-        board["g8"] = BLACK | KNIGHT;
-        board["h8"] = BLACK | ROCK;
+        board["a8"] = NOTATION::COLOR::BLACK | NOTATION::PIECES::ROCK;
+        board["b8"] = NOTATION::COLOR::BLACK | NOTATION::PIECES::KNIGHT;
+        board["c8"] = NOTATION::COLOR::BLACK | NOTATION::PIECES::BISHOP;
+        board["d8"] = NOTATION::COLOR::BLACK | NOTATION::PIECES::QUEEN;
+        board["e8"] = NOTATION::COLOR::BLACK | NOTATION::PIECES::KING;
+        board["f8"] = NOTATION::COLOR::BLACK | NOTATION::PIECES::BISHOP;
+        board["g8"] = NOTATION::COLOR::BLACK | NOTATION::PIECES::KNIGHT;
+        board["h8"] = NOTATION::COLOR::BLACK | NOTATION::PIECES::ROCK;
 
         field[2] = 7;
-        for (auto&& c: "abcdefgh")
+        for (auto&& c: {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'})
         {
                 field[0] = c;
-                board[field] = BLACK | PAWN;
+                board[field] = NOTATION::COLOR::BLACK | NOTATION::PIECES::PAWN;
         }
 }
-

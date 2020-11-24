@@ -10,13 +10,17 @@ $(GTEST_DIR)/$(GTEST_LIB):
 	make
 	cd -
 
-all: pieces.o board.o
-	g++ main.cpp pieces.o board.o -o chess-backend -I./Board
+all: build/pieces.o build/board.o build/NotationConversions.o Board/Board.hpp main.cpp
+	g++ main.cpp build/pieces.o build/board.o build/NotationConversions.o -o chess-backend -I./Board
 
-pieces.o:
-	g++ -c Board/Pieces.cpp -I./Board -o pieces.o
+build/pieces.o: Board/Board.hpp Board/Pieces.cpp Board/Notation.hpp
+	g++ -c Board/Pieces.cpp -I./Board -o build/pieces.o
 
-board.o:
-	g++ -c Board/Board.cpp -I./Board -o board.o
+build/board.o: Board/Board.cpp Board/Board.hpp Board/Notation.hpp
+	g++ -c Board/Board.cpp -I./Board -o build/board.o
+
+build/NotationConversions.o: Board/NotationConversions.cpp Board/NotationConversions.hpp Board/Notation.hpp
+	g++ -c Board/NotationConversions.cpp -I./Board -o build/NotationConversions.o
+
 clean:
-	rm chess-backend
+	rm chess-backend build/*.o
