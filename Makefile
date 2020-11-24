@@ -1,10 +1,8 @@
 GTEST_DIR = externals/gtest
 GTEST_LIB = googletest/build/libgtest.a
 
-all: backend
-
 ut: $(GTEST_DIR)/$(GTEST_LIB)
-	gcc test/ut/main.cpp
+	g++ test/ut/main.cpp
 
 .ONESHELL:
 $(GTEST_DIR)/$(GTEST_LIB):
@@ -12,11 +10,13 @@ $(GTEST_DIR)/$(GTEST_LIB):
 	make
 	cd -
 
-backend: pieces
-	gcc main.cpp -o chess-backend -I./Board
+all: pieces.o board.o
+	g++ main.cpp pieces.o board.o -o chess-backend -I./Board
 
-pieces:
-	gcc Board/Pieces.cpp -I./Board
+pieces.o:
+	g++ -c Board/Pieces.cpp -I./Board -o pieces.o
 
+board.o:
+	g++ -c Board/Board.cpp -I./Board -o board.o
 clean:
 	rm chess-backend
