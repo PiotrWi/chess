@@ -40,18 +40,27 @@ bool isRowInBoard(unsigned char row)
 {
 	return row < 8u;
 }
-bool isCollumnInBoard(unsigned char col)
+bool isColumnInBoard(unsigned char col)
 {
 	return col < 8u;
 }
 
-bool isAttackedByOpositePawn(const Board& board,
-		unsigned char row,
-		unsigned char col)
+NOTATION::COLOR::color getOpositeColor(const Board& board, const unsigned char row, const unsigned char col)
 {
-	auto pawnColor = switchColor(
-			static_cast<NOTATION::COLOR::color>(
-					board[getFieldNum(row, col)] & NOTATION::COLOR::COLOR_MASK));
+	return switchColor(static_cast<NOTATION::COLOR::color>(
+		board[getFieldNum(row, col)] & NOTATION::COLOR::COLOR_MASK));
+}
+
+unsigned char getOpositeColorBin(const Board& board, const unsigned char row, const unsigned char col)
+{
+	return ((board[getFieldNum(row, col)] & NOTATION::COLOR::COLOR_MASK) + 1u) & NOTATION::COLOR::COLOR_MASK;
+}
+
+bool isAttackedByOpositePawn(const Board& board,
+	unsigned char row,
+	unsigned char col)
+{
+	auto pawnColor = getOpositeColor(board, row, col);
 
 	auto pawnRow = 0;
 	auto pawnMask = NOTATION::PIECES::PAWN;
@@ -70,11 +79,54 @@ bool isAttackedByOpositePawn(const Board& board,
 	auto leftColumn = col - 1;
 	auto rightColumn = col + 1;
 	return isRowInBoard(pawnRow) and
-			((isCollumnInBoard(leftColumn) and board[getFieldNum(pawnRow, leftColumn)] == pawnMask)
-			or (isCollumnInBoard(rightColumn) and board[getFieldNum(pawnRow, leftColumn)] == pawnMask));
+		((isColumnInBoard(leftColumn) and board[getFieldNum(pawnRow, leftColumn)] == pawnMask)
+		or (isColumnInBoard(rightColumn) and board[getFieldNum(pawnRow, leftColumn)] == pawnMask));
 }
 
-bool isAttackedOnDiagonalByBishopOrQueen(const Board& board, unsigned char row, unsigned char col);
+namespace
+{
+
+std::pair<unsigned char, unsigned char> modifyCoordinates(std::pair<unsigned char, unsigned char> co,
+	std::pair<signed char, signed char> dir)
+{
+	co.first += dir.first;
+	co.second += dir.second;
+	return co;
+}
+
+}
+
+bool isAttackedOnDiagonalByOpositeBishopOrQueen(const Board& board, unsigned char row, unsigned char col)
+{
+	auto colorBin = getOpositeColorBin(board, row, col);
+
+	auto bishopPattern = colorBin | NOTATION::PIECES::BISHOP;
+	auto queenPattern = colorBin | NOTATION::PIECES::QUEEN;
+
+	for (const auto& dir: {
+		std::pair<signed char, signed char>(1, 1),
+		std::pair<signed char, signed char>(-1, -1),
+		std::pair<signed char, signed char>(-1, 1),
+		std::pair<signed char, signed char>(1, -1)})
+	{
+		for (auto co = modifyCoordinates(std::make_pair(row, col), dir);
+			isRowInBoard(co.first) && isColumnInBoard(co.second);
+			co = modifyCoordinates(co, dir))
+		{
+			const auto& field = board.fields[getFieldNum(co.first, co.second)];
+			if (field != 0u)
+			{
+				if ((field == bishopPattern) | (field == queenPattern))
+				{
+					return true;
+				}
+			}
+		}
+	}
+	
+	return false;
+}
+
 bool isAttackedByRookOrQueen(const Board& board, unsigned char row, unsigned char col);
 bool isAttackedByKing(const Board& board, unsigned char row, unsigned char col);
 bool isAttackedByKnight(const Board& board, unsigned char row, unsigned char col);
