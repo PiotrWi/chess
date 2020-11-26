@@ -8,7 +8,7 @@ ut-run: ut
 ut: $(GTEST_DIR)/$(GTEST_LIB) build/ut/CheckCheckerTest.o
 	g++ test/ut/main.cpp build/ut/CheckCheckerTest.o ${OBJ_FILES} $(GTEST_DIR)/$(GTEST_LIB) -lpthread -I./$(GTEST_DIR)/googletest/googletest/include/ -o ut
 
-build/ut/CheckCheckerTest.o: test/ut/CheckCheckerTest.cpp
+build/ut/CheckCheckerTest.o: test/ut/CheckCheckerTest.cpp build/CheckChecker.o
 	g++ -c -I./$(GTEST_DIR)/googletest/googletest/include/ -I./Board test/ut/CheckCheckerTest.cpp -o build/ut/CheckCheckerTest.o
 
 .ONESHELL:
