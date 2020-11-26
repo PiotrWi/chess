@@ -21,13 +21,12 @@ bool isColumnInBoard(unsigned char col)
 
 NOTATION::COLOR::color getOpositeColor(const Board& board, const unsigned char row, const unsigned char col)
 {
-	return switchColor(static_cast<NOTATION::COLOR::color>(
-		board[getFieldNum(row, col)] & NOTATION::COLOR::COLOR_MASK));
+	return switchColor(getPieceColor(board[getFieldNum(row, col)]));
 }
 
 unsigned char getOpositeColorBin(const Board& board, const unsigned char row, const unsigned char col)
 {
-	return ((board[getFieldNum(row, col)] & NOTATION::COLOR::COLOR_MASK) + 1u) & NOTATION::COLOR::COLOR_MASK;
+	return static_cast<unsigned char>(getOpositeColor(board, row, col));
 }
 
 std::pair<unsigned char, unsigned char> modifyCoordinates(std::pair<unsigned char, unsigned char> co,
