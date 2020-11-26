@@ -24,7 +24,7 @@ struct Board
 
 };
 
+void initDefault(Board& board);
 bool validateMove(const Board, const Move);
 void applyMove(Board&, const Move&);
-void initDefault(Board& board);
 bool isCheckOn(const Board&, const NOTATION::COLOR::color);
