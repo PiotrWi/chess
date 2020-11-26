@@ -29,23 +29,55 @@ const unsigned char& Board::operator[](const unsigned char field) const
 	return const_cast<Board&>(*this)[field];
 }
 
-bool validateMove(const Board&, const Move)
+bool validateMove(const Board& board, const Move move)
 {
-	// Not implemented
-	throw 1;
+	auto piece = board.fields[move.source];
+	auto pieceColor = getPieceColor(piece);
+	auto piecetype = getPieceType(piece);
+
+	auto isSourceFieldEmpty = (piece == 0u);
+	auto isDifferentPlayerOnMove = pieceColor != board.playerOnMove;
+	if (isSourceFieldEmpty or isDifferentPlayerOnMove)
+	{
+		return false;
+	}
+
+	if (piecetype == NOTATION::PIECES::PAWN)
+	{
+
+	}
+	if (piecetype == NOTATION::PIECES::ROCK)
+	{
+
+	}
+	if (piecetype == NOTATION::PIECES::KNIGHT)
+	{
+
+	}
+	if (piecetype == NOTATION::PIECES::BISHOP)
+	{
+
+	}
+	if (piecetype == NOTATION::PIECES::QUEEN)
+	{
+
+	}
+	if (piecetype == NOTATION::PIECES::KING)
+	{
+
+	}
+	throw 1; // Not implemented yet
+	return true;
 }
-
-
 
 bool isCheckOn(const Board& board, const NOTATION::COLOR::color c)
 {
 	return CheckChecker::isCheckOn(board, c);
 }
 
-
 void applyMove(Board& board, const Move& move)
 {
-	bool isCastle = (board[move.source] == NOTATION::PIECES::KING
+	bool isCastle = (getPieceType(board[move.source]) == NOTATION::PIECES::KING
 		and getColumnNum(move.source) == NOTATION::COORDINATES::COLUMN::E
 		and (getColumnNum(move.source) == NOTATION::COORDINATES::COLUMN::C
 			or getColumnNum(move.source) == NOTATION::COORDINATES::COLUMN::G));

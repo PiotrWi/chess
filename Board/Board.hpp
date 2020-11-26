@@ -21,10 +21,11 @@ struct Board
 	unsigned char& operator[](unsigned char);
 	const unsigned char& operator[](const char*) const;
 	const unsigned char& operator[](unsigned char) const;
-
 };
 
 bool validateMove(const Board, const Move);
 void applyMove(Board&, const Move&);
 void initDefault(Board& board);
 bool isCheckOn(const Board&, const NOTATION::COLOR::color);
+bool isMate();
+bool isDraw();
