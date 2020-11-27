@@ -1,6 +1,6 @@
 GTEST_DIR = externals/gtest
 GTEST_LIB = googletest/build/lib/libgtest.a
-OBJ_FILES = build/pieces.o build/board.o build/NotationConversions.o build/CheckChecker.o
+OBJ_FILES = build/pieces.o build/board.o build/NotationConversions.o build/CheckChecker.o build/MoveValidator.o
 
 ut-run: ut
 	./ut
@@ -17,7 +17,7 @@ $(GTEST_DIR)/$(GTEST_LIB):
 	make
 	cd -
 
-all: build/pieces.o build/board.o build/NotationConversions.o build/CheckChecker.o Board/Board.hpp main.cpp
+all: ${OBJ_FILES} Board/Board.hpp main.cpp
 	g++ main.cpp ${OBJ_FILES} -o chess-backend -I./Board
 
 build/pieces.o: Board/Board.hpp Board/Pieces.cpp Board/Notation.hpp
@@ -31,6 +31,10 @@ build/NotationConversions.o: Board/NotationConversions.cpp Board/NotationConvers
 
 build/CheckChecker.o: Board/CheckChecker.cpp Board/CheckChecker.hpp
 	g++ -c Board/CheckChecker.cpp -I./Board -o build/CheckChecker.o
+
+build/MoveValidator.o: Board/MoveValidator.cpp Board/MoveValidator.hpp
+	g++ -c Board/MoveValidator.cpp -I./Board -o build/MoveValidator.o
+
 
 clean:
 	rm chess-backend build/*.o

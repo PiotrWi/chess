@@ -1,5 +1,8 @@
 #include <NotationConversions.hpp>
 
+namespace NotationConversions
+{
+
 unsigned char getColumnNum(unsigned char field)
 {
 	return field % 8u;
@@ -28,4 +31,6 @@ unsigned char getPieceType(unsigned char piece)
 NOTATION::COLOR::color getPieceColor(unsigned char piece)
 {
 	return static_cast<NOTATION::COLOR::color >(piece & NOTATION::COLOR::COLOR_MASK);
+}
+
 }

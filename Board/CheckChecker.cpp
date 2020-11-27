@@ -21,7 +21,8 @@ bool isColumnInBoard(signed char col)
 
 NOTATION::COLOR::color getOpositeColor(const Board& board, const unsigned char row, const unsigned char col)
 {
-	return switchColor(getPieceColor(board[getFieldNum(row, col)]));
+	return NotationConversions::switchColor(
+			NotationConversions::getPieceColor(board[NotationConversions::getFieldNum(row, col)]));
 }
 
 unsigned char getOpositeColorBin(const Board& board, const unsigned char row, const unsigned char col)
@@ -61,8 +62,8 @@ bool isAttackedByOpositePawn(const Board& board,
 	signed char rightColumn = col + 1;
 
 	return isRowInBoard(pawnRow) and
-			((isColumnInBoard(leftColumn) and board[getFieldNum(pawnRow, leftColumn)] == pawnMask)
-			or (isColumnInBoard(rightColumn) and board[getFieldNum(pawnRow, leftColumn)] == pawnMask));
+			((isColumnInBoard(leftColumn) and board[NotationConversions::getFieldNum(pawnRow, leftColumn)] == pawnMask)
+			or (isColumnInBoard(rightColumn) and board[NotationConversions::getFieldNum(pawnRow, leftColumn)] == pawnMask));
 }
 
 bool isAttackedOnDiagonalByOpositeBishopOrQueen(const Board& board, unsigned char row, unsigned char col)
@@ -82,7 +83,7 @@ bool isAttackedOnDiagonalByOpositeBishopOrQueen(const Board& board, unsigned cha
 			isRowInBoard(co.first) && isColumnInBoard(co.second);
 			co = modifyCoordinates(co, dir))
 		{
-			const auto& field = board.fields[getFieldNum(co.first, co.second)];
+			const auto& field = board.fields[NotationConversions::getFieldNum(co.first, co.second)];
 			if (field != 0u)
 			{
 				if ((field == bishopPattern) | (field == queenPattern))
@@ -112,7 +113,7 @@ bool isAttackedByRookOrQueen(const Board& board, unsigned char row, unsigned cha
 			isRowInBoard(co.first) && isColumnInBoard(co.second);
 			co = modifyCoordinates(co, dir))
 		{
-			const auto& field = board.fields[getFieldNum(co.first, co.second)];
+			const auto& field = board.fields[NotationConversions::getFieldNum(co.first, co.second)];
 			if (field != 0u)
 			{
 				if (field == rockPattern or field == gueenPattern)
@@ -147,7 +148,7 @@ bool isAttackedByKing(const Board& board, unsigned char row, unsigned char col)
 		{
 			continue;
 		}
-		const auto& field = board.fields[getFieldNum(co.first, co.second)];
+		const auto& field = board.fields[NotationConversions::getFieldNum(co.first, co.second)];
 
 		if (field == kingPattern)
 		{
@@ -178,7 +179,7 @@ bool isAttackedByKnight(const Board& board, unsigned char row, unsigned char col
 		{
 					continue;
 		}
-		const auto& field = board.fields[getFieldNum(co.first, co.second)];
+		const auto& field = board.fields[NotationConversions::getFieldNum(co.first, co.second)];
 
 		if (field == knightPattern)
 		{
@@ -199,8 +200,8 @@ bool isCheckOn(const Board& board, const NOTATION::COLOR::color c)
 	unsigned char KING_MASQ = static_cast<unsigned char>(c) | NOTATION::PIECES::KING;
 	unsigned char kingPos = std::find(board.fields, board.fields + 64, KING_MASQ) - board.fields;
 
-	auto kingRow = getRow(kingPos);
-	auto kingColumn = getColumnNum(kingPos);
+	auto kingRow = NotationConversions::getRow(kingPos);
+	auto kingColumn = NotationConversions::getColumnNum(kingPos);
 
     return isAttackedByOpositePawn(board, kingRow, kingColumn)
     	|| isAttackedOnDiagonalByOpositeBishopOrQueen(board, kingRow, kingColumn)

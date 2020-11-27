@@ -23,6 +23,8 @@ struct Board
 	const unsigned char& operator[](unsigned char) const;
 };
 
+bool operator==(const Board& lfs, const Board rhs);
+
 void initDefault(Board& board);
 bool validateMove(const Board, const Move);
 void applyMove(Board&, const Move&);
