@@ -19,7 +19,9 @@ thread_local struct MoveContext{
 	unsigned char targetColumn;
 } ctx;
 
+bool valiateConcretePiece();
 bool validatePawn();
+bool validateRock();
 
 bool valiateConcretePiece()
 {
@@ -94,7 +96,40 @@ bool validatePawn()
 			}
 		}
 	}
+	else
+	{
+		auto collumnDiff = ctx.sourceColumn - ctx.targetColumn;
+		if (collumnDiff != 1 and collumnDiff != -1)
+		{
+			return false;
+		}
+		const auto& targetField = (*ctx.board)[ctx.move->destination];
+		const auto& prevMove = ctx.board->lastMove;
+		if (ctx.pieceColor == NOTATION::COLOR::color::white)
+		{
+			return rowDifference == 1
+				and ((targetField != 0u and
+					NotationConversions::getPieceColor(targetField) == NOTATION::COLOR::color::black)
+				or ((*ctx.board)[prevMove.destination] == (NOTATION::COLOR::BLACK | NOTATION::PIECES::PAWN)
+					and prevMove.source == prevMove.destination + 2 * singeRow));
+		}
+		if (ctx.pieceColor == NOTATION::COLOR::color::black)
+		{
+			return rowDifference == -1
+				and ((targetField != 0u and
+					NotationConversions::getPieceColor(targetField) == NOTATION::COLOR::color::white)
+				or ((*ctx.board)[prevMove.destination] == (NOTATION::COLOR::WHITE | NOTATION::PIECES::PAWN)
+					and prevMove.source == prevMove.destination - 2 * singeRow));
+		}
+	}
 
+	return false;
+}
+
+bool validateRock()
+{
+	// isOverHorizontal
+	// isOverVertical
 	return false;
 }
 
