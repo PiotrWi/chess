@@ -33,8 +33,7 @@ bool valiateConcretePiece()
 	}
 	if (pieceType == NOTATION::PIECES::ROCK)
 	{
-		// isVertical and noPieceinBeetween and targetEmptyOrEnemy
-		// or isHorizontall and noPieceinBeetween and targetEmptyOrEnemy
+		return validateRock();
 	}
 	if (pieceType == NOTATION::PIECES::KNIGHT)
 	{
@@ -126,10 +125,42 @@ bool validatePawn()
 	return false;
 }
 
+signed char sign (signed char a)
+{
+	if (a < 0)
+		return -1;
+	if (a > 0)
+		return 1;
+	return 0;
+}
+
 bool validateRock()
 {
-	// isOverHorizontal
-	// isOverVertical
+	auto isOverVertical = ctx.sourceColumn == ctx.targetColumn;
+	auto isOverHorizontal = ctx.sourceRow == ctx.targetRow;
+
+	if (isOverHorizontal)
+	{
+		auto r =  ctx.sourceRow;
+		auto s = sign(ctx.targetColumn - ctx.sourceColumn);
+		for (auto c = ctx.sourceColumn + s; c != ctx.targetColumn; c+s)
+		{
+			if ((*ctx.board)[NotationConversions::getFieldNum(r, c)] != 0)
+				return false;
+		}
+		return true;
+	}
+	if (isOverVertical)
+	{
+		auto c =  ctx.sourceColumn;
+		auto s = sign(ctx.targetRow - ctx.sourceRow);
+		for (auto r = ctx.sourceRow + s; r != ctx.targetColumn; r+s)
+		{
+			if ((*ctx.board)[NotationConversions::getFieldNum(r, c)] != 0)
+				return false;
+		}
+		return true;
+	}
 	return false;
 }
 
@@ -149,8 +180,8 @@ bool validateMove(const Board& board, const Move& move)
 	auto isDifferentPlayerOnMove = ctx.pieceColor != board.playerOnMove;
 	auto isPieceWithSameColorOnTarget = board[move.destination] != 0 and
 			(ctx.pieceColor == NotationConversions::getPieceColor(board[move.destination]));
-
-	if (isDifferentPlayerOnMove or isPieceWithSameColorOnTarget)
+	auto isSourceAndTargetSame = move.source == move.destination;
+	if (isDifferentPlayerOnMove or isPieceWithSameColorOnTarget or isSourceAndTargetSame)
 	{
 		return false;
 	}
@@ -163,34 +194,6 @@ bool validateMove(const Board& board, const Move& move)
 	auto pieceType = ctx.piece & NOTATION::PIECES::PIECES_MASK;
 
 	return valiateConcretePiece() and noCheckAfterMove();
-	if (pieceType == NOTATION::PIECES::PAWN)
-	{
-
-		// is2RowsMove or isSingleRowMove or isBearingInFly or isBeatig or isInLastLineWithPromotion;
-	}
-	if (pieceType == NOTATION::PIECES::ROCK)
-	{
-		// isVertical and noPieceinBeetween and targetEmptyOrEnemy
-		// or isHorizontall and noPieceinBeetween and targetEmptyOrEnemy
-	}
-	if (pieceType == NOTATION::PIECES::KNIGHT)
-	{
-
-	}
-	if (pieceType == NOTATION::PIECES::BISHOP)
-	{
-
-	}
-	if (pieceType == NOTATION::PIECES::QUEEN)
-	{
-
-	}
-	if (pieceType == NOTATION::PIECES::KING)
-	{
-
-	}
-	throw 1; // Not implemented yet
-	return true;
 }
 
 }
