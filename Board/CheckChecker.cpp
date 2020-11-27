@@ -130,16 +130,16 @@ bool isAttackedByRookOrQueen(const Board& board, unsigned char row, unsigned cha
 bool isAttackedByKing(const Board& board, unsigned char row, unsigned char col)
 {
 	auto colorBin = getOpositeColorBin(board, row, col);
-	unsigned char  kingPattern = colorBin | NOTATION::PIECES::KING;
+	unsigned char kingPattern = colorBin | NOTATION::PIECES::KING;
 
 	for (const auto& adjustmentField: {
 		std::pair<signed char, signed char>(1, 1),
 		std::pair<signed char, signed char>(1, 0),
 		std::pair<signed char, signed char>(1, -1),
+		std::pair<signed char, signed char>(0, -1),
 		std::pair<signed char, signed char>(0, 1),
-		std::pair<signed char, signed char>(1, -1),
 		std::pair<signed char, signed char>(-1, -1),
-		std::pair<signed char, signed char>(-1, 0),
+		std::pair<signed char, signed char>(-1, 1),
 		std::pair<signed char, signed char>(-1, 0)})
 	{
 		auto co = modifyCoordinates(std::make_pair(row, col), adjustmentField);

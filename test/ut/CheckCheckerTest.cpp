@@ -227,3 +227,106 @@ TEST(CheckCheckershould, NotFindCheckByRockWhenPieceInBeetween)
 	ASSERT_FALSE(CheckChecker::isCheckOn(board, NOTATION::COLOR::color::black));
 	ASSERT_FALSE(CheckChecker::isCheckOn(board, NOTATION::COLOR::color::white));
 }
+
+
+TEST(CheckCheckershould, FindCheckByBishop)
+{
+	Board board;
+	auto position =
+			"        "
+			"♖     ♝♚"
+			"        "
+			"        "
+			"       ♝"
+			"        "
+			"        "
+			"    ♔   ";
+	initBoardByString (board, position);
+	ASSERT_FALSE(CheckChecker::isCheckOn(board, NOTATION::COLOR::color::black));
+	ASSERT_TRUE(CheckChecker::isCheckOn(board, NOTATION::COLOR::color::white));
+}
+
+TEST(CheckCheckershould, FindCheckByBishop_2)
+{
+	Board board;
+	auto position =
+			"        "
+			"♖     ♝♚"
+			"        "
+			"        "
+			"        "
+			"        "
+			"        "
+			" ♗   ♔  ";
+	initBoardByString (board, position);
+	ASSERT_TRUE(CheckChecker::isCheckOn(board, NOTATION::COLOR::color::black));
+	ASSERT_FALSE(CheckChecker::isCheckOn(board, NOTATION::COLOR::color::white));
+}
+
+TEST(CheckCheckershould, NotFindCheckByBishopWhenpieceBetween)
+{
+	Board board;
+	auto position =
+			"        "
+			"      ♝♚"
+			"        "
+			"        "
+			"    ♖   "
+			"        "
+			"        "
+			" ♗   ♔  ";
+	initBoardByString (board, position);
+	ASSERT_FALSE(CheckChecker::isCheckOn(board, NOTATION::COLOR::color::black));
+	ASSERT_FALSE(CheckChecker::isCheckOn(board, NOTATION::COLOR::color::white));
+}
+
+TEST(CheckCheckershould, FindCheckByGueen)
+{
+	Board board;
+	auto position =
+			"        "
+			"       ♚"
+			"        "
+			"        "
+			"    ♕   "
+			"        "
+			"        "
+			" ♛   ♔  ";
+	initBoardByString (board, position);
+	ASSERT_TRUE(CheckChecker::isCheckOn(board, NOTATION::COLOR::color::black));
+	ASSERT_TRUE(CheckChecker::isCheckOn(board, NOTATION::COLOR::color::white));
+}
+
+TEST(CheckCheckershould, FindCheckByKnight)
+{
+	Board board;
+	auto position =
+			"♜♞♝♛♚♝♞♜"
+			"♟♟♟♟♟♟♟♟"
+			"     ♘  "
+			"        "
+			"        "
+			"  ♞     "
+			"♙♙♙♙♙♙♙♙"
+			"♖♘♗♔♕♗ ♖";
+	initBoardByString (board, position);
+	ASSERT_TRUE(CheckChecker::isCheckOn(board, NOTATION::COLOR::color::black));
+	ASSERT_TRUE(CheckChecker::isCheckOn(board, NOTATION::COLOR::color::white));
+}
+
+TEST(CheckCheckershould, FindCheckByKing)
+{
+	Board board;
+	auto position =
+			"        "
+			"      ♔♚"
+			"        "
+			"        "
+			"        "
+			"        "
+			"        "
+			"        ";
+	initBoardByString (board, position);
+	ASSERT_TRUE(CheckChecker::isCheckOn(board, NOTATION::COLOR::color::black));
+	ASSERT_TRUE(CheckChecker::isCheckOn(board, NOTATION::COLOR::color::white));
+}
