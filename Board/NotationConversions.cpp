@@ -7,6 +7,7 @@ unsigned char getColumnNum(unsigned char field)
 {
 	return field % 8u;
 }
+
 unsigned char getRow(unsigned char field)
 {
 	return (field >> 3u);

@@ -1,6 +1,5 @@
 #include "Board.hpp"
 
-#include <algorithm>
 #include <initializer_list>
 
 #include <NotationConversions.hpp>
@@ -9,15 +8,15 @@
 
 unsigned char& Board::operator[](const char* field)
 {
-        unsigned char collumn = field[0] - 'a';
-        unsigned char row = field[0] - '1';
+	unsigned char collumn = field[0] - 'a';
+	unsigned char row = field[0] - '1';
 
-        return fields[row*8u + collumn];
+	return fields[row*8u + collumn];
 }
 
 unsigned char& Board::operator[](const unsigned char field)
 {
-        return fields[field];
+	return fields[field];
 }
 
 const unsigned char& Board::operator[](const char* field) const
@@ -42,37 +41,41 @@ bool isCheckOn(const Board& board, const NOTATION::COLOR::color c)
 
 void applyMove(Board& board, const Move& move)
 {
-	bool isCastle = (NotationConversions::getPieceType(board[move.source]) == NOTATION::PIECES::KING
-		and NotationConversions::getColumnNum(move.source) == NOTATION::COORDINATES::COLUMN::E
-		and (NotationConversions::getColumnNum(move.source) == NOTATION::COORDINATES::COLUMN::C
-			or NotationConversions::getColumnNum(move.source) == NOTATION::COORDINATES::COLUMN::G));
-
-	board[move.destination] = board[move.source];
+	board[move.destination] = board[move.source] | NOTATION::MOVED::MOVED_MASK;
 	board[move.source] = 0;
+
+	if (NotationConversions::getPieceType(board[move.source]) == NOTATION::PIECES::KING)
+	{
+		bool isCastle = NotationConversions::getColumnNum(move.source) == NOTATION::COORDINATES::COLUMN::E
+				and (NotationConversions::getColumnNum(move.source) == NOTATION::COORDINATES::COLUMN::C
+					or NotationConversions::getColumnNum(move.source) == NOTATION::COORDINATES::COLUMN::G);
+
+		if (isCastle)
+		{
+			auto row = NotationConversions::getRow(move.source);
+			bool isLongCastle = NotationConversions::getColumnNum(move.source) == NOTATION::COORDINATES::COLUMN::C;
+			if (isLongCastle)
+			{
+				auto rockSource = NotationConversions::getFieldNum(row, NOTATION::COORDINATES::COLUMN::A);
+				auto rockDestination = NotationConversions::getFieldNum(row, NOTATION::COORDINATES::COLUMN::D);
+				board[rockDestination] = board[rockSource];
+				board[rockSource] = 0u;
+			}
+			else
+			{
+	            auto rockSource = NotationConversions::getFieldNum(row, NOTATION::COORDINATES::COLUMN::A);
+	            auto rockDestination = NotationConversions::getFieldNum(row, NOTATION::COORDINATES::COLUMN::D);
+	            board[rockDestination] = board[rockSource];
+	            board[rockSource] = 0u;
+
+			}
+		}
+	}
+
 	if (move.isPromoted)
 	{
 		board[move.destination] = static_cast<unsigned char>(board.playerOnMove) |
 		    (move.promoteTo & NOTATION::PIECES::PIECES_MASK);
-	}
-	if (isCastle)
-	{
-		auto row = NotationConversions::getRow(move.source);
-		bool isLongCastle = NotationConversions::getColumnNum(move.source) == NOTATION::COORDINATES::COLUMN::C;
-		if (isLongCastle)
-		{
-			auto rockSource = NotationConversions::getFieldNum(row, NOTATION::COORDINATES::COLUMN::A);
-			auto rockDestination = NotationConversions::getFieldNum(row, NOTATION::COORDINATES::COLUMN::D);
-			board[rockDestination] = board[rockSource];
-			board[rockSource] = 0u;
-		}
-		else
-		{
-            auto rockSource = NotationConversions::getFieldNum(row, NOTATION::COORDINATES::COLUMN::A);
-            auto rockDestination = NotationConversions::getFieldNum(row, NOTATION::COORDINATES::COLUMN::D);
-            board[rockDestination] = board[rockSource];
-            board[rockSource] = 0u;
-
-		}
 	}
 
 	board.playerOnMove = NotationConversions::switchColor(board.playerOnMove);

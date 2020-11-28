@@ -5,7 +5,8 @@
 class Piece
 {
 public:
-	Piece(char, color);
+	Piece(char, NOTATION::COLOR::color);
+	Piece(unsigned char);
 	const char* getFullName() const;
 	const char* getColor() const;
 	const char* getPieceName() const;
@@ -13,7 +14,7 @@ public:
 	~Piece() = default;
 private:
 	char PieceName_;
-	color c_;
+	NOTATION::COLOR::color c_;
 };
 
 Piece createPiece(const unsigned char number);

@@ -14,7 +14,6 @@ struct Board
 {
 	NOTATION::COLOR::color playerOnMove = NOTATION::COLOR::color::white;
 	Move lastMove = {0, 0};
-	bool hasCastled[2] = {};
 	unsigned char fields[64] = {}; // "0 belongs to A0, 1 belongs to B0, 8 belongs to A1
 
 	unsigned char& operator[](const char*);

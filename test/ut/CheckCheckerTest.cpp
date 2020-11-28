@@ -52,6 +52,11 @@ unsigned char getCorrespondingFigure(const char* str, int bytesLen)
 	return 0;
 }
 
+unsigned char randomlyAddMovedBit(unsigned char in)
+{
+	return in | ((unsigned char)(rand()) & NOTATION::MOVED::MOVED_MASK);
+}
+
 void initBoardByString(Board& board,
 		const char* position,
 		NOTATION::COLOR::color playerOnMove = NOTATION::COLOR::color::white,
@@ -66,7 +71,7 @@ void initBoardByString(Board& board,
 			auto row = 7 - (i / 8);
 			auto col = i & 0b111;
 
-			board.fields[(row << 3) | col] = piece;
+			board.fields[(row << 3) | col] = randomlyAddMovedBit(piece);
 		}
 		str_i += len;
 	}

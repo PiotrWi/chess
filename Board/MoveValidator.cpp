@@ -22,6 +22,9 @@ thread_local struct MoveContext{
 bool valiateConcretePiece();
 bool validatePawn();
 bool validateRock();
+bool validateBishop();
+bool validateKnight();
+bool validateKing();
 
 bool valiateConcretePiece()
 {
@@ -35,28 +38,30 @@ bool valiateConcretePiece()
 	{
 		return validateRock();
 	}
-	if (pieceType == NOTATION::PIECES::KNIGHT)
-	{
-
-	}
 	if (pieceType == NOTATION::PIECES::BISHOP)
 	{
-
+		return validateBishop();
+	}
+	if (pieceType == NOTATION::PIECES::KNIGHT)
+	{
+		return validateKnight();
 	}
 	if (pieceType == NOTATION::PIECES::QUEEN)
 	{
-
+		return validateRock() or validateBishop();
 	}
 	if (pieceType == NOTATION::PIECES::KING)
 	{
-
+		return validateKing();
 	}
 	return false;
 }
 
 bool noCheckAfterMove()
 {
-	return true;
+	Board boardCopy = *ctx.board;
+	applyMove(boardCopy, *ctx.move);
+	return isCheckOn(boardCopy, ctx.board->playerOnMove);
 }
 
 bool validatePawn()
@@ -162,6 +167,78 @@ bool validateRock()
 		return true;
 	}
 	return false;
+}
+
+bool validateBishop()
+{
+	auto isToUperRightDiagonal = (ctx.sourceColumn - ctx.sourceRow)
+			== (ctx.targetColumn + ctx.targetRow);
+	auto isToBotopRightDiagonal = (ctx.sourceColumn + ctx.sourceRow)
+			== (ctx.targetColumn + ctx.targetRow);
+
+	if (isToUperRightDiagonal or isToBotopRightDiagonal)
+	{
+		auto s_c = sign(ctx.targetColumn - ctx.sourceColumn);
+		auto s_r = sign(ctx.targetRow - ctx.sourceRow);
+
+		for (unsigned char r = ctx.sourceRow + s_r,  c = ctx.sourceColumn + s_c;
+			r != ctx.targetRow;
+			r += s_r, c += s_c)
+		{
+			if ((*ctx.board)[NotationConversions::getFieldNum(r, c)] != 0)
+				return false;
+		}
+		return true;
+	}
+
+	return false;
+}
+
+bool validateKnight()
+{
+	auto rowDiff = ctx.sourceRow - ctx.targetRow;
+	auto colDiff = ctx.sourceColumn - ctx.targetColumn;
+	auto rowDiffAbs = rowDiff * sign(rowDiff);
+	auto colDiffAbs = rowDiff * sign(rowDiff);
+
+	return (rowDiffAbs == 1 || rowDiffAbs == 2) and ((rowDiffAbs + colDiffAbs) == 3);
+}
+
+bool validateKing()
+{
+	auto rowDiff = ctx.sourceRow - ctx.targetRow;
+	auto colDiff = ctx.sourceColumn - ctx.targetColumn;
+	auto rowDiffAbs = rowDiff * sign(rowDiff);
+	auto colDiffAbs = rowDiff * sign(rowDiff);
+
+	if (colDiffAbs == 2)
+	{
+		auto notMovedRockPattern = NOTATION::PIECES::ROCK
+			| static_cast<unsigned char>(ctx.pieceColor);
+		auto hasKingMoved = (*ctx.board)[ctx.move->source]
+						& NOTATION::MOVED::MOVED_MASK;
+		unsigned rockColumn = 0;
+
+		if (ctx.targetColumn > ctx.sourceColumn)
+		{
+			auto rockColumn = 7;
+		}
+
+		auto isCheckInBetween = [&]() -> bool {
+			auto boardCopy = *ctx.board;
+			auto moveCopy = *ctx.move;
+			moveCopy.destination =
+					moveCopy.source + sign(ctx.targetColumn - ctx.sourceColumn);
+			applyMove(boardCopy, moveCopy);
+			return isCheckOn(boardCopy, ctx.board->playerOnMove);
+		};
+
+		return (hasKingMoved == false)
+			and (notMovedRockPattern == (*ctx.board)[
+				NotationConversions::getFieldNum(ctx.sourceRow , rockColumn)])
+			and not isCheckInBetween();
+	}
+	return (rowDiffAbs == 0 || rowDiffAbs == 1) and (colDiffAbs == 0 or colDiffAbs == 1);
 }
 
 }  // namespace
