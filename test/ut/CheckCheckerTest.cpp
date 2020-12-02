@@ -1,87 +1,14 @@
 #include <gtest/gtest.h>
 
-#include <cstring>
-#include <utility>
-#include <vector>
-
 #include <Board.hpp>
 #include <CheckChecker.hpp>
 
-std::vector<std::pair<const char*, unsigned char>> symbolToPieceMapping = {
-	std::make_pair("♜", NOTATION::COLOR::BLACK | NOTATION::PIECES::ROCK),
-	std::make_pair("♞", NOTATION::COLOR::BLACK | NOTATION::PIECES::KNIGHT),
-	std::make_pair("♝", NOTATION::COLOR::BLACK | NOTATION::PIECES::BISHOP),
-	std::make_pair("♛", NOTATION::COLOR::BLACK | NOTATION::PIECES::QUEEN),
-	std::make_pair("♚", NOTATION::COLOR::BLACK | NOTATION::PIECES::KING),
-	std::make_pair("♟", NOTATION::COLOR::BLACK | NOTATION::PIECES::PAWN),
-	std::make_pair("♙", NOTATION::COLOR::WHITE | NOTATION::PIECES::PAWN),
-	std::make_pair("♕", NOTATION::COLOR::WHITE | NOTATION::PIECES::QUEEN),
-	std::make_pair("♔", NOTATION::COLOR::WHITE | NOTATION::PIECES::KING),
-	std::make_pair("♗", NOTATION::COLOR::WHITE | NOTATION::PIECES::BISHOP),
-	std::make_pair("♘", NOTATION::COLOR::WHITE | NOTATION::PIECES::KNIGHT),
-	std::make_pair("♖", NOTATION::COLOR::WHITE | NOTATION::PIECES::ROCK),
-};
-
-int unicodeLen(unsigned char c)
-{
-	if (~c & 0b1000000)
-		return 1;
-	if ((c & 0b11110000) == 0b11110000)
-		return 4;
-	if ((c & 0b11100000) == 0b11100000)
-		return 3;
-	if ((c & 0b11000000) == 0b11000000)
-		return 2;
-	return 1;
-}
-
-unsigned char getCorrespondingFigure(const char* str, int bytesLen)
-{
-	for (const auto& map : symbolToPieceMapping)
-	{
-		bool match = true;
-		for (auto i = 0u; i< bytesLen; ++i)
-		{
-			match &= map.first[i] == str[i];
-		}
-		if (match)
-		{
-			return map.second;
-		}
-	}
-	return 0;
-}
-
-unsigned char randomlyAddMovedBit(unsigned char in)
-{
-	return in | ((unsigned char)(rand()) & NOTATION::MOVED::MOVED_MASK);
-}
-
-void initBoardByString(Board& board,
-		const char* position,
-		NOTATION::COLOR::color playerOnMove = NOTATION::COLOR::color::white,
-		Move lastMove = {})
-{
-	for (int str_i = 0, i = 0; str_i < strlen(position); ++i)
-	{
-		auto len = unicodeLen(position[str_i]);
-		if (len != 1)
-		{
-			auto piece = getCorrespondingFigure(&position[str_i], len);
-			auto row = 7 - (i / 8);
-			auto col = i & 0b111;
-
-			board.fields[(row << 3) | col] = randomlyAddMovedBit(piece);
-		}
-		str_i += len;
-	}
-}
+#include <utils/BoardGenerationUtils.hpp>
 
 /* PAWN based */
 TEST(CheckCheckershould, FindCheckByPawn)
 {
-	Board board;
-	auto position =
+	Board board = createBoard(
 			"        "
 			"   ♚    "
 			"  ♙     "
@@ -89,8 +16,7 @@ TEST(CheckCheckershould, FindCheckByPawn)
 			"        "
 			"        "
 			"        "
-			"    ♔   ";
-	initBoardByString (board, position);
+			"    ♔   ");
 	ASSERT_TRUE(CheckChecker::isCheckOn(board, NOTATION::COLOR::color::black));
 	ASSERT_FALSE(CheckChecker::isCheckOn(board, NOTATION::COLOR::color::white));
 }
@@ -98,8 +24,7 @@ TEST(CheckCheckershould, FindCheckByPawn)
 
 TEST(CheckCheckershould, DoNotFindCheckByPawn)
 {
-	Board board;
-	auto position =
+	Board board = createBoard(
 			"        "
 			"   ♚    "
 			"   ♙    "
@@ -107,16 +32,14 @@ TEST(CheckCheckershould, DoNotFindCheckByPawn)
 			"        "
 			"        "
 			"        "
-			"    ♔   ";
-	initBoardByString (board, position);
+			"    ♔   ");
 	ASSERT_FALSE(CheckChecker::isCheckOn(board, NOTATION::COLOR::color::black));
 	ASSERT_FALSE(CheckChecker::isCheckOn(board, NOTATION::COLOR::color::white));
 }
 
 TEST(CheckCheckershould, DoFindCheckByPawn_2)
 {
-	Board board;
-	auto position =
+	Board board = createBoard(
 			"        "
 			"   ♚♟   "
 			"♙  ♙    "
@@ -124,8 +47,7 @@ TEST(CheckCheckershould, DoFindCheckByPawn_2)
 			"        "
 			"        "
 			"   ♟    "
-			"    ♔   ";
-	initBoardByString (board, position);
+			"    ♔   ");
 	ASSERT_FALSE(CheckChecker::isCheckOn(board, NOTATION::COLOR::color::black));
 	ASSERT_TRUE(CheckChecker::isCheckOn(board, NOTATION::COLOR::color::white));
 }
@@ -133,8 +55,7 @@ TEST(CheckCheckershould, DoFindCheckByPawn_2)
 /* ROCK Based */
 TEST(CheckCheckershould, FindCheckByRockHorizontaly)
 {
-	Board board;
-	auto position =
+	Board board = createBoard(
 			"        "
 			"   ♚   ♖"
 			"        "
@@ -142,16 +63,14 @@ TEST(CheckCheckershould, FindCheckByRockHorizontaly)
 			"        "
 			"       ♜"
 			"        "
-			"    ♔   ";
-	initBoardByString (board, position);
+			"    ♔   ");
 	ASSERT_TRUE(CheckChecker::isCheckOn(board, NOTATION::COLOR::color::black));
 	ASSERT_FALSE(CheckChecker::isCheckOn(board, NOTATION::COLOR::color::white));
 }
 
 TEST(CheckCheckershould, FindCheckByRockHorizontaly_2)
 {
-	Board board;
-	auto position =
+	Board board = createBoard(
 			"        "
 			"♖   ♚   "
 			"        "
@@ -159,16 +78,14 @@ TEST(CheckCheckershould, FindCheckByRockHorizontaly_2)
 			"        "
 			"  ♜     "
 			"        "
-			"    ♔   ";
-	initBoardByString (board, position);
+			"    ♔   ");
 	ASSERT_TRUE(CheckChecker::isCheckOn(board, NOTATION::COLOR::color::black));
 	ASSERT_FALSE(CheckChecker::isCheckOn(board, NOTATION::COLOR::color::white));
 }
 
 TEST(CheckCheckershould, FindCheckByRockHorizontaly_3)
 {
-	Board board;
-	auto position =
+	Board board = createBoard(
 			"        "
 			"    ♚   "
 			" ♖      "
@@ -176,16 +93,14 @@ TEST(CheckCheckershould, FindCheckByRockHorizontaly_3)
 			"        "
 			"        "
 			"        "
-			" ♜  ♔   ";
-	initBoardByString (board, position);
+			" ♜  ♔   ");
 	ASSERT_FALSE(CheckChecker::isCheckOn(board, NOTATION::COLOR::color::black));
 	ASSERT_TRUE(CheckChecker::isCheckOn(board, NOTATION::COLOR::color::white));
 }
 
 TEST(CheckCheckershould, FindCheckByRockVertically_1)
 {
-	Board board;
-	auto position =
+	Board board = createBoard(
 			"        "
 			"    ♚   "
 			" ♖      "
@@ -193,16 +108,14 @@ TEST(CheckCheckershould, FindCheckByRockVertically_1)
 			"        "
 			"    ♜   "
 			"        "
-			"    ♔   ";
-	initBoardByString (board, position);
+			"    ♔   ");
 	ASSERT_FALSE(CheckChecker::isCheckOn(board, NOTATION::COLOR::color::black));
 	ASSERT_TRUE(CheckChecker::isCheckOn(board, NOTATION::COLOR::color::white));
 }
 
 TEST(CheckCheckershould, FindCheckByRockVertically_2)
 {
-	Board board;
-	auto position =
+	Board board = createBoard(
 			"        "
 			"       ♚"
 			"       ♖"
@@ -210,16 +123,14 @@ TEST(CheckCheckershould, FindCheckByRockVertically_2)
 			"        "
 			"     ♜  "
 			"        "
-			"    ♔   ";
-	initBoardByString (board, position);
+			"    ♔   ");
 	ASSERT_TRUE(CheckChecker::isCheckOn(board, NOTATION::COLOR::color::black));
 	ASSERT_FALSE(CheckChecker::isCheckOn(board, NOTATION::COLOR::color::white));
 }
 
 TEST(CheckCheckershould, NotFindCheckByRockWhenPieceInBeetween)
 {
-	Board board;
-	auto position =
+	Board board = createBoard(
 			"        "
 			"♖     ♝♚"
 			"        "
@@ -227,8 +138,7 @@ TEST(CheckCheckershould, NotFindCheckByRockWhenPieceInBeetween)
 			"        "
 			"    ♜   "
 			"    ♝   "
-			"    ♔   ";
-	initBoardByString (board, position);
+			"    ♔   ");
 	ASSERT_FALSE(CheckChecker::isCheckOn(board, NOTATION::COLOR::color::black));
 	ASSERT_FALSE(CheckChecker::isCheckOn(board, NOTATION::COLOR::color::white));
 }
@@ -236,8 +146,7 @@ TEST(CheckCheckershould, NotFindCheckByRockWhenPieceInBeetween)
 
 TEST(CheckCheckershould, FindCheckByBishop)
 {
-	Board board;
-	auto position =
+	Board board = createBoard(
 			"        "
 			"♖     ♝♚"
 			"        "
@@ -245,16 +154,14 @@ TEST(CheckCheckershould, FindCheckByBishop)
 			"       ♝"
 			"        "
 			"        "
-			"    ♔   ";
-	initBoardByString (board, position);
+			"    ♔   ");
 	ASSERT_FALSE(CheckChecker::isCheckOn(board, NOTATION::COLOR::color::black));
 	ASSERT_TRUE(CheckChecker::isCheckOn(board, NOTATION::COLOR::color::white));
 }
 
 TEST(CheckCheckershould, FindCheckByBishop_2)
 {
-	Board board;
-	auto position =
+	Board board = createBoard(
 			"        "
 			"♖     ♝♚"
 			"        "
@@ -262,16 +169,14 @@ TEST(CheckCheckershould, FindCheckByBishop_2)
 			"        "
 			"        "
 			"        "
-			" ♗   ♔  ";
-	initBoardByString (board, position);
+			" ♗   ♔  ");
 	ASSERT_TRUE(CheckChecker::isCheckOn(board, NOTATION::COLOR::color::black));
 	ASSERT_FALSE(CheckChecker::isCheckOn(board, NOTATION::COLOR::color::white));
 }
 
 TEST(CheckCheckershould, NotFindCheckByBishopWhenpieceBetween)
 {
-	Board board;
-	auto position =
+	Board board = createBoard(
 			"        "
 			"      ♝♚"
 			"        "
@@ -279,16 +184,14 @@ TEST(CheckCheckershould, NotFindCheckByBishopWhenpieceBetween)
 			"    ♖   "
 			"        "
 			"        "
-			" ♗   ♔  ";
-	initBoardByString (board, position);
+			" ♗   ♔  ");
 	ASSERT_FALSE(CheckChecker::isCheckOn(board, NOTATION::COLOR::color::black));
 	ASSERT_FALSE(CheckChecker::isCheckOn(board, NOTATION::COLOR::color::white));
 }
 
 TEST(CheckCheckershould, FindCheckByGueen)
 {
-	Board board;
-	auto position =
+	Board board = createBoard(
 			"        "
 			"       ♚"
 			"        "
@@ -296,16 +199,14 @@ TEST(CheckCheckershould, FindCheckByGueen)
 			"    ♕   "
 			"        "
 			"        "
-			" ♛   ♔  ";
-	initBoardByString (board, position);
+			" ♛   ♔  ");
 	ASSERT_TRUE(CheckChecker::isCheckOn(board, NOTATION::COLOR::color::black));
 	ASSERT_TRUE(CheckChecker::isCheckOn(board, NOTATION::COLOR::color::white));
 }
 
 TEST(CheckCheckershould, FindCheckByKnight)
 {
-	Board board;
-	auto position =
+	Board board = createBoard(
 			"♜♞♝♛♚♝♞♜"
 			"♟♟♟♟♟♟♟♟"
 			"     ♘  "
@@ -313,16 +214,14 @@ TEST(CheckCheckershould, FindCheckByKnight)
 			"        "
 			"  ♞     "
 			"♙♙♙♙♙♙♙♙"
-			"♖♘♗♔♕♗ ♖";
-	initBoardByString (board, position);
+			"♖♘♗♔♕♗ ♖");
 	ASSERT_TRUE(CheckChecker::isCheckOn(board, NOTATION::COLOR::color::black));
 	ASSERT_TRUE(CheckChecker::isCheckOn(board, NOTATION::COLOR::color::white));
 }
 
 TEST(CheckCheckershould, FindCheckByKing)
 {
-	Board board;
-	auto position =
+	Board board = createBoard(
 			"        "
 			"      ♔♚"
 			"        "
@@ -330,8 +229,7 @@ TEST(CheckCheckershould, FindCheckByKing)
 			"        "
 			"        "
 			"        "
-			"        ";
-	initBoardByString (board, position);
+			"        ");
 	ASSERT_TRUE(CheckChecker::isCheckOn(board, NOTATION::COLOR::color::black));
 	ASSERT_TRUE(CheckChecker::isCheckOn(board, NOTATION::COLOR::color::white));
 }

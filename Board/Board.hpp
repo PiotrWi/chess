@@ -4,6 +4,10 @@
 
 struct Move
 {
+	Move();
+	Move(const char*, const char*, bool isPromoted = false, unsigned char promoteTo = 0);
+	Move(unsigned char, unsigned char, bool isPromoted = false, unsigned char promoteTo = 0);
+
 	unsigned char source;
 	unsigned char destination;
 	bool isPromoted;
@@ -13,8 +17,8 @@ struct Move
 struct Board
 {
 	NOTATION::COLOR::color playerOnMove = NOTATION::COLOR::color::white;
-	Move lastMove = {0, 0};
-	unsigned char fields[64] = {}; // "0 belongs to A0, 1 belongs to B0, 8 belongs to A1
+	Move lastMove = {};
+	unsigned char fields[64] = {0u, 0u}; // "0 belongs to A0, 1 belongs to B0, 8 belongs to A1
 
 	unsigned char& operator[](const char*);
 	unsigned char& operator[](unsigned char);

@@ -5,11 +5,14 @@ OBJ_FILES = build/pieces.o build/board.o build/NotationConversions.o build/Check
 ut-run: ut
 	./ut
 
-ut: $(GTEST_DIR)/$(GTEST_LIB) build/ut/CheckCheckerTest.o
-	g++ test/ut/main.cpp build/ut/CheckCheckerTest.o ${OBJ_FILES} $(GTEST_DIR)/$(GTEST_LIB) -lpthread -I./$(GTEST_DIR)/googletest/googletest/include/ -o ut
+ut: $(GTEST_DIR)/$(GTEST_LIB) build/ut/CheckCheckerTest.o build/ut/MoveValidatorTest.o
+	g++ test/ut/main.cpp build/ut/CheckCheckerTest.o build/ut/MoveValidatorTest.o ${OBJ_FILES} $(GTEST_DIR)/$(GTEST_LIB) -lpthread -I./$(GTEST_DIR)/googletest/googletest/include/ -o ut
 
 build/ut/CheckCheckerTest.o: test/ut/CheckCheckerTest.cpp build/CheckChecker.o
-	g++ -c -I./$(GTEST_DIR)/googletest/googletest/include/ -I./Board test/ut/CheckCheckerTest.cpp -o build/ut/CheckCheckerTest.o
+	g++ -c -I./$(GTEST_DIR)/googletest/googletest/include/ -I./Board -I./test/ut/  test/ut/CheckCheckerTest.cpp -o build/ut/CheckCheckerTest.o
+
+build/ut/MoveValidatorTest.o: test/ut/MoveValidatorTest.cpp build/MoveValidator.o
+	g++ -c -I./$(GTEST_DIR)/googletest/googletest/include/ -I./Board -I./test/ut/ test/ut/MoveValidatorTest.cpp  -o build/ut/MoveValidatorTest.o
 
 .ONESHELL:
 $(GTEST_DIR)/$(GTEST_LIB):
