@@ -61,13 +61,13 @@ bool noCheckAfterMove()
 {
 	Board boardCopy = *ctx.board;
 	applyMove(boardCopy, *ctx.move);
-	return isCheckOn(boardCopy, ctx.board->playerOnMove);
+    return not isCheckOn(boardCopy, ctx.board->playerOnMove);
 }
 
 bool validatePawn()
 {
 	constexpr unsigned char singeRow = 8u;
-	auto isBeating = ctx.sourceColumn == ctx.targetColumn;
+    auto isBeating = (ctx.sourceColumn != ctx.targetColumn);
 	auto rowDifference = ctx.targetRow - ctx.sourceRow;
 
 	if (not isBeating)
@@ -75,7 +75,7 @@ bool validatePawn()
 		if (ctx.pieceColor == NOTATION::COLOR::color::white)
 		{
 			if (rowDifference == 2)
-			{
+            {
 				return ctx.sourceRow == 1
 					and ((*ctx.board)[ctx.move->source + singeRow] == 0u)
 					and ((*ctx.board)[ctx.move->source + 2*singeRow] == 0u);
@@ -267,8 +267,6 @@ bool validateMove(const Board& board, const Move& move)
 	ctx.targetRow = NotationConversions::getRow(move.destination);
 	ctx.sourceColumn = NotationConversions::getColumnNum(move.source);
 	ctx.targetColumn = NotationConversions::getColumnNum(move.destination);
-
-	auto pieceType = ctx.piece & NOTATION::PIECES::PIECES_MASK;
 
 	return valiateConcretePiece() and noCheckAfterMove();
 }

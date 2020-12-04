@@ -54,6 +54,8 @@ unsigned char getCorrespondingFigure(const char* str, int bytesLen)
 }
 
 }
+namespace utils
+{
 
 static Board createBoard(const char* position,
 		NOTATION::COLOR::color playerOnMove = NOTATION::COLOR::color::white,
@@ -74,5 +76,9 @@ static Board createBoard(const char* position,
 		str_i += len;
 	}
 
+    board.playerOnMove = playerOnMove;
+
 	return board;
 }
+
+}  // namespace utils

@@ -9,7 +9,7 @@
 static unsigned char fieldStringToNum(const char* field)
 {
 	unsigned char collumn = field[0] - 'a';
-	unsigned char row = field[0] - '1';
+    unsigned char row = field[1] - '1';
 	return row*8u + collumn;
 }
 

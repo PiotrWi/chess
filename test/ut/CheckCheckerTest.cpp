@@ -8,7 +8,7 @@
 /* PAWN based */
 TEST(CheckCheckershould, FindCheckByPawn)
 {
-	Board board = createBoard(
+    Board board = utils::createBoard(
 			"        "
 			"   ♚    "
 			"  ♙     "
@@ -24,7 +24,7 @@ TEST(CheckCheckershould, FindCheckByPawn)
 
 TEST(CheckCheckershould, DoNotFindCheckByPawn)
 {
-	Board board = createBoard(
+    Board board = utils::createBoard(
 			"        "
 			"   ♚    "
 			"   ♙    "
@@ -39,7 +39,7 @@ TEST(CheckCheckershould, DoNotFindCheckByPawn)
 
 TEST(CheckCheckershould, DoFindCheckByPawn_2)
 {
-	Board board = createBoard(
+    Board board = utils::createBoard(
 			"        "
 			"   ♚♟   "
 			"♙  ♙    "
@@ -55,7 +55,7 @@ TEST(CheckCheckershould, DoFindCheckByPawn_2)
 /* ROCK Based */
 TEST(CheckCheckershould, FindCheckByRockHorizontaly)
 {
-	Board board = createBoard(
+    Board board = utils::createBoard(
 			"        "
 			"   ♚   ♖"
 			"        "
@@ -70,7 +70,7 @@ TEST(CheckCheckershould, FindCheckByRockHorizontaly)
 
 TEST(CheckCheckershould, FindCheckByRockHorizontaly_2)
 {
-	Board board = createBoard(
+    Board board = utils::createBoard(
 			"        "
 			"♖   ♚   "
 			"        "
@@ -85,7 +85,7 @@ TEST(CheckCheckershould, FindCheckByRockHorizontaly_2)
 
 TEST(CheckCheckershould, FindCheckByRockHorizontaly_3)
 {
-	Board board = createBoard(
+    Board board = utils::createBoard(
 			"        "
 			"    ♚   "
 			" ♖      "
@@ -100,7 +100,7 @@ TEST(CheckCheckershould, FindCheckByRockHorizontaly_3)
 
 TEST(CheckCheckershould, FindCheckByRockVertically_1)
 {
-	Board board = createBoard(
+    Board board = utils::createBoard(
 			"        "
 			"    ♚   "
 			" ♖      "
@@ -115,7 +115,7 @@ TEST(CheckCheckershould, FindCheckByRockVertically_1)
 
 TEST(CheckCheckershould, FindCheckByRockVertically_2)
 {
-	Board board = createBoard(
+    Board board = utils::createBoard(
 			"        "
 			"       ♚"
 			"       ♖"
@@ -130,7 +130,7 @@ TEST(CheckCheckershould, FindCheckByRockVertically_2)
 
 TEST(CheckCheckershould, NotFindCheckByRockWhenPieceInBeetween)
 {
-	Board board = createBoard(
+    Board board = utils::createBoard(
 			"        "
 			"♖     ♝♚"
 			"        "
@@ -146,7 +146,7 @@ TEST(CheckCheckershould, NotFindCheckByRockWhenPieceInBeetween)
 
 TEST(CheckCheckershould, FindCheckByBishop)
 {
-	Board board = createBoard(
+    Board board = utils::createBoard(
 			"        "
 			"♖     ♝♚"
 			"        "
@@ -161,7 +161,7 @@ TEST(CheckCheckershould, FindCheckByBishop)
 
 TEST(CheckCheckershould, FindCheckByBishop_2)
 {
-	Board board = createBoard(
+    Board board = utils::createBoard(
 			"        "
 			"♖     ♝♚"
 			"        "
@@ -176,7 +176,7 @@ TEST(CheckCheckershould, FindCheckByBishop_2)
 
 TEST(CheckCheckershould, NotFindCheckByBishopWhenpieceBetween)
 {
-	Board board = createBoard(
+    Board board = utils::createBoard(
 			"        "
 			"      ♝♚"
 			"        "
@@ -191,7 +191,7 @@ TEST(CheckCheckershould, NotFindCheckByBishopWhenpieceBetween)
 
 TEST(CheckCheckershould, FindCheckByGueen)
 {
-	Board board = createBoard(
+    Board board = utils::createBoard(
 			"        "
 			"       ♚"
 			"        "
@@ -206,7 +206,7 @@ TEST(CheckCheckershould, FindCheckByGueen)
 
 TEST(CheckCheckershould, FindCheckByKnight)
 {
-	Board board = createBoard(
+    Board board = utils::createBoard(
 			"♜♞♝♛♚♝♞♜"
 			"♟♟♟♟♟♟♟♟"
 			"     ♘  "
@@ -221,7 +221,7 @@ TEST(CheckCheckershould, FindCheckByKnight)
 
 TEST(CheckCheckershould, FindCheckByKing)
 {
-	Board board = createBoard(
+    Board board = utils::createBoard(
 			"        "
 			"      ♔♚"
 			"        "
