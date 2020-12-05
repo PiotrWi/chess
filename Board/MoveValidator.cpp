@@ -148,7 +148,7 @@ bool validateRock()
 	{
 		auto r =  ctx.sourceRow;
 		auto s = sign(ctx.targetColumn - ctx.sourceColumn);
-		for (auto c = ctx.sourceColumn + s; c != ctx.targetColumn; c+s)
+        for (auto c = ctx.sourceColumn + s; c != ctx.targetColumn; c+=s)
 		{
 			if ((*ctx.board)[NotationConversions::getFieldNum(r, c)] != 0)
 				return false;
@@ -159,7 +159,7 @@ bool validateRock()
 	{
 		auto c =  ctx.sourceColumn;
 		auto s = sign(ctx.targetRow - ctx.sourceRow);
-		for (auto r = ctx.sourceRow + s; r != ctx.targetColumn; r+s)
+        for (auto r = ctx.sourceRow + s; r != ctx.targetColumn; r+=s)
 		{
 			if ((*ctx.board)[NotationConversions::getFieldNum(r, c)] != 0)
 				return false;
@@ -199,7 +199,7 @@ bool validateKnight()
 	auto rowDiff = ctx.sourceRow - ctx.targetRow;
 	auto colDiff = ctx.sourceColumn - ctx.targetColumn;
 	auto rowDiffAbs = rowDiff * sign(rowDiff);
-	auto colDiffAbs = rowDiff * sign(rowDiff);
+    auto colDiffAbs = colDiff * sign(colDiff);
 
 	return (rowDiffAbs == 1 || rowDiffAbs == 2) and ((rowDiffAbs + colDiffAbs) == 3);
 }
@@ -209,7 +209,7 @@ bool validateKing()
 	auto rowDiff = ctx.sourceRow - ctx.targetRow;
 	auto colDiff = ctx.sourceColumn - ctx.targetColumn;
 	auto rowDiffAbs = rowDiff * sign(rowDiff);
-	auto colDiffAbs = rowDiff * sign(rowDiff);
+    auto colDiffAbs = colDiff * sign(colDiff);
 
 	if (colDiffAbs == 2)
 	{
@@ -221,7 +221,7 @@ bool validateKing()
 
 		if (ctx.targetColumn > ctx.sourceColumn)
 		{
-			auto rockColumn = 7;
+            rockColumn = 7;
 		}
 
 		auto isCheckInBetween = [&]() -> bool {

@@ -36,12 +36,12 @@ int unicodeLen(unsigned char c)
 	return 1;
 }
 
-unsigned char getCorrespondingFigure(const char* str, int bytesLen)
+unsigned char getCorrespondingFigure(const char* str, size_t bytesLen)
 {
 	for (const auto& map : symbolToPieceMapping)
 	{
 		bool match = true;
-		for (auto i = 0u; i< bytesLen; ++i)
+        for (size_t i = 0; i< bytesLen; ++i)
 		{
 			match &= map.first[i] == str[i];
 		}
@@ -58,11 +58,10 @@ namespace utils
 {
 
 static Board createBoard(const char* position,
-		NOTATION::COLOR::color playerOnMove = NOTATION::COLOR::color::white,
-		Move lastMove = {})
+        NOTATION::COLOR::color playerOnMove = NOTATION::COLOR::color::white)
 {
 	Board board;
-	for (int str_i = 0, i = 0; str_i < strlen(position); ++i)
+    for (size_t str_i = 0, i = 0; str_i < strlen(position); ++i)
 	{
 		auto len = unicodeLen(position[str_i]);
 		if (len != 1)

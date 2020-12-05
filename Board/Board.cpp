@@ -33,9 +33,6 @@ Move::Move(const char* sourceStr, const char* destinationStr, bool isPromoted, u
 
 unsigned char& Board::operator[](const char* field)
 {
-	unsigned char collumn = field[0] - 'a';
-	unsigned char row = field[0] - '1';
-
 	return fields[fieldStringToNum(field)];
 }
 

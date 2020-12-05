@@ -29,8 +29,8 @@ Move createMove (const std::string& moveStr,
 	}
 
 	std::smatch groups;
-	std::regex moveTemplate(R"(.*([[:lower:]]\d)[-x]([[:lower:]]\d))");
-	auto matched = std::regex_match(moveStr, groups, moveTemplate);
+    std::regex moveTemplate(R"(.*([[:lower:]]\d)[-x]([[:lower:]]\d))");
+    std::regex_match(moveStr, groups, moveTemplate);
 
 	return Move{groups[1].str().c_str(), groups[2].str().c_str()};
 }
@@ -40,7 +40,7 @@ class BoardBasedTest
 {
 public:
     virtual Board createBoard(const char* boardString) = 0;
-    virtual void setAsMoved(const char* position) = 0;
+    virtual void setAsMoved(const char*) = 0;
 };
 
 class WhiteOnMove
@@ -52,7 +52,7 @@ public:
         return utils::createBoard(boardString, color_);
     }
 
-    virtual void setAsMoved(const char* position) {}
+    virtual void setAsMoved(const char*) {}
 
     NOTATION::COLOR::color color_ = NOTATION::COLOR::color::white;
 };
@@ -66,7 +66,7 @@ public:
         return utils::createBoard(boardString, color_);
     }
 
-    virtual void setAsMoved(const char* position) {}
+    virtual void setAsMoved(const char*) {}
 
     NOTATION::COLOR::color color_ = NOTATION::COLOR::color::black;
 };
@@ -186,7 +186,7 @@ TEST_F(WhitePawnOnMove, AllowBeatsOnFly)
     ASSERT_FALSE(MoveValidator::validateMove(board, createMove("e5-e6", color_)));
 }
 
-TEST_F(WhitePawnOnMove, DoNotAllowToCheckAfter)
+TEST_F(WhitePawnOnMove, DoNotAllowToCheckAfterMove)
 {
     Board board = createBoard(
                 "    ♚   "
@@ -201,5 +201,84 @@ TEST_F(WhitePawnOnMove, DoNotAllowToCheckAfter)
     ASSERT_FALSE(MoveValidator::validateMove(board, createMove("e5-g6", color_)));
     ASSERT_FALSE(MoveValidator::validateMove(board, createMove("f4-f5", color_)));
     ASSERT_FALSE(MoveValidator::validateMove(board, createMove("d5-d6", color_)));
+}
+
+
+class BlackPawnOnMove : public BlackOnMove {};
+
+TEST_F(BlackPawnOnMove, DoNotAllowIncorectPawnMoves)
+{
+    Board board = createBoard(
+                "♜♞♝♛♚♝♞♜"
+                "♟♟♟♟♟♟♟♟"
+                "   ♙    "
+                "        "
+                "        "
+                "        "
+                "♙♙♙ ♙♙♙♙"
+                "♖♘♗♕♔♗♘♖");
+
+    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("d7-d6", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("d7-d5", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("d7-c6", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("d7-e6", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("d7-e7", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("d7-c7", color_)));
+}
+
+TEST_F(BlackPawnOnMove, AllowStandardBeats)
+{
+    Board board = createBoard(
+                "♜♞♝♛♚♝♞♜"
+                "♟♟♟♟ ♟♟♟"
+                "        "
+                "    ♟   "
+                "   ♙♙♙  "
+                "        "
+                "♙♙♙  ♙♙♙"
+                "♖♘♗♕♔♗♘♖");
+
+    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("e5-d4", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("e5-f4", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("e5-e4", color_)));
+}
+
+TEST_F(BlackPawnOnMove, AllowBeatsOnFly)
+{
+    Board board = createBoard(
+                "♜♞♝♛♚♝♞♜"
+                "♟♟♟♟ ♟♟♟"
+                "        "
+                "        "
+                "   ♙♟♙  "
+                "    ♙   "
+                "♙♙♙   ♙♙"
+                "♖♘♗♕♔♗♘♖");
+
+    board.lastMove = createMove("d2-d4", NOTATION::COLOR::color::black);
+    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("e4-d3", color_)));
+
+    board.lastMove = createMove("f2-f4", NOTATION::COLOR::color::black);
+    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("e4-f3", color_)));
+
+    board.lastMove = createMove("e7-e6", NOTATION::COLOR::color::black);
+    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("e4-e3", color_)));
+}
+
+TEST_F(BlackPawnOnMove, DoNotAllowToCheckAfterMove)
+{
+    Board board = createBoard(
+                "        "
+                "    ♚♟ ♕"
+                "   ♟♟   "
+                "     ♕  "
+                "        "
+                "♕   ♕   "
+                "        "
+                "    ♔   ");
+
+    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("e6-g5", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("g7-g6", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("d6-d5", color_)));
 }
 

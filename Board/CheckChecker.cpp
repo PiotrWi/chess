@@ -10,13 +10,13 @@
 namespace
 {
 
-bool isRowInBoard(signed char row)
+bool isRowInBoard(unsigned char row)
 {
-	return row < 8u and row >= 0;
+    return row < 8u;
 }
-bool isColumnInBoard(signed char col)
+bool isColumnInBoard(unsigned char col)
 {
-	return col < 8u and col >=0;
+    return col < 8u;
 }
 
 NOTATION::COLOR::color getOpositeColor(const Board& board, const unsigned char row, const unsigned char col)
@@ -64,7 +64,6 @@ bool isAttackedByOpositePawn(const Board& board,
 		pawnMask |= NOTATION::COLOR::BLACK;
 	}
 
-	bool rowInBoard = false;
 	signed char leftColumn = col - 1;
 	signed char rightColumn = col + 1;
 
