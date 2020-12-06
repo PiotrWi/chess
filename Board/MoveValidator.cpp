@@ -1,4 +1,5 @@
 #include "MoveValidator.hpp"
+#include <iostream>
 
 #include <utility>
 
@@ -153,18 +154,18 @@ bool validateRock()
 			if ((*ctx.board)[NotationConversions::getFieldNum(r, c)] != 0)
 				return false;
 		}
-		return true;
+		return true; /*Target field color check is done in parrent fcn*/
 	}
 	if (isOverVertical)
 	{
 		auto c =  ctx.sourceColumn;
 		auto s = sign(ctx.targetRow - ctx.sourceRow);
-        for (auto r = ctx.sourceRow + s; r != ctx.targetColumn; r+=s)
+        for (auto r = ctx.sourceRow + s; r != ctx.targetRow; r+=s)
 		{
 			if ((*ctx.board)[NotationConversions::getFieldNum(r, c)] != 0)
 				return false;
 		}
-		return true;
+		return true; /*Target field color check is done in parrent fcn*/
 	}
 	return false;
 }
@@ -172,7 +173,7 @@ bool validateRock()
 bool validateBishop()
 {
 	auto isToUperRightDiagonal = (ctx.sourceColumn - ctx.sourceRow)
-			== (ctx.targetColumn + ctx.targetRow);
+			== (ctx.targetColumn - ctx.targetRow);
 	auto isToBotopRightDiagonal = (ctx.sourceColumn + ctx.sourceRow)
 			== (ctx.targetColumn + ctx.targetRow);
 
