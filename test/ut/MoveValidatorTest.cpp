@@ -661,6 +661,76 @@ TEST_F(MoveValidatorTests_BlackBishopOnMove, StandardBeats)
  * QUEENSs tests
  ******************************************************************/
 
+class MoveValidatorTests_WhiteQueenOnMove : public WhiteOnMove {};
+
+TEST_F(MoveValidatorTests_WhiteQueenOnMove, CheckInitialMoves)
+{
+    Board board = createBoard(InitialBoardString);
+
+    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("d1-c1", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("d1-c2", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("d1-d2", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("d1-e2", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("d1-e1", color_)));
+}
+
+TEST_F(MoveValidatorTests_WhiteQueenOnMove, CheckAllMoves)
+{
+    Board board = createBoard(
+    		"    ♚   "
+            "        "
+            "        "
+            "        "
+            "  ♕     "
+            "        "
+            "        "
+            "    ♔   "); //c4
+
+    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("c4-a4", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("c4-a6", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("c4-c8", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("c4-g8", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("c4-c8", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("c4-f1", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("c4-c1", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("c4-a2", color_)));
+}
+
+class MoveValidatorTests_BlackQueenOnMove : public BlackOnMove {};
+
+TEST_F(MoveValidatorTests_BlackQueenOnMove, CheckInitialMoves)
+{
+    Board board = createBoard(InitialBoardString);
+
+    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("d8-c8", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("d8-c7", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("d8-d7", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("d8-e7", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("d8-e8", color_)));
+}
+
+TEST_F(MoveValidatorTests_BlackQueenOnMove, CheckAllMoves)
+{
+    Board board = createBoard(
+    		"    ♚   "
+            "        "
+            "        "
+            "        "
+            "  ♛     "
+            "        "
+            "        "
+            "    ♔   "); //c4
+
+    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("c4-a4", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("c4-a6", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("c4-c8", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("c4-g8", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("c4-c8", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("c4-f1", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("c4-c1", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("c4-a2", color_)));
+}
+
 /*******************************************************************
  * KINGs tests
  ******************************************************************/
