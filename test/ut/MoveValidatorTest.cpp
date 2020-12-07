@@ -1,49 +1,10 @@
 #include <gtest/gtest.h>
 
+#include <Board.hpp>
 #include <MoveValidator.hpp>
 
-#include <regex>
-
-#include <Board.hpp>
 #include <utils/BoardGenerationUtils.hpp>
-
-// Long algebraic notation
-Move createMove (const std::string& moveStr,
-	NOTATION::COLOR::color playerOnMove)
-{
-	if (moveStr == "O-O")
-	{
-		if (playerOnMove == NOTATION::COLOR::color::white)
-		{
-			return Move{"e1", "g1"};
-		}
-		return Move{"e8", "g8"};
-	}
-	if (moveStr == "O-O-O")
-	{
-		if (playerOnMove == NOTATION::COLOR::color::white)
-		{
-			return Move{"e1", "c1"};
-		}
-        return Move{"e8", "c8"};
-	}
-
-	std::smatch groups;
-    std::regex moveTemplate(R"(.*([[:lower:]]\d)[-x]([[:lower:]]\d))");
-    std::regex_match(moveStr, groups, moveTemplate);
-
-	return Move{groups[1].str().c_str(), groups[2].str().c_str()};
-}
-
-static const char* InitialBoardString =
-		    "♜♞♝♛♚♝♞♜"
-            "♟♟♟♟♟♟♟♟"
-            "        "
-            "        "
-            "        "
-            "        "
-            "♙♙♙♙♙♙♙♙"
-            "♖♘♗♕♔♗♘♖";
+#include <utils/LongAlgebraicNotation.hpp>
 
 class BoardBasedTest
     : public ::testing::Test
@@ -90,7 +51,7 @@ class MoveValidatorTests_BlackPawnsInitialMovesTest
 
 TEST_P(MoveValidatorTests_BlackPawnsInitialMovesTest, AAllowToMovePawn)
 {
-    Board board = createBoard(InitialBoardString);
+    Board board = createBoard(utils::InitialBoardString);
     auto move = createMove(GetParam(), color_);
 
     ASSERT_TRUE(MoveValidator::validateMove(board, move));
@@ -110,7 +71,7 @@ class MoveValidatorTests_WhitePawnsInitialMovesTest
 
 TEST_P(MoveValidatorTests_WhitePawnsInitialMovesTest, AllowToMovePawn)
 {
-	Board board = createBoard(InitialBoardString);
+	Board board = createBoard(utils::InitialBoardString);
     auto move = createMove(GetParam(), color_);
 
 	ASSERT_TRUE(MoveValidator::validateMove(board, move));
@@ -285,7 +246,7 @@ class MoveValidatorTests_WhiteRockOnMove : public WhiteOnMove {};
 
 TEST_F(MoveValidatorTests_WhiteRockOnMove, DoNotAllowIncorectPawnMoves)
 {
-    Board board = createBoard(InitialBoardString);
+    Board board = createBoard(utils::InitialBoardString);
 
     ASSERT_FALSE(MoveValidator::validateMove(board, createMove("a1-a3", color_)));
     ASSERT_FALSE(MoveValidator::validateMove(board, createMove("a1-c1", color_)));
@@ -355,7 +316,7 @@ class MoveValidatorTests_BlackRockOnMove : public BlackOnMove {};
 
 TEST_F(MoveValidatorTests_BlackRockOnMove, DoNotAllowIncorectMoves)
 {
-    Board board = createBoard(InitialBoardString);
+    Board board = createBoard(utils::InitialBoardString);
 
     ASSERT_FALSE(MoveValidator::validateMove(board, createMove("a8-a7", color_)));
     ASSERT_FALSE(MoveValidator::validateMove(board, createMove("a8-c8", color_)));
@@ -428,7 +389,7 @@ class MoveValidatorTests_WhiteKnightOnMove : public WhiteOnMove {};
 
 TEST_F(MoveValidatorTests_WhiteKnightOnMove, CheckInitialMoves)
 {
-    Board board = createBoard(InitialBoardString);
+    Board board = createBoard(utils::InitialBoardString);
 
     ASSERT_TRUE(MoveValidator::validateMove(board, createMove("b1-a3", color_)));
     ASSERT_TRUE(MoveValidator::validateMove(board, createMove("b1-c3", color_)));
@@ -469,7 +430,7 @@ class MoveValidatorTests_BlackKnightOnMove : public BlackOnMove {};
 
 TEST_F(MoveValidatorTests_BlackKnightOnMove, CheckInitialMoves)
 {
-    Board board = createBoard(InitialBoardString);
+    Board board = createBoard(utils::InitialBoardString);
 
     ASSERT_TRUE(MoveValidator::validateMove(board, createMove("b8-a6", color_)));
     ASSERT_TRUE(MoveValidator::validateMove(board, createMove("b8-c6", color_)));
@@ -513,7 +474,7 @@ class MoveValidatorTests_WhiteBishopOnMove : public WhiteOnMove {};
 
 TEST_F(MoveValidatorTests_WhiteBishopOnMove, CheckInitialMoves)
 {
-    Board board = createBoard(InitialBoardString);
+    Board board = createBoard(utils::InitialBoardString);
 
     ASSERT_FALSE(MoveValidator::validateMove(board, createMove("c1-b2", color_)));
     ASSERT_FALSE(MoveValidator::validateMove(board, createMove("c1-a3", color_)));
@@ -586,7 +547,7 @@ class MoveValidatorTests_BlackBishopOnMove : public BlackOnMove {};
 
 TEST_F(MoveValidatorTests_BlackBishopOnMove, CheckInitialMoves)
 {
-    Board board = createBoard(InitialBoardString);
+    Board board = createBoard(utils::InitialBoardString);
 
     ASSERT_FALSE(MoveValidator::validateMove(board, createMove("c8-b7", color_)));
     ASSERT_FALSE(MoveValidator::validateMove(board, createMove("c8-a6", color_)));
@@ -662,7 +623,7 @@ class MoveValidatorTests_WhiteQueenOnMove : public WhiteOnMove {};
 
 TEST_F(MoveValidatorTests_WhiteQueenOnMove, CheckInitialMoves)
 {
-    Board board = createBoard(InitialBoardString);
+    Board board = createBoard(utils::InitialBoardString);
 
     ASSERT_FALSE(MoveValidator::validateMove(board, createMove("d1-c1", color_)));
     ASSERT_FALSE(MoveValidator::validateMove(board, createMove("d1-c2", color_)));
@@ -697,7 +658,7 @@ class MoveValidatorTests_BlackQueenOnMove : public BlackOnMove {};
 
 TEST_F(MoveValidatorTests_BlackQueenOnMove, CheckInitialMoves)
 {
-    Board board = createBoard(InitialBoardString);
+    Board board = createBoard(utils::InitialBoardString);
 
     ASSERT_FALSE(MoveValidator::validateMove(board, createMove("d8-c8", color_)));
     ASSERT_FALSE(MoveValidator::validateMove(board, createMove("d8-c7", color_)));
@@ -736,7 +697,7 @@ class MoveValidatorTests_WhiteKingOnMove : public WhiteOnMove {};
 
 TEST_F(MoveValidatorTests_WhiteKingOnMove, CheckInitialMoves)
 {
-    Board board = createBoard(InitialBoardString);
+    Board board = createBoard(utils::InitialBoardString);
 
     ASSERT_FALSE(MoveValidator::validateMove(board, createMove("e1-d1", color_)));
     ASSERT_FALSE(MoveValidator::validateMove(board, createMove("e1-d2", color_)));
@@ -832,7 +793,7 @@ class MoveValidatorTests_BlackKingOnMove : public BlackOnMove {};
 
 TEST_F(MoveValidatorTests_BlackKingOnMove, CheckInitialMoves)
 {
-    Board board = createBoard(InitialBoardString);
+    Board board = createBoard(utils::InitialBoardString);
 
     ASSERT_FALSE(MoveValidator::validateMove(board, createMove("e8-d8", color_)));
     ASSERT_FALSE(MoveValidator::validateMove(board, createMove("e8-d7", color_)));

@@ -9,6 +9,7 @@ namespace MoveGenerator
 
 class MoveGenerator
 {
+public:
 	std::vector<Move> generate(const Board&) const;
 };
 
