@@ -6,13 +6,6 @@
 #include <CheckChecker.hpp>
 #include <MoveValidator.hpp>
 
-static unsigned char fieldStringToNum(const char* field)
-{
-	unsigned char collumn = field[0] - 'a';
-    unsigned char row = field[1] - '1';
-	return row*8u + collumn;
-}
-
 Move::Move()
 	: source(0)
 	, destination(0)
@@ -26,14 +19,14 @@ Move::Move(unsigned char s, unsigned char d, bool isPromoted, unsigned char prom
 	, promoteTo(promoteTo) {}
 
 Move::Move(const char* sourceStr, const char* destinationStr, bool isPromoted, unsigned char promoteTo)
-	: source(fieldStringToNum(sourceStr))
-	, destination(fieldStringToNum(destinationStr))
+	: source(NotationConversions::getFieldNum(sourceStr))
+	, destination(NotationConversions::getFieldNum(destinationStr))
 	, isPromoted(isPromoted)
 	, promoteTo(promoteTo) {}
 
 unsigned char& Board::operator[](const char* field)
 {
-	return fields[fieldStringToNum(field)];
+	return fields[NotationConversions::getFieldNum(field)];
 }
 
 unsigned char& Board::operator[](const unsigned char field)

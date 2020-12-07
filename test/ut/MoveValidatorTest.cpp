@@ -25,7 +25,7 @@ Move createMove (const std::string& moveStr,
 		{
 			return Move{"e1", "c1"};
 		}
-		return Move{"c8", "c8"};
+        return Move{"e8", "c8"};
 	}
 
 	std::smatch groups;
@@ -49,21 +49,21 @@ class BoardBasedTest
     : public ::testing::Test
 {
 public:
-    virtual Board createBoard(const char* boardString) = 0;
-    virtual void setAsMoved(const char*) = 0;
+    virtual Board createBoard(const char* boardString) const = 0;
+    void setAsMoved(Board& board, const char* fieldStr) const
+    {
+    	board[fieldStr] |= NOTATION::MOVED::MOVED_MASK;
+    }
 };
 
 class WhiteOnMove
     : public BoardBasedTest
 {
 public:
-    virtual Board createBoard(const char* boardString) override
+    virtual Board createBoard(const char* boardString) const override
     {
         return utils::createBoard(boardString, color_);
     }
-
-    virtual void setAsMoved(const char*) {}
-
     NOTATION::COLOR::color color_ = NOTATION::COLOR::color::white;
 };
 
@@ -71,13 +71,10 @@ class BlackOnMove
     : public BoardBasedTest
 {
 public:
-    virtual Board createBoard(const char* boardString) override
+    virtual Board createBoard(const char* boardString) const override
     {
         return utils::createBoard(boardString, color_);
     }
-
-    virtual void setAsMoved(const char*) {}
-
     NOTATION::COLOR::color color_ = NOTATION::COLOR::color::black;
 };
 
@@ -735,3 +732,194 @@ TEST_F(MoveValidatorTests_BlackQueenOnMove, CheckAllMoves)
  * KINGs tests
  ******************************************************************/
 
+class MoveValidatorTests_WhiteKingOnMove : public WhiteOnMove {};
+
+TEST_F(MoveValidatorTests_WhiteKingOnMove, CheckInitialMoves)
+{
+    Board board = createBoard(InitialBoardString);
+
+    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("e1-d1", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("e1-d2", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("e1-e2", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("e1-f2", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("e1-f1", color_)));
+}
+
+TEST_F(MoveValidatorTests_WhiteKingOnMove, CheckAllMoves)
+{
+    Board board = createBoard(
+    		"    ♚   "
+            "        "
+            "        "
+            "        "
+            "  ♕     "
+            "        "
+            "    ♔   "
+            "        "); //c4
+
+    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("e2-e1", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("e2-f1", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("e2-f2", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("e2-f3", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("e2-e3", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("e2-d3", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("e2-d2", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("e2-d1", color_)));
+}
+
+TEST_F(MoveValidatorTests_WhiteKingOnMove, CheckCastles)
+{
+    Board board = createBoard(
+    		"    ♚   "
+            "        "
+            "        "
+            "        "
+            "  ♕     "
+            "        "
+            "        "
+            "♖   ♔  ♖");
+
+    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("O-O", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("O-O-O", color_)));
+}
+
+TEST_F(MoveValidatorTests_WhiteKingOnMove, DoNotAllowCastleWhenMoved)
+{
+	const char* boardString =
+    		"    ♚   "
+            "        "
+            "        "
+            "        "
+            "  ♕     "
+            "        "
+            "        "
+            "♖   ♔  ♖";
+    Board board = createBoard(boardString);
+    setAsMoved(board, "a1");
+    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("O-O", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("O-O-O", color_)));
+
+    board = createBoard(boardString);
+    setAsMoved(board, "h1");
+    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("O-O", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("O-O-O", color_)));
+
+    board = createBoard(boardString);
+    setAsMoved(board, "e1");
+    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("O-O", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("O-O-O", color_)));
+}
+
+
+TEST_F(MoveValidatorTests_WhiteKingOnMove, DoNotAllowCastlesOverAtackedFields)
+{
+    Board board = createBoard(
+    		"   ♜♚♜  "
+            "        "
+            "        "
+            "        "
+            "  ♕     "
+            "        "
+            "        "
+            "♖   ♔  ♖");
+
+    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("O-O", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("O-O-O", color_)));
+}
+
+
+class MoveValidatorTests_BlackKingOnMove : public BlackOnMove {};
+
+TEST_F(MoveValidatorTests_BlackKingOnMove, CheckInitialMoves)
+{
+    Board board = createBoard(InitialBoardString);
+
+    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("e8-d8", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("e8-d7", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("e8-e7", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("e8-f7", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("e8-f8", color_)));
+}
+
+TEST_F(MoveValidatorTests_BlackKingOnMove, CheckAllMoves)
+{
+    Board board = createBoard(
+    		"        "
+            " ♚      "
+            "        "
+            "        "
+            "  ♛     "
+            "        "
+            "        "
+            "    ♔   "); //c4
+
+    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("b7-a8", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("b7-b8", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("b7-c8", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("b7-c7", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("b7-c6", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("b7-b6", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("b7-a6", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("b7-a7", color_)));
+}
+
+
+TEST_F(MoveValidatorTests_BlackKingOnMove, CheckCastles)
+{
+    Board board = createBoard(
+    		"♜   ♚  ♜"
+            "        "
+            "        "
+            "        "
+            "        "
+            "        "
+            "        "
+            "    ♔   ");
+
+    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("O-O", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("O-O-O", color_)));
+}
+
+TEST_F(MoveValidatorTests_BlackKingOnMove, DoNotAllowCastleWhenMoved)
+{
+	const char* boardString =
+    		"♜   ♚  ♜"
+            "        "
+            "        "
+            "        "
+            "        "
+            "        "
+            "        "
+            "    ♔   ";
+    Board board = createBoard(boardString);
+    setAsMoved(board, "a8");
+    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("O-O", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("O-O-O", color_)));
+
+    board = createBoard(boardString);
+    setAsMoved(board, "h8");
+    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("O-O", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("O-O-O", color_)));
+
+    board = createBoard(boardString);
+    setAsMoved(board, "e8");
+    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("O-O", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("O-O-O", color_)));
+}
+
+
+TEST_F(MoveValidatorTests_BlackKingOnMove, DoNotAllowCastlesOverAtackedFields)
+{
+    Board board = createBoard(
+    		"♜   ♚  ♜"
+            "        "
+            "        "
+            "        "
+            "        "
+            "        "
+            "        "
+            "   ♖♔♖  ");
+
+    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("O-O", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("O-O-O", color_)));
+}
