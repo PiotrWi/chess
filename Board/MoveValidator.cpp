@@ -31,30 +31,16 @@ bool valiateConcretePiece()
 {
 	auto pieceType = ctx.piece & NOTATION::PIECES::PIECES_MASK;
 
-	if (pieceType == NOTATION::PIECES::PAWN)
+	switch(pieceType)
 	{
-		return validatePawn();
+	case(NOTATION::PIECES::PAWN): return validatePawn();
+	case(NOTATION::PIECES::ROCK): return validateRock();
+	case(NOTATION::PIECES::BISHOP): return validateBishop();
+	case(NOTATION::PIECES::KNIGHT): return validateKnight();
+	case(NOTATION::PIECES::QUEEN): return validateRock() or validateBishop();
+	case(NOTATION::PIECES::KING): return validateKing();
 	}
-	if (pieceType == NOTATION::PIECES::ROCK)
-	{
-		return validateRock();
-	}
-	if (pieceType == NOTATION::PIECES::BISHOP)
-	{
-		return validateBishop();
-	}
-	if (pieceType == NOTATION::PIECES::KNIGHT)
-	{
-		return validateKnight();
-	}
-	if (pieceType == NOTATION::PIECES::QUEEN)
-	{
-		return validateRock() or validateBishop();
-	}
-	if (pieceType == NOTATION::PIECES::KING)
-	{
-		return validateKing();
-	}
+
 	return false;
 }
 

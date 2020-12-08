@@ -37,14 +37,16 @@ namespace COORDINATES
 {
 namespace COLUMN
 {
-	constexpr unsigned char A = 0;
-	constexpr unsigned char B = 1;
-	constexpr unsigned char C = 2;
-	constexpr unsigned char D = 3;
-	constexpr unsigned char E = 4;
-    constexpr unsigned char F = 5;
-    constexpr unsigned char G = 6;
-    constexpr unsigned char H = 7;
+constexpr unsigned char A = 0;
+constexpr unsigned char B = 1;
+constexpr unsigned char C = 2;
+constexpr unsigned char D = 3;
+constexpr unsigned char E = 4;
+constexpr unsigned char F = 5;
+constexpr unsigned char G = 6;
+constexpr unsigned char H = 7;
 }
+
+constexpr unsigned char ROW_DIFF = 8;
 }
 }

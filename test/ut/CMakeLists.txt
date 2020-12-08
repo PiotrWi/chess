@@ -16,5 +16,5 @@ add_executable(ut
 add_dependencies(ut googletest)
 add_dependencies(ut board)
 
-target_link_libraries(ut gtest gtest_main pthread board)
+target_link_libraries(ut gtest gmock gtest_main pthread board)
 add_dependencies(ut-run ut)

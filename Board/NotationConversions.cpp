@@ -41,4 +41,14 @@ NOTATION::COLOR::color getPieceColor(unsigned char piece)
 	return static_cast<NOTATION::COLOR::color >(piece & NOTATION::COLOR::COLOR_MASK);
 }
 
+bool isRowInBoard(unsigned char row)
+{
+    return row < 8u;
+}
+bool isColumnInBoard(unsigned char col)
+{
+    return col < 8u;
+}
+
+
 }

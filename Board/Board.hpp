@@ -14,6 +14,8 @@ struct Move
 	unsigned char promoteTo;
 };
 
+bool operator==(const Move& lfs, const Move& rhs);
+
 struct Board
 {
 	NOTATION::COLOR::color playerOnMove = NOTATION::COLOR::color::white;

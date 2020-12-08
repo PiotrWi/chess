@@ -1,5 +1,6 @@
 #include "Board.hpp"
 
+#include <stdint.h>
 #include <initializer_list>
 
 #include <NotationConversions.hpp>
@@ -23,6 +24,12 @@ Move::Move(const char* sourceStr, const char* destinationStr, bool isPromoted, u
 	, destination(NotationConversions::getFieldNum(destinationStr))
 	, isPromoted(isPromoted)
 	, promoteTo(promoteTo) {}
+
+bool operator==(const Move& lfs, const Move& rhs)
+{
+	return *reinterpret_cast<const uint32_t*>(&lfs) == *reinterpret_cast<const uint32_t*>(&rhs);
+}
+
 
 unsigned char& Board::operator[](const char* field)
 {

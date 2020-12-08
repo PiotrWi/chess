@@ -10,15 +10,6 @@
 namespace
 {
 
-bool isRowInBoard(unsigned char row)
-{
-    return row < 8u;
-}
-bool isColumnInBoard(unsigned char col)
-{
-    return col < 8u;
-}
-
 NOTATION::COLOR::color getOpositeColor(const Board& board, const unsigned char row, const unsigned char col)
 {
 	return NotationConversions::switchColor(
@@ -67,9 +58,9 @@ bool isAttackedByOpositePawn(const Board& board,
 	signed char leftColumn = col - 1;
 	signed char rightColumn = col + 1;
 
-	return isRowInBoard(pawnRow) and
-			((isColumnInBoard(leftColumn) and getColoredPiece(board, pawnRow, leftColumn) == pawnMask)
-			or (isColumnInBoard(rightColumn) and getColoredPiece(board, pawnRow, leftColumn) == pawnMask));
+	return NotationConversions::isRowInBoard(pawnRow) and
+			((NotationConversions::isColumnInBoard(leftColumn) and getColoredPiece(board, pawnRow, leftColumn) == pawnMask)
+			or (NotationConversions::isColumnInBoard(rightColumn) and getColoredPiece(board, pawnRow, leftColumn) == pawnMask));
 }
 
 bool isAttackedOnDiagonalByOpositeBishopOrQueen(const Board& board, unsigned char row, unsigned char col)
@@ -86,7 +77,7 @@ bool isAttackedOnDiagonalByOpositeBishopOrQueen(const Board& board, unsigned cha
 		std::pair<signed char, signed char>(1, -1)})
 	{
 		for (auto co = modifyCoordinates(std::make_pair(row, col), dir);
-			isRowInBoard(co.first) && isColumnInBoard(co.second);
+			NotationConversions::isRowInBoard(co.first) && NotationConversions::isColumnInBoard(co.second);
 			co = modifyCoordinates(co, dir))
 		{
 			const auto& field = getColoredPiece(board, co.first, co.second);
@@ -116,7 +107,7 @@ bool isAttackedByRookOrQueen(const Board& board, unsigned char row, unsigned cha
 		std::pair<signed char, signed char>(0, -1)})
 	{
 		for (auto co = modifyCoordinates(std::make_pair(row, col), dir);
-			isRowInBoard(co.first) && isColumnInBoard(co.second);
+			NotationConversions::isRowInBoard(co.first) && NotationConversions::isColumnInBoard(co.second);
 			co = modifyCoordinates(co, dir))
 		{
 			const auto& field = getColoredPiece(board, co.first, co.second);
@@ -150,7 +141,7 @@ bool isAttackedByKing(const Board& board, unsigned char row, unsigned char col)
 		std::pair<signed char, signed char>(-1, 0)})
 	{
 		auto co = modifyCoordinates(std::make_pair(row, col), adjustmentField);
-		if (!isRowInBoard(co.first) or !isColumnInBoard(co.second))
+		if (!NotationConversions::isRowInBoard(co.first) or !NotationConversions::isColumnInBoard(co.second))
 		{
 			continue;
 		}
@@ -181,7 +172,7 @@ bool isAttackedByKnight(const Board& board, unsigned char row, unsigned char col
 		std::pair<signed char, signed char>(-2, 1)})
 	{
 		auto co = modifyCoordinates(std::make_pair(row, col), adjustmentField);
-		if (!isRowInBoard(co.first) or !isColumnInBoard(co.second))
+		if (!NotationConversions::isRowInBoard(co.first) or !NotationConversions::isColumnInBoard(co.second))
 		{
 					continue;
 		}
