@@ -18,6 +18,7 @@ constexpr NOTATION::COLOR::color WHITE = NOTATION::COLOR::color::white;
 
 namespace
 {
+
 const std::vector<Move> operator+(const std::vector<Move>& lhs,
 		const std::vector<Move>& rhs)
 {
@@ -30,34 +31,29 @@ const std::vector<Move> operator+(const std::vector<Move>& lhs,
 	return v;
 }
 
+template <size_t N>
+std::vector<Move> map(const char* (&&in)[N], NOTATION::COLOR::color c)
+{
+	std::vector<Move> moves;
+	moves.reserve(N);
+
+	for (auto i = 0u; i < N; ++i)
+	{
+		moves.emplace_back(createMove(in[i], c));
+	}
+	return moves;
 }
 
-const std::vector<Move> whitePawnInitialMoves = {
-		createMove("a2-a3", WHITE),
-		createMove("a2-a4", WHITE),
-		createMove("b2-b3", WHITE),
-		createMove("b2-b4", WHITE),
-		createMove("c2-c3", WHITE),
-		createMove("c2-c4", WHITE),
-		createMove("d2-d3", WHITE),
-		createMove("d2-d4", WHITE),
-		createMove("e2-e3", WHITE),
-		createMove("e2-e4", WHITE),
-		createMove("f2-f3", WHITE),
-		createMove("f2-f4", WHITE),
-		createMove("g2-g3", WHITE),
-		createMove("g2-g4", WHITE),
-		createMove("h2-h3", WHITE),
-		createMove("h2-h4", WHITE)
-};
+}
 
-std::vector<Move> whiteKnightInitialMoves = {
-		createMove("b1-a3", WHITE),
-		createMove("b1-c3", WHITE),
-		createMove("g1-f3", WHITE),
-		createMove("g1-h3", WHITE),
+const std::vector<Move> whitePawnInitialMoves = map(
+		{"a2-a3", "a2-a4", "b2-b3", "b2-b4", "c2-c3", "c2-c4", "d2-d3",
+		"d2-d4", "e2-e3", "e2-e4", "f2-f3", "f2-f4", "g2-g3", "g2-g4",
+		"h2-h3", "h2-h4"}, WHITE);
 
-};
+
+std::vector<Move> whiteKnightInitialMoves = map(
+		{"b1-a3", "b1-c3", "g1-f3", "g1-h3"}, WHITE);
 
 TEST_F(MoveGeneratorTests, shouldReturnPawnMoves)
 {

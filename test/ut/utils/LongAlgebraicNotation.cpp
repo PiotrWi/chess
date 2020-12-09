@@ -1,7 +1,5 @@
 #include "LongAlgebraicNotation.hpp"
 
-#include <regex>
-
 Move createMove (const std::string& moveStr,
 	NOTATION::COLOR::color playerOnMove)
 {
@@ -22,9 +20,12 @@ Move createMove (const std::string& moveStr,
         return Move{"e8", "c8"};
 	}
 
-	std::smatch groups;
-    std::regex moveTemplate(R"(.*([[:lower:]]\d)[-x]([[:lower:]]\d))");
-    std::regex_match(moveStr, groups, moveTemplate);
+	auto basePos = 0u;
+	if (isupper(moveStr[0]))
+	{
+		basePos += 1;
+	}
 
-	return Move{groups[1].str().c_str(), groups[2].str().c_str()};
+	return Move{moveStr.substr(basePos, 2).c_str()
+		, moveStr.substr(basePos + 3, 2).c_str()};
 }
