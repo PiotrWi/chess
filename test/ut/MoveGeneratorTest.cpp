@@ -44,20 +44,48 @@ std::vector<Move> map(const char* (&&in)[N], NOTATION::COLOR::color c)
 	return moves;
 }
 
-}
-
-const std::vector<Move> whitePawnInitialMoves = map(
-		{"a2-a3", "a2-a4", "b2-b3", "b2-b4", "c2-c3", "c2-c4", "d2-d3",
-		"d2-d4", "e2-e3", "e2-e4", "f2-f3", "f2-f4", "g2-g3", "g2-g4",
-		"h2-h3", "h2-h4"}, WHITE);
-
-
-std::vector<Move> whiteKnightInitialMoves = map(
-		{"b1-a3", "b1-c3", "g1-f3", "g1-h3"}, WHITE);
+}  // namespace
 
 TEST_F(MoveGeneratorTests, shouldReturnPawnMoves)
 {
+	auto pawnInitialMoves = map(
+			{"a2-a3", "a2-a4", "b2-b3", "b2-b4", "c2-c3", "c2-c4", "d2-d3",
+			"d2-d4", "e2-e3", "e2-e4", "f2-f3", "f2-f4", "g2-g3", "g2-g4",
+			"h2-h3", "h2-h4"}, WHITE);
+
+	auto knightInitialMoves = map(
+			{"b1-a3", "b1-c3", "g1-f3", "g1-h3"}, WHITE);
+
 	Board board = utils::createBoard(utils::InitialBoardString);
 	ASSERT_THAT(sut.generate(board, WHITE),
-		::testing::UnorderedElementsAreArray(whitePawnInitialMoves + whiteKnightInitialMoves));
+		::testing::UnorderedElementsAreArray(pawnInitialMoves + knightInitialMoves));
+}
+
+TEST_F(MoveGeneratorTests, shouldCorectlyAnalyzePos_2)
+{
+	auto pawnMoves = map(
+		{"b2-b3", "b2-b4", "c2-c3", "c2-c4", "d4-e5",
+		"e4-d5", "e4-f5", "g2-g3", "g2-g4",
+		"h2-h3", "h2-h4"}, WHITE);
+
+	auto knightMoves = map(
+		{"a3-b5", "a3-c4", "a3-b1",
+		"f3-d2", "f3-e5", "f3-g5", "f3-h4", "f3-g1"}, WHITE);
+
+	auto rockMoves = map(
+		{"a1-b1", "h1-g1"}, WHITE);
+
+	Board board = utils::createBoard(
+		"♜♞♝♛♚♝♞♜"
+		"♟♟♟   ♟♟"
+		"        "
+		"   ♟♟♟  "
+		"   ♙♙   "
+		"♘    ♘  "
+		"♙♙♙  ♙♙♙"
+		"♖ ♗♕♔♗ ♖");
+
+	ASSERT_THAT(sut.generate(board, WHITE),
+		::testing::UnorderedElementsAreArray(pawnMoves+knightMoves));
+
 }

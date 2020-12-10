@@ -1,5 +1,6 @@
 #pragma once
 
+#include <iosfwd>
 #include <Notation.hpp>
 
 struct Move
@@ -14,6 +15,7 @@ struct Move
 	unsigned char promoteTo;
 };
 
+std::ostream& operator<<(std::ostream&, const Move&);
 bool operator==(const Move& lfs, const Move& rhs);
 
 struct Board

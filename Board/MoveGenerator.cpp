@@ -23,24 +23,45 @@ bool isValid(const Move& move)
     return not isCheckOn(boardCopy, ctx.board->playerOnMove);
 }
 
+void tryToAddMove(unsigned char source, unsigned char destination)
+{
+	Move m = Move(source, destination);
+	if (isValid(m))
+	{
+		ctx.allMoves->push_back(m);
+	}
+}
+
 void generatePawnMoves(unsigned char i)
 {
 	if (ctx.pieceColor == NOTATION::COLOR::color::white)
 	{
 		if ((*ctx.board)[i + NOTATION::COORDINATES::ROW_DIFF] == 0)
 		{
-			Move m = Move(i, i + NOTATION::COORDINATES::ROW_DIFF);
-			if (isValid(m))
+			tryToAddMove(i, i + NOTATION::COORDINATES::ROW_DIFF);
+			auto row = NotationConversions::getRow(i);
+			if (row == 1 and (*ctx.board)[i + 2 * NOTATION::COORDINATES::ROW_DIFF] == 0)
 			{
-				ctx.allMoves->push_back(m);
+				tryToAddMove(i, i + 2 * NOTATION::COORDINATES::ROW_DIFF);
 			}
 		}
-		if ((*ctx.board)[i + 2 * NOTATION::COORDINATES::ROW_DIFF] == 0)
+		auto col = NotationConversions::getColumnNum(i);
+		if (col<7)
 		{
-			Move m = Move(i, i + 2* NOTATION::COORDINATES::ROW_DIFF);
-			if (isValid(m))
+			auto destination = i + NOTATION::COORDINATES::ROW_DIFF + 1;
+			if ((*ctx.board)[destination] != 0 and
+				((*ctx.board)[destination] & NOTATION::COLOR::COLOR_MASK) == NOTATION::COLOR::BLACK)
 			{
-				ctx.allMoves->push_back(m);
+				tryToAddMove(i, destination);
+			}
+		}
+		if (col > 0)
+		{
+			auto destination = i + NOTATION::COORDINATES::ROW_DIFF - 1;
+			if ((*ctx.board)[destination] != 0 and
+				((*ctx.board)[destination] & NOTATION::COLOR::COLOR_MASK) == NOTATION::COLOR::BLACK)
+			{
+				tryToAddMove(i, destination);
 			}
 		}
 	}
@@ -52,7 +73,6 @@ void generatePawnMoves(unsigned char i)
 
 void generateKnightMoves(unsigned char i)
 {
-	std::cout << (unsigned)i << std::endl;
 	const auto row = NotationConversions::getRow(i);
 	const auto col = NotationConversions::getColumnNum(i);
 
@@ -89,10 +109,43 @@ void generateKnightMoves(unsigned char i)
 	}
 }
 
+void generateRockMoves(unsigned char i)
+{
+	const auto row = NotationConversions::getRow(i);
+	const auto col = NotationConversions::getColumnNum(i);
+
+	static const std::pair<unsigned char, unsigned char> rockMoves[] = {
+		{-1, 0},
+		{1, 0},
+		{0, -1},
+		{0, 1},
+	};
+
+	for (const auto& diff: rockMoves)
+	{
+		for (unsigned char r = row, c = col;
+			r < 8 and c < 8;
+			r += diff.first, c+= diff.second)
+		{
+			auto destination = NotationConversions::getFieldNum(r, c);
+			if ((*ctx.board)[destination] != 0)
+			{
+				if (static_cast<unsigned char>(NotationConversions::switchColor(ctx.pieceColor)) ==
+					((*ctx.board)[destination] & NOTATION::COLOR::COLOR_MASK))
+				{
+					tryToAddMove(i, destination);
+				}
+				break;
+			}
+			tryToAddMove(i, destination);
+		}
+	}
+}
+
 }  // namespace
 
 std::vector<Move> MoveGenerator::generate(const Board& board,
-	NOTATION::COLOR::color c) const
+	NOTATION::COLOR::color) const
 {
 	std::vector<Move> allMoves;
 	ctx.allMoves = &allMoves;
@@ -100,16 +153,23 @@ std::vector<Move> MoveGenerator::generate(const Board& board,
 
 	for (unsigned char i = 0u; i <= 64u; ++i)
 	{
-		if ((board[i] & NOTATION::COLOR_AND_PIECE_MASK)
-			== (NOTATION::PIECES::PAWN | static_cast<unsigned char>(c)))
+		switch (board[i] & NOTATION::COLOR_AND_PIECE_MASK)
 		{
+		case (NOTATION::PIECES::PAWN):
 			generatePawnMoves(i);
-		}
-		if ((board[i] & NOTATION::COLOR_AND_PIECE_MASK)
-			== (NOTATION::PIECES::KNIGHT | static_cast<unsigned char>(c)))
-		{
+			continue;
+		case (NOTATION::PIECES::KNIGHT):
 			generateKnightMoves(i);
+			continue;
+		case (NOTATION::PIECES::ROCK):
+			generateRockMoves(i);
+			continue;
+
 		}
+	}
+	for (auto&&m : allMoves)
+	{
+		std::cout << m << std::endl;
 	}
 	return allMoves;
 }

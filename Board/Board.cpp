@@ -2,7 +2,7 @@
 
 #include <stdint.h>
 #include <initializer_list>
-
+#include <ostream>
 #include <NotationConversions.hpp>
 #include <CheckChecker.hpp>
 #include <MoveValidator.hpp>
@@ -25,11 +25,23 @@ Move::Move(const char* sourceStr, const char* destinationStr, bool isPromoted, u
 	, isPromoted(isPromoted)
 	, promoteTo(promoteTo) {}
 
+std::ostream& operator<<(std::ostream& os, const Move& m)
+{
+	char out[6];
+	out[0] = 'a' + NotationConversions::getColumnNum(m.source);
+	out[1] = '1' + NotationConversions::getRow(m.source);
+	out[2] = '-';
+	out[3] = 'a' + NotationConversions::getColumnNum(m.destination);
+	out[4] = '1' + NotationConversions::getRow(m.destination);
+	out[5] = '\0';
+	os << out;
+	return os;
+}
+
 bool operator==(const Move& lfs, const Move& rhs)
 {
 	return *reinterpret_cast<const uint32_t*>(&lfs) == *reinterpret_cast<const uint32_t*>(&rhs);
 }
-
 
 unsigned char& Board::operator[](const char* field)
 {
