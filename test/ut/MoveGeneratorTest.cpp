@@ -75,6 +75,16 @@ TEST_F(MoveGeneratorTests, shouldCorectlyAnalyzePos_2)
 	auto rockMoves = map(
 		{"a1-b1", "h1-g1"}, WHITE);
 
+	auto bishopMoves = map(
+		{"c1-d2", "c1-e3", "c1-f4", "c1-g5", "c1-h6",
+		"f1-e2", "f1-d3", "f1-c4", "f1-b5", "f1-a6"}, WHITE);
+
+	auto queenMoves = map(
+		{"d1-d2", "d1-d3", "d1-e2"}, WHITE);
+
+	auto kingMoves = map(
+		{"e1-d2", "e1-e2"}, WHITE);
+
 	Board board = utils::createBoard(
 		"♜♞♝♛♚♝♞♜"
 		"♟♟♟   ♟♟"
@@ -86,6 +96,5 @@ TEST_F(MoveGeneratorTests, shouldCorectlyAnalyzePos_2)
 		"♖ ♗♕♔♗ ♖");
 
 	ASSERT_THAT(sut.generate(board, WHITE),
-		::testing::UnorderedElementsAreArray(pawnMoves+knightMoves));
-
+		::testing::UnorderedElementsAreArray(pawnMoves+knightMoves+rockMoves+bishopMoves+queenMoves+kingMoves));
 }

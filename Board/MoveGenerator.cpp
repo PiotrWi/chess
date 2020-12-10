@@ -71,26 +71,16 @@ void generatePawnMoves(unsigned char i)
 	}
 }
 
-void generateKnightMoves(unsigned char i)
+template <size_t N, const std::pair<unsigned char, unsigned char> TMoves[N]>
+void generateFixedMoves(unsigned char i)
 {
 	const auto row = NotationConversions::getRow(i);
 	const auto col = NotationConversions::getColumnNum(i);
 
-	static const std::pair<unsigned char, unsigned char> knightMoves[] = {
-		{1, -2},
-		{2, -1},
-		{2, 1},
-		{1, 2},
-		{-1, 2},
-		{-2, 1},
-		{-2, -1},
-		{-1, -2}
-	};
-
-	for (const auto& moveDiff : knightMoves)
+	for (auto* diff = TMoves; diff < TMoves + N; ++diff)
 	{
-		unsigned char targerRow = row + moveDiff.first;
-		unsigned char targerCol = col + moveDiff.second;
+		unsigned char targerRow = row + diff->first;
+		unsigned char targerCol = col + diff->second;
 		if (NotationConversions::isColumnInBoard(targerCol)
 			&& NotationConversions::isRowInBoard(targerRow))
 		{
@@ -109,24 +99,28 @@ void generateKnightMoves(unsigned char i)
 	}
 }
 
-void generateRockMoves(unsigned char i)
+const std::pair<unsigned char, unsigned char> knightMoves[] = {
+	{1, -2}, {2, -1}, {2, 1}, {1, 2}, {-1, 2}, {-2, 1}, {-2, -1}, {-1, -2} };
+void (*generateKnightMoves)(unsigned char i) = generateFixedMoves<8, knightMoves>;
+
+const std::pair<unsigned char, unsigned char> kingMoves[] = {
+	{1, 0}, {1, 1}, {0, 1}, {-1, 1}, {-1, 0}, {-1, -1}, {0, -1}, {1, -1} };
+void (*generateNormalKingMoves)(unsigned char i) = generateFixedMoves<8, kingMoves>;
+
+template <size_t N, const std::pair<unsigned char, unsigned char> TMoves[N]>
+void generateLineMoves(unsigned char i)
 {
 	const auto row = NotationConversions::getRow(i);
 	const auto col = NotationConversions::getColumnNum(i);
 
-	static const std::pair<unsigned char, unsigned char> rockMoves[] = {
-		{-1, 0},
-		{1, 0},
-		{0, -1},
-		{0, 1},
-	};
-
-	for (const auto& diff: rockMoves)
+	for (auto* diff = TMoves; diff < TMoves + N; ++diff)
 	{
-		for (unsigned char r = row, c = col;
-			r < 8 and c < 8;
-			r += diff.first, c+= diff.second)
+		std::cout << "in " << (unsigned) row << " " << (unsigned) col <<std::endl;
+		for (unsigned char r = row + diff->first, c = col + diff->second;
+			r < 8u and c < 8u;
+			r += diff->first, c+= diff->second)
 		{
+			std::cout << "check " << (unsigned) r << " " << (unsigned) c <<std::endl;
 			auto destination = NotationConversions::getFieldNum(r, c);
 			if ((*ctx.board)[destination] != 0)
 			{
@@ -142,6 +136,12 @@ void generateRockMoves(unsigned char i)
 	}
 }
 
+const std::pair<unsigned char, unsigned char> rockMoves[] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
+void (*generateRockMoves)(unsigned char i) = generateLineMoves<4, rockMoves>;
+
+const std::pair<unsigned char, unsigned char> bishopMoves[] = {{-1, -1}, {-1, 1}, {1, -1}, {1, 1}};
+void (*generateBishopMoves)(unsigned char i) = generateLineMoves<4, bishopMoves>;
+
 }  // namespace
 
 std::vector<Move> MoveGenerator::generate(const Board& board,
@@ -155,8 +155,11 @@ std::vector<Move> MoveGenerator::generate(const Board& board,
 	{
 		switch (board[i] & NOTATION::COLOR_AND_PIECE_MASK)
 		{
+		// TODO the same for black
 		case (NOTATION::PIECES::PAWN):
 			generatePawnMoves(i);
+			// TODO: en passant
+			// TODO: promotions
 			continue;
 		case (NOTATION::PIECES::KNIGHT):
 			generateKnightMoves(i);
@@ -164,7 +167,17 @@ std::vector<Move> MoveGenerator::generate(const Board& board,
 		case (NOTATION::PIECES::ROCK):
 			generateRockMoves(i);
 			continue;
-
+		case (NOTATION::PIECES::BISHOP):
+			generateBishopMoves(i);
+			continue;
+		case (NOTATION::PIECES::QUEEN):
+			generateBishopMoves(i);
+			generateRockMoves(i);
+			continue;
+		case (NOTATION::PIECES::KING):
+			generateNormalKingMoves(i);
+			// TODO: Castling
+			continue;
 		}
 	}
 	for (auto&&m : allMoves)
