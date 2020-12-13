@@ -3,6 +3,7 @@
 #include <iostream>
 
 #include <NotationConversions.hpp>
+#include <CheckChecker.hpp>
 
 namespace MoveGenerator
 {
@@ -32,7 +33,7 @@ void tryToAddMove(unsigned char source, unsigned char destination)
 	}
 }
 
-void generatePawnMoves(unsigned char i)
+void generateStandardPawnMoves(unsigned char i)
 {
 	if (ctx.pieceColor == NOTATION::COLOR::color::white)
 	{
@@ -71,6 +72,45 @@ void generatePawnMoves(unsigned char i)
 	}
 }
 
+void generateEnPasant()
+{
+	if (ctx.pieceColor == NOTATION::COLOR::color::white)
+	{
+		auto& lastMove = ctx.board->lastMove;
+		if (lastMove.source - lastMove.destination
+			!= 2 * NOTATION::COORDINATES::ROW_DIFF
+			or ((*ctx.board)[lastMove.destination] & NOTATION::PIECES::PIECES_MASK)
+				!= NOTATION::PIECES::PAWN)
+		{
+			return;
+		}
+		auto col = NotationConversions::getColumnNum(lastMove.destination);
+		if (col<7)
+		{
+			{
+				auto opositeCandidateField = lastMove.destination + 1;
+				if (((*ctx.board)[opositeCandidateField] & NOTATION::COLOR_AND_PIECE_MASK) ==
+					(NOTATION::PIECES::PAWN | NOTATION::COLOR::WHITE))
+				{
+					tryToAddMove(opositeCandidateField,
+						(lastMove.source + lastMove.destination) / 2);
+				}
+			}
+			if (col > 0)
+			{
+				auto opositeCandidateField = lastMove.destination - 1;
+				if (((*ctx.board)[opositeCandidateField] & NOTATION::COLOR_AND_PIECE_MASK) ==
+					(NOTATION::PIECES::PAWN | NOTATION::COLOR::WHITE))
+				{
+					tryToAddMove(opositeCandidateField,
+						(lastMove.source + lastMove.destination) / 2);
+				}
+			}
+		}
+	}
+}
+
+
 template <size_t N, const std::pair<unsigned char, unsigned char> TMoves[N]>
 void generateFixedMoves(unsigned char i)
 {
@@ -107,6 +147,45 @@ const std::pair<unsigned char, unsigned char> kingMoves[] = {
 	{1, 0}, {1, 1}, {0, 1}, {-1, 1}, {-1, 0}, {-1, -1}, {0, -1}, {1, -1} };
 void (*generateNormalKingMoves)(unsigned char i) = generateFixedMoves<8, kingMoves>;
 
+void generateCasles(unsigned char i)
+{
+	auto wasKingMoved = ((*ctx.board)[i] & NOTATION::MOVED::MOVED_MASK) != 0;
+	if (wasKingMoved)
+	{
+		return;
+	}
+
+	if (CheckChecker::isAttackedOn(*ctx.board, ctx.pieceColor, i))
+	{
+		return;
+	}
+
+	const auto notMovedRockPattern = NOTATION::PIECES::ROCK;
+
+	// long casle
+	unsigned char quensRockPosition = i - 4;
+	if (((*ctx.board)[quensRockPosition] & NOTATION::MOVED_AND_PIECE_MASK)
+		== notMovedRockPattern
+		and not CheckChecker::isAttackedOn(*ctx.board, ctx.pieceColor, i-1)
+		and (*ctx.board)[i-1] == 0
+		and (*ctx.board)[i-2] == 0
+		and (*ctx.board)[i-3] == 0)
+	{
+		tryToAddMove(i, i-2);
+	}
+
+	// short castle
+	unsigned char kingsRockPosition = i + 3;
+	if (((*ctx.board)[kingsRockPosition] & NOTATION::MOVED_AND_PIECE_MASK)
+		== notMovedRockPattern
+		and not CheckChecker::isAttackedOn(*ctx.board, ctx.pieceColor, i+1)
+		and (*ctx.board)[i+1] == 0
+		and (*ctx.board)[i+2] == 0)
+	{
+		tryToAddMove(i, i+2);
+	}
+}
+
 template <size_t N, const std::pair<unsigned char, unsigned char> TMoves[N]>
 void generateLineMoves(unsigned char i)
 {
@@ -115,12 +194,10 @@ void generateLineMoves(unsigned char i)
 
 	for (auto* diff = TMoves; diff < TMoves + N; ++diff)
 	{
-		std::cout << "in " << (unsigned) row << " " << (unsigned) col <<std::endl;
 		for (unsigned char r = row + diff->first, c = col + diff->second;
 			r < 8u and c < 8u;
 			r += diff->first, c+= diff->second)
 		{
-			std::cout << "check " << (unsigned) r << " " << (unsigned) c <<std::endl;
 			auto destination = NotationConversions::getFieldNum(r, c);
 			if ((*ctx.board)[destination] != 0)
 			{
@@ -157,8 +234,7 @@ std::vector<Move> MoveGenerator::generate(const Board& board,
 		{
 		// TODO the same for black
 		case (NOTATION::PIECES::PAWN):
-			generatePawnMoves(i);
-			// TODO: en passant
+			generateStandardPawnMoves(i);
 			// TODO: promotions
 			continue;
 		case (NOTATION::PIECES::KNIGHT):
@@ -176,10 +252,13 @@ std::vector<Move> MoveGenerator::generate(const Board& board,
 			continue;
 		case (NOTATION::PIECES::KING):
 			generateNormalKingMoves(i);
-			// TODO: Castling
+			generateCasles(i);
 			continue;
 		}
 	}
+
+	generateEnPasant();
+
 	for (auto&&m : allMoves)
 	{
 		std::cout << m << std::endl;

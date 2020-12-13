@@ -26,8 +26,6 @@ enum class color : unsigned char {
 };
 }
 
-constexpr unsigned char COLOR_AND_PIECE_MASK = PIECES::PIECES_MASK | COLOR::COLOR_MASK;
-
 namespace MOVED
 {
 constexpr unsigned char MOVED_MASK = (1u << 7);
@@ -49,4 +47,8 @@ constexpr unsigned char H = 7;
 
 constexpr unsigned char ROW_DIFF = 8;
 }
+
+constexpr unsigned char COLOR_AND_PIECE_MASK = PIECES::PIECES_MASK | COLOR::COLOR_MASK;
+constexpr unsigned char MOVED_AND_PIECE_MASK = PIECES::PIECES_MASK | MOVED::MOVED_MASK;
+
 }

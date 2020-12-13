@@ -14,10 +14,11 @@ public:
 	MoveGenerator::MoveGenerator sut;
 };
 
-constexpr NOTATION::COLOR::color WHITE = NOTATION::COLOR::color::white;
-
 namespace
 {
+
+constexpr NOTATION::COLOR::color WHITE = NOTATION::COLOR::color::white;
+constexpr NOTATION::COLOR::color BLACK = NOTATION::COLOR::color::black;
 
 const std::vector<Move> operator+(const std::vector<Move>& lhs,
 		const std::vector<Move>& rhs)
@@ -97,4 +98,76 @@ TEST_F(MoveGeneratorTests, shouldCorectlyAnalyzePos_2)
 
 	ASSERT_THAT(sut.generate(board, WHITE),
 		::testing::UnorderedElementsAreArray(pawnMoves+knightMoves+rockMoves+bishopMoves+queenMoves+kingMoves));
+}
+
+TEST_F(MoveGeneratorTests, shouldCorectlyAnalyzePosWithMoves)
+{
+	Board board = utils::createBoard(
+		"    ♚   "
+		"  ♟     "
+		"        "
+		" ♙      "
+		"    ♙   "
+		"        "
+		"    ♔  ♙"
+		"♖      ♖");
+
+	auto moveKingToInitialPosition = createMove("e2-e1", WHITE);
+	applyMove(board, moveKingToInitialPosition);
+
+	auto moveWitePawnToPieces = createMove("c7-c5", BLACK);
+	applyMove(board, moveWitePawnToPieces);
+
+//	"    ♚   "
+//	"        "
+//	"  .     "
+//	" ♙♟     "
+//	"    ♙   "
+//	"        "
+//	"       ♙"
+//	"♖   ♔  ♖");
+
+	const char* enPassant = "b5-c6";
+	auto pawnMoves = map(
+		{enPassant, "b5-b6", "e4-e5", "h2-h3", "h2-h4"}, WHITE);
+
+	auto rockMoves = map(
+		{"a1-a2", "a1-a3", "a1-a4", "a1-a5", "a1-a6", "a1-a7", "a1-a8",
+		"a1-b1", "a1-c1", "a1-d1",
+		"h1-g1", "h1-f1"}, WHITE);
+
+	auto kingMoves = map(
+		{"e1-d1", "e1-d2", "e1-e2", "e1-f2", "e1-f1"}, WHITE);
+
+	ASSERT_THAT(sut.generate(board, WHITE),
+		::testing::UnorderedElementsAreArray(pawnMoves+rockMoves+kingMoves));
+}
+
+TEST_F(MoveGeneratorTests, shouldAllowCastles)
+{
+	Board board = utils::createBoard(
+		"    ♚   "
+		"  ♟     "
+		"        "
+		" ♙      "
+		"    ♙   "
+		"        "
+		"       ♙"
+		"♖   ♔  ♖");
+
+	auto pawnMoves = map(
+		{"b5-b6", "e4-e5", "h2-h3", "h2-h4"}, WHITE);
+
+	auto rockMoves = map(
+		{"a1-a2", "a1-a3", "a1-a4", "a1-a5", "a1-a6", "a1-a7", "a1-a8",
+		"a1-b1", "a1-c1", "a1-d1",
+		"h1-g1", "h1-f1"}, WHITE);
+
+	const char* shortCastle = "O-O";
+	const char* longCastle = "O-O-O";
+	auto kingMoves = map(
+		{"e1-d1", "e1-d2", "e1-e2", "e1-f2", "e1-f1", shortCastle, longCastle}, WHITE);
+
+	ASSERT_THAT(sut.generate(board, WHITE),
+		::testing::UnorderedElementsAreArray(pawnMoves+rockMoves+kingMoves));
 }

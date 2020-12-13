@@ -75,7 +75,9 @@ bool isCheckOn(const Board& board, const NOTATION::COLOR::color c)
 
 void applyMove(Board& board, const Move& move)
 {
+	// TODO: Make a decision about en passant. Shall there be a separate flag? Or it shall be decided durring move application
 	board[move.destination] = board[move.source] | NOTATION::MOVED::MOVED_MASK;
+	board.lastMove = move;
 	board[move.source] = 0;
 
 	if (NotationConversions::getPieceType(board[move.source]) == NOTATION::PIECES::KING)
