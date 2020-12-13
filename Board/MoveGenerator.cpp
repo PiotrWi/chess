@@ -33,13 +33,32 @@ void tryToAddMove(unsigned char source, unsigned char destination)
 	}
 }
 
+void tryToAddMoveAndPromote(unsigned char source, unsigned char destination)
+{
+	Move m = Move(source, destination);
+	if (not isValid(m))
+	{
+		return;
+	}
+	if (NotationConversions::getRow(destination) == 7)
+	{
+		unsigned char pattern = NOTATION::COLOR::WHITE | NOTATION::MOVED::MOVED_MASK;
+		ctx.allMoves->emplace_back(source, destination, true, NOTATION::PIECES::QUEEN | pattern);
+		ctx.allMoves->emplace_back(source, destination, true, NOTATION::PIECES::BISHOP | pattern);
+		ctx.allMoves->emplace_back(source, destination, true, NOTATION::PIECES::ROCK | pattern);
+		ctx.allMoves->emplace_back(source, destination, true, NOTATION::PIECES::KNIGHT | pattern);
+		return;
+	}
+	ctx.allMoves->push_back(m);
+}
+
 void generateStandardPawnMoves(unsigned char i)
 {
 	if (ctx.pieceColor == NOTATION::COLOR::color::white)
 	{
 		if ((*ctx.board)[i + NOTATION::COORDINATES::ROW_DIFF] == 0)
 		{
-			tryToAddMove(i, i + NOTATION::COORDINATES::ROW_DIFF);
+			tryToAddMoveAndPromote(i, i + NOTATION::COORDINATES::ROW_DIFF);
 			auto row = NotationConversions::getRow(i);
 			if (row == 1 and (*ctx.board)[i + 2 * NOTATION::COORDINATES::ROW_DIFF] == 0)
 			{
@@ -53,7 +72,7 @@ void generateStandardPawnMoves(unsigned char i)
 			if ((*ctx.board)[destination] != 0 and
 				((*ctx.board)[destination] & NOTATION::COLOR::COLOR_MASK) == NOTATION::COLOR::BLACK)
 			{
-				tryToAddMove(i, destination);
+				tryToAddMoveAndPromote(i, destination);
 			}
 		}
 		if (col > 0)
@@ -62,7 +81,7 @@ void generateStandardPawnMoves(unsigned char i)
 			if ((*ctx.board)[destination] != 0 and
 				((*ctx.board)[destination] & NOTATION::COLOR::COLOR_MASK) == NOTATION::COLOR::BLACK)
 			{
-				tryToAddMove(i, destination);
+				tryToAddMoveAndPromote(i, destination);
 			}
 		}
 	}

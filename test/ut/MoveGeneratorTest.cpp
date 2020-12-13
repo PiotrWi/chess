@@ -171,3 +171,140 @@ TEST_F(MoveGeneratorTests, shouldAllowCastles)
 	ASSERT_THAT(sut.generate(board, WHITE),
 		::testing::UnorderedElementsAreArray(pawnMoves+rockMoves+kingMoves));
 }
+
+TEST_F(MoveGeneratorTests, shouldPreventIllegalCasles)
+{
+	Board board = utils::createBoard(
+		"   ♜♚ ♜ "
+		"  ♟     "
+		"        "
+		" ♙      "
+		"    ♙   "
+		"        "
+		"       ♙"
+		"♖   ♔  ♖");
+
+	auto pawnMoves = map(
+		{"b5-b6", "e4-e5", "h2-h3", "h2-h4"}, WHITE);
+
+	auto rockMoves = map(
+		{"a1-a2", "a1-a3", "a1-a4", "a1-a5", "a1-a6", "a1-a7", "a1-a8",
+		"a1-b1", "a1-c1", "a1-d1",
+		"h1-g1", "h1-f1"}, WHITE);
+
+	auto kingMoves = map(
+		{"e1-e2", "e1-f2", "e1-f1"}, WHITE);
+
+	ASSERT_THAT(sut.generate(board, WHITE),
+		::testing::UnorderedElementsAreArray(pawnMoves+rockMoves+kingMoves));
+}
+
+TEST_F(MoveGeneratorTests, shouldPreventIllegalCasles_2)
+{
+	Board board = utils::createBoard(
+		"        "
+		"  ♟ ♚   "
+		"        "
+		" ♙      "
+		"    ♙   "
+		"        "
+		"       ♙"
+		" ♖  ♔  ♖");
+
+	auto pawnMoves = map(
+		{"b5-b6", "e4-e5", "h2-h3", "h2-h4"}, WHITE);
+
+	auto rockMoves = map(
+		{"a1-a2", "a1-a3", "a1-a4", "a1-a5", "a1-a6", "a1-a7", "a1-a8",
+		"a1-b1", "a1-c1", "a1-d1",
+		"h1-g1", "h1-f1"}, WHITE);
+
+	const char* shortCastle = "O-O";
+	auto kingMoves = map(
+		{shortCastle, "e1-e2", "e1-f2", "e1-f1", "e1-d2", "e1-d1"}, WHITE);
+
+	auto moveKingToInitialPosition = createMove("b1-a1", WHITE);
+	applyMove(board, moveKingToInitialPosition);
+
+	auto moveWitePawnToPieces = createMove("e7-e8", BLACK);
+	applyMove(board, moveWitePawnToPieces);
+
+//	"    ♚   "
+//	"        "
+//	"  .     "
+//	" ♙♟     "
+//	"    ♙   "
+//	"        "
+//	"       ♙"
+//	"♖   ♔  ♖");
+
+	ASSERT_THAT(sut.generate(board, WHITE),
+		::testing::UnorderedElementsAreArray(pawnMoves+rockMoves+kingMoves));
+}
+
+TEST_F(MoveGeneratorTests, shouldPreventIllegalCasles_3)
+{
+	Board board = utils::createBoard(
+		"        "
+		"  ♟ ♚   "
+		"        "
+		" ♙      "
+		"    ♙   "
+		"        "
+		"       ♙"
+		"♖   ♔ ♖ ");
+
+	auto pawnMoves = map(
+		{"b5-b6", "e4-e5", "h2-h3", "h2-h4"}, WHITE);
+
+	auto rockMoves = map(
+		{"a1-a2", "a1-a3", "a1-a4", "a1-a5", "a1-a6", "a1-a7", "a1-a8",
+		"a1-b1", "a1-c1", "a1-d1",
+		"h1-g1", "h1-f1"}, WHITE);
+
+	const char* longCastle = "O-O-O";
+	auto kingMoves = map(
+		{longCastle, "e1-e2", "e1-f2", "e1-f1", "e1-d2", "e1-d1"}, WHITE);
+
+	auto moveKingToInitialPosition = createMove("g1-h1", WHITE);
+	applyMove(board, moveKingToInitialPosition);
+
+	auto moveWitePawnToPieces = createMove("e7-e8", BLACK);
+	applyMove(board, moveWitePawnToPieces);
+
+//	"    ♚   "
+//	"        "
+//	"  .     "
+//	" ♙♟     "
+//	"    ♙   "
+//	"        "
+//	"       ♙"
+//	"♖   ♔  ♖");
+
+	ASSERT_THAT(sut.generate(board, WHITE),
+		::testing::UnorderedElementsAreArray(pawnMoves+rockMoves+kingMoves));
+}
+
+TEST_F(MoveGeneratorTests, shouldFindPromotions)
+{
+	Board board = utils::createBoard(
+		"  ♞ ♜   "
+		"   ♙   ♚"
+		"        "
+		"        "
+		"        "
+		"        "
+		"        "
+		"   ♔    ");
+
+	auto pawnMoves = map(
+		{"d7-c8=Q", "d7-c8=N", "d7-c8=B", "d7-c8=R",
+		"d7-d8=Q", "d7-d8=N", "d7-d8=B", "d7-d8=R",
+		"d7-e8=Q", "d7-e8=N", "d7-e8=B", "d7-e8=R"}, WHITE);
+
+	auto kingMoves = map(
+		{"d1-c1", "d1-c2", "d1-d2"}, WHITE);
+
+	ASSERT_THAT(sut.generate(board, WHITE),
+		::testing::UnorderedElementsAreArray(pawnMoves+kingMoves));
+}
