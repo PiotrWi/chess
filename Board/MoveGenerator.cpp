@@ -1,7 +1,5 @@
 #include "MoveGenerator.hpp"
 
-#include <iostream>
-
 #include <NotationConversions.hpp>
 #include <CheckChecker.hpp>
 
@@ -33,6 +31,8 @@ void tryToAddMove(unsigned char source, unsigned char destination)
 	}
 }
 
+template <unsigned char TARGET_LINE
+	, unsigned char COLOR>
 void tryToAddMoveAndPromote(unsigned char source, unsigned char destination)
 {
 	Move m = Move(source, destination);
@@ -40,9 +40,9 @@ void tryToAddMoveAndPromote(unsigned char source, unsigned char destination)
 	{
 		return;
 	}
-	if (NotationConversions::getRow(destination) == 7)
+	if (NotationConversions::getRow(destination) == TARGET_LINE)
 	{
-		unsigned char pattern = NOTATION::COLOR::WHITE | NOTATION::MOVED::MOVED_MASK;
+		unsigned char pattern = COLOR | NOTATION::MOVED::MOVED_MASK;
 		ctx.allMoves->emplace_back(source, destination, true, NOTATION::PIECES::QUEEN | pattern);
 		ctx.allMoves->emplace_back(source, destination, true, NOTATION::PIECES::BISHOP | pattern);
 		ctx.allMoves->emplace_back(source, destination, true, NOTATION::PIECES::ROCK | pattern);
@@ -52,42 +52,40 @@ void tryToAddMoveAndPromote(unsigned char source, unsigned char destination)
 	ctx.allMoves->push_back(m);
 }
 
+template <unsigned char FIRST_LINE
+	, unsigned char TARGET_LINE
+	, signed char ROW_DIFF
+	, unsigned char COLOR
+	, unsigned char OPOSITE_COLOR>
 void generateStandardPawnMoves(unsigned char i)
 {
-	if (ctx.pieceColor == NOTATION::COLOR::color::white)
+	if ((*ctx.board)[i + ROW_DIFF] == 0)
 	{
-		if ((*ctx.board)[i + NOTATION::COORDINATES::ROW_DIFF] == 0)
+		tryToAddMoveAndPromote<TARGET_LINE, COLOR>(i, i + ROW_DIFF);
+		auto row = NotationConversions::getRow(i);
+		if (row == FIRST_LINE and (*ctx.board)[i + 2 * ROW_DIFF] == 0)
 		{
-			tryToAddMoveAndPromote(i, i + NOTATION::COORDINATES::ROW_DIFF);
-			auto row = NotationConversions::getRow(i);
-			if (row == 1 and (*ctx.board)[i + 2 * NOTATION::COORDINATES::ROW_DIFF] == 0)
-			{
-				tryToAddMove(i, i + 2 * NOTATION::COORDINATES::ROW_DIFF);
-			}
-		}
-		auto col = NotationConversions::getColumnNum(i);
-		if (col<7)
-		{
-			auto destination = i + NOTATION::COORDINATES::ROW_DIFF + 1;
-			if ((*ctx.board)[destination] != 0 and
-				((*ctx.board)[destination] & NOTATION::COLOR::COLOR_MASK) == NOTATION::COLOR::BLACK)
-			{
-				tryToAddMoveAndPromote(i, destination);
-			}
-		}
-		if (col > 0)
-		{
-			auto destination = i + NOTATION::COORDINATES::ROW_DIFF - 1;
-			if ((*ctx.board)[destination] != 0 and
-				((*ctx.board)[destination] & NOTATION::COLOR::COLOR_MASK) == NOTATION::COLOR::BLACK)
-			{
-				tryToAddMoveAndPromote(i, destination);
-			}
+			tryToAddMove(i, i + 2 * ROW_DIFF);
 		}
 	}
-	else
+	auto col = NotationConversions::getColumnNum(i);
+	if (col<7)
 	{
-
+		auto destination = i + ROW_DIFF + 1;
+		if ((*ctx.board)[destination] != 0 and
+			((*ctx.board)[destination] & NOTATION::COLOR::COLOR_MASK) == OPOSITE_COLOR)
+		{
+			tryToAddMoveAndPromote<TARGET_LINE, COLOR>(i, destination);
+		}
+	}
+	if (col > 0)
+	{
+		auto destination = i + ROW_DIFF - 1;
+		if ((*ctx.board)[destination] != 0 and
+			((*ctx.board)[destination] & NOTATION::COLOR::COLOR_MASK) == OPOSITE_COLOR)
+		{
+			tryToAddMoveAndPromote<TARGET_LINE, COLOR>(i, destination);
+		}
 	}
 }
 
@@ -241,20 +239,32 @@ void (*generateBishopMoves)(unsigned char i) = generateLineMoves<4, bishopMoves>
 }  // namespace
 
 std::vector<Move> MoveGenerator::generate(const Board& board,
-	NOTATION::COLOR::color) const
+	NOTATION::COLOR::color c) const
 {
 	std::vector<Move> allMoves;
 	ctx.allMoves = &allMoves;
 	ctx.board = &board;
+	ctx.pieceColor = c;
 
 	for (unsigned char i = 0u; i <= 64u; ++i)
 	{
-		switch (board[i] & NOTATION::COLOR_AND_PIECE_MASK)
+		switch ((board[i] & NOTATION::COLOR_AND_PIECE_MASK) ^ static_cast<unsigned char>(c))
 		{
-		// TODO the same for black
 		case (NOTATION::PIECES::PAWN):
-			generateStandardPawnMoves(i);
-			// TODO: promotions
+			if (c == NOTATION::COLOR::color::white)
+			{
+				generateStandardPawnMoves<1u, 7u,
+					NOTATION::COORDINATES::ROW_DIFF,
+					NOTATION::COLOR::WHITE,
+					NOTATION::COLOR::BLACK>(i);
+			}
+			else
+			{
+				generateStandardPawnMoves<6u, 0u,
+					-NOTATION::COORDINATES::ROW_DIFF,
+					NOTATION::COLOR::BLACK,
+					NOTATION::COLOR::WHITE>(i);
+			}
 			continue;
 		case (NOTATION::PIECES::KNIGHT):
 			generateKnightMoves(i);
@@ -275,13 +285,7 @@ std::vector<Move> MoveGenerator::generate(const Board& board,
 			continue;
 		}
 	}
-
 	generateEnPasant();
-
-	for (auto&&m : allMoves)
-	{
-		std::cout << m << std::endl;
-	}
 	return allMoves;
 }
 

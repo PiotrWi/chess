@@ -47,7 +47,7 @@ std::vector<Move> map(const char* (&&in)[N], NOTATION::COLOR::color c)
 
 }  // namespace
 
-TEST_F(MoveGeneratorTests, shouldReturnPawnMoves)
+TEST_F(MoveGeneratorTests, shouldReturnInitialMoves)
 {
 	auto pawnInitialMoves = map(
 			{"a2-a3", "a2-a4", "b2-b3", "b2-b4", "c2-c3", "c2-c4", "d2-d3",
@@ -306,5 +306,115 @@ TEST_F(MoveGeneratorTests, shouldFindPromotions)
 		{"d1-c1", "d1-c2", "d1-d2"}, WHITE);
 
 	ASSERT_THAT(sut.generate(board, WHITE),
+		::testing::UnorderedElementsAreArray(pawnMoves+kingMoves));
+}
+
+TEST_F(MoveGeneratorTests, shouldCorectlyAnalyzePosWithCheck)
+{
+	auto pawnMoves = map(
+		{"h5-g6"}, WHITE);
+
+	auto knightMoves = map(
+		{"f3-g5"}, WHITE);
+
+	auto rockMoves = map(
+		{"h4-g4"}, WHITE);
+
+	auto bishopMoves = map(
+		{"c1-g5"}, WHITE);
+
+	auto kingMoves = map(
+		{"g3-h3", "g3-h2"}, WHITE);
+
+	Board board = utils::createBoard(
+		"♜♞♝ ♚♝♞♜"
+		"♟♟♟   ♟♟"
+		"      ♛ "
+		"   ♟♟♟ ♙"
+		"   ♙♙  ♖"
+		"♘    ♘♔ "
+		"♙♙♙  ♙♙ "
+		"♖ ♗♕♗   ");
+
+	ASSERT_THAT(sut.generate(board, WHITE),
+		::testing::UnorderedElementsAreArray(pawnMoves+knightMoves+bishopMoves+rockMoves+kingMoves));
+}
+
+
+TEST_F(MoveGeneratorTests, shouldFindInitialMovesForBlack)
+{
+	auto pawnInitialMoves = map(
+			{"a7-a6", "a7-a5", "b7-b6", "b7-b5", "c7-c6", "c7-c5", "d7-d6",
+			"d7-d5", "e7-e6", "e7-e5", "f7-f6", "f7-f5", "g7-g6", "g7-g5",
+			"h7-h6", "h7-h5"}, BLACK);
+
+	auto knightInitialMoves = map(
+			{"b8-a6", "b8-c6", "g8-f6", "g8-h6"}, BLACK);
+
+	Board board = utils::createBoard(utils::InitialBoardString);
+	ASSERT_THAT(sut.generate(board, BLACK),
+		::testing::UnorderedElementsAreArray(pawnInitialMoves + knightInitialMoves));
+}
+
+
+TEST_F(MoveGeneratorTests, shouldCorectlyAnalyzePosForBlack)
+{
+	auto pawnMoves = map(
+		{"a5-a4", "b7-b6", "b7-b5", "c7-c6", "c7-c5",
+		"d5-d4", "e7-e6", "e7-e5", "f7-f6", "f7-f5",
+		"g6-g5", "h7-h6", "h7-h5"}, BLACK);
+
+	auto knightMoves = map(
+		{"a6-b8", "a6-c5", "a6-b4",
+		"g4-h2", "g4-f2", "g4-e3", "g4-e5", "g4-f6", "g4-h6"}, BLACK);
+
+	auto rockMoves = map(
+		{"a8-a7", "a8-b8", "h8-g8"}, BLACK);
+
+	auto bishopMoves = map(
+		{"c8-d7", "c8-e6", "c8-f5",
+		"f8-g7", "f8-h6"}, BLACK);
+
+	auto queenMoves = map(
+		{"d8-d7", "d8-d6"}, BLACK);
+
+	auto kingMoves = map(
+		{"e8-d7"}, BLACK);
+
+	Board board = utils::createBoard(
+		"♜ ♝♛♚♝ ♜"
+		" ♟♟ ♟♟ ♟"
+		"♞     ♟ "
+		"♟  ♟    "
+		"      ♞ "
+		"        "
+		"♙♙♙♙♙♙♙♙"
+		"♖♘♗♕♔♗♘♖", BLACK);
+
+	ASSERT_THAT(sut.generate(board, BLACK),
+		::testing::UnorderedElementsAreArray(pawnMoves+knightMoves+rockMoves+bishopMoves+queenMoves+kingMoves));
+}
+
+
+TEST_F(MoveGeneratorTests, shouldFindBlackPromotions)
+{
+	Board board = utils::createBoard(
+		"        "
+		"      ♚ "
+		"        "
+		"        "
+		"        "
+		"        "
+		"     ♟  "
+		"   ♔    ");
+
+	auto pawnMoves = map(
+		{"f2-f1=Q", "f2-f1=N", "f2-f1=B", "f2-f1=R"}, BLACK);
+
+	auto kingMoves = map(
+		{"g7-g8", "g7-h8", "g7-h7", "g7-h6",
+		"g7-g6", "g7-f6", "g7-f7", "g7-f8"}, BLACK);
+
+	ASSERT_THAT(sut.generate(board, BLACK),
 		::testing::UnorderedElementsAreArray(pawnMoves+kingMoves));
 }
