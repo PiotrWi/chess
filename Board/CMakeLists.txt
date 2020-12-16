@@ -5,5 +5,6 @@ add_library(board
 	CheckChecker.cpp
 	MoveGenerator.cpp
 	MoveValidator.cpp
-	NotationConversions.cpp)
+	NotationConversions.cpp
+	ResultEvaluator.cpp)
 	
