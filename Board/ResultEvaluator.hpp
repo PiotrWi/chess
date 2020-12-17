@@ -12,13 +12,13 @@ enum class Result
 	draw
 };
 
-class Node;
+struct Node;
 
 class ResultEvaluator
 {
 public:
 	ResultEvaluator();
-
+	~ResultEvaluator();
 	void storeBoard(const Board&);
 	Result evaluate() const;
 	void removeSingle();

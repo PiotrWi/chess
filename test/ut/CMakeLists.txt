@@ -10,6 +10,7 @@ add_executable(ut
 	CheckCheckerTest.cpp
 	MoveValidatorTest.cpp
 	MoveGeneratorTest.cpp
+	ResultEvaluatorTest.cpp
 	utils/BoardGenerationUtils.cpp
 	utils/LongAlgebraicNotation.cpp)
 
