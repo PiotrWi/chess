@@ -24,54 +24,82 @@ TEST (ResultEvaluatorShould, findMate)
     auto move = createMove("e2-e4", WHITE);
     applyMove(board, move);
     sut.storeBoard(board);
-    std::cerr << board << std::endl;
     ASSERT_EQ(sut.evaluate(), Result::ongoing);
 
     move = createMove("e7-e5", BLACK);
     applyMove(board, move);
     sut.storeBoard(board);
-    std::cerr << board << std::endl;
     ASSERT_EQ(sut.evaluate(), Result::ongoing);
 
     move = createMove("f1-c4", WHITE);
     applyMove(board, move);
     sut.storeBoard(board);
-    std::cerr << board << std::endl;
     ASSERT_EQ(sut.evaluate(), Result::ongoing);
 
     move = createMove("b8-c6", BLACK);
     applyMove(board, move);
     sut.storeBoard(board);
-    std::cerr << board << std::endl;
     ASSERT_EQ(sut.evaluate(), Result::ongoing);
 
     move = createMove("d1-h5", WHITE);
     applyMove(board, move);
     sut.storeBoard(board);
-    std::cerr << board << std::endl;
     ASSERT_EQ(sut.evaluate(), Result::ongoing);
 
-    move = createMove("g8-d6", BLACK);
+    move = createMove("g8-f6", BLACK);
     applyMove(board, move);
     sut.storeBoard(board);
-    std::cerr << board << std::endl;
     ASSERT_EQ(sut.evaluate(), Result::ongoing);
 
+    /*
+        "♜ ♝♛♚♝♞♜"
+        "♟♟♟♟ ♟♟♟"
+        "  ♞     "
+        "    ♟  ♕"
+        "  ♗ ♙   "
+        "        "
+        "♙♙♙♙ ♙♙♙"
+        "♖♘♗ ♔ ♘♖";
+    */
     move = createMove("h5-f7", WHITE);
     applyMove(board, move);
     sut.storeBoard(board);
-    std::cerr << board << std::endl;
     ASSERT_EQ(sut.evaluate(), Result::whiteWon);
+}
 
-/*
-    "♜ ♝♛♚♝♞♜"
-    "♟♟♟♟ ♟♟♟"
-    "  ♞     "
-    "    ♟  ♕"
-    "  ♗ ♙   "
-    "        "
-    "♙♙♙♙ ♙♙♙"
-    "♖♘♗ ♔ ♘♖";
-*/
+TEST (ResultEvaluatorShould, findMateOnWhite)
+{
+	ResultEvaluator sut;
 
+    Board board = utils::createBoard(
+			"       ♜"
+			"        "
+			"        "
+			"     ♚ ♔"
+			"        "
+			"        "
+			"        "
+			"        ", WHITE);
+
+    sut.storeBoard(board);
+    ASSERT_EQ(sut.evaluate(), Result::blackWon);
+}
+
+
+TEST (ResultEvaluatorShould, findDrawByNoMove)
+{
+	ResultEvaluator sut;
+
+    Board board = utils::createBoard(
+			" ♚      "
+			" ♙      "
+			" ♔      "
+			"        "
+			"        "
+			"        "
+			"        "
+			"        ", BLACK);
+
+    sut.storeBoard(board);
+    ASSERT_EQ(sut.evaluate(), Result::draw);
 }

@@ -48,7 +48,7 @@ bool isAttackedByOpositePawn(const Board& board,
 
 	return NotationConversions::isRowInBoard(pawnRow) and
 			((NotationConversions::isColumnInBoard(leftColumn) and getColoredPiece(board, pawnRow, leftColumn) == pawnMask)
-			or (NotationConversions::isColumnInBoard(rightColumn) and getColoredPiece(board, pawnRow, leftColumn) == pawnMask));
+			or (NotationConversions::isColumnInBoard(rightColumn) and getColoredPiece(board, pawnRow, rightColumn) == pawnMask));
 }
 
 bool isAttackedOnDiagonalByOpositeBishopOrQueen(const Board& board,
