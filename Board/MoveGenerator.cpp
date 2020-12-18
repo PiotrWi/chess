@@ -144,7 +144,7 @@ void generateFixedMoves(unsigned char i)
 			unsigned char destination = NotationConversions::getFieldNum(targerRow, targerCol);
 			const auto& field = (*ctx.board)[destination];
 			if (field == 0
-				or (static_cast<unsigned char>(NotationConversions::switchColor(ctx.pieceColor)) == (field & NOTATION::COLOR::COLOR_MASK)))
+				or (static_cast<unsigned char>(ctx.pieceColor+1) == (field & NOTATION::COLOR::COLOR_MASK)))
 			{
 				Move m{i, destination};
 				if (isValid(m))
@@ -218,7 +218,7 @@ void generateLineMoves(unsigned char i)
 			auto destination = NotationConversions::getFieldNum(r, c);
 			if ((*ctx.board)[destination] != 0)
 			{
-				if (static_cast<unsigned char>(NotationConversions::switchColor(ctx.pieceColor)) ==
+				if (static_cast<unsigned char>(ctx.pieceColor+1) ==
 					((*ctx.board)[destination] & NOTATION::COLOR::COLOR_MASK))
 				{
 					tryToAddMove(i, destination);

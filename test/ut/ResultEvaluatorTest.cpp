@@ -1,8 +1,7 @@
 #include <gtest/gtest.h>
 
 #include <Board.hpp>
-#include <BoardIO.hpp>
-
+#include <NotationConversions.hpp>
 #include <ResultEvaluator.hpp>
 
 #include <utils/BoardGenerationUtils.hpp>
@@ -14,43 +13,46 @@ namespace
 constexpr NOTATION::COLOR::color WHITE = NOTATION::COLOR::color::white;
 constexpr NOTATION::COLOR::color BLACK = NOTATION::COLOR::color::black;
 
-}
+}  // namespace
 
-TEST (ResultEvaluatorShould, findMate)
+class ResultEvaluatorShould
+    : public ::testing::Test
 {
-	ResultEvaluator sut;
+public:
+    void applyMoveAndStore(Board& board,
+                           const char* moveStr,
+                           const NOTATION::COLOR::color c)
+    {
+        auto move = createMove(moveStr, c);
+        applyMove(board, move);
+        sut.storeBoard(board);
+    }
 
-    Board board = utils::createBoard(utils::InitialBoardString);
-    auto move = createMove("e2-e4", WHITE);
-    applyMove(board, move);
-    sut.storeBoard(board);
-    ASSERT_EQ(sut.evaluate(), Result::ongoing);
+    template<size_t N>
+    void verifyChainOfMoves(Board& board,
+                            const char*(&&moves)[N],
+                            NOTATION::COLOR::color c,
+                            Result finalResult)
+    {
+        for (auto i = 0u; i < N - 1; ++i)
+        {
+            applyMoveAndStore(board, moves[i], c++);
+            ASSERT_EQ(sut.evaluate(), Result::ongoing);
+        }
+        applyMoveAndStore(board, moves[N-1], c++);
+        ASSERT_EQ(sut.evaluate(), finalResult);
+    }
 
-    move = createMove("e7-e5", BLACK);
-    applyMove(board, move);
-    sut.storeBoard(board);
-    ASSERT_EQ(sut.evaluate(), Result::ongoing);
+    ResultEvaluator sut;
+};
 
-    move = createMove("f1-c4", WHITE);
-    applyMove(board, move);
-    sut.storeBoard(board);
-    ASSERT_EQ(sut.evaluate(), Result::ongoing);
-
-    move = createMove("b8-c6", BLACK);
-    applyMove(board, move);
-    sut.storeBoard(board);
-    ASSERT_EQ(sut.evaluate(), Result::ongoing);
-
-    move = createMove("d1-h5", WHITE);
-    applyMove(board, move);
-    sut.storeBoard(board);
-    ASSERT_EQ(sut.evaluate(), Result::ongoing);
-
-    move = createMove("g8-f6", BLACK);
-    applyMove(board, move);
-    sut.storeBoard(board);
-    ASSERT_EQ(sut.evaluate(), Result::ongoing);
-
+TEST_F (ResultEvaluatorShould, findMate)
+{
+	Board board = utils::createBoard(utils::InitialBoardString);
+    verifyChainOfMoves(board,
+                       {"e2-e4", "e7-e5", "f1-c4", "b8-c6", "d1-h5", "g8-f6", "h5-f7"},
+                       WHITE,
+                       Result::whiteWon);
     /*
         "♜ ♝♛♚♝♞♜"
         "♟♟♟♟ ♟♟♟"
@@ -61,17 +63,11 @@ TEST (ResultEvaluatorShould, findMate)
         "♙♙♙♙ ♙♙♙"
         "♖♘♗ ♔ ♘♖";
     */
-    move = createMove("h5-f7", WHITE);
-    applyMove(board, move);
-    sut.storeBoard(board);
-    ASSERT_EQ(sut.evaluate(), Result::whiteWon);
 }
 
-TEST (ResultEvaluatorShould, findMateOnWhite)
+TEST_F (ResultEvaluatorShould, findMateOnWhite)
 {
-	ResultEvaluator sut;
-
-    Board board = utils::createBoard(
+	Board board = utils::createBoard(
 			"       ♜"
 			"        "
 			"        "
@@ -85,10 +81,8 @@ TEST (ResultEvaluatorShould, findMateOnWhite)
     ASSERT_EQ(sut.evaluate(), Result::blackWon);
 }
 
-
-TEST (ResultEvaluatorShould, findDrawByNoMove)
+TEST_F (ResultEvaluatorShould, findDrawByNoMove)
 {
-	ResultEvaluator sut;
 
     Board board = utils::createBoard(
 			" ♚      "
@@ -102,4 +96,22 @@ TEST (ResultEvaluatorShould, findDrawByNoMove)
 
     sut.storeBoard(board);
     ASSERT_EQ(sut.evaluate(), Result::draw);
+}
+
+TEST_F (ResultEvaluatorShould, findDrawByRepeatitions)
+{
+    Board board = utils::createBoard(
+                        "♜       "
+            "♚       "
+            "        "
+            "        "
+            "        "
+            "        "
+            "♔       "
+            "♖       ", BLACK);
+
+    verifyChainOfMoves(board,
+                       {"a1-h1", "a8-h8", "h1-a1", "a8-h8", "a1-h1", "a8-h8", "h1-a1", "a8-h8"},
+                       WHITE,
+                       Result::draw);
 }

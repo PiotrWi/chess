@@ -52,3 +52,21 @@ bool isColumnInBoard(unsigned char col)
 
 
 }
+
+NOTATION::COLOR::color operator++(NOTATION::COLOR::color& c)
+{
+    c = NotationConversions::switchColor(c);
+    return c;
+}
+
+NOTATION::COLOR::color operator++(NOTATION::COLOR::color& c, int)
+{
+    auto tmp = c;
+    c = ++c;
+    return tmp;
+}
+
+NOTATION::COLOR::color operator+(NOTATION::COLOR::color& c, unsigned char)
+{
+    return NotationConversions::switchColor(c);
+}

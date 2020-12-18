@@ -1,7 +1,6 @@
 #include "Board.hpp"
 
-#include <stdint.h>
-#include <initializer_list>
+#include <cstdint>
 #include <ostream>
 #include <NotationConversions.hpp>
 #include <CheckChecker.hpp>
@@ -114,7 +113,7 @@ void applyMove(Board& board, const Move& move)
 		    (move.promoteTo & NOTATION::PIECES::PIECES_MASK);
 	}
 
-	board.playerOnMove = NotationConversions::switchColor(board.playerOnMove);
+	++board.playerOnMove;
 }
 
 void initDefault(Board& board)

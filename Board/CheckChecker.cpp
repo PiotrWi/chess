@@ -1,7 +1,6 @@
 #include "CheckChecker.hpp"
 
 #include <algorithm>
-#include <initializer_list>
 #include <utility>
 
 #include <Board.hpp>
@@ -25,10 +24,10 @@ unsigned char getColoredPiece(const Board& board,
 	return board[NotationConversions::getFieldNum(row, col)] & NOTATION::COLOR_AND_PIECE_MASK;
 }
 
-bool isAttackedByOpositePawn(const Board& board,
-	NOTATION::COLOR::color pawnColor,
-	unsigned char row,
-	unsigned char col)
+bool isAttackedByOppositePawn(const Board& board,
+                              NOTATION::COLOR::color pawnColor,
+                              unsigned char row,
+                              unsigned char col)
 {
 	signed char pawnRow = 0;
 	auto pawnMask = NOTATION::PIECES::PAWN;
@@ -51,12 +50,12 @@ bool isAttackedByOpositePawn(const Board& board,
 			or (NotationConversions::isColumnInBoard(rightColumn) and getColoredPiece(board, pawnRow, rightColumn) == pawnMask));
 }
 
-bool isAttackedOnDiagonalByOpositeBishopOrQueen(const Board& board,
-	NOTATION::COLOR::color opositeColor,
+bool isAttackedOnDiagonalByOppositeBishopOrQueen(const Board& board,
+	NOTATION::COLOR::color oppositeColor,
 	unsigned char row,
 	unsigned char col)
 {
-	auto colorBin = static_cast<unsigned char>(opositeColor);
+	auto colorBin = static_cast<unsigned char>(oppositeColor);
 
 	unsigned char bishopPattern = colorBin | NOTATION::PIECES::BISHOP;
 	unsigned char queenPattern = colorBin | NOTATION::PIECES::QUEEN;
@@ -193,18 +192,18 @@ namespace CheckChecker
 {
 
 bool isAttackedOn(const Board& board,
-		const NOTATION::COLOR::color playerColor,
+		NOTATION::COLOR::color playerColor,
 		unsigned char fieldPosition)
 {
-	auto opositeColor = NotationConversions::switchColor(playerColor);
+	auto opositeColor = ++playerColor;
 	auto pRow = NotationConversions::getRow(fieldPosition);
 	auto pCollumn = NotationConversions::getColumnNum(fieldPosition);
 
-    return isAttackedByOpositePawn(board, opositeColor, pRow, pCollumn)
-    	|| isAttackedOnDiagonalByOpositeBishopOrQueen(board, opositeColor, pRow, pCollumn)
-		|| isAttackedByRookOrQueen(board, opositeColor, pRow, pCollumn)
-		|| isAttackedByKing(board, opositeColor, pRow, pCollumn)
-		|| isAttackedByKnight(board, opositeColor, pRow, pCollumn);
+    return isAttackedByOppositePawn(board, opositeColor, pRow, pCollumn)
+           || isAttackedOnDiagonalByOppositeBishopOrQueen(board, opositeColor, pRow, pCollumn)
+           || isAttackedByRookOrQueen(board, opositeColor, pRow, pCollumn)
+           || isAttackedByKing(board, opositeColor, pRow, pCollumn)
+           || isAttackedByKnight(board, opositeColor, pRow, pCollumn);
 }
 
 bool isCheckOn(const Board& board, const NOTATION::COLOR::color c)

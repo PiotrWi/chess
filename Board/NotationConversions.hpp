@@ -20,3 +20,7 @@ bool isRowInBoard(unsigned char row);
 bool isColumnInBoard(unsigned char col);
 
 }
+
+NOTATION::COLOR::color operator+(NOTATION::COLOR::color& c, unsigned char);
+NOTATION::COLOR::color operator++(NOTATION::COLOR::color& c);
+NOTATION::COLOR::color operator++(NOTATION::COLOR::color& c, int);

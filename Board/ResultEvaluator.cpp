@@ -115,8 +115,8 @@ bool are3Repeatitions(Node& node)
 
 	auto boardTemplate = node.boardInformations_.back().board;
 
-	for (auto it = node.boardInformations_.begin();
-			it < node.boardInformations_.end() - 1;
+	for (auto it = node.boardInformations_.rbegin() + 1;
+			it < node.boardInformations_.rend();
 			++it)
 	{
 		if (compare(boardTemplate, it->board))
