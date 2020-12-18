@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 
 #include <Board.hpp>
+#include <MoveApplier.hpp>
 #include <NotationConversions.hpp>
 #include <ResultEvaluator.hpp>
 
@@ -24,7 +25,7 @@ public:
                            const NOTATION::COLOR::color c)
     {
         auto move = createMove(moveStr, c);
-        applyMove(board, move);
+        MoveApplier::applyMove(board, move);
         sut.storeBoard(board);
     }
 
@@ -39,7 +40,7 @@ public:
             applyMoveAndStore(board, moves[i], c++);
             ASSERT_EQ(sut.evaluate(), Result::ongoing);
         }
-        applyMoveAndStore(board, moves[N-1], c++);
+        applyMoveAndStore(board, moves[N-1], c);
         ASSERT_EQ(sut.evaluate(), finalResult);
     }
 

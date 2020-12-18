@@ -33,8 +33,5 @@ struct Board
 bool operator==(const Board& lfs, const Board& rhs);
 
 void initDefault(Board& board);
-bool validateMove(const Board, const Move);
-void applyMove(Board&, const Move&);
-bool isCheckOn(const Board&, const NOTATION::COLOR::color);
-bool isMate();
-bool isDraw();
+
+

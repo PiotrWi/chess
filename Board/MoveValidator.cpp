@@ -4,7 +4,9 @@
 #include <utility>
 
 #include <Board.hpp>
+#include <MoveApplier.hpp>
 #include <NotationConversions.hpp>
+#include <CheckChecker.hpp>
 
 namespace
 {
@@ -47,8 +49,8 @@ bool valiateConcretePiece()
 bool noCheckAfterMove()
 {
 	Board boardCopy = *ctx.board;
-	applyMove(boardCopy, *ctx.move);
-    return not isCheckOn(boardCopy, ctx.board->playerOnMove);
+	MoveApplier::applyMove(boardCopy, *ctx.move);
+    return not CheckChecker::isCheckOn(boardCopy, ctx.board->playerOnMove);
 }
 
 bool validatePawn()
@@ -216,8 +218,8 @@ bool validateKing()
 			auto moveCopy = *ctx.move;
 			moveCopy.destination =
 					moveCopy.source + sign(ctx.targetColumn - ctx.sourceColumn);
-			applyMove(boardCopy, moveCopy);
-			return isCheckOn(boardCopy, ctx.board->playerOnMove);
+			MoveApplier::applyMove(boardCopy, moveCopy);
+			return CheckChecker::isCheckOn(boardCopy, ctx.board->playerOnMove);
 		};
 
 		return (hasKingMoved == false)

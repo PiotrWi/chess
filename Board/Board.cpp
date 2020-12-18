@@ -3,8 +3,6 @@
 #include <cstdint>
 #include <ostream>
 #include <NotationConversions.hpp>
-#include <CheckChecker.hpp>
-#include <MoveValidator.hpp>
 
 Move::Move()
 	: source(0)
@@ -60,60 +58,6 @@ const unsigned char& Board::operator[](const char* field) const
 const unsigned char& Board::operator[](const unsigned char field) const
 {
 	return const_cast<Board&>(*this)[field];
-}
-
-bool validateMove(const Board& board, const Move& move)
-{
-	return MoveValidator::validateMove(board, move);
-}
-
-bool isCheckOn(const Board& board, const NOTATION::COLOR::color c)
-{
-	return CheckChecker::isCheckOn(board, c);
-}
-
-void applyMove(Board& board, const Move& move)
-{
-	// TODO: Make a decision about en passant. Shall there be a separate flag? Or it shall be decided durring move application
-	board[move.destination] = board[move.source] | NOTATION::MOVED::MOVED_MASK;
-	board.lastMove = move;
-	board[move.source] = 0;
-
-	if (NotationConversions::getPieceType(board[move.source]) == NOTATION::PIECES::KING)
-	{
-		bool isCastle = NotationConversions::getColumnNum(move.source) == NOTATION::COORDINATES::COLUMN::E
-				and (NotationConversions::getColumnNum(move.source) == NOTATION::COORDINATES::COLUMN::C
-					or NotationConversions::getColumnNum(move.source) == NOTATION::COORDINATES::COLUMN::G);
-
-		if (isCastle)
-		{
-			auto row = NotationConversions::getRow(move.source);
-			bool isLongCastle = NotationConversions::getColumnNum(move.source) == NOTATION::COORDINATES::COLUMN::C;
-			if (isLongCastle)
-			{
-				auto rockSource = NotationConversions::getFieldNum(row, NOTATION::COORDINATES::COLUMN::A);
-				auto rockDestination = NotationConversions::getFieldNum(row, NOTATION::COORDINATES::COLUMN::D);
-				board[rockDestination] = board[rockSource];
-				board[rockSource] = 0u;
-			}
-			else
-			{
-	            auto rockSource = NotationConversions::getFieldNum(row, NOTATION::COORDINATES::COLUMN::A);
-	            auto rockDestination = NotationConversions::getFieldNum(row, NOTATION::COORDINATES::COLUMN::D);
-	            board[rockDestination] = board[rockSource];
-	            board[rockSource] = 0u;
-
-			}
-		}
-	}
-
-	if (move.isPromoted)
-	{
-		board[move.destination] = static_cast<unsigned char>(board.playerOnMove) |
-		    (move.promoteTo & NOTATION::PIECES::PIECES_MASK);
-	}
-
-	++board.playerOnMove;
 }
 
 void initDefault(Board& board)

@@ -3,6 +3,7 @@
 
 #include <vector>
 
+#include <MoveApplier.hpp>
 #include <MoveGenerator.hpp>
 #include <utils/BoardGenerationUtils.hpp>
 #include <utils/LongAlgebraicNotation.hpp>
@@ -113,10 +114,10 @@ TEST_F(MoveGeneratorTests, shouldCorectlyAnalyzePosWithMoves)
 		"♖      ♖");
 
 	auto moveKingToInitialPosition = createMove("e2-e1", WHITE);
-	applyMove(board, moveKingToInitialPosition);
+	MoveApplier::applyMove(board, moveKingToInitialPosition);
 
 	auto moveWitePawnToPieces = createMove("c7-c5", BLACK);
-	applyMove(board, moveWitePawnToPieces);
+    MoveApplier::applyMove(board, moveWitePawnToPieces);
 
 //	"    ♚   "
 //	"        "
@@ -224,10 +225,10 @@ TEST_F(MoveGeneratorTests, shouldPreventIllegalCasles_2)
 		{shortCastle, "e1-e2", "e1-f2", "e1-f1", "e1-d2", "e1-d1"}, WHITE);
 
 	auto moveKingToInitialPosition = createMove("b1-a1", WHITE);
-	applyMove(board, moveKingToInitialPosition);
+    MoveApplier::applyMove(board, moveKingToInitialPosition);
 
 	auto moveWitePawnToPieces = createMove("e7-e8", BLACK);
-	applyMove(board, moveWitePawnToPieces);
+    MoveApplier::applyMove(board, moveWitePawnToPieces);
 
 //	"    ♚   "
 //	"        "
@@ -267,10 +268,10 @@ TEST_F(MoveGeneratorTests, shouldPreventIllegalCasles_3)
 		{longCastle, "e1-e2", "e1-f2", "e1-f1", "e1-d2", "e1-d1"}, WHITE);
 
 	auto moveKingToInitialPosition = createMove("g1-h1", WHITE);
-	applyMove(board, moveKingToInitialPosition);
+    MoveApplier::applyMove(board, moveKingToInitialPosition);
 
 	auto moveWitePawnToPieces = createMove("e7-e8", BLACK);
-	applyMove(board, moveWitePawnToPieces);
+    MoveApplier::applyMove(board, moveWitePawnToPieces);
 
 //	"    ♚   "
 //	"        "

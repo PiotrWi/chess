@@ -172,10 +172,9 @@ bool isAttackedByKnight(const Board& board,
 	{
 		auto co = modifyCoordinates(std::make_pair(row, col), adjustmentField);
 		if (!NotationConversions::isRowInBoard(co.first) or !NotationConversions::isColumnInBoard(co.second))
-		{
-					continue;
-		}
-		const auto& field = getColoredPiece(board, co.first, co.second);
+		    continue;
+
+	    const auto& field = getColoredPiece(board, co.first, co.second);
 
 		if (field == knightPattern)
 		{

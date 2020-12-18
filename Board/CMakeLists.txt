@@ -7,5 +7,5 @@ add_library(board
 	MoveGenerator.cpp
 	MoveValidator.cpp
 	NotationConversions.cpp
-	ResultEvaluator.cpp)
+	ResultEvaluator.cpp MoveApplier.cpp)
 	

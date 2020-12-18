@@ -2,6 +2,7 @@
 
 #include <NotationConversions.hpp>
 #include <CheckChecker.hpp>
+#include <MoveApplier.hpp>
 
 namespace MoveGenerator
 {
@@ -18,8 +19,8 @@ thread_local struct MoveContext{
 bool isValid(const Move& move)
 {
 	Board boardCopy = *ctx.board;
-	applyMove(boardCopy, move);
-    return not isCheckOn(boardCopy, ctx.board->playerOnMove);
+	MoveApplier::applyMove(boardCopy, move);
+    return not CheckChecker::isCheckOn(boardCopy, ctx.board->playerOnMove);
 }
 
 void tryToAddMove(unsigned char source, unsigned char destination)
