@@ -31,11 +31,10 @@ void applyCasltingRules(Board& board, const Move& move)
             }
             else
             {
-                auto rockSource = NotationConversions::getFieldNum(row, COLUMN::A);
-                auto rockDestination = NotationConversions::getFieldNum(row, COLUMN::D);
+                auto rockSource = NotationConversions::getFieldNum(row, COLUMN::H);
+                auto rockDestination = NotationConversions::getFieldNum(row, COLUMN::F);
                 board[rockDestination] = board[rockSource];
                 board[rockSource] = 0u;
-
             }
         }
     }
@@ -46,7 +45,8 @@ void applyPromotionRules(Board& board, const Move& move)
     if (move.isPromoted)
     {
         board[move.destination] = static_cast<unsigned char>(board.playerOnMove) |
-                                  (move.promoteTo & NOTATION::PIECES::PIECES_MASK);
+                                  (move.promoteTo & NOTATION::PIECES::PIECES_MASK) |
+                                  NOTATION::MOVED::MOVED_MASK;
     }
 }
 
@@ -63,12 +63,12 @@ void applyEnPassantRules(Board& board, const Move& move)
         auto moveDiff = move.source-move.destination;
         if (abs(moveDiff) == NOTATION::COORDINATES::ROW_DIFF + 1)
         {
-            board[move.destination+1] = 0;
+            board[move.source + (move.source > move.destination ? -1 : 1)] = 0;
             return;
         }
         if (abs(moveDiff) == NOTATION::COORDINATES::ROW_DIFF - 1)
         {
-            board[move.destination-1] = 0;
+            board[move.source + (move.source > move.destination ? 1 : -1)] = 0;
             return;
         }
     }
@@ -81,12 +81,12 @@ namespace MoveApplier
 
 void applyMove(Board& board, const Move& move)
 {
+    applyCasltingRules(board, move);
+    applyEnPassantRules(board, move);
+
     board[move.destination] = board[move.source] | NOTATION::MOVED::MOVED_MASK;
     board.lastMove = move;
     board[move.source] = 0;
-
-    applyCasltingRules(board, move);
-    applyEnPassantRules(board, move);
     applyPromotionRules(board, move);
 
     ++board.playerOnMove;
