@@ -30,8 +30,6 @@ struct Board
 	const unsigned char& operator[](unsigned char) const;
 };
 
-bool operator==(const Board& lfs, const Board& rhs);
+bool operator==(const Board& lhs, const Board& rhs);
 
 void initDefault(Board& board);
-
-

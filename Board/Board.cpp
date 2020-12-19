@@ -1,5 +1,6 @@
 #include "Board.hpp"
 
+#include <algorithm>
 #include <cstdint>
 #include <ostream>
 #include <NotationConversions.hpp>
@@ -58,6 +59,12 @@ const unsigned char& Board::operator[](const char* field) const
 const unsigned char& Board::operator[](const unsigned char field) const
 {
 	return const_cast<Board&>(*this)[field];
+}
+
+bool operator==(const Board& lhs, const Board& rhs)
+{
+    return lhs.lastMove == rhs.lastMove and lhs.playerOnMove == rhs.playerOnMove
+        and std::equal(std::begin(lhs.fields), std::end(lhs.fields), std::begin(rhs.fields));
 }
 
 void initDefault(Board& board)

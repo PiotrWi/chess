@@ -1,6 +1,7 @@
 #include "MoveApplier.hpp"
 
 #include <NotationConversions.hpp>
+#include <ResultEvaluator.hpp>
 
 namespace
 {
@@ -9,25 +10,29 @@ void applyCasltingRules(Board& board, const Move& move)
 {
     if (NotationConversions::getPieceType(board[move.source]) == NOTATION::PIECES::KING)
     {
-        bool isCastle = NotationConversions::getColumnNum(move.source) == NOTATION::COORDINATES::COLUMN::E
-                        and (NotationConversions::getColumnNum(move.source) == NOTATION::COORDINATES::COLUMN::C
-                             or NotationConversions::getColumnNum(move.source) == NOTATION::COORDINATES::COLUMN::G);
+        using namespace NOTATION::COORDINATES;
+        const auto sourceColumn = NotationConversions::getColumnNum(move.source);
+        const auto targetColumn = NotationConversions::getColumnNum(move.destination);
+
+        bool isCastle = sourceColumn == COLUMN::E
+                        and (targetColumn == COLUMN::C
+                             or targetColumn == COLUMN::G);
 
         if (isCastle)
         {
             auto row = NotationConversions::getRow(move.source);
-            bool isLongCastle = NotationConversions::getColumnNum(move.source) == NOTATION::COORDINATES::COLUMN::C;
+            bool isLongCastle = targetColumn == COLUMN::C;
             if (isLongCastle)
             {
-                auto rockSource = NotationConversions::getFieldNum(row, NOTATION::COORDINATES::COLUMN::A);
-                auto rockDestination = NotationConversions::getFieldNum(row, NOTATION::COORDINATES::COLUMN::D);
+                auto rockSource = NotationConversions::getFieldNum(row, COLUMN::A);
+                auto rockDestination = NotationConversions::getFieldNum(row, COLUMN::D);
                 board[rockDestination] = board[rockSource];
                 board[rockSource] = 0u;
             }
             else
             {
-                auto rockSource = NotationConversions::getFieldNum(row, NOTATION::COORDINATES::COLUMN::A);
-                auto rockDestination = NotationConversions::getFieldNum(row, NOTATION::COORDINATES::COLUMN::D);
+                auto rockSource = NotationConversions::getFieldNum(row, COLUMN::A);
+                auto rockDestination = NotationConversions::getFieldNum(row, COLUMN::D);
                 board[rockDestination] = board[rockSource];
                 board[rockSource] = 0u;
 

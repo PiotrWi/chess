@@ -89,4 +89,14 @@ Board createBoard(const char* position,
 	return board;
 }
 
+void setMovedBit(Board& board, const char* posStr)
+{
+	board[posStr] |= NOTATION::MOVED::MOVED_MASK;
+}
+
+void setLastMove(Board& board, const Move& lastMove)
+{
+	board.lastMove = lastMove;
+}
+
 }  // namespace utils
