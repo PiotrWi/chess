@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Notation.hpp>
+#include <publicIf/Notation.hpp>
 
 class Board;
 

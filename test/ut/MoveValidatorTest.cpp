@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 
-#include <Board.hpp>
-#include <MoveValidator.hpp>
+#include <publicIf/Board.hpp>
+#include <detail/MoveValidator.hpp>
 
 #include <utils/BoardGenerationUtils.hpp>
 #include <utils/LongAlgebraicNotation.hpp>

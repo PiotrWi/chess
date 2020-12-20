@@ -3,7 +3,7 @@
 
 #include <iostream>
 
-#include <MoveApplier.hpp>
+#include <detail/MoveApplier.hpp>
 //#include <BoardIO.hpp>
 #include <utils/BoardGenerationUtils.hpp>
 #include <utils/LongAlgebraicNotation.hpp>

@@ -2,15 +2,8 @@
 
 #include <memory>
 
-#include <Board.hpp>
-
-enum class Result
-{
-	ongoing,
-	whiteWon,
-	blackWon,
-	draw
-};
+#include <publicIf/Board.hpp>
+#include <publicIf/Result.hpp>
 
 struct Node;
 

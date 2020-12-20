@@ -1,7 +1,7 @@
 #include "MoveApplier.hpp"
 
-#include <NotationConversions.hpp>
-#include <ResultEvaluator.hpp>
+#include <publicIf/NotationConversions.hpp>
+#include <detail/ResultEvaluator.hpp>
 
 namespace
 {

@@ -3,8 +3,8 @@
 
 #include <vector>
 
-#include <MoveApplier.hpp>
-#include <MoveGenerator.hpp>
+#include <detail/MoveApplier.hpp>
+#include <detail/MoveGenerator.hpp>
 #include <utils/BoardGenerationUtils.hpp>
 #include <utils/LongAlgebraicNotation.hpp>
 

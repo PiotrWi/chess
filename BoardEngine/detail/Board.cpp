@@ -1,9 +1,9 @@
-#include "Board.hpp"
+#include "publicIf/Board.hpp"
 
 #include <algorithm>
 #include <cstdint>
 #include <ostream>
-#include <NotationConversions.hpp>
+#include <publicIf/NotationConversions.hpp>
 
 Move::Move()
 	: source(0)

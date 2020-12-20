@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include <Board.hpp>
+#include <publicIf/Board.hpp>
 
 template <typename TKey, typename TValue>
 struct JsonElem

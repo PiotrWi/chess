@@ -1,8 +1,8 @@
 #include "MoveGenerator.hpp"
 
-#include <NotationConversions.hpp>
-#include <CheckChecker.hpp>
-#include <MoveApplier.hpp>
+#include <publicIf/NotationConversions.hpp>
+#include <detail/CheckChecker.hpp>
+#include <detail/MoveApplier.hpp>
 
 namespace MoveGenerator
 {

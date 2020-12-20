@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#include <Board.hpp>
+#include <publicIf/Board.hpp>
 
 // Long algebraic notation
 Move createMove (const std::string& moveStr,

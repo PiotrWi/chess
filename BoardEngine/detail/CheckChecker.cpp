@@ -3,8 +3,8 @@
 #include <algorithm>
 #include <utility>
 
-#include <Board.hpp>
-#include <NotationConversions.hpp>
+#include <publicIf/Board.hpp>
+#include <publicIf/NotationConversions.hpp>
 
 namespace
 {

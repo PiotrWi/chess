@@ -2,7 +2,7 @@
 
 #include <vector>
 
-#include <Board.hpp>
+#include <publicIf/Board.hpp>
 
 namespace MoveGenerator
 {

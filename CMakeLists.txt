@@ -7,13 +7,16 @@ SET(CMAKE_CXX_FLAGS  "-O3 -Wall -Wextra -Werror -Wpedantic -pedantic-errors -std
 set(GTEST_INSTALATION_DIR ${CMAKE_CURRENT_SOURCE_DIR}/externals/gtest/googltest )
 
 include_directories(
-	${PROJECT_SOURCE_DIR}/Board)
+		${PROJECT_SOURCE_DIR}/BoardEngine
+		${PROJECT_SOURCE_DIR}/players)
 
-add_subdirectory(Board)
+add_subdirectory(BoardEngine)
+add_subdirectory(players)
 add_subdirectory(externals/gtest)
 add_subdirectory(test/ut)
 
 add_executable(chess main.cpp)
 
 target_link_libraries(chess
-	board)
+	board
+	Players)

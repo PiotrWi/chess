@@ -3,10 +3,10 @@
 
 #include <utility>
 
-#include <Board.hpp>
-#include <MoveApplier.hpp>
-#include <NotationConversions.hpp>
-#include <CheckChecker.hpp>
+#include <publicIf/Board.hpp>
+#include <detail/MoveApplier.hpp>
+#include <publicIf/NotationConversions.hpp>
+#include <detail/CheckChecker.hpp>
 
 namespace
 {

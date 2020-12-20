@@ -5,9 +5,9 @@
 #include <utility>
 #include <vector>
 
-#include <CheckChecker.hpp>
-#include <MoveGenerator.hpp>
-#include <Notation.hpp>
+#include <detail/CheckChecker.hpp>
+#include <detail/MoveGenerator.hpp>
+#include <publicIf/Notation.hpp>
 
 namespace PawnHash
 {

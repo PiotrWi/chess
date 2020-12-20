@@ -1,7 +1,7 @@
 #pragma once
 
 #include <iosfwd>
-#include <Notation.hpp>
+#include <publicIf/Notation.hpp>
 
 struct Move
 {

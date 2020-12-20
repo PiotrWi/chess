@@ -1,4 +1,4 @@
-#include <NotationConversions.hpp>
+#include <publicIf/NotationConversions.hpp>
 
 namespace NotationConversions
 {

@@ -1,9 +1,9 @@
 #include <gtest/gtest.h>
 
-#include <Board.hpp>
-#include <MoveApplier.hpp>
-#include <NotationConversions.hpp>
-#include <ResultEvaluator.hpp>
+#include <publicIf/Board.hpp>
+#include <detail/MoveApplier.hpp>
+#include <publicIf/NotationConversions.hpp>
+#include <detail/ResultEvaluator.hpp>
 
 #include <utils/BoardGenerationUtils.hpp>
 #include <utils/LongAlgebraicNotation.hpp>

@@ -1,4 +1,4 @@
-#include "BoardIO.hpp"
+#include "publicIf/BoardIO.hpp"
 
 #include <map>
 #include <ostream>
