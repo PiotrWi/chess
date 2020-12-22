@@ -23,19 +23,6 @@ Move::Move(const char* sourceStr, const char* destinationStr, bool isPromoted, u
 	, isPromoted(isPromoted)
 	, promoteTo(promoteTo) {}
 
-std::ostream& operator<<(std::ostream& os, const Move& m)
-{
-	char out[6];
-	out[0] = 'a' + NotationConversions::getColumnNum(m.source);
-	out[1] = '1' + NotationConversions::getRow(m.source);
-	out[2] = '-';
-	out[3] = 'a' + NotationConversions::getColumnNum(m.destination);
-	out[4] = '1' + NotationConversions::getRow(m.destination);
-	out[5] = '\0';
-	os << out;
-	return os;
-}
-
 bool operator==(const Move& lfs, const Move& rhs)
 {
 	return *reinterpret_cast<const uint32_t*>(&lfs) == *reinterpret_cast<const uint32_t*>(&rhs);
@@ -94,7 +81,7 @@ void initDefault(Board& board)
         board["g8"] = NOTATION::COLOR::BLACK | NOTATION::PIECES::KNIGHT;
         board["h8"] = NOTATION::COLOR::BLACK | NOTATION::PIECES::ROCK;
 
-        field[2] = 7;
+        field[1] = '7';
         for (auto&& c: {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'})
         {
                 field[0] = c;

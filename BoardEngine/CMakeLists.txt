@@ -7,5 +7,8 @@ add_library(board
 		detail/MoveGenerator.cpp
 		detail/MoveValidator.cpp
 		detail/NotationConversions.cpp
-		detail/ResultEvaluator.cpp detail/MoveApplier.cpp BoardEngine.hpp publicIf/Result.hpp BoardEngine.cpp)
+		detail/ResultEvaluator.cpp
+		detail/MoveApplier.cpp
+		BoardEngine.cpp
+		notations/LongAlgebraicNotation.cpp)
 	

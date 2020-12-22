@@ -12,7 +12,7 @@ add_executable(ut
 	MoveGeneratorTest.cpp
 	ResultEvaluatorTest.cpp
 	utils/BoardGenerationUtils.cpp
-	utils/LongAlgebraicNotation.cpp MoveApplierTest.cpp)
+	MoveApplierTest.cpp)
 
 add_dependencies(ut googletest)
 add_dependencies(ut board)

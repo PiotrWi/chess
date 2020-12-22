@@ -15,14 +15,13 @@ struct Move
 	unsigned char promoteTo;
 };
 
-std::ostream& operator<<(std::ostream&, const Move&);
 bool operator==(const Move& lfs, const Move& rhs);
 
 struct Board
 {
 	NOTATION::COLOR::color playerOnMove = NOTATION::COLOR::color::white;
 	Move lastMove = {};
-	unsigned char fields[64] = {0u, 0u}; // "0 belongs to A0, 1 belongs to B0, 8 belongs to A1
+	unsigned char fields[64] = {0u, 0u}; // "0 belongs to A1, 1 belongs to B1, 8 belongs to A2
 
 	unsigned char& operator[](const char*);
 	unsigned char& operator[](unsigned char);

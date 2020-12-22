@@ -10,4 +10,5 @@ public:
     void rejectLast() override;
 private:
     Color playerColor_;
+    char lastMove_[20];
 };

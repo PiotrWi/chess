@@ -4,7 +4,7 @@
 #include <detail/MoveValidator.hpp>
 
 #include <utils/BoardGenerationUtils.hpp>
-#include <utils/LongAlgebraicNotation.hpp>
+#include <notations/LongAlgebraicNotation.hpp>
 
 class BoardBasedTest
     : public ::testing::Test

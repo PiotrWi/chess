@@ -15,7 +15,7 @@ add_subdirectory(players)
 add_subdirectory(externals/gtest)
 add_subdirectory(test/ut)
 
-add_executable(chess main.cpp)
+add_executable(chess main.cpp ConsoleApplication.cpp ConsoleApplication.hpp)
 
 target_link_libraries(chess
 	board

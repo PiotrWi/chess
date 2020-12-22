@@ -6,7 +6,7 @@
 #include <detail/ResultEvaluator.hpp>
 
 #include <utils/BoardGenerationUtils.hpp>
-#include <utils/LongAlgebraicNotation.hpp>
+#include <notations/LongAlgebraicNotation.hpp>
 
 namespace
 {

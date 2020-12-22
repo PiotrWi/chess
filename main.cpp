@@ -2,6 +2,8 @@
 
 #include <cstring>
 #include <iostream>
+#include <HumanPlayer/HumanPlayer.hpp>
+#include "ConsoleApplication.hpp"
 
 int main(int argc, char** argv)
 {
@@ -13,14 +15,26 @@ int main(int argc, char** argv)
         return 1;
     }
 
+    auto app = ConsoleApplication();
     for (auto i = 0; i < argc; ++i)
     {
         if (strcmp(argv[i], "--whitePlayer"))
         {
-
+            auto player = std::make_unique<HumanPlayer>();
+            player->init(Color::white);
+            app.setWhitePlayer(std::move(player));
+            continue;
+        }
+        if (strcmp(argv[i], "--blackPlayer"))
+        {
+            auto player = std::make_unique<HumanPlayer>();
+            player->init(Color::black);
+            app.setBlackPlayer(std::move(player));
             continue;
         }
     }
+
+    app.start();
 
 	return 0;
 }

@@ -6,7 +6,7 @@
 #include <detail/MoveApplier.hpp>
 #include <detail/MoveGenerator.hpp>
 #include <utils/BoardGenerationUtils.hpp>
-#include <utils/LongAlgebraicNotation.hpp>
+#include <notations/LongAlgebraicNotation.hpp>
 
 class MoveGeneratorTests
 	: public ::testing::Test
