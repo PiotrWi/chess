@@ -11,10 +11,14 @@ class ResultEvaluator
 {
 public:
 	ResultEvaluator();
+    ResultEvaluator(const ResultEvaluator&);
 	~ResultEvaluator();
+public:
 	void storeBoard(const Board&);
-	Result evaluate() const;
-	void removeSingle();
+    void removeSingle();
 
-	std::unique_ptr<Node> boardsToEvaluate;
+	Result evaluate() const;
+    Result evaluate(bool movesAvailable) const;
+
+    std::unique_ptr<Node> boardsToEvaluate;
 };

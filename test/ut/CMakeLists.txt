@@ -12,10 +12,12 @@ add_executable(ut
 	MoveGeneratorTest.cpp
 	ResultEvaluatorTest.cpp
 	utils/BoardGenerationUtils.cpp
-	MoveApplierTest.cpp)
+	MoveApplierTest.cpp
+	MinMaxTests.cpp)
+
 
 add_dependencies(ut googletest)
 add_dependencies(ut board)
 
-target_link_libraries(ut gtest gmock gtest_main pthread board)
+target_link_libraries(ut gtest gmock gtest_main pthread board Players)
 add_dependencies(ut-run ut)

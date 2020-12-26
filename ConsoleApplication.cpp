@@ -1,6 +1,7 @@
 #include "ConsoleApplication.hpp"
 
 #include <iostream>
+#include <publicIf/BoardIO.hpp>
 
 #include <notations/LongAlgebraicNotation.hpp>
 
@@ -60,6 +61,7 @@ void ConsoleApplication::start()
             std::pair<NOTATION::COLOR::color, IPlayer&>{NOTATION::COLOR::color::white, *whitePlayer_},
             std::pair<NOTATION::COLOR::color, IPlayer&>{NOTATION::COLOR::color::black, *blackPlayer_}})
         {
+            std::cout << boardEngine_.board << std::endl;
             auto& player = colorAndPlayer.second;
             auto& color = colorAndPlayer.first;
 
@@ -68,6 +70,7 @@ void ConsoleApplication::start()
             do
             {
                 lastMoveTmp = player.act(lastMoveStr);
+                std::cout << "player move is: " << lastMoveTmp << std::endl;
                 lastMove = createMove(lastMoveTmp, color);
             } while(!validateAndReject(lastMove, *whitePlayer_));
             lastMoveStr = lastMoveTmp;

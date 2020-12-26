@@ -290,4 +290,9 @@ std::vector<Move> MoveGenerator::generate(const Board& board,
 	return allMoves;
 }
 
+std::vector<Move> MoveGenerator::generate(const Board& board) const
+{
+    return generate(board, board.playerOnMove);
+}
+
 }  // namespace MoveGenerator

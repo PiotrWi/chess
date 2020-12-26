@@ -4,5 +4,5 @@
 
 namespace minMax
 {
-Move evaluate(BoardEngine be, unsigned char depth);
+Move evaluate(BoardEngine, unsigned char depth);
 }

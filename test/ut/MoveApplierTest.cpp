@@ -4,7 +4,7 @@
 #include <iostream>
 
 #include <detail/MoveApplier.hpp>
-//#include <BoardIO.hpp>
+#include <publicIf/BoardIO.hpp>
 #include <utils/BoardGenerationUtils.hpp>
 #include <notations/LongAlgebraicNotation.hpp>
 
@@ -17,6 +17,7 @@ namespace
     {
     public:
         MOCK_METHOD(void, storeBoard, (const Board&));
+        MOCK_METHOD(void, removeSingle, ());
     };
 }
 
@@ -31,6 +32,7 @@ public:
 TEST_F(MoveApplierShould, storeMoveToResultEvaluator)
 {
     Board board = utils::createBoard(utils::InitialBoardString);
+    Board beforeMove = board;
 
     Board expectedBoard = utils::createBoard(
             "♜♞♝♛♚♝♞♜"
@@ -45,8 +47,12 @@ TEST_F(MoveApplierShould, storeMoveToResultEvaluator)
     utils::setLastMove(expectedBoard, createMove("e2-e4", WHITE));
 
     EXPECT_CALL(resultEvaluatorMock, storeBoard(_));
-    MoveApplier::applyMove(board, createMove("e2-e4", WHITE), resultEvaluatorMock);
+    auto memorial = MoveApplier::applyTmpMove(board, createMove("e2-e4", WHITE), resultEvaluatorMock);
     ASSERT_EQ(expectedBoard, board);
+
+    EXPECT_CALL(resultEvaluatorMock, removeSingle());
+    MoveApplier::undoMove(board, memorial, resultEvaluatorMock);
+    ASSERT_EQ(board, beforeMove);
 }
 
 TEST_F(MoveApplierShould, doCastlesForWhite)
@@ -273,3 +279,4 @@ TEST_F(MoveApplierShould, allowEnPassantForBlack)
 
     ASSERT_EQ(expectedBoard, board);
 }
+

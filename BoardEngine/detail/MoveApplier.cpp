@@ -6,7 +6,7 @@
 namespace
 {
 
-void applyCasltingRules(Board& board, const Move& move)
+bool applyCasltingRules(Board& board, const Move& move)
 {
     if (NotationConversions::getPieceType(board[move.source]) == NOTATION::PIECES::KING)
     {
@@ -36,8 +36,10 @@ void applyCasltingRules(Board& board, const Move& move)
                 board[rockDestination] = board[rockSource];
                 board[rockSource] = 0u;
             }
+            return true;
         }
     }
+    return false;
 }
 
 void applyPromotionRules(Board& board, const Move& move)
@@ -55,7 +57,7 @@ unsigned char abs(signed char num)
     return (num > 0) ? num : -1 * num;
 }
 
-void applyEnPassantRules(Board& board, const Move& move)
+bool applyEnPassantRules(Board& board, const Move& move)
 {
     if (NotationConversions::getPieceType(board[move.source]) == NOTATION::PIECES::PAWN
         and board[move.destination] == 0)
@@ -64,20 +66,85 @@ void applyEnPassantRules(Board& board, const Move& move)
         if (abs(moveDiff) == NOTATION::COORDINATES::ROW_DIFF + 1)
         {
             board[move.source + (move.source > move.destination ? -1 : 1)] = 0;
-            return;
+            return true;
         }
         if (abs(moveDiff) == NOTATION::COORDINATES::ROW_DIFF - 1)
         {
             board[move.source + (move.source > move.destination ? 1 : -1)] = 0;
-            return;
+            return true;
         }
     }
+    return false;
 }
 
 }  // namespace
 
 namespace MoveApplier
 {
+
+MoveMemorial applyTmpMove(Board& board, const Move& move)
+{
+    MoveMemorial moveMemorial;
+    moveMemorial.lastMove = board.lastMove;
+
+    moveMemorial.sourceField = move.source;
+    moveMemorial.targetField = move.destination;
+    moveMemorial.sourceVal = board[move.source];
+    moveMemorial.targetVal = board[move.destination];
+
+    moveMemorial.wasCasling = applyCasltingRules(board, move);
+    moveMemorial.enPasant = applyEnPassantRules(board, move);
+
+    board[move.destination] = board[move.source] | NOTATION::MOVED::MOVED_MASK;
+    board.lastMove = move;
+    board[move.source] = 0;
+    applyPromotionRules(board, move);
+
+    ++board.playerOnMove;
+    return moveMemorial;
+}
+
+void undoMove(Board& board, const MoveMemorial& memorial)
+{
+    board.lastMove = memorial.lastMove;
+    ++board.playerOnMove;
+
+    board[memorial.sourceField] = memorial.sourceVal;
+    board[memorial.targetField] = memorial.targetVal;
+
+    if (memorial.wasCasling)
+    {
+        if (memorial.sourceField > memorial.targetField)
+        {
+            for (auto field = memorial.sourceField +1; field < memorial.targetField; ++field)
+            {
+                board[field] = 0;
+            }
+        }
+        else
+        {
+            for (auto field = memorial.targetField +1; field < memorial.sourceField; ++field)
+            {
+                board[field] = 0;
+            }
+        }
+    }
+    if(memorial.enPasant)
+    {
+        const auto sourceColumn = NotationConversions::getColumnNum(memorial.sourceField);
+        const auto targetColumn = NotationConversions::getColumnNum(memorial.targetField);
+
+        auto oppositePawn = board[memorial.sourceField] ^ NOTATION::COLOR::COLOR_MASK;
+        if (targetColumn < sourceColumn)
+        {
+            board[memorial.sourceField - 1] = oppositePawn;
+        }
+        else
+        {
+            board[memorial.sourceField - 1] = oppositePawn;
+        }
+    }
+}
 
 void applyMove(Board& board, const Move& move)
 {

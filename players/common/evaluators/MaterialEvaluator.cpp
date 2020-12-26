@@ -6,7 +6,7 @@ static signed char mapToValue(unsigned char field)
 {
     using namespace NOTATION::PIECES;
     using namespace NOTATION::COLOR;
-    switch (field & NOTATION::MOVED_AND_PIECE_MASK)
+    switch (field & NOTATION::COLOR_AND_PIECE_MASK)
     {
         case WHITE | PAWN: return 1;
         case WHITE | KNIGHT: return 3;

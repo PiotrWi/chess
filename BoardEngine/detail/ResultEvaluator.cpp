@@ -65,12 +65,19 @@ struct Node
 		PiecesCount::type piecesCount;
 		unsigned char repeatedTime = 0;
 	};
-
+public:
+    Node(const std::vector<BoardInformations>&, std::unique_ptr<Node>&&);
 	std::vector<BoardInformations> boardInformations_;
 	std::unique_ptr<Node> previous;
 
 	static std::unique_ptr<Node> makeTail();
 };
+
+Node::Node(const std::vector<BoardInformations>& bo, std::unique_ptr<Node>&& prev)
+    : boardInformations_(bo)
+    , previous(std::move(prev))
+{
+}
 
 Node::BoardInformations::BoardInformations() {}
 
@@ -137,6 +144,26 @@ ResultEvaluator::ResultEvaluator()
 
 ResultEvaluator::~ResultEvaluator() {}
 
+static std::unique_ptr<Node> deepClone(const Node& other)
+{
+    if (other.previous)
+    {
+        return std::make_unique<Node>(other.boardInformations_, deepClone(*other.previous));
+    }
+    return std::make_unique<Node>(other.boardInformations_, nullptr);
+}
+
+ResultEvaluator::ResultEvaluator(const ResultEvaluator & other)
+{
+    if (other.boardsToEvaluate)
+    {
+        boardsToEvaluate = deepClone(*other.boardsToEvaluate);
+    }
+    else
+    {
+        boardsToEvaluate = Node::makeTail();
+    }
+}
 
 void ResultEvaluator::storeBoard(const Board& board)
 {
@@ -155,35 +182,45 @@ void ResultEvaluator::storeBoard(const Board& board)
 		board, pawnHash, piecesCount, 0);
 }
 
+void ResultEvaluator::removeSingle()
+{
+    boardsToEvaluate->boardInformations_.pop_back();
+    if (boardsToEvaluate->boardInformations_.empty())
+    {
+        boardsToEvaluate = std::move(boardsToEvaluate->previous);
+    }
+}
+
+Result ResultEvaluator::evaluate(bool movesAvailable) const
+{
+    if (not movesAvailable)
+    {
+        const auto& board = boardsToEvaluate->boardInformations_.back().board;
+        if (CheckChecker::isCheckOn(board, board.playerOnMove))
+        {
+            return (board.playerOnMove == NOTATION::COLOR::color::white)
+                       ? Result::blackWon
+                       : Result::whiteWon;
+        }
+        return Result::draw;
+    }
+
+    if (boardsToEvaluate->boardInformations_.size() >= 100)
+    {
+        return Result::draw;
+    }
+
+    if (are3Repeatitions(*boardsToEvaluate))
+    {
+        return Result::draw;
+    }
+
+    return Result::ongoing;
+}
+
+
 Result ResultEvaluator::evaluate() const
 {
-	const auto& board = boardsToEvaluate->boardInformations_.back().board;
-	if (CheckChecker::isCheckOn(board, board.playerOnMove))
-	{
-		// TODO One move is enought. No need to check all.
-		if (MoveGenerator::MoveGenerator().generate(board, board.playerOnMove).empty())
-		{
-			return (board.playerOnMove == NOTATION::COLOR::color::white)
-				? Result::blackWon
-				: Result::whiteWon;
-		}
-	}
-
-	// TODO Same as upper. One is enought.
-	if (MoveGenerator::MoveGenerator().generate(board, board.playerOnMove).empty())
-	{
-		return Result::draw;
-	}
-
-	if (boardsToEvaluate->boardInformations_.size() >= 100)
-	{
-		return Result::draw;
-	}
-
-	if (are3Repeatitions(*boardsToEvaluate))
-	{
-		return Result::draw;
-	}
-
-	return Result::ongoing;
+    const auto& board = boardsToEvaluate->boardInformations_.back().board;
+    return evaluate(not MoveGenerator::MoveGenerator().generate(board, board.playerOnMove).empty());
 }
