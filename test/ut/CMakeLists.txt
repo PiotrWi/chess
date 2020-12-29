@@ -11,9 +11,9 @@ add_executable(ut
 	MoveValidatorTest.cpp
 	MoveGeneratorTest.cpp
 	ResultEvaluatorTest.cpp
-	utils/BoardGenerationUtils.cpp
+	../utils/BoardGenerationUtils.cpp
 	MoveApplierTest.cpp
-	MinMaxTests.cpp AlfaBetaTests.cpp MaterialEvaluatorTest.cpp)
+	MaterialEvaluatorTest.cpp)
 
 
 add_dependencies(ut googletest)

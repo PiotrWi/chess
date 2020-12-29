@@ -24,28 +24,3 @@ TEST(MinMax, PerformanceTest_4)
     BoardEngine be;
     minMax::evaluate(be, 4);
 }
-/*
-TEST(MinMax, PerformanceTest_6)
-{
-    BoardEngine be;
-    minMax::evaluate(be, 6);
-}
-
-TEST(MinMax, PerformanceTest_8)
-{
-    BoardEngine be;
-    minMax::evaluate(be, 8);
-}
-
-TEST(MinMax, PerformanceTest_10)
-{
-    BoardEngine be;
-    minMax::evaluate(be, 10);
-}
-
-TEST(MinMax, PerformanceTest_12)
-{
-    BoardEngine be;
-    minMax::evaluate(be, 12);
-}
-*/

@@ -1,8 +1,17 @@
 cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
 
+
+# section flags
+find_program(CCACHE_PROGRAM ccache)
+if(CCACHE_PROGRAM)
+	message (STATUS "CCache avaiable")
+	set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${CCACHE_PROGRAM}")
+endif()
+
 project(chess LANGUAGES CXX)
 
 SET(CMAKE_CXX_FLAGS  "-O3 -Wall -Wextra -Werror -Wpedantic -pedantic-errors -std=c++17")
+# end of section flags
 
 set(GTEST_INSTALATION_DIR ${CMAKE_CURRENT_SOURCE_DIR}/externals/gtest/googltest )
 
@@ -13,7 +22,7 @@ include_directories(
 add_subdirectory(BoardEngine)
 add_subdirectory(players)
 add_subdirectory(externals/gtest)
-add_subdirectory(test/ut)
+add_subdirectory(test)
 
 add_executable(chess main.cpp ConsoleApplication.cpp ConsoleApplication.hpp)
 
