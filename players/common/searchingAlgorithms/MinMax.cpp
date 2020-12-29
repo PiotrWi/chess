@@ -3,8 +3,6 @@
 
 #include <iostream>
 
-#include <publicIf/BoardIO.hpp>
-
 namespace
 {
 
@@ -15,7 +13,6 @@ signed char evaluateMax(BoardEngine& be, unsigned char depth, NOTATION::COLOR::c
 
 signed char evaluateMin(BoardEngine &be, unsigned char depth, NOTATION::COLOR::color color)
 {
-    ++nodes;
     auto validMoves = be.generateMoves();
     auto gameResult = be.getResult(not validMoves.empty());
     if(gameResult == Result::draw)
@@ -49,7 +46,6 @@ signed char evaluateMin(BoardEngine &be, unsigned char depth, NOTATION::COLOR::c
 
 signed char evaluateMax(BoardEngine& be, unsigned char depth, NOTATION::COLOR::color color)
 {
-    ++nodes;
     auto validMoves = be.generateMoves();
     auto gameResult = be.getResult(not validMoves.empty());
     if(gameResult == Result::draw)
@@ -88,7 +84,6 @@ namespace minMax
 
 Move evaluate(BoardEngine be, unsigned char depth)
 {
-    ++nodes;
     auto validMoves = be.generateMoves();
     auto greatestMove = 0u;
     auto greatestValue = std::numeric_limits<signed char>::min();

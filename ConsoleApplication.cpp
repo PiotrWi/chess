@@ -52,7 +52,7 @@ static const char* toString(Result result)
 
 void ConsoleApplication::start()
 {
-    const char* lastMoveStr = "";
+    const char* lastMoveStr = nullptr;
     Move lastMove;
 
     while (true)

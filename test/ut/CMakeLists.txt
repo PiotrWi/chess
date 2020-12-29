@@ -13,7 +13,7 @@ add_executable(ut
 	ResultEvaluatorTest.cpp
 	utils/BoardGenerationUtils.cpp
 	MoveApplierTest.cpp
-	MinMaxTests.cpp)
+	MinMaxTests.cpp AlfaBetaTests.cpp MaterialEvaluatorTest.cpp)
 
 
 add_dependencies(ut googletest)

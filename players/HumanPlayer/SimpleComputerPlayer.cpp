@@ -2,6 +2,7 @@
 #include <cstring>
 #include <notations/LongAlgebraicNotation.hpp>
 #include <common/searchingAlgorithms/MinMax.hpp>
+#include <common/searchingAlgorithms/AlfaBeta.hpp>
 
 void SimpleComputerPlayer::init(Color c)
 {
@@ -14,7 +15,7 @@ const char *SimpleComputerPlayer::act(const char *string)
     {
         be.applyMove(createMove(string, be.board.playerOnMove));
     }
-    auto move = minMax::evaluate(be, 4);
+    auto move = alfaBeta::evaluate(be, 6);
     be.applyMove(move);
     strcpy(lastMove_, createMoveStr(move).data());
     return lastMove_;

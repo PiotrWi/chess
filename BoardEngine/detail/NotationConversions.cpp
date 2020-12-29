@@ -5,7 +5,7 @@ namespace NotationConversions
 
 unsigned char getColumnNum(unsigned char field)
 {
-	return field % 8u;
+	return field & 0b111;// 8u;
 }
 
 unsigned char getRow(unsigned char field)
@@ -49,7 +49,6 @@ bool isColumnInBoard(unsigned char col)
 {
     return col < 8u;
 }
-
 
 }
 

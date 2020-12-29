@@ -35,6 +35,6 @@ signed char evaluate(const Board &board, NOTATION::COLOR::color c)
     }
     if (c == NOTATION::COLOR::color::black)
         return -1 * value;
-    return 0;
+    return value;
 }
 }
