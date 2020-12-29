@@ -20,7 +20,7 @@ type evaluate(const Board& board)
 	using namespace NOTATION::PIECES;
 
 	type hash = 0;
-	for (auto i = 0u; i < 64u; ++i)
+	for (auto i = 8u; i < 56u; ++i)
 	{
 		hash |= (((board[i] & PIECES_MASK) == PAWN) << 1);
 	}

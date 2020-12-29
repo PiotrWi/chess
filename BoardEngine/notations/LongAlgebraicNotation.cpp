@@ -1,5 +1,9 @@
 #include "LongAlgebraicNotation.hpp"
+
+#include <ostream>
+
 #include <publicIf/NotationConversions.hpp>
+
 namespace
 {
 
@@ -91,4 +95,9 @@ std::vector<char> createMoveStr(const Move& m)
     }
     out.back() = '\0';
     return out;
+}
+
+std::ostream& operator<<(std::ostream& os, const Move& m)
+{
+    return os << (const char*)(createMoveStr(m).data());
 }

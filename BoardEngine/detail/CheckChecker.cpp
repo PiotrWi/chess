@@ -185,7 +185,7 @@ bool isAttackedByKnight(const Board& board,
 	return false;
 }
 
-}
+}  // namespace
 
 namespace CheckChecker
 {
@@ -194,15 +194,15 @@ bool isAttackedOn(const Board& board,
 		NOTATION::COLOR::color playerColor,
 		unsigned char fieldPosition)
 {
-	auto opositeColor = ++playerColor;
+	auto oppositeColor = ++playerColor;
 	auto pRow = NotationConversions::getRow(fieldPosition);
-	auto pCollumn = NotationConversions::getColumnNum(fieldPosition);
+	auto pColumn = NotationConversions::getColumnNum(fieldPosition);
 
-    return isAttackedByOppositePawn(board, opositeColor, pRow, pCollumn)
-           || isAttackedOnDiagonalByOppositeBishopOrQueen(board, opositeColor, pRow, pCollumn)
-           || isAttackedByRookOrQueen(board, opositeColor, pRow, pCollumn)
-           || isAttackedByKing(board, opositeColor, pRow, pCollumn)
-           || isAttackedByKnight(board, opositeColor, pRow, pCollumn);
+    return isAttackedByOppositePawn(board, oppositeColor, pRow, pColumn)
+           || isAttackedOnDiagonalByOppositeBishopOrQueen(board, oppositeColor, pRow, pColumn)
+           || isAttackedByRookOrQueen(board, oppositeColor, pRow, pColumn)
+           || isAttackedByKing(board, oppositeColor, pRow, pColumn)
+           || isAttackedByKnight(board, oppositeColor, pRow, pColumn);
 }
 
 bool isCheckOn(const Board& board, const NOTATION::COLOR::color c)

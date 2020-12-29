@@ -237,6 +237,8 @@ void (*generateRockMoves)(unsigned char i) = generateLineMoves<4, rockMoves>;
 const std::pair<unsigned char, unsigned char> bishopMoves[] = {{-1, -1}, {-1, 1}, {1, -1}, {1, 1}};
 void (*generateBishopMoves)(unsigned char i) = generateLineMoves<4, bishopMoves>;
 
+
+
 }  // namespace
 
 std::vector<Move> MoveGenerator::generate(const Board& board,

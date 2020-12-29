@@ -6,15 +6,6 @@
 
 TEST(MaterialEvaluatorShall, EvaluateFirstPosition)
 {
-    /*const char* InitialBoardString =
-        "♜♞♝♛♚♝♞♜"
-        "♟♟♟♟♟♟♟♟"
-        "        "
-        "        "
-        "        "
-        "        "
-        "♙♙♙♙♙♙♙♙"
-        "♖♘♗♕♔♗♘♖";*/
     auto initialBoard = utils::createBoard(utils::InitialBoardString,NOTATION::COLOR::color::white );
 
     ASSERT_EQ(0, materialEvaluator::evaluate(initialBoard, NOTATION::COLOR::color::white ));
@@ -55,6 +46,6 @@ TEST(MaterialEvaluatorShall, EvaluateSinglePawn)
         "♙♙♙ ♙♙♙♙"
         "♖♘♗♕♔♗♘♖";
     auto initialBoard = utils::createBoard(boardString,NOTATION::COLOR::color::white );
-    ASSERT_EQ(-1, materialEvaluator::evaluate(initialBoard, NOTATION::COLOR::color::white ));
-    ASSERT_EQ(1, materialEvaluator::evaluate(initialBoard, NOTATION::COLOR::color::black ));
+    ASSERT_EQ(-100, materialEvaluator::evaluate(initialBoard, NOTATION::COLOR::color::white ));
+    ASSERT_EQ(100, materialEvaluator::evaluate(initialBoard, NOTATION::COLOR::color::black ));
 }

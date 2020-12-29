@@ -5,5 +5,5 @@
 
 namespace materialEvaluator
 {
-signed char evaluate(const Board &, NOTATION::COLOR::color);
+int evaluate(const Board &, NOTATION::COLOR::color);
 }

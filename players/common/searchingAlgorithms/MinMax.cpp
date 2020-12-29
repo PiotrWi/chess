@@ -1,17 +1,15 @@
 #include "MinMax.hpp"
-#include <common/evaluators/MaterialEvaluator.hpp>
 
-#include <iostream>
+
+#include <common/evaluators/MaterialEvaluator.hpp>
 
 namespace
 {
 
-unsigned long nodes = 0;
+int evaluateMin(BoardEngine &be, unsigned char depth, NOTATION::COLOR::color color);
+int evaluateMax(BoardEngine& be, unsigned char depth, NOTATION::COLOR::color color);
 
-signed char evaluateMin(BoardEngine &be, unsigned char depth, NOTATION::COLOR::color color);
-signed char evaluateMax(BoardEngine& be, unsigned char depth, NOTATION::COLOR::color color);
-
-signed char evaluateMin(BoardEngine &be, unsigned char depth, NOTATION::COLOR::color color)
+int evaluateMin(BoardEngine &be, unsigned char depth, NOTATION::COLOR::color color)
 {
     auto validMoves = be.generateMoves();
     auto gameResult = be.getResult(not validMoves.empty());
@@ -21,20 +19,20 @@ signed char evaluateMin(BoardEngine &be, unsigned char depth, NOTATION::COLOR::c
     }
     if ((gameResult == Result::whiteWon) | (gameResult == Result::blackWon))
     {
-        return std::numeric_limits<signed char>::max();
+        return std::numeric_limits<int>::max();
     }
     if (depth == 0)
     {
         return materialEvaluator::evaluate(be.board, color);
     }
 
-    auto greatestValue = std::numeric_limits<signed char>::max();
+    auto greatestValue = std::numeric_limits<int>::max();
 
     for (auto i = 0u; i < validMoves.size(); ++i)
     {
-        auto undoHandle = be.applyUndoableMove(validMoves[i]);
-        auto nodeVal = evaluateMax(be, depth - 1, color);
-        be.undoMove(undoHandle);
+        auto beClone = be;
+        beClone.applyMove(validMoves[i]);
+        auto nodeVal = evaluateMax(beClone, depth - 1, color);
 
         if (nodeVal < greatestValue)
         {
@@ -44,7 +42,7 @@ signed char evaluateMin(BoardEngine &be, unsigned char depth, NOTATION::COLOR::c
     return greatestValue;
 }
 
-signed char evaluateMax(BoardEngine& be, unsigned char depth, NOTATION::COLOR::color color)
+int evaluateMax(BoardEngine& be, unsigned char depth, NOTATION::COLOR::color color)
 {
     auto validMoves = be.generateMoves();
     auto gameResult = be.getResult(not validMoves.empty());
@@ -54,20 +52,20 @@ signed char evaluateMax(BoardEngine& be, unsigned char depth, NOTATION::COLOR::c
     }
     if ((gameResult == Result::whiteWon) | (gameResult == Result::blackWon))
     {
-        return std::numeric_limits<signed char>::min();
+        return std::numeric_limits<int>::min();
     }
     if (depth == 0)
     {
         return materialEvaluator::evaluate(be.board, color);
     }
 
-    auto greatestValue = std::numeric_limits<signed char>::min();
+    auto greatestValue = std::numeric_limits<int>::min();
 
     for (auto i = 0u; i < validMoves.size(); ++i)
     {
-        auto undoHandle = be.applyUndoableMove(validMoves[i]);
-        auto nodeVal = evaluateMin(be, depth - 1, color);
-        be.undoMove(undoHandle);
+        auto beClone = be;
+        beClone.applyMove(validMoves[i]);
+        auto nodeVal = evaluateMin(beClone, depth - 1, color);
 
         if (nodeVal > greatestValue)
         {
@@ -86,15 +84,15 @@ Move evaluate(BoardEngine be, unsigned char depth)
 {
     auto validMoves = be.generateMoves();
     auto greatestMove = 0u;
-    auto greatestValue = std::numeric_limits<signed char>::min();
+    auto greatestValue = std::numeric_limits<int>::min();
 
     auto playerOnMove = be.board.playerOnMove;
 
     for (auto i = 0u; i < validMoves.size(); ++i)
     {
-        auto undoHandle = be.applyUndoableMove(validMoves[i]);
-        auto nodeVal = evaluateMin(be, depth - 1, playerOnMove);
-        be.undoMove(undoHandle);
+        auto beClone = be;
+        beClone.applyMove(validMoves[i]);
+        auto nodeVal = evaluateMin(beClone, depth - 1, playerOnMove);
 
         if (nodeVal > greatestValue)
         {
@@ -102,7 +100,6 @@ Move evaluate(BoardEngine be, unsigned char depth)
             greatestMove = i;
         }
     }
-    std::cout << "Calculated: " << nodes << std::endl;
     return validMoves[greatestMove];
 }
 

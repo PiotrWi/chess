@@ -39,6 +39,12 @@ std::vector<Move> BoardEngine::generateMoves() const
     return mg.generate(board);
 }
 
+std::vector<Move> BoardEngine::generateMovesFor(NOTATION::COLOR::color color) const
+{
+    MoveGenerator::MoveGenerator mg;
+    return mg.generate(board, color);
+}
+
 MoveApplier::MoveMemorial BoardEngine::applyUndoableMove(const Move & move)
 {
     return MoveApplier::applyTmpMove(board, move, resultEvaluator);
