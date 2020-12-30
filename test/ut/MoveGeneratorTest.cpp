@@ -352,7 +352,7 @@ TEST_F(MoveGeneratorTests, shouldFindInitialMovesForBlack)
 	auto knightInitialMoves = map(
 			{"b8-a6", "b8-c6", "g8-f6", "g8-h6"}, BLACK);
 
-	Board board = utils::createBoard(utils::InitialBoardString);
+	Board board = utils::createBoard(utils::InitialBoardString, BLACK);
 	ASSERT_THAT(sut.generate(board, BLACK),
 		::testing::UnorderedElementsAreArray(pawnInitialMoves + knightInitialMoves));
 }

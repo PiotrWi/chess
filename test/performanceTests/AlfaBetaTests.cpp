@@ -36,3 +36,16 @@ TEST(AlfaBeta, PerformanceTest_6_black)
     be.applyMove(createMove("e2-e4", NOTATION::COLOR::color::white));
     alfaBeta::evaluate(be, 6);
 }
+
+TEST(AlfaBeta, PerformanceTest_8)
+{
+    BoardEngine be;
+    alfaBeta::evaluate(be, 8);
+}
+
+TEST(AlfaBeta, PerformanceTest_8_black)
+{
+    BoardEngine be;
+    be.applyMove(createMove("e2-e4", NOTATION::COLOR::color::white));
+    alfaBeta::evaluate(be, 8);
+}
