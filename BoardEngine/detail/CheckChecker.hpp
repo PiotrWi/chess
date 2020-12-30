@@ -6,6 +6,7 @@ class Board;
 
 namespace CheckChecker
 {
+unsigned char findKing(const Board& board, const NOTATION::COLOR::color c);
 
 bool isAttackedOn(const Board& board,
 		NOTATION::COLOR::color playerColor,

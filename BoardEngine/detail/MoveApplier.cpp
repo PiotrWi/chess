@@ -1,7 +1,6 @@
 #include "MoveApplier.hpp"
 
 #include <publicIf/NotationConversions.hpp>
-#include <detail/ResultEvaluator.hpp>
 
 namespace
 {
@@ -157,6 +156,18 @@ void applyMove(Board& board, const Move& move)
     applyPromotionRules(board, move);
 
     ++board.playerOnMove;
+}
+
+SimpleMoveMemorial applyTmpMoveSimple(Board& board, const Move& move)
+{
+    SimpleMoveMemorial memorial{board};
+    applyMove(board, move);
+    return memorial;
+}
+
+void undoMove(Board& board, const SimpleMoveMemorial& memorial)
+{
+    board = memorial.previousBoard;
 }
 
 }  // namespace MoveApplier

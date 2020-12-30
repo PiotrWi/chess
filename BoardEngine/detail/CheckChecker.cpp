@@ -57,8 +57,7 @@ bool isAttackedOnDiagonalByOppositeBishopOrQueen(const Board& board,
 {
 	auto colorBin = static_cast<unsigned char>(oppositeColor);
 
-	unsigned char bishopPattern = colorBin | NOTATION::PIECES::BISHOP;
-	unsigned char queenPattern = colorBin | NOTATION::PIECES::QUEEN;
+	unsigned char pattern = colorBin | NOTATION::PIECE_FEATURES::CAN_ATTACK_ON_DIAGONAL;
 
 	for (const auto& dir: {
 		std::pair<signed char, signed char>(1, 1),
@@ -73,7 +72,7 @@ bool isAttackedOnDiagonalByOppositeBishopOrQueen(const Board& board,
 			const auto& field = getColoredPiece(board, co.first, co.second);
 			if (field != 0u)
 			{
-				if ((field == bishopPattern) | (field == queenPattern))
+				if ((field & pattern) == pattern)
 				{
 					return true;
 				}
@@ -91,8 +90,9 @@ bool isAttackedByRookOrQueen(const Board& board,
 	unsigned char col)
 {
 	auto colorBin = static_cast<unsigned char>(opositeColor);
-	unsigned char rockPattern = colorBin | NOTATION::PIECES::ROCK;
-	unsigned char gueenPattern = colorBin | NOTATION::PIECES::QUEEN;
+
+	unsigned char pattern = colorBin | NOTATION::PIECE_FEATURES::CAN_ATTACK_ON_LINES;
+
 	for (const auto& dir: {
 		std::pair<signed char, signed char>(1, 0),
 		std::pair<signed char, signed char>(0, 1),
@@ -106,7 +106,7 @@ bool isAttackedByRookOrQueen(const Board& board,
 			const auto& field = getColoredPiece(board, co.first, co.second);
 			if (field != 0u)
 			{
-				if (field == rockPattern or field == gueenPattern)
+				if ((field & pattern) == pattern)
 				{
 					return true;
 				}
@@ -205,14 +205,18 @@ bool isAttackedOn(const Board& board,
            || isAttackedByKnight(board, oppositeColor, pRow, pColumn);
 }
 
+unsigned char findKing(const Board& board, const NOTATION::COLOR::color c)
+{
+    unsigned char KING_MASQ = static_cast<unsigned char>(c) | NOTATION::PIECES::KING;
+    unsigned char kingPos = std::find_if(board.fields, board.fields + 64, [&](auto&& field){
+        return KING_MASQ == (field & NOTATION::COLOR_AND_PIECE_MASK);
+    }) - board.fields;
+    return kingPos;
+}
+
 bool isCheckOn(const Board& board, const NOTATION::COLOR::color c)
 {
-	unsigned char KING_MASQ = static_cast<unsigned char>(c) | NOTATION::PIECES::KING;
-	unsigned char kingPos = std::find_if(board.fields, board.fields + 64, [&](auto&& field){
-		return KING_MASQ == (field & NOTATION::COLOR_AND_PIECE_MASK);
-	}) - board.fields;
-
-	return isAttackedOn(board, c, kingPos);
+	return isAttackedOn(board, c, findKing(board, c));
 }
 
 }

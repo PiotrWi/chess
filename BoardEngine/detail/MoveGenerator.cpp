@@ -73,8 +73,7 @@ void generateStandardPawnMoves(unsigned char i)
 	if (col<7)
 	{
 		auto destination = i + ROW_DIFF + 1;
-		if ((*ctx.board)[destination] != 0 and
-			((*ctx.board)[destination] & NOTATION::COLOR::COLOR_MASK) == OPOSITE_COLOR)
+		if (((*ctx.board)[destination] & NOTATION::COLOR::COLOR_MASK) == OPOSITE_COLOR)
 		{
 			tryToAddMoveAndPromote<TARGET_LINE, COLOR>(i, destination);
 		}
@@ -82,8 +81,7 @@ void generateStandardPawnMoves(unsigned char i)
 	if (col > 0)
 	{
 		auto destination = i + ROW_DIFF - 1;
-		if ((*ctx.board)[destination] != 0 and
-			((*ctx.board)[destination] & NOTATION::COLOR::COLOR_MASK) == OPOSITE_COLOR)
+		if (((*ctx.board)[destination] & NOTATION::COLOR::COLOR_MASK) == OPOSITE_COLOR)
 		{
 			tryToAddMoveAndPromote<TARGET_LINE, COLOR>(i, destination);
 		}
@@ -104,30 +102,59 @@ void generateEnPasant()
 		}
 		auto col = NotationConversions::getColumnNum(lastMove.destination);
 		if (col<7)
-		{
-			{
-				auto opositeCandidateField = lastMove.destination + 1;
-				if (((*ctx.board)[opositeCandidateField] & NOTATION::COLOR_AND_PIECE_MASK) ==
-					(NOTATION::PIECES::PAWN | NOTATION::COLOR::WHITE))
-				{
-					tryToAddMove(opositeCandidateField,
-						(lastMove.source + lastMove.destination) / 2);
-				}
-			}
-			if (col > 0)
-			{
-				auto opositeCandidateField = lastMove.destination - 1;
-				if (((*ctx.board)[opositeCandidateField] & NOTATION::COLOR_AND_PIECE_MASK) ==
-					(NOTATION::PIECES::PAWN | NOTATION::COLOR::WHITE))
-				{
-					tryToAddMove(opositeCandidateField,
-						(lastMove.source + lastMove.destination) / 2);
-				}
-			}
-		}
+        {
+            auto opositeCandidateField = lastMove.destination + 1;
+            if (((*ctx.board)[opositeCandidateField] & NOTATION::COLOR_AND_PIECE_MASK) ==
+                (NOTATION::PIECES::PAWN | NOTATION::COLOR::WHITE))
+            {
+                tryToAddMove(opositeCandidateField,
+                             (lastMove.source + lastMove.destination) / 2);
+            }
+        }
+        if (col > 0)
+        {
+            auto opositeCandidateField = lastMove.destination - 1;
+            if (((*ctx.board)[opositeCandidateField] & NOTATION::COLOR_AND_PIECE_MASK) ==
+                (NOTATION::PIECES::PAWN | NOTATION::COLOR::WHITE))
+            {
+                tryToAddMove(opositeCandidateField,
+                    (lastMove.source + lastMove.destination) / 2);
+            }
+        }
 	}
+    if (ctx.pieceColor == NOTATION::COLOR::color::black)
+    {
+        auto& lastMove = ctx.board->lastMove;
+        if (lastMove.destination - lastMove.source
+            != 2 * NOTATION::COORDINATES::ROW_DIFF
+            or ((*ctx.board)[lastMove.destination] & NOTATION::PIECES::PIECES_MASK)
+               != NOTATION::PIECES::PAWN)
+        {
+            return;
+        }
+        auto col = NotationConversions::getColumnNum(lastMove.destination);
+        if (col<7)
+        {
+            auto opositeCandidateField = lastMove.destination + 1;
+            if (((*ctx.board)[opositeCandidateField] & NOTATION::COLOR_AND_PIECE_MASK) ==
+                (NOTATION::PIECES::PAWN | NOTATION::COLOR::BLACK))
+            {
+                tryToAddMove(opositeCandidateField,
+                             (lastMove.source + lastMove.destination) / 2);
+            }
+        }
+        if (col > 0)
+        {
+            auto opositeCandidateField = lastMove.destination - 1;
+            if (((*ctx.board)[opositeCandidateField] & NOTATION::COLOR_AND_PIECE_MASK) ==
+                (NOTATION::PIECES::PAWN | NOTATION::COLOR::BLACK))
+            {
+                tryToAddMove(opositeCandidateField,
+                             (lastMove.source + lastMove.destination) / 2);
+            }
+        }
+    }
 }
-
 
 template <size_t N, const std::pair<unsigned char, unsigned char> TMoves[N]>
 void generateFixedMoves(unsigned char i)
@@ -144,8 +171,7 @@ void generateFixedMoves(unsigned char i)
 		{
 			unsigned char destination = NotationConversions::getFieldNum(targerRow, targerCol);
 			const auto& field = (*ctx.board)[destination];
-			if (field == 0
-				or (static_cast<unsigned char>(ctx.pieceColor+1) == (field & NOTATION::COLOR::COLOR_MASK)))
+			if ((field & static_cast<unsigned char>(ctx.pieceColor)) == 0)
 			{
 				Move m{i, destination};
 				if (isValid(m))
@@ -237,7 +263,64 @@ void (*generateRockMoves)(unsigned char i) = generateLineMoves<4, rockMoves>;
 const std::pair<unsigned char, unsigned char> bishopMoves[] = {{-1, -1}, {-1, 1}, {1, -1}, {1, 1}};
 void (*generateBishopMoves)(unsigned char i) = generateLineMoves<4, bishopMoves>;
 
+template <NOTATION::COLOR::color c>
+void dispatchToGenerateStandardPawnMoves(unsigned char i);
 
+template<>
+void dispatchToGenerateStandardPawnMoves<NOTATION::COLOR::color::white>(unsigned char i)
+{
+    generateStandardPawnMoves<1u, 7u,
+            NOTATION::COORDINATES::ROW_DIFF,
+            NOTATION::COLOR::WHITE,
+            NOTATION::COLOR::BLACK>(i);
+}
+
+template<>
+void dispatchToGenerateStandardPawnMoves<NOTATION::COLOR::color::black>(unsigned char i)
+{
+    generateStandardPawnMoves<6u, 0u,
+            -NOTATION::COORDINATES::ROW_DIFF,
+            NOTATION::COLOR::BLACK,
+            NOTATION::COLOR::WHITE>(i);
+}
+
+template <NOTATION::COLOR::color c>
+void dispatchToProperHandler(unsigned char i)
+{
+    switch (((*ctx.board)[i] & NOTATION::COLOR_AND_PIECE_MASK) ^ static_cast<unsigned char>(c))
+    {
+        case (NOTATION::PIECES::PAWN):
+            dispatchToGenerateStandardPawnMoves<c>(i);
+            return;
+        case (NOTATION::PIECES::KNIGHT):
+            generateKnightMoves(i);
+            return;
+        case (NOTATION::PIECE_FEATURES::CAN_ATTACK_ON_LINES):
+            generateRockMoves(i);
+            return;
+        case (NOTATION::PIECE_FEATURES::CAN_ATTACK_ON_DIAGONAL):
+            generateBishopMoves(i);
+            return;
+        case (NOTATION::PIECES::QUEEN):
+            generateBishopMoves(i);
+            generateRockMoves(i);
+            return;
+        case (NOTATION::PIECES::KING):
+            generateNormalKingMoves(i);
+            generateCasles(i);
+            return;
+    }
+}
+
+template <NOTATION::COLOR::color c>
+void _generate_()
+{
+    for (unsigned char i = 0u; i < 64u; ++i)
+    {
+        dispatchToProperHandler<c>(i);
+    }
+    generateEnPasant();
+}
 
 }  // namespace
 
@@ -248,47 +331,15 @@ std::vector<Move> MoveGenerator::generate(const Board& board,
 	ctx.allMoves = &allMoves;
 	ctx.board = &board;
 	ctx.pieceColor = c;
+	if (c == NOTATION::COLOR::color::white)
+    {
+        _generate_<NOTATION::COLOR::color::white>();
+    }
+    else
+    {
+        _generate_<NOTATION::COLOR::color::black>();
+    }
 
-	for (unsigned char i = 0u; i <= 64u; ++i)
-	{
-		switch ((board[i] & NOTATION::COLOR_AND_PIECE_MASK) ^ static_cast<unsigned char>(c))
-		{
-		case (NOTATION::PIECES::PAWN):
-			if (c == NOTATION::COLOR::color::white)
-			{
-				generateStandardPawnMoves<1u, 7u,
-					NOTATION::COORDINATES::ROW_DIFF,
-					NOTATION::COLOR::WHITE,
-					NOTATION::COLOR::BLACK>(i);
-			}
-			else
-			{
-				generateStandardPawnMoves<6u, 0u,
-					-NOTATION::COORDINATES::ROW_DIFF,
-					NOTATION::COLOR::BLACK,
-					NOTATION::COLOR::WHITE>(i);
-			}
-			continue;
-		case (NOTATION::PIECES::KNIGHT):
-			generateKnightMoves(i);
-			continue;
-		case (NOTATION::PIECES::ROCK):
-			generateRockMoves(i);
-			continue;
-		case (NOTATION::PIECES::BISHOP):
-			generateBishopMoves(i);
-			continue;
-		case (NOTATION::PIECES::QUEEN):
-			generateBishopMoves(i);
-			generateRockMoves(i);
-			continue;
-		case (NOTATION::PIECES::KING):
-			generateNormalKingMoves(i);
-			generateCasles(i);
-			continue;
-		}
-	}
-	generateEnPasant();
 	return allMoves;
 }
 

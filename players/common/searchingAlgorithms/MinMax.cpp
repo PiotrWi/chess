@@ -6,10 +6,10 @@
 namespace
 {
 
-int evaluateMin(BoardEngine &be, unsigned char depth, NOTATION::COLOR::color color);
+int evaluateMin(BoardEngine& be, unsigned char depth, NOTATION::COLOR::color color);
 int evaluateMax(BoardEngine& be, unsigned char depth, NOTATION::COLOR::color color);
 
-int evaluateMin(BoardEngine &be, unsigned char depth, NOTATION::COLOR::color color)
+int evaluateMin(BoardEngine& be, unsigned char depth, NOTATION::COLOR::color color)
 {
     auto validMoves = be.generateMoves();
     auto gameResult = be.getResult(not validMoves.empty());
@@ -30,9 +30,9 @@ int evaluateMin(BoardEngine &be, unsigned char depth, NOTATION::COLOR::color col
 
     for (auto i = 0u; i < validMoves.size(); ++i)
     {
-        auto beClone = be;
-        beClone.applyMove(validMoves[i]);
-        auto nodeVal = evaluateMax(beClone, depth - 1, color);
+        auto memorial = be.applyUndoableSimpleMove(validMoves[i]);
+        auto nodeVal = evaluateMax(be, depth - 1, color);
+        be.undoMove(memorial);
 
         if (nodeVal < greatestValue)
         {
@@ -63,9 +63,9 @@ int evaluateMax(BoardEngine& be, unsigned char depth, NOTATION::COLOR::color col
 
     for (auto i = 0u; i < validMoves.size(); ++i)
     {
-        auto beClone = be;
-        beClone.applyMove(validMoves[i]);
-        auto nodeVal = evaluateMin(beClone, depth - 1, color);
+        auto memorial = be.applyUndoableSimpleMove(validMoves[i]);
+        auto nodeVal = evaluateMin(be, depth - 1, color);
+        be.undoMove(memorial);
 
         if (nodeVal > greatestValue)
         {
@@ -90,9 +90,9 @@ Move evaluate(BoardEngine be, unsigned char depth)
 
     for (auto i = 0u; i < validMoves.size(); ++i)
     {
-        auto beClone = be;
-        beClone.applyMove(validMoves[i]);
-        auto nodeVal = evaluateMin(beClone, depth - 1, playerOnMove);
+        auto memorial = be.applyUndoableSimpleMove(validMoves[i]);
+        auto nodeVal = evaluateMin(be, depth - 1, playerOnMove);
+        be.undoMove(memorial);
 
         if (nodeVal > greatestValue)
         {

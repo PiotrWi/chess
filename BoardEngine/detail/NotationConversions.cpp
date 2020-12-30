@@ -5,7 +5,7 @@ namespace NotationConversions
 
 unsigned char getColumnNum(unsigned char field)
 {
-	return field % 8u;
+	return field & 0b111;
 }
 
 unsigned char getRow(unsigned char field)
@@ -16,7 +16,7 @@ unsigned char getRow(unsigned char field)
 NOTATION::COLOR::color switchColor(NOTATION::COLOR::color c)
 {
 	auto colorNum = static_cast<unsigned char>(c);
-	return NOTATION::COLOR::color(++colorNum & NOTATION::COLOR::COLOR_MASK);
+	return NOTATION::COLOR::color(colorNum ^ NOTATION::COLOR::COLOR_MASK);
 }
 
 unsigned char getFieldNum(const unsigned char row, const unsigned char col)
@@ -43,13 +43,12 @@ NOTATION::COLOR::color getPieceColor(unsigned char piece)
 
 bool isRowInBoard(unsigned char row)
 {
-    return row < 8u;
+    return !(row & 0b11111000)/*row < 8u*/;
 }
 bool isColumnInBoard(unsigned char col)
 {
-    return col < 8u;
+    return !(col & 0b11111000)/*col < 8u*/;
 }
-
 
 }
 

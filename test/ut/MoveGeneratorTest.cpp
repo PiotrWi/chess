@@ -391,8 +391,9 @@ TEST_F(MoveGeneratorTests, shouldCorectlyAnalyzePosForBlack)
 		"        "
 		"♙♙♙♙♙♙♙♙"
 		"♖♘♗♕♔♗♘♖", BLACK);
+    // d8-d7U, d8-d6U, e8-d7U
 
-	ASSERT_THAT(sut.generate(board, BLACK),
+    ASSERT_THAT(sut.generate(board, BLACK),
 		::testing::UnorderedElementsAreArray(pawnMoves+knightMoves+rockMoves+bishopMoves+queenMoves+kingMoves));
 }
 

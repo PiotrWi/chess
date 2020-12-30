@@ -8,18 +8,18 @@
 namespace
 {
 
-int evaluateMin(BoardEngine be,
+int evaluateMin(BoardEngine& be,
                         unsigned char depth,
                         NOTATION::COLOR::color color,
                         int alfa,
                         int beta);
-int evaluateMax(BoardEngine be,
+int evaluateMax(BoardEngine& be,
                         unsigned char depth,
                         NOTATION::COLOR::color color,
                         int alfa,
                         int beta);
 
-int evaluateMin(BoardEngine be,
+int evaluateMin(BoardEngine& be,
                         unsigned char depth,
                         NOTATION::COLOR::color color,
                         int alfa,
@@ -43,9 +43,9 @@ int evaluateMin(BoardEngine be,
     auto greatestValue = std::numeric_limits<int>::max();
     for (auto i = 0u; i < validMoves.size(); ++i)
     {
-        auto beClone = be;
-        beClone.applyMove(validMoves[i]);
-        auto nextBeta = evaluateMax(beClone, depth - 1, color, alfa, beta);
+        auto memorial = be.applyUndoableSimpleMove(validMoves[i]);
+        auto nextBeta = evaluateMax(be, depth - 1, color, alfa, beta);
+        be.undoMove(memorial);
 
         greatestValue = std::min(greatestValue, nextBeta);
         beta = std::min(beta, nextBeta);
@@ -56,7 +56,7 @@ int evaluateMin(BoardEngine be,
     return greatestValue;
 }
 
-int evaluateMax(BoardEngine be,
+int evaluateMax(BoardEngine& be,
                         unsigned char depth,
                         NOTATION::COLOR::color color,
                         int alfa,
@@ -80,9 +80,9 @@ int evaluateMax(BoardEngine be,
     auto greatestValue = std::numeric_limits<int>::min();
     for (auto i = 0u; i < validMoves.size(); ++i)
     {
-        auto beClone = be;
-        beClone.applyMove(validMoves[i]);
-        auto nextAlfa = evaluateMin(beClone, depth - 1, color, alfa, beta);
+        auto memorial = be.applyUndoableSimpleMove(validMoves[i]);
+        auto nextAlfa = evaluateMin(be, depth - 1, color, alfa, beta);
+        be.undoMove(memorial);
 
         greatestValue = std::max(greatestValue, nextAlfa);
         alfa = std::max(alfa, nextAlfa);
@@ -110,9 +110,9 @@ Move evaluate(BoardEngine be, unsigned char depth)
 
     for (auto i = 0u; i < validMoves.size(); ++i)
     {
-        auto beClone = be;
-        beClone.applyMove(validMoves[i]);
-        auto nextAlfa = evaluateMin(beClone, depth - 1, playerOnMove, alfa, beta);
+        auto memorial = be.applyUndoableSimpleMove(validMoves[i]);
+        auto nextAlfa = evaluateMin(be, depth - 1, playerOnMove, alfa, beta);
+        be.undoMove(memorial);
 
         if (nextAlfa > alfa)
         {

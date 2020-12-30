@@ -21,6 +21,9 @@ public:
 // TODO: There is something wrong with move unoing
     void undoMove(const MoveApplier::MoveMemorial);
 
+    MoveApplier::SimpleMoveMemorial applyUndoableSimpleMove(const Move&);
+    void undoMove(MoveApplier::SimpleMoveMemorial);
+
     Result getResult() const;
     Result getResult(bool availableMoves) const;
     std::vector<Move> generateMoves() const;

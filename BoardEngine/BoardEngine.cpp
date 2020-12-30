@@ -55,3 +55,13 @@ void BoardEngine::undoMove(const MoveApplier::MoveMemorial moveMemorial)
     MoveApplier::undoMove(board, moveMemorial, resultEvaluator);
 }
 
+MoveApplier::SimpleMoveMemorial BoardEngine::applyUndoableSimpleMove(const Move& move)
+{
+    return MoveApplier::applyTmpMoveSimple(board, move, resultEvaluator);
+}
+
+void BoardEngine::undoMove(MoveApplier::SimpleMoveMemorial sm)
+{
+    return MoveApplier::undoMove(board, sm, resultEvaluator);
+}
+
