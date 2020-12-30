@@ -216,7 +216,12 @@ unsigned char findKing(const Board& board, const NOTATION::COLOR::color c)
 
 bool isCheckOn(const Board& board, const NOTATION::COLOR::color c)
 {
-	return isAttackedOn(board, c, findKing(board, c));
+    unsigned char KING_MASQ = static_cast<unsigned char>(c) | NOTATION::PIECES::KING;
+    unsigned char kingPos = std::find_if(board.fields, board.fields + 64, [&](auto&& field){
+        return KING_MASQ == (field & NOTATION::COLOR_AND_PIECE_MASK);
+    }) - board.fields;
+
+	return isAttackedOn(board, c, kingPos);
 }
 
 }
