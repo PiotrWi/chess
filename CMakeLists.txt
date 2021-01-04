@@ -11,7 +11,7 @@ endif()
 project(chess LANGUAGES CXX)
 
 SET(CMAKE_CXX_FLAGS  "-O3 -Wall -Wextra -Werror -Wpedantic -pedantic-errors -std=c++17 -flto -fuse-ld=gold")
-#SET(CMAKE_CXX_FLAGS  "-Og -Wall -Wextra -Werror -Wpedantic -pedantic-errors -std=c++17 -fuse-ld=gold")
+#SET(CMAKE_CXX_FLAGS  "-Og -g -Wall -Wextra -Werror -Wpedantic -pedantic-errors -std=c++17 -fuse-ld=gold")
 
 # end of section flags
 

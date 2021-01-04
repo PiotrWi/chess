@@ -10,7 +10,7 @@ namespace
 {
 
 std::pair<signed char, signed char> modifyCoordinates(std::pair<unsigned char, unsigned char> co,
-	std::pair<signed char, signed char> dir)
+	std::pair<signed char, signed char> dir) noexcept
 {
 	co.first += dir.first;
 	co.second += dir.second;
@@ -19,7 +19,7 @@ std::pair<signed char, signed char> modifyCoordinates(std::pair<unsigned char, u
 
 unsigned char getColoredPiece(const Board& board,
 	unsigned char row,
-	unsigned char col)
+	unsigned char col) noexcept
 {
 	return board[NotationConversions::getFieldNum(row, col)] & NOTATION::COLOR_AND_PIECE_MASK;
 }
@@ -27,9 +27,9 @@ unsigned char getColoredPiece(const Board& board,
 bool isAttackedByOppositePawn(const Board& board,
                               NOTATION::COLOR::color pawnColor,
                               unsigned char row,
-                              unsigned char col)
+                              unsigned char col) noexcept
 {
-	signed char pawnRow = 0;
+	unsigned char pawnRow = 0;
 	auto pawnMask = NOTATION::PIECES::PAWN;
 	if (pawnColor == NOTATION::COLOR::color::white)
 	{
@@ -42,8 +42,8 @@ bool isAttackedByOppositePawn(const Board& board,
 		pawnMask |= NOTATION::COLOR::BLACK;
 	}
 
-	signed char leftColumn = col - 1;
-	signed char rightColumn = col + 1;
+	unsigned char leftColumn = col - 1;
+	unsigned char rightColumn = col + 1;
 
 	return NotationConversions::isRowInBoard(pawnRow) and
 			((NotationConversions::isColumnInBoard(leftColumn) and getColoredPiece(board, pawnRow, leftColumn) == pawnMask)
@@ -53,7 +53,7 @@ bool isAttackedByOppositePawn(const Board& board,
 bool isAttackedOnDiagonalByOppositeBishopOrQueen(const Board& board,
 	NOTATION::COLOR::color oppositeColor,
 	unsigned char row,
-	unsigned char col)
+	unsigned char col) noexcept
 {
 	auto colorBin = static_cast<unsigned char>(oppositeColor);
 
@@ -87,7 +87,7 @@ bool isAttackedOnDiagonalByOppositeBishopOrQueen(const Board& board,
 bool isAttackedByRookOrQueen(const Board& board,
 	NOTATION::COLOR::color opositeColor,
 	unsigned char row,
-	unsigned char col)
+	unsigned char col) noexcept
 {
 	auto colorBin = static_cast<unsigned char>(opositeColor);
 
@@ -121,7 +121,7 @@ bool isAttackedByRookOrQueen(const Board& board,
 bool isAttackedByKing(const Board& board,
 		NOTATION::COLOR::color opositeColor,
 		unsigned char row,
-		unsigned char col)
+		unsigned char col) noexcept
 {
 	auto colorBin = static_cast<unsigned char>(opositeColor);
 	unsigned char kingPattern = colorBin | NOTATION::PIECES::KING;
@@ -155,7 +155,7 @@ bool isAttackedByKing(const Board& board,
 bool isAttackedByKnight(const Board& board,
 		NOTATION::COLOR::color opositeColor,
 		unsigned char row,
-		unsigned char col)
+		unsigned char col) noexcept
 {
 	auto colorBin = static_cast<unsigned char>(opositeColor);
 	unsigned char  knightPattern = colorBin | NOTATION::PIECES::KNIGHT;
@@ -192,7 +192,7 @@ namespace CheckChecker
 
 bool isAttackedOn(const Board& board,
 		NOTATION::COLOR::color playerColor,
-		unsigned char fieldPosition)
+		unsigned char fieldPosition) noexcept
 {
 	auto oppositeColor = ++playerColor;
 	auto pRow = NotationConversions::getRow(fieldPosition);
@@ -205,7 +205,7 @@ bool isAttackedOn(const Board& board,
            || isAttackedByKnight(board, oppositeColor, pRow, pColumn);
 }
 
-unsigned char findKing(const Board& board, const NOTATION::COLOR::color c)
+unsigned char findKing(const Board& board, const NOTATION::COLOR::color c) noexcept
 {
     unsigned char KING_MASQ = static_cast<unsigned char>(c) | NOTATION::PIECES::KING;
     unsigned char kingPos = std::find_if(board.fields, board.fields + 64, [&](auto&& field){
@@ -214,7 +214,7 @@ unsigned char findKing(const Board& board, const NOTATION::COLOR::color c)
     return kingPos;
 }
 
-bool isCheckOn(const Board& board, const NOTATION::COLOR::color c)
+bool isCheckOn(const Board& board, const NOTATION::COLOR::color c) noexcept
 {
     unsigned char KING_MASQ = static_cast<unsigned char>(c) | NOTATION::PIECES::KING;
     unsigned char kingPos = std::find_if(board.fields, board.fields + 64, [&](auto&& field){

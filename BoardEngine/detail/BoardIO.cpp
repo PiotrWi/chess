@@ -24,7 +24,7 @@ std::map<unsigned char, const char*> symbolToPieceMapping = {
 
 }  // namespace
 
-std::ostream& operator<<(std::ostream& os, const Board& board)
+std::ostream& operator<<(std::ostream& os, const Board& board) noexcept
 {
 	for (auto row = 56; row >= 0; row -= 8)
 	{

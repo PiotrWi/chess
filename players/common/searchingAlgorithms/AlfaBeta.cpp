@@ -6,8 +6,6 @@
 #include <common/evaluators/MaterialEvaluator.hpp>
 #include <common/evaluators/MoveCountEvaluator.hpp>
 
-
-
 namespace
 {
 

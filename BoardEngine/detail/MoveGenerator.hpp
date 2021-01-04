@@ -17,11 +17,11 @@ struct MoveDecorator
 class MoveGenerator
 {
 public:
-	std::vector<Move> generate(const Board&
-		, NOTATION::COLOR::color) const;
-    std::vector<Move> generate(const Board&) const;
+	static std::vector<Move> generate(const Board&
+		, NOTATION::COLOR::color);
+    static  std::vector<Move> generate(const Board&);
 
-    std::vector<MoveDecorator> generateWithAdditionalInfo(const Board&) const;
+    static std::vector<MoveDecorator> generateWithAdditionalInfo(const Board&);
 };
 
 }  // namespace MoveGenerator

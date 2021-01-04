@@ -1,5 +1,6 @@
 #include <BoardEngine.hpp>
 
+#include <cassert>
 #include <cstring>
 #include <iostream>
 #include <HumanPlayer/HumanPlayer.hpp>
@@ -16,6 +17,7 @@ std::unique_ptr<IPlayer> createPlayer(const char* playerType)
     {
         return std::make_unique<SimpleComputerPlayer>();
     }
+    assert(false);
     return {};
 }
 

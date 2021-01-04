@@ -35,14 +35,12 @@ Result BoardEngine::getResult(bool availableMoves) const
 
 std::vector<Move> BoardEngine::generateMoves() const
 {
-    MoveGenerator::MoveGenerator mg;
-    return mg.generate(board);
+    return MoveGenerator::MoveGenerator::generate(board);
 }
 
 std::vector<Move> BoardEngine::generateMovesFor(NOTATION::COLOR::color color) const
 {
-    MoveGenerator::MoveGenerator mg;
-    return mg.generate(board, color);
+    return MoveGenerator::MoveGenerator::generate(board, color);
 }
 
 MoveApplier::MoveMemorial BoardEngine::applyUndoableMove(const Move & move)

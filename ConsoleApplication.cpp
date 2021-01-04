@@ -1,5 +1,6 @@
 #include "ConsoleApplication.hpp"
 
+#include <cassert>
 #include <iostream>
 #include <publicIf/BoardIO.hpp>
 
@@ -52,6 +53,9 @@ static const char* toString(Result result)
 
 void ConsoleApplication::start()
 {
+    assert(whitePlayer_.operator bool());
+    assert(blackPlayer_.operator bool());
+
     const char* lastMoveStr = nullptr;
     Move lastMove;
 

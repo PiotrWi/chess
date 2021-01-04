@@ -59,7 +59,6 @@ template <class TResultEvaluator> void undoMove(Board& board, const MoveMemorial
 }
 
 void undoMove(Board& board, const SimpleMoveMemorial& memorial);
-void undoMove(Board& board, const MoveMemorial& memorial);
 template <class TResultEvaluator> void undoMove(Board& board, const SimpleMoveMemorial& memorial, TResultEvaluator& resultEvaluator)
 {
     resultEvaluator.removeSingle();

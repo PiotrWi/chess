@@ -3,8 +3,6 @@
 #include <detail/CheckChecker.hpp>
 #include <detail/MoveApplier.hpp>
 #include <cstdint>
-#include <cassert>
-#include <iostream>
 
 namespace MoveGenerator
 {
@@ -843,7 +841,7 @@ void _generate_()
 }  // namespace
 
 std::vector<Move> MoveGenerator::generate(const Board& board,
-	NOTATION::COLOR::color c) const
+	NOTATION::COLOR::color c)
 {
 	std::vector<Move> allMoves;
 	ctx.allMoves = &allMoves;
@@ -863,12 +861,12 @@ std::vector<Move> MoveGenerator::generate(const Board& board,
 	return allMoves;
 }
 
-std::vector<Move> MoveGenerator::generate(const Board& board) const
+std::vector<Move> MoveGenerator::generate(const Board& board)
 {
     return generate(board, board.playerOnMove);
 }
 
-std::vector<MoveDecorator> MoveGenerator::generateWithAdditionalInfo(const Board&) const
+std::vector<MoveDecorator> MoveGenerator::generateWithAdditionalInfo(const Board&)
 {
     return std::vector<MoveDecorator>{};
 }

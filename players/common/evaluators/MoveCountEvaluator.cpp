@@ -7,7 +7,7 @@ namespace moveCountEvaluator
 int evaluate(int playerOnMoveMovesCount, BoardEngine be)
 {
     auto oponentMovesCount = be.generateMovesFor(be.board.playerOnMove + 1).size();
-    return (playerOnMoveMovesCount - oponentMovesCount) * 10;
+    return (playerOnMoveMovesCount - oponentMovesCount) * 1;
 }
 
 }

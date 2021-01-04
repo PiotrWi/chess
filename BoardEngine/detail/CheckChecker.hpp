@@ -6,12 +6,12 @@ struct Board;
 
 namespace CheckChecker
 {
-unsigned char findKing(const Board& board, const NOTATION::COLOR::color c);
+unsigned char findKing(const Board& board, const NOTATION::COLOR::color c) noexcept;
 
 bool isAttackedOn(const Board& board,
 		NOTATION::COLOR::color playerColor,
-		unsigned char field);
+		unsigned char field) noexcept;
 bool isCheckOn(const Board& board,
-		const NOTATION::COLOR::color kingColor);
+		const NOTATION::COLOR::color kingColor) noexcept;
 
 }

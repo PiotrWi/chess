@@ -5,9 +5,9 @@
 
 struct Move
 {
-	Move();
-	Move(const char*, const char*, bool isPromoted = false, unsigned char promoteTo = 0);
-	Move(unsigned char, unsigned char, bool isPromoted = false, unsigned char promoteTo = 0);
+	Move() noexcept;
+	explicit Move(const char*, const char*, bool isPromoted = false, unsigned char promoteTo = 0) noexcept;
+    explicit Move(unsigned char, unsigned char, bool isPromoted = false, unsigned char promoteTo = 0) noexcept;
 
 	unsigned char source;
 	unsigned char destination;
@@ -15,20 +15,21 @@ struct Move
 	unsigned char promoteTo;
 };
 
-bool operator==(const Move& lfs, const Move& rhs);
+bool operator==(const Move& lfs, const Move& rhs) noexcept;
 
 struct Board
 {
 	NOTATION::COLOR::color playerOnMove = NOTATION::COLOR::color::white;
+	signed char validEnPassant = -1;
 	Move lastMove = {};
 	unsigned char fields[64] = {0u, 0u}; // "0 belongs to A1, 1 belongs to B1, 8 belongs to A2
 
-	unsigned char& operator[](const char*);
-	unsigned char& operator[](unsigned char);
-	const unsigned char& operator[](const char*) const;
-	const unsigned char& operator[](unsigned char) const;
+	unsigned char& operator[](const char*) noexcept;
+	unsigned char& operator[](const unsigned char) noexcept;
+	const unsigned char& operator[](const char*) const noexcept;
+	const unsigned char& operator[](const unsigned char) const noexcept;
 };
 
-bool operator==(const Board& lhs, const Board& rhs);
+bool operator==(const Board& lhs, const Board& rhs) noexcept;
 
-void initDefault(Board& board);
+void initDefault(Board& board) noexcept;
