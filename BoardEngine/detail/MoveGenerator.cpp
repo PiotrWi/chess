@@ -145,67 +145,50 @@ void generateStandardPawnMoves(unsigned char i)
 template<typename TMoveAddingStrategy>
 void generateEnPasant()
 {
+    if ((ctx.board)->validEnPassant == -1)
+    {
+        return;
+    }
+    auto enPassantCol = NotationConversions::getColumnNum((ctx.board)->validEnPassant);
 	if (ctx.pieceColor == NOTATION::COLOR::color::white)
-	{
-		auto& lastMove = ctx.board->lastMove;
-		if (lastMove.source - lastMove.destination
-			!= 2 * NOTATION::COORDINATES::ROW_DIFF
-			or ((*ctx.board)[lastMove.destination] & NOTATION::PIECES::PIECES_MASK)
-				!= NOTATION::PIECES::PAWN)
-		{
-			return;
-		}
-		auto col = NotationConversions::getColumnNum(lastMove.destination);
-		if (col<7)
+    {
+        if (enPassantCol < 7u)
         {
-            auto opositeCandidateField = lastMove.destination + 1;
-            if (((*ctx.board)[opositeCandidateField] & NOTATION::COLOR_AND_PIECE_MASK) ==
+            auto whitePawnLocCandidate = (ctx.board)->validEnPassant - NOTATION::COORDINATES::ROW_DIFF + 1;
+            if (((*ctx.board)[whitePawnLocCandidate] & NOTATION::COLOR_AND_PIECE_MASK) ==
                 (NOTATION::PIECES::PAWN | NOTATION::COLOR::WHITE))
             {
-                TMoveAddingStrategy::addForUsualPiece(opositeCandidateField,
-                                                      (lastMove.source + lastMove.destination) / 2);
+                TMoveAddingStrategy::addForUsualPiece(whitePawnLocCandidate, (ctx.board)->validEnPassant);
             }
         }
-        if (col > 0)
+        if (enPassantCol > 0u)
         {
-            auto opositeCandidateField = lastMove.destination - 1;
-            if (((*ctx.board)[opositeCandidateField] & NOTATION::COLOR_AND_PIECE_MASK) ==
+            auto whitePawnLocCandidate = (ctx.board)->validEnPassant - NOTATION::COORDINATES::ROW_DIFF - 1;
+            if (((*ctx.board)[whitePawnLocCandidate] & NOTATION::COLOR_AND_PIECE_MASK) ==
                 (NOTATION::PIECES::PAWN | NOTATION::COLOR::WHITE))
             {
-                TMoveAddingStrategy::addForUsualPiece(opositeCandidateField,
-                                                      (lastMove.source + lastMove.destination) / 2);
+                TMoveAddingStrategy::addForUsualPiece(whitePawnLocCandidate, (ctx.board)->validEnPassant);
             }
         }
-	}
+    }
     if (ctx.pieceColor == NOTATION::COLOR::color::black)
     {
-        auto& lastMove = ctx.board->lastMove;
-        if (lastMove.destination - lastMove.source
-            != 2 * NOTATION::COORDINATES::ROW_DIFF
-            or ((*ctx.board)[lastMove.destination] & NOTATION::PIECES::PIECES_MASK)
-               != NOTATION::PIECES::PAWN)
+        if (enPassantCol < 7u)
         {
-            return;
-        }
-        auto col = NotationConversions::getColumnNum(lastMove.destination);
-        if (col<7)
-        {
-            auto opositeCandidateField = lastMove.destination + 1;
-            if (((*ctx.board)[opositeCandidateField] & NOTATION::COLOR_AND_PIECE_MASK) ==
-                (NOTATION::PIECES::PAWN | NOTATION::COLOR::BLACK))
+            auto whitePawnLocCandidate = (ctx.board)->validEnPassant + NOTATION::COORDINATES::ROW_DIFF + 1;
+            if (((*ctx.board)[whitePawnLocCandidate] & NOTATION::COLOR_AND_PIECE_MASK) ==
+                (NOTATION::PIECES::PAWN | NOTATION::COLOR::WHITE))
             {
-                TMoveAddingStrategy::addForUsualPiece(opositeCandidateField,
-                                                      (lastMove.source + lastMove.destination) / 2);
+                TMoveAddingStrategy::addForUsualPiece(whitePawnLocCandidate, (ctx.board)->validEnPassant);
             }
         }
-        if (col > 0)
+        if (enPassantCol > 0u)
         {
-            auto opositeCandidateField = lastMove.destination - 1;
-            if (((*ctx.board)[opositeCandidateField] & NOTATION::COLOR_AND_PIECE_MASK) ==
-                (NOTATION::PIECES::PAWN | NOTATION::COLOR::BLACK))
+            auto whitePawnLocCandidate = (ctx.board)->validEnPassant + NOTATION::COORDINATES::ROW_DIFF - 1;
+            if (((*ctx.board)[whitePawnLocCandidate] & NOTATION::COLOR_AND_PIECE_MASK) ==
+                (NOTATION::PIECES::PAWN | NOTATION::COLOR::WHITE))
             {
-                TMoveAddingStrategy::addForUsualPiece(opositeCandidateField,
-                                                      (lastMove.source + lastMove.destination) / 2);
+                TMoveAddingStrategy::addForUsualPiece(whitePawnLocCandidate, (ctx.board)->validEnPassant);
             }
         }
     }

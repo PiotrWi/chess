@@ -1,4 +1,5 @@
 #include "BoardGenerationUtils.hpp"
+#include <publicIf/NotationConversions.hpp>
 
 #include <cstring>
 #include <utility>
@@ -83,7 +84,7 @@ Board createBoard(const char* position,
 		}
 		str_i += len;
 	}
-
+    board.validEnPassant = -1;
     board.playerOnMove = playerOnMove;
 
 	return board;
@@ -94,9 +95,9 @@ void setMovedBit(Board& board, const char* posStr)
 	board[posStr] |= NOTATION::MOVED::MOVED_MASK;
 }
 
-void setLastMove(Board& board, const Move& lastMove)
+void setValidEnPassant(Board& board, const char* posStr)
 {
-	board.lastMove = lastMove;
+    board.validEnPassant = NotationConversions::getFieldNum(posStr);
 }
 
 }  // namespace utils

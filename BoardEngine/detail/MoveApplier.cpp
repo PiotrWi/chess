@@ -59,20 +59,30 @@ unsigned char abs(signed char num)
 bool applyEnPassantRules(Board& board, const Move& move)
 {
     if (NotationConversions::getPieceType(board[move.source]) == NOTATION::PIECES::PAWN
-        and board[move.destination] == 0)
+        and move.destination == board.validEnPassant)
     {
         auto moveDiff = move.source-move.destination;
         if (abs(moveDiff) == NOTATION::COORDINATES::ROW_DIFF + 1)
         {
             board[move.source + (move.source > move.destination ? -1 : 1)] = 0;
-            return true;
         }
         if (abs(moveDiff) == NOTATION::COORDINATES::ROW_DIFF - 1)
         {
             board[move.source + (move.source > move.destination ? 1 : -1)] = 0;
-            return true;
+        }
+        board.validEnPassant = -1;
+        return true;
+    }
+    if (NotationConversions::getPieceType(board[move.source]) == NOTATION::PIECES::PAWN)
+    {
+        auto moveDiff = move.source-move.destination;
+        if (abs(moveDiff) == 2 * NOTATION::COORDINATES::ROW_DIFF)
+        {
+            board.validEnPassant = (move.source + move.destination) / 2;
+            return false;
         }
     }
+    board.validEnPassant = -1;
     return false;
 }
 
@@ -84,7 +94,6 @@ namespace MoveApplier
 MoveMemorial applyTmpMove(Board& board, const Move& move)
 {
     MoveMemorial moveMemorial;
-    moveMemorial.lastMove = board.lastMove;
 
     moveMemorial.sourceField = move.source;
     moveMemorial.targetField = move.destination;
@@ -95,7 +104,6 @@ MoveMemorial applyTmpMove(Board& board, const Move& move)
     moveMemorial.enPasant = applyEnPassantRules(board, move);
 
     board[move.destination] = board[move.source] | NOTATION::MOVED::MOVED_MASK;
-    board.lastMove = move;
     board[move.source] = 0;
     applyPromotionRules(board, move);
 
@@ -105,7 +113,6 @@ MoveMemorial applyTmpMove(Board& board, const Move& move)
 
 void undoMove(Board& board, const MoveMemorial& memorial)
 {
-    board.lastMove = memorial.lastMove;
     ++board.playerOnMove;
 
     board[memorial.sourceField] = memorial.sourceVal;
@@ -151,7 +158,6 @@ void applyMove(Board& board, const Move& move)
     applyEnPassantRules(board, move);
 
     board[move.destination] = board[move.source] | NOTATION::MOVED::MOVED_MASK;
-    board.lastMove = move;
     board[move.source] = 0;
     applyPromotionRules(board, move);
 

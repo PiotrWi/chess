@@ -1,5 +1,6 @@
 #include "zobrist.hpp"
 
+#include <publicIf/Board.hpp>
 #include <random>
 
 namespace
@@ -38,19 +39,37 @@ public:
 
     auto getColorHash()
     {
+        return blackHash;
+    }
 
+    auto getEnPassant()
+    {
+        return validEnPassant;
     }
 private:
     uint64_t hashes[64][256];
     uint64_t blackHash;
-    uint64_t validEnPassant[64];
+    uint64_t validEnPassant[65];
 };
 
 Hash HASH;
 
 }  // namespace
 
-uint64_t hash(Board&) noexcept
+uint64_t hash(Board& board) noexcept
 {
-    return 0;
+    uint64_t h = 0u;
+    for (unsigned char i = 0u; i < 64; ++i)
+    {
+        h ^= HASH.getField()[i][board[i]];
+    }
+
+    if (board.playerOnMove == NOTATION::COLOR::color::black)
+    {
+        h ^= HASH.getColorHash();
+    }
+
+    h ^= HASH.getEnPassant()[board.validEnPassant+1];
+
+    return h;
 }

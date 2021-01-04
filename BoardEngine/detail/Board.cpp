@@ -50,13 +50,14 @@ const unsigned char& Board::operator[](const unsigned char field) const noexcept
 
 bool operator==(const Board& lhs, const Board& rhs) noexcept
 {
-    return lhs.lastMove == rhs.lastMove and lhs.playerOnMove == rhs.playerOnMove
+    return lhs.validEnPassant == rhs.validEnPassant and lhs.playerOnMove == rhs.playerOnMove
         and std::equal(std::begin(lhs.fields), std::end(lhs.fields), std::begin(rhs.fields));
 }
 
 void initDefault(Board& board) noexcept
 {
     board.validEnPassant = -1;
+
     board["a1"] = NOTATION::COLOR::WHITE | NOTATION::PIECES::ROCK;
     board["b1"] = NOTATION::COLOR::WHITE | NOTATION::PIECES::KNIGHT;
     board["c1"] = NOTATION::COLOR::WHITE | NOTATION::PIECES::BISHOP;

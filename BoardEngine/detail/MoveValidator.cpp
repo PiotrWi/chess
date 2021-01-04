@@ -67,7 +67,7 @@ bool validatePawn()
             {
 				return ctx.sourceRow == 1
 					and ((*ctx.board)[ctx.move->source + singeRow] == 0u)
-					and ((*ctx.board)[ctx.move->source + 2*singeRow] == 0u);
+					and ((*ctx.board)[ctx.move->source + 2 * singeRow] == 0u);
 			}
 			if (rowDifference == 1
 				and ctx.pieceColor == NOTATION::COLOR::color::white)
@@ -96,24 +96,30 @@ bool validatePawn()
 		{
 			return false;
 		}
-		const auto& targetField = (*ctx.board)[ctx.move->destination];
-		const auto& prevMove = ctx.board->lastMove;
-		if (ctx.pieceColor == NOTATION::COLOR::color::white)
-		{
-			return rowDifference == 1
-				and ((targetField != 0u and
-					NotationConversions::getPieceColor(targetField) == NOTATION::COLOR::color::black)
-				or ((*ctx.board)[prevMove.destination] == (NOTATION::COLOR::BLACK | NOTATION::PIECES::PAWN)
-					and prevMove.source == prevMove.destination + 2 * singeRow));
-		}
-		if (ctx.pieceColor == NOTATION::COLOR::color::black)
-		{
-			return rowDifference == -1
-				and ((targetField != 0u and
-					NotationConversions::getPieceColor(targetField) == NOTATION::COLOR::color::white)
-				or ((*ctx.board)[prevMove.destination] == (NOTATION::COLOR::WHITE | NOTATION::PIECES::PAWN)
-					and prevMove.source == prevMove.destination - 2 * singeRow));
-		}
+        if (ctx.pieceColor == NOTATION::COLOR::color::white)
+        {
+            if (rowDifference == 1)
+            {
+                if (ctx.move->destination == ctx.board->validEnPassant or
+                    ((*ctx.board)[ctx.move->destination] & NOTATION::COLOR_AND_PIECE_MASK) ==
+                    (NOTATION::PIECES::PAWN | NOTATION::COLOR::BLACK))
+                {
+                    return true;
+                }
+            }
+        }
+        if (ctx.pieceColor == NOTATION::COLOR::color::black)
+        {
+            if (rowDifference == -1)
+            {
+                if (ctx.move->destination == ctx.board->validEnPassant or
+                    ((*ctx.board)[ctx.move->destination] & NOTATION::COLOR_AND_PIECE_MASK) ==
+                    (NOTATION::PIECES::PAWN | NOTATION::COLOR::WHITE))
+                {
+                    return true;
+                }
+            }
+        }
 	}
 
 	return false;

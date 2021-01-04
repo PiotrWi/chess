@@ -12,7 +12,6 @@ namespace MoveApplier
 
 struct MoveMemorial
 {
-    decltype(Board::lastMove) lastMove;
     bool wasCasling;
     bool enPasant;
     unsigned char sourceField;

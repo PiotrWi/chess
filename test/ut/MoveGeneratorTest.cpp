@@ -311,7 +311,7 @@ TEST_F(MoveGeneratorTests, shouldFindPromotions)
 
 	auto kingMoves = map(
 		{"d1-c1", "d1-c2", "d1-d2"}, WHITE);
-
+	utils::setMovedBit(board, "d1");
 	ASSERT_THAT(sut.generate(board, WHITE),
 		::testing::UnorderedElementsAreArray(pawnMoves+kingMoves));
 }

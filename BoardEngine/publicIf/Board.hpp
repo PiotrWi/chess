@@ -21,7 +21,6 @@ struct Board
 {
 	NOTATION::COLOR::color playerOnMove = NOTATION::COLOR::color::white;
 	signed char validEnPassant = -1;
-	Move lastMove = {};
 	unsigned char fields[64] = {0u, 0u}; // "0 belongs to A1, 1 belongs to B1, 8 belongs to A2
 
 	unsigned char& operator[](const char*) noexcept;

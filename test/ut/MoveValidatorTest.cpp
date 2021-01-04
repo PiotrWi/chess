@@ -131,15 +131,13 @@ TEST_F(MoveValidatorTests_WhitePawnOnMove, AllowBeatsOnFly)
                 "        "
                 "♙♙♙♙ ♙♙♙"
                 "♖♘♗♕♔♗♘♖");
+    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("e5-e6", color_)));
 
-    board.lastMove = createMove("d7-d5", NOTATION::COLOR::color::black);
+    utils::setValidEnPassant(board, "d6");
     ASSERT_TRUE(MoveValidator::validateMove(board, createMove("e5-d6", color_)));
 
-    board.lastMove = createMove("f7-f5", NOTATION::COLOR::color::black);
+    utils::setValidEnPassant(board, "f6");
     ASSERT_TRUE(MoveValidator::validateMove(board, createMove("e5-f6", color_)));
-
-    board.lastMove = createMove("e7-e6", NOTATION::COLOR::color::black);
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("e5-e6", color_)));
 }
 
 TEST_F(MoveValidatorTests_WhitePawnOnMove, DoNotAllowToCheckAfterMove)
@@ -210,15 +208,13 @@ TEST_F(MoveValidatorTests_BlackPawnOnMove, AllowBeatsOnFly)
                 "    ♙   "
                 "♙♙♙   ♙♙"
                 "♖♘♗♕♔♗♘♖");
+    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("e4-e3", color_)));
 
-    board.lastMove = createMove("d2-d4", NOTATION::COLOR::color::black);
+    utils::setValidEnPassant(board, "d3");
     ASSERT_TRUE(MoveValidator::validateMove(board, createMove("e4-d3", color_)));
 
-    board.lastMove = createMove("f2-f4", NOTATION::COLOR::color::black);
+    utils::setValidEnPassant(board, "f3");
     ASSERT_TRUE(MoveValidator::validateMove(board, createMove("e4-f3", color_)));
-
-    board.lastMove = createMove("e7-e6", NOTATION::COLOR::color::black);
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("e4-e3", color_)));
 }
 
 TEST_F(MoveValidatorTests_BlackPawnOnMove, DoNotAllowToCheckAfterMove)

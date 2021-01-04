@@ -32,7 +32,7 @@ public:
 TEST_F(MoveApplierShould, storeMoveToResultEvaluator)
 {
     Board board = utils::createBoard(utils::InitialBoardString);
-    Board beforeMove = board;
+//    Board beforeMove = board;
 
     Board expectedBoard = utils::createBoard(
             "♜♞♝♛♚♝♞♜"
@@ -44,15 +44,16 @@ TEST_F(MoveApplierShould, storeMoveToResultEvaluator)
             "♙♙♙♙ ♙♙♙"
             "♖♘♗♕♔♗♘♖", BLACK);
     utils::setMovedBit(expectedBoard, "e4");
-    utils::setLastMove(expectedBoard, createMove("e2-e4", WHITE));
+    utils::setValidEnPassant(expectedBoard, "e3");
 
     EXPECT_CALL(resultEvaluatorMock, storeBoard(_));
-    auto memorial = MoveApplier::applyTmpMove(board, createMove("e2-e4", WHITE), resultEvaluatorMock);
+    MoveApplier::applyMove(board, createMove("e2-e4", WHITE), resultEvaluatorMock);
     ASSERT_EQ(expectedBoard, board);
-
+/*
     EXPECT_CALL(resultEvaluatorMock, removeSingle());
     MoveApplier::undoMove(board, memorial, resultEvaluatorMock);
     ASSERT_EQ(board, beforeMove);
+    */
 }
 
 TEST_F(MoveApplierShould, doCastlesForWhite)
@@ -68,7 +69,6 @@ TEST_F(MoveApplierShould, doCastlesForWhite)
             "♙♙♙♙ ♙♙♙"
             "♖    ♖♔ ", BLACK);
     utils::setMovedBit(shortCastleExpectedBoard, "g1");
-    utils::setLastMove(shortCastleExpectedBoard, createMove("e1-g1", WHITE));
 
     Board longCastleExpectedBoard = utils::createBoard(
             "♜♞♝♛♚♝♞♜"
@@ -80,7 +80,6 @@ TEST_F(MoveApplierShould, doCastlesForWhite)
             "♙♙♙♙ ♙♙♙"
             "  ♔♖   ♖", BLACK);
     utils::setMovedBit(longCastleExpectedBoard, "c1");
-    utils::setLastMove(longCastleExpectedBoard, createMove("O-O-O", WHITE));
 
 // preparation
     Board board = utils::createBoard("♜♞♝♛♚♝♞♜"
@@ -119,7 +118,6 @@ TEST_F(MoveApplierShould, doCastlesForBlack)
             "♙♙♙♙ ♙♙♙"
             "♖   ♔  ♖", WHITE);
     utils::setMovedBit(shortCastleExpectedBoard, "g8");
-    utils::setLastMove(shortCastleExpectedBoard, createMove("e8-g8", BLACK));
 
     Board longCastleExpectedBoard = utils::createBoard(
             "  ♚♜   ♜"
@@ -131,7 +129,6 @@ TEST_F(MoveApplierShould, doCastlesForBlack)
             "♙♙♙♙ ♙♙♙"
             "♖   ♔  ♖", WHITE);
     utils::setMovedBit(longCastleExpectedBoard, "c8");
-    utils::setLastMove(longCastleExpectedBoard, createMove("O-O-O", BLACK));
 
 // preparation
     Board board = utils::createBoard("♜   ♚  ♜"
@@ -169,7 +166,6 @@ TEST_F(MoveApplierShould, apllyPromotionsWhite)
             "      ♔ ", BLACK);
 
     utils::setMovedBit(promotedPawn, "c8");
-    utils::setLastMove(promotedPawn, createMove("c7-c8=Q", WHITE));
 
     Board board = utils::createBoard("    ♚   "
          "  ♙     "
@@ -198,7 +194,6 @@ TEST_F(MoveApplierShould, apllyPromotionsBlack)
             "♜     ♔ ", WHITE);
 
     utils::setMovedBit(promotedPawn, "a1");
-    utils::setLastMove(promotedPawn, createMove("a2-a1=R", WHITE));
 
     Board board = utils::createBoard("    ♚   "
                                      "        "
@@ -226,7 +221,6 @@ TEST_F(MoveApplierShould, allowEnPassantForWhite)
             "♙♙♙♙ ♙♙♙"
             "♖♘♗♕♔♗♘♖", BLACK);
     utils::setMovedBit(expectedBoard, "d6");
-    utils::setLastMove(expectedBoard, createMove("e5-d6", WHITE));
 
     Board board = utils::createBoard(
         "♜♞♝♛♚♝♞♜"
@@ -259,7 +253,6 @@ TEST_F(MoveApplierShould, allowEnPassantForBlack)
             "♙♙♙♙ ♙♙♙"
             "♖♘♗♕♔♗♘♖", WHITE);
     utils::setMovedBit(expectedBoard, "e3");
-    utils::setLastMove(expectedBoard, createMove("d4-e3", BLACK));
 
     Board board = utils::createBoard(
             "♜♞♝♛♚♝♞♜"
@@ -273,7 +266,7 @@ TEST_F(MoveApplierShould, allowEnPassantForBlack)
 
     EXPECT_CALL(resultEvaluatorMock, storeBoard(_));
     MoveApplier::applyMove(board, createMove("e2-e4", WHITE), resultEvaluatorMock);
-
+    utils::setValidEnPassant(board, "e3");
     EXPECT_CALL(resultEvaluatorMock, storeBoard(_));
     MoveApplier::applyMove(board, createMove("d4-e3", BLACK), resultEvaluatorMock);
 
