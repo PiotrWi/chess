@@ -16,13 +16,6 @@ TEST(MinMaxAndAlfaBeta, shallReturnSameValues)
     be.applyMove(createMove("e2-e4", NOTATION::COLOR::color::white));
     ASSERT_EQ(minMax::evaluate(be, 2), alfaBeta::evaluate(be, 2));
     ASSERT_EQ(minMax::evaluate(be, 3), alfaBeta::evaluate(be, 3));
-}
-
-TEST(MinMaxAndAlfaBeta, TEMP_shallReturnSameValues)
-{
-    BoardEngine be;
-    // WHY? Move is different O_o
-    be.applyMove(createMove("e2-e4", NOTATION::COLOR::color::white));
     ASSERT_EQ(minMax::evaluate(be, 4), alfaBeta::evaluate(be, 4));
 }
 
@@ -85,13 +78,13 @@ TEST(MinMaxAndAlfaBeta, shallSolvePuzzle)
     auto expectedMove = createMove("d1-b1", NOTATION::COLOR::color::white);
     ASSERT_EQ(expectedMove, minMax::evaluate(be, 4));
 
-    ASSERT_EQ(expectedMove, alfaBeta::evaluate(be, 6));
+    ASSERT_EQ(expectedMove, alfaBeta::evaluate(be, 4));
 }
 
 TEST(MinMaxAndAlfaBeta, shallSolvePuzzle_2)
 {
     BoardEngine be;
-    be.board = utils::createBoard ("  ♜   ♚ "
+    be.board = utils::createBoard ("  ♜♚    "
                                    " ♛   ♟♟ "
                                    "    ♟  ♟"
                                    "        "

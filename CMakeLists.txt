@@ -10,11 +10,12 @@ endif()
 
 project(chess LANGUAGES CXX)
 
-SET(CMAKE_CXX_FLAGS  "-O3 -Wall -Wextra -Werror -Wpedantic -pedantic-errors -std=c++17 -flto")
+SET(CMAKE_CXX_FLAGS  "-O3 -Wall -Wextra -Werror -Wpedantic -pedantic-errors -std=c++17 -flto -fuse-ld=gold")
+#SET(CMAKE_CXX_FLAGS  "-Og -Wall -Wextra -Werror -Wpedantic -pedantic-errors -std=c++17 -fuse-ld=gold")
+
 # end of section flags
 
 set(GTEST_INSTALATION_DIR ${CMAKE_CURRENT_SOURCE_DIR}/externals/gtest/googltest )
-
 include_directories(
 		${PROJECT_SOURCE_DIR}/BoardEngine
 		${PROJECT_SOURCE_DIR}/players)

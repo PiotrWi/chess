@@ -1,9 +1,12 @@
 #include "AlfaBeta.hpp"
 
 #include <algorithm>
+#include <vector>
 
 #include <common/evaluators/MaterialEvaluator.hpp>
 #include <common/evaluators/MoveCountEvaluator.hpp>
+
+
 
 namespace
 {

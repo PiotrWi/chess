@@ -5,7 +5,7 @@
 namespace NotationConversions
 {
 
-NOTATION::COLOR::color switchColor(NOTATION::COLOR::color c);
+NOTATION::COLOR::color switchColor(const NOTATION::COLOR::color c);
 
 unsigned char getColumnNum(unsigned char field);
 unsigned char getRow(unsigned char field);
@@ -21,6 +21,7 @@ bool isColumnInBoard(unsigned char col);
 
 }
 
-NOTATION::COLOR::color operator+(NOTATION::COLOR::color& c, unsigned char);
+NOTATION::COLOR::color operator+(const NOTATION::COLOR::color& c, unsigned char);
 NOTATION::COLOR::color operator++(NOTATION::COLOR::color& c);
 NOTATION::COLOR::color operator++(NOTATION::COLOR::color& c, int);
+bool operator==(const unsigned char, const NOTATION::COLOR::color);

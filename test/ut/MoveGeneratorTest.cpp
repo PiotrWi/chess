@@ -46,6 +46,12 @@ std::vector<Move> map(const char* (&&in)[N], NOTATION::COLOR::color c)
 	return moves;
 }
 
+/*std::ostream& operator<<(std::ostream& os, const std::vector<Move>& moves)
+{
+    std::copy(moves.begin(), moves.end(), std::ostream_iterator<Move>(os, " "));
+    return os;
+}*/
+
 }  // namespace
 
 TEST_F(MoveGeneratorTests, shouldReturnInitialMoves)
@@ -336,7 +342,6 @@ TEST_F(MoveGeneratorTests, shouldCorectlyAnalyzePosWithCheck)
 		"♘    ♘♔ "
 		"♙♙♙  ♙♙ "
 		"♖ ♗♕♗   ");
-
 	ASSERT_THAT(sut.generate(board, WHITE),
 		::testing::UnorderedElementsAreArray(pawnMoves+knightMoves+bishopMoves+rockMoves+kingMoves));
 }
@@ -351,7 +356,7 @@ TEST_F(MoveGeneratorTests, shouldFindInitialMovesForBlack)
 
 	auto knightInitialMoves = map(
 			{"b8-a6", "b8-c6", "g8-f6", "g8-h6"}, BLACK);
-
+// e7-e6U, e7-e5U, b8-c6U, b8-a6U, e7-e6U, e7-e5U, a7-a6U, a7-a5U, b7-b6U, b7-b5U, c7-c6U, c7-c5U, d7-d6U, d7-d5U, f7-f6U, f7-f5U, g7-g6U, g7-g5U, h7-h6U, h7-h5U, g8-h6U, g8-f6U }, which has 22 elements
 	Board board = utils::createBoard(utils::InitialBoardString, BLACK);
 	ASSERT_THAT(sut.generate(board, BLACK),
 		::testing::UnorderedElementsAreArray(pawnInitialMoves + knightInitialMoves));
@@ -397,6 +402,37 @@ TEST_F(MoveGeneratorTests, shouldCorectlyAnalyzePosForBlack)
 		::testing::UnorderedElementsAreArray(pawnMoves+knightMoves+rockMoves+bishopMoves+queenMoves+kingMoves));
 }
 
+TEST_F(MoveGeneratorTests,  shouldCorectlyAnalyzePosForBlack_2)
+{
+    auto pawnMoves = map(
+            {"f7-f6", "f7-f5", "g7-g6", "g7-g5", "e6-e5", "h6-h5"}, BLACK);
+
+    auto rockMoves = map(
+            {"c8-a8", "c8-b8", "c8-d8", "c8-e8", "c8-f8",
+             "c8-c7", "c8-c6", "c8-c5", "c8-c4"}, BLACK);
+
+    auto queenMoves = map(
+            {"b7-a8", "b7-c6", "b7-d5", "b7-e4", "b7-f3", "b7-g2", "b7-h1",
+             "b7-a6",
+             "b7-a7", "b7-c7", "b7-d7", "b7-e7",
+             "b7-b8", "b7-b6", "b7-b5", "b7-b4", "b7-b3", "b7-b2", "b7-b1"
+            }, BLACK);
+
+    auto kingMoves = map(
+            {"g8-f8", "g8-h8"}, BLACK);
+
+    auto board = utils::createBoard("  ♜   ♚ "
+                                  " ♛   ♟♟ "
+                                  "    ♟  ♟"
+                                  "        "
+                                  "♟ ♙  ♖ ♙"
+                                  "♙     ♙ "
+                                  "  ♗  ♙  "
+                                  "     ♕♔ ", BLACK);
+    utils::setMovedBit(board, "g8");
+    ASSERT_THAT(sut.generate(board, BLACK),
+                ::testing::UnorderedElementsAreArray(pawnMoves+rockMoves+queenMoves+kingMoves));
+}
 
 TEST_F(MoveGeneratorTests, shouldFindBlackPromotions)
 {
@@ -419,4 +455,106 @@ TEST_F(MoveGeneratorTests, shouldFindBlackPromotions)
 
 	ASSERT_THAT(sut.generate(board, BLACK),
 		::testing::UnorderedElementsAreArray(pawnMoves+kingMoves));
+}
+
+TEST_F(MoveGeneratorTests, shallNotAllowToMovePinned)
+{
+    auto rockMoves = map(
+            {"e6-e7", "e6-e8",
+             "e4-e3", "e4-e2",
+             "d5-c5", "d5-b5", "d5-a5", "f5-g5"}, WHITE);
+
+
+    auto kingMoves = map(
+            {"e5-f6", "e5-d6", "e5-d4", "e5-f4"}, WHITE);
+
+    auto board = utils::createBoard("    ♜ ♚ "
+                                    "        "
+                                    "    ♖   "
+                                    "♛  ♖♔♖♜ "
+                                    "    ♖   "
+                                    "        "
+                                    "    ♛   "
+                                    "        ", WHITE);
+    ASSERT_THAT(sut.generate(board, WHITE),
+                ::testing::UnorderedElementsAreArray(rockMoves + kingMoves));
+}
+
+TEST_F(MoveGeneratorTests, shallNotAllowToMovePinnedBlack)
+{
+    auto rockMoves = map(
+            {"e6-e7", "e6-e8",
+             "e4-e3", "e4-e2",
+             "d5-c5", "d5-b5", "d5-a5", "f5-g5"}, BLACK);
+
+
+    auto kingMoves = map(
+            {"e5-f6", "e5-d6", "e5-d4", "e5-f4"}, BLACK);
+
+    auto board = utils::createBoard("    ♖ ♔ "
+                                    "        "
+                                    "    ♜   "
+                                    "♖  ♜♚♜♖ "
+                                    "    ♜   "
+                                    "        "
+                                    "    ♖   "
+                                    "        ", BLACK);
+    ASSERT_THAT(sut.generate(board, BLACK),
+                ::testing::UnorderedElementsAreArray(rockMoves + kingMoves));
+}
+
+TEST_F(MoveGeneratorTests, shallNotAllowToMoveDiagonal)
+{
+    auto kingMoves = map(
+            {"e5-e6", "e5-d5", "e5-f5", "e5-e4"}, WHITE);
+
+    auto board = utils::createBoard("      ♚♛"
+                                    "  ♛     "
+                                    "   ♖ ♖  "
+                                    "    ♔   "
+                                    "   ♖ ♖  "
+                                    "      ♛ "
+                                    " ♛      "
+                                    "        ", WHITE);
+    ASSERT_THAT(sut.generate(board, WHITE),
+                ::testing::UnorderedElementsAreArray(kingMoves));
+}
+
+TEST_F(MoveGeneratorTests, shallNotAllowToMoveDiagonalBlack)
+{
+    auto kingMoves = map(
+            {"e5-e6", "e5-d5", "e5-f5", "e5-e4"}, BLACK);
+
+    auto board = utils::createBoard("♔       "
+                                    "  ♕   ♕ "
+                                    "   ♜ ♜  "
+                                    "    ♚   "
+                                    "   ♜ ♜  "
+                                    "  ♕   ♕ "
+                                    "        "
+                                    "        ", BLACK);
+    ASSERT_THAT(sut.generate(board, BLACK),
+                ::testing::UnorderedElementsAreArray(kingMoves));
+}
+
+TEST_F(MoveGeneratorTests, shallNotAllowToMovePawnWhenPinned)
+{
+    auto kingMoves = map(
+            {"e8-f8", "e8-e7"}, BLACK);
+
+    auto board = utils::createBoard(
+                                    "  ♔ ♚   "
+                                    "     ♟  "
+                                    "        "
+                                    "       ♕"
+                                    "        "
+                                    "        "
+                                    "        "
+                                    "        ", BLACK);
+    ASSERT_THAT(sut.generate(board, BLACK),
+                ::testing::UnorderedElementsAreArray(kingMoves));
+
+    utils::setMovedBit(board, "h5");
+    ASSERT_THAT(sut.generate(board, BLACK),
+                ::testing::UnorderedElementsAreArray(kingMoves));
 }

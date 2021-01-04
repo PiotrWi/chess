@@ -13,7 +13,7 @@ unsigned char getRow(unsigned char field)
 	return (field >> 3u);
 }
 
-NOTATION::COLOR::color switchColor(NOTATION::COLOR::color c)
+NOTATION::COLOR::color switchColor(const NOTATION::COLOR::color c)
 {
 	auto colorNum = static_cast<unsigned char>(c);
 	return NOTATION::COLOR::color(colorNum ^ NOTATION::COLOR::COLOR_MASK);
@@ -65,7 +65,12 @@ NOTATION::COLOR::color operator++(NOTATION::COLOR::color& c, int)
     return tmp;
 }
 
-NOTATION::COLOR::color operator+(NOTATION::COLOR::color& c, unsigned char)
+NOTATION::COLOR::color operator+(const NOTATION::COLOR::color& c, unsigned char)
 {
     return NotationConversions::switchColor(c);
+}
+
+bool operator==(const unsigned char uc, const NOTATION::COLOR::color c)
+{
+    return uc == static_cast<unsigned char>(c);
 }

@@ -2,7 +2,7 @@
 
 #include <publicIf/Notation.hpp>
 
-class Board;
+struct Board;
 
 namespace CheckChecker
 {
