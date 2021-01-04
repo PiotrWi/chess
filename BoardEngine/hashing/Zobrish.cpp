@@ -9,6 +9,7 @@ namespace
 constexpr unsigned CFieldCount = 64;
 constexpr unsigned CValueCount = 256;
 
+
 class Hash
 {
 public:
@@ -72,4 +73,21 @@ uint64_t hash(Board& board) noexcept
     h ^= HASH.getEnPassant()[board.validEnPassant+1];
 
     return h;
+}
+
+uint64_t switchColor(uint64_t oldHash) noexcept
+{
+    return oldHash ^= HASH.getColorHash();
+}
+
+uint64_t switchField(uint64_t oldHash, unsigned char fieldIndex, unsigned char oldVal, unsigned char newVal) noexcept
+{
+    oldHash ^= HASH.getField()[fieldIndex][oldVal];
+    return oldHash ^= HASH.getField()[fieldIndex][newVal];
+}
+
+uint64_t switchEnPassant(uint64_t oldHash, unsigned char oldVal, unsigned char newVal) noexcept
+{
+    oldHash ^= HASH.getEnPassant()[oldVal];
+    return oldHash ^= HASH.getEnPassant()[newVal];
 }
