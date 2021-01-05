@@ -15,7 +15,7 @@ const char *SimpleComputerPlayer::act(const char *string)
     {
         be.applyMove(createMove(string, be.board.playerOnMove));
     }
-    auto move = alfaBeta::evaluate(be, 6);
+    auto move = alfaBeta::evaluate(be, 8);
     be.applyMove(move);
     strcpy(lastMove_, createMoveStr(move).data());
     return lastMove_;

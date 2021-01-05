@@ -57,7 +57,10 @@ Hash HASH;
 
 }  // namespace
 
-uint64_t hash(Board& board) noexcept
+namespace hash
+{
+
+uint64_t hash(Board &board) noexcept
 {
     uint64_t h = 0u;
     for (unsigned char i = 0u; i < 64; ++i)
@@ -70,7 +73,7 @@ uint64_t hash(Board& board) noexcept
         h ^= HASH.getColorHash();
     }
 
-    h ^= HASH.getEnPassant()[board.validEnPassant+1];
+    h ^= HASH.getEnPassant()[board.validEnPassant + 1];
 
     return h;
 }
@@ -90,4 +93,6 @@ uint64_t switchEnPassant(uint64_t oldHash, unsigned char oldVal, unsigned char n
 {
     oldHash ^= HASH.getEnPassant()[oldVal];
     return oldHash ^= HASH.getEnPassant()[newVal];
+}
+
 }

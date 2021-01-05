@@ -37,6 +37,9 @@ enum class color : unsigned char {
 
 namespace MOVED
 {
+// TODO:  To consider different approach. This can affect hashing.
+//        Two same positions may end as different hash.
+//        Especially in early stages of the game.
 constexpr unsigned char MOVED_MASK = (1u << 7);
 }  //namespace MOVED
 
