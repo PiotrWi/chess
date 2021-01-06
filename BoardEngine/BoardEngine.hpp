@@ -26,8 +26,8 @@ public:
 
     uint64_t getHash() const;
 
-    Result getResult() const;
-    Result getResult(bool availableMoves) const;
+    Result getResult();
+    Result getResult(bool availableMoves);
     std::vector<Move> generateMoves() const;
     std::vector<Move> generateMovesFor(NOTATION::COLOR::color) const;
 

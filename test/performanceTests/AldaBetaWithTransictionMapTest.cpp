@@ -47,7 +47,7 @@ TEST(AlfaBetaTrasictionMap, PerformanceTest_8_black)
     be.applyMove(createMove("e2-e4", NOTATION::COLOR::color::white));
     alfaBeta::evaluate(be, mg, 8);
 }
-
+/*
 TEST(AlfaBetaTrasictionMap, PerformanceTest_10)
 {
     BoardEngine be;
@@ -62,3 +62,4 @@ TEST(AlfaBetaTrasictionMap, PerformanceTest_10_black)
     be.applyMove(createMove("e2-e4", NOTATION::COLOR::color::white));
     alfaBeta::evaluate(be, mg, 10);
 }
+*/

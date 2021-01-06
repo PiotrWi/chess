@@ -25,12 +25,12 @@ void BoardEngine::applyMove(const Move& move)
     MoveApplier::applyMove(board, hash_, move, resultEvaluator);
 }
 
-Result BoardEngine::getResult() const
+Result BoardEngine::getResult()
 {
     return resultEvaluator.evaluate();
 }
 
-Result BoardEngine::getResult(bool availableMoves) const
+Result BoardEngine::getResult(bool availableMoves)
 {
     return resultEvaluator.evaluate(availableMoves);
 }

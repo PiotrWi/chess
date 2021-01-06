@@ -13,7 +13,6 @@ namespace PawnHash
 {
 
 using type = uint64_t;
-type TAIL = (uint64_t)(-1);
 
 type evaluate(const Board& board)
 {
@@ -22,7 +21,7 @@ type evaluate(const Board& board)
 	type hash = 0;
 	for (auto i = 8u; i < 56u; ++i)
 	{
-		hash |= (((board[i] & PIECES_MASK) == PAWN) << 1);
+		hash |= (((board[i] & PIECES_MASK) == PAWN) << i);
 	}
 	return hash;
 }
@@ -33,7 +32,6 @@ namespace PiecesCount
 {
 
 using type = unsigned char;
-type TAIL = 255u;
 
 type evaluate(const Board& board)
 {
@@ -49,120 +47,67 @@ type evaluate(const Board& board)
 
 }  // namespace FiguresCount
 
+Node::Node() {}
 
-struct Node
-{
-	struct BoardInformations
-	{
-		BoardInformations();
-		BoardInformations(const Board&,
-			PawnHash::type,
-			PiecesCount::type,
-			unsigned char);
-
-		Board board;
-		PawnHash::type pawnsHash;
-		PiecesCount::type piecesCount;
-		unsigned char repeatedTime = 0;
-	};
-public:
-    Node(const std::vector<BoardInformations>&, std::unique_ptr<Node>&&);
-	std::vector<BoardInformations> boardInformations_;
-	std::unique_ptr<Node> previous;
-
-	static std::unique_ptr<Node> makeTail();
-};
-
-Node::Node(const std::vector<BoardInformations>& bo, std::unique_ptr<Node>&& prev)
-    : boardInformations_(bo)
-    , previous(std::move(prev))
-{
-}
-
-Node::BoardInformations::BoardInformations() {}
-
-Node::BoardInformations::BoardInformations(const Board& b,
+Node::Node(const Board& b,
 		PawnHash::type ph,
 		PiecesCount::type pc,
-		unsigned char rT)
+		unsigned char rT,
+		unsigned char noSignificant)
 	: board(b)
 	, pawnsHash(ph)
 	, piecesCount(pc)
 	, repeatedTime(rT)
+	, noSignificantMoves_(noSignificant)
 {
 }
 
-std::unique_ptr<Node> Node::makeTail()
-{
-	return std::unique_ptr<Node>(
-		new Node{
-			{{
-				{},
-				PawnHash::TAIL,
-				PiecesCount::TAIL,
-				0u
-			}}, {}});
-}
+Node TAIL = {{}, std::numeric_limits<uint64_t>::max(), std::numeric_limits<unsigned char>::max(), 0, 0};
 
 namespace
 {
 
-bool are3Repeatitions(Node& node)
+bool are3Repeatitions(std::vector<Node>& nodes)
 {
 	//TODO it definetly would advance if we lose a loop inside
 	auto compare = [](const Board& lhs, const Board& rhs) {
-		using namespace NOTATION;
-		for (auto i = 0; i != 64; ++i)
+        using namespace NOTATION;
+	    constexpr u_int64_t mask = (COLOR_AND_PIECE_MASK)
+            | (static_cast<u_int64_t>(COLOR_AND_PIECE_MASK) << 8)
+            | (static_cast<u_int64_t>(COLOR_AND_PIECE_MASK) << 16)
+            | (static_cast<u_int64_t>(COLOR_AND_PIECE_MASK) << 24)
+            | (static_cast<u_int64_t>(COLOR_AND_PIECE_MASK) << 32)
+            | (static_cast<u_int64_t>(COLOR_AND_PIECE_MASK) << 40)
+            | (static_cast<u_int64_t>(COLOR_AND_PIECE_MASK) << 48)
+            | (static_cast<u_int64_t>(COLOR_AND_PIECE_MASK) << 56);
+
+		for (auto i = 0; i != 8; ++i)
 		{
-			if ((lhs[i] & COLOR_AND_PIECE_MASK) != (rhs[i] & COLOR_AND_PIECE_MASK))
+            if((mask & (*((u_int64_t*)(lhs.fields) + i))) !=
+                        (mask & (*((u_int64_t*)(rhs.fields) + i))))
 				return false;
 		}
 		return true;
 	};
 
-	auto boardTemplate = node.boardInformations_.back().board;
-
-	for (auto it = node.boardInformations_.rbegin() + 1;
-			it < node.boardInformations_.rend();
-			++it)
-	{
-		if (compare(boardTemplate, it->board))
-		{
-			node.boardInformations_.back().repeatedTime = it->repeatedTime + 1;
-			return 2 == node.boardInformations_.back().repeatedTime;
-		}
-	}
-	return false;
+	int significantCounter = nodes.back().noSignificantMoves_ - 1;
+    auto boardTemplate = nodes.back().board;
+    for (auto it = nodes.rbegin() + 1; significantCounter >= 0; ++it, --significantCounter)
+    {
+        if (compare(boardTemplate, it->board))
+        {
+            nodes.back().repeatedTime = it->repeatedTime + 1;
+            return 2 == nodes.back().repeatedTime;
+        }
+    }
+    return false;
 }
 
 }  // namespace
 
 ResultEvaluator::ResultEvaluator()
-	: boardsToEvaluate(Node::makeTail())
+	: boardsToEvaluate({TAIL})
 {
-}
-
-ResultEvaluator::~ResultEvaluator() {}
-
-static std::unique_ptr<Node> deepClone(const Node& other)
-{
-    if (other.previous)
-    {
-        return std::make_unique<Node>(other.boardInformations_, deepClone(*other.previous));
-    }
-    return std::make_unique<Node>(other.boardInformations_, nullptr);
-}
-
-ResultEvaluator::ResultEvaluator(const ResultEvaluator & other)
-{
-    if (other.boardsToEvaluate)
-    {
-        boardsToEvaluate = deepClone(*other.boardsToEvaluate);
-    }
-    else
-    {
-        boardsToEvaluate = Node::makeTail();
-    }
 }
 
 void ResultEvaluator::storeBoard(const Board& board)
@@ -170,32 +115,25 @@ void ResultEvaluator::storeBoard(const Board& board)
 	auto pawnHash = PawnHash::evaluate(board);
 	auto piecesCount = PiecesCount::evaluate(board);
 
-	if (pawnHash != boardsToEvaluate->boardInformations_.back().pawnsHash
-		or piecesCount != boardsToEvaluate->boardInformations_.back().piecesCount)
-	{
-		auto newBoardsToEvaluate = std::unique_ptr<Node>(
-			new Node{{}, std::move(boardsToEvaluate)});
-		boardsToEvaluate = std::move(newBoardsToEvaluate);
-	}
-
-	boardsToEvaluate->boardInformations_.emplace_back(
-		board, pawnHash, piecesCount, 0);
+    boardsToEvaluate.emplace_back(
+            board,
+            pawnHash,
+            piecesCount,
+            0,
+            (pawnHash != boardsToEvaluate.back().pawnsHash or piecesCount != boardsToEvaluate.back().piecesCount)
+                ? 0 : boardsToEvaluate.back().noSignificantMoves_ + 1);
 }
 
 void ResultEvaluator::removeSingle()
 {
-    boardsToEvaluate->boardInformations_.pop_back();
-    if (boardsToEvaluate->boardInformations_.empty())
-    {
-        boardsToEvaluate = std::move(boardsToEvaluate->previous);
-    }
+    boardsToEvaluate.pop_back();
 }
 
-Result ResultEvaluator::evaluate(bool movesAvailable) const
+Result ResultEvaluator::evaluate(bool movesAvailable)
 {
     if (not movesAvailable)
     {
-        const auto& board = boardsToEvaluate->boardInformations_.back().board;
+        const auto& board = boardsToEvaluate.back().board;
         if (CheckChecker::isCheckOn(board, board.playerOnMove))
         {
             return (board.playerOnMove == NOTATION::COLOR::color::white)
@@ -205,12 +143,12 @@ Result ResultEvaluator::evaluate(bool movesAvailable) const
         return Result::draw;
     }
 
-    if (boardsToEvaluate->boardInformations_.size() >= 100)
+    if (boardsToEvaluate.back().noSignificantMoves_ >= 100)
     {
         return Result::draw;
     }
 
-    if (are3Repeatitions(*boardsToEvaluate))
+    if (are3Repeatitions(boardsToEvaluate))
     {
         return Result::draw;
     }
@@ -219,8 +157,8 @@ Result ResultEvaluator::evaluate(bool movesAvailable) const
 }
 
 
-Result ResultEvaluator::evaluate() const
+Result ResultEvaluator::evaluate()
 {
-    const auto& board = boardsToEvaluate->boardInformations_.back().board;
+    const auto& board = boardsToEvaluate.back().board;
     return evaluate(not MoveGenerator::MoveGenerator().generate(board, board.playerOnMove).empty());
 }
