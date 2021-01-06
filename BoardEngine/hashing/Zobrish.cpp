@@ -44,14 +44,16 @@ public:
             hashes[i][BLACK | NOTATION::PIECES::ROCK | MOVED_MASK] = dis(gen);
             hashes[i][BLACK | NOTATION::PIECES::KING | MOVED_MASK] = dis(gen);
 
-            hashes[i][WHITE | PAWN | MOVED_MASK] = hashes[i][WHITE | PAWN];
-            hashes[i][WHITE | KNIGHT | MOVED_MASK] = hashes[i][WHITE | KNIGHT];
-            hashes[i][WHITE | BISHOP | MOVED_MASK] = hashes[i][WHITE | BISHOP];
-            hashes[i][WHITE | QUEEN | MOVED_MASK] = hashes[i][WHITE | QUEEN];
-            hashes[i][BLACK | PAWN | MOVED_MASK] = hashes[i][BLACK | PAWN];
-            hashes[i][BLACK | KNIGHT | MOVED_MASK] = hashes[i][BLACK | KNIGHT];
-            hashes[i][BLACK | BISHOP | MOVED_MASK] = hashes[i][BLACK | BISHOP];
-            hashes[i][BLACK | QUEEN | MOVED_MASK] = hashes[i][BLACK | QUEEN];
+            // bellow one shall have same hash.
+            // In current MOVED_MASK representation, it would be a pessimisation.
+            hashes[i][WHITE | PAWN | MOVED_MASK] = dis(gen);
+            hashes[i][WHITE | KNIGHT | MOVED_MASK] = dis(gen);
+            hashes[i][WHITE | BISHOP | MOVED_MASK] = dis(gen);
+            hashes[i][WHITE | QUEEN | MOVED_MASK] = dis(gen);
+            hashes[i][BLACK | PAWN | MOVED_MASK] = dis(gen);
+            hashes[i][BLACK | KNIGHT | MOVED_MASK] = dis(gen);
+            hashes[i][BLACK | BISHOP | MOVED_MASK] = dis(gen);
+            hashes[i][BLACK | QUEEN | MOVED_MASK] = dis(gen);
         }
         blackHash = dis(gen);
         for (auto i = 1u; i < CFieldCount; ++i)

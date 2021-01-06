@@ -3,7 +3,6 @@
 namespace NOTATION
 {
 
-
 namespace PIECE_FEATURES
 {
 

@@ -2,6 +2,7 @@
 
 #include <BoardEngine.hpp>
 #include <common/CachedMoveGenerator/CachedMoveGenerator.hpp>
+
 namespace alfaBeta
 {
 

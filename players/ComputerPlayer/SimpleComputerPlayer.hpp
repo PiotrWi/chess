@@ -3,6 +3,7 @@
 #include <common/IPLayer.hpp>
 #include <BoardEngine.hpp>
 #include <common/CachedMoveGenerator/CachedMoveGenerator.hpp>
+#include <common/CachedMoveGenerator/CachedMoveGeneratorMap.hpp>
 
 class SimpleComputerPlayer
         : public IPlayer
