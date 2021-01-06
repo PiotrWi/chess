@@ -1,3 +1,4 @@
+#include <limits>
 #include "MinMax.hpp"
 
 #include <common/evaluators/MaterialEvaluator.hpp>
