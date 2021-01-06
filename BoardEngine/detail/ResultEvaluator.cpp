@@ -69,7 +69,6 @@ namespace
 
 bool are3Repeatitions(std::vector<Node>& nodes)
 {
-	//TODO it definetly would advance if we lose a loop inside
 	auto compare = [](const Board& lhs, const Board& rhs) {
         using namespace NOTATION;
 	    constexpr u_int64_t mask = (COLOR_AND_PIECE_MASK)
