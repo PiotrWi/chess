@@ -3,6 +3,7 @@
 #include <notations/LongAlgebraicNotation.hpp>
 #include <common/searchingAlgorithms/MinMax.hpp>
 #include <common/searchingAlgorithms/AlfaBeta.hpp>
+#include <common/searchingAlgorithms/AlfaBetaWithTransitctionTable.hpp>
 
 void SimpleComputerPlayer::init(Color c)
 {
@@ -15,7 +16,7 @@ const char *SimpleComputerPlayer::act(const char *string)
     {
         be.applyMove(createMove(string, be.board.playerOnMove));
     }
-    auto move = alfaBeta::evaluate(be, 8);
+    auto move = alfaBeta::evaluate(be, cachedMoveGenerator_, 7);
     be.applyMove(move);
     strcpy(lastMove_, createMoveStr(move).data());
     return lastMove_;

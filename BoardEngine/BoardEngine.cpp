@@ -1,10 +1,12 @@
 #include "BoardEngine.hpp"
 #include <detail/MoveValidator.hpp>
 #include <detail/MoveGenerator.hpp>
+#include <hashing/zobrist.hpp>
 
 BoardEngine::BoardEngine()
 {
     initDefault(board);
+    hash_ = hash::hash(board);
 }
 
 BoardEngine::BoardEngine(const BoardEngine& other)
@@ -20,7 +22,7 @@ bool BoardEngine::validateMove(const Move& move) const
 
 void BoardEngine::applyMove(const Move& move)
 {
-    MoveApplier::applyMove(board, move, resultEvaluator);
+    MoveApplier::applyMove(board, hash_, move, resultEvaluator);
 }
 
 Result BoardEngine::getResult() const
@@ -45,21 +47,25 @@ std::vector<Move> BoardEngine::generateMovesFor(NOTATION::COLOR::color color) co
 
 MoveApplier::MoveMemorial BoardEngine::applyUndoableMove(const Move & move)
 {
-    return MoveApplier::applyTmpMove(board, move, resultEvaluator);
+    return MoveApplier::applyTmpMove(board, hash_, move, resultEvaluator);
 }
 
 void BoardEngine::undoMove(const MoveApplier::MoveMemorial moveMemorial)
 {
-    MoveApplier::undoMove(board, moveMemorial, resultEvaluator);
+    MoveApplier::undoMove(board, hash_, moveMemorial, resultEvaluator);
 }
 
 MoveApplier::SimpleMoveMemorial BoardEngine::applyUndoableSimpleMove(const Move& move)
 {
-    return MoveApplier::applyTmpMoveSimple(board, move, resultEvaluator);
+    return MoveApplier::applyTmpMoveSimple(board, hash_, move, resultEvaluator);
 }
 
 void BoardEngine::undoMove(MoveApplier::SimpleMoveMemorial sm)
 {
-    return MoveApplier::undoMove(board, sm, resultEvaluator);
+    return MoveApplier::undoMove(board, hash_, sm, resultEvaluator);
 }
 
+uint64_t BoardEngine::getHash() const
+{
+    return hash_;
+}

@@ -24,6 +24,8 @@ public:
     MoveApplier::SimpleMoveMemorial applyUndoableSimpleMove(const Move&);
     void undoMove(MoveApplier::SimpleMoveMemorial);
 
+    uint64_t getHash() const;
+
     Result getResult() const;
     Result getResult(bool availableMoves) const;
     std::vector<Move> generateMoves() const;
@@ -31,4 +33,5 @@ public:
 
     Board board;
     ResultEvaluator resultEvaluator;
+    uint64_t hash_ = 0lu;
 };

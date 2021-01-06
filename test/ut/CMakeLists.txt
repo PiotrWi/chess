@@ -14,7 +14,7 @@ add_executable(ut
 	../utils/BoardGenerationUtils.cpp
 	MoveApplierTest.cpp
 	MaterialEvaluatorTest.cpp
-	MinMaxAndAlfaBetaTest.cpp ZobrishTest.cpp)
+	MinMaxAndAlfaBetaTest.cpp ZobrishTest.cpp HashTableTest.cpp CachedMoveGeneratorTest.cpp)
 
 
 add_dependencies(ut googletest)

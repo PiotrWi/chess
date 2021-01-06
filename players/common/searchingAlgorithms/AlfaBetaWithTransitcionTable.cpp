@@ -1,3 +1,5 @@
+#include "AlfaBetaWithTransitctionTable.hpp"
+
 #include "AlfaBeta.hpp"
 
 #include <algorithm>
@@ -10,23 +12,26 @@ namespace
 {
 
 int evaluateMin(BoardEngine& be,
-                        unsigned char depth,
-                        NOTATION::COLOR::color color,
-                        int alfa,
-                        int beta);
+                CachedMoveGenerator& moveGenerator,
+                unsigned char depth,
+                NOTATION::COLOR::color color,
+                int alfa,
+                int beta);
 int evaluateMax(BoardEngine& be,
-                        unsigned char depth,
-                        NOTATION::COLOR::color color,
-                        int alfa,
-                        int beta);
+                CachedMoveGenerator& moveGenerator,
+                unsigned char depth,
+                NOTATION::COLOR::color color,
+                int alfa,
+                int beta);
 
 int evaluateMin(BoardEngine& be,
-                        unsigned char depth,
-                        NOTATION::COLOR::color color,
-                        int alfa,
-                        int beta)
+                CachedMoveGenerator& moveGenerator,
+                unsigned char depth,
+                NOTATION::COLOR::color color,
+                int alfa,
+                int beta)
 {
-    auto validMoves = be.generateMoves();
+    auto validMoves = moveGenerator.generate(be);
     auto gameResult = be.getResult(not validMoves.empty());
     if(gameResult == Result::draw)
     {
@@ -45,7 +50,7 @@ int evaluateMin(BoardEngine& be,
     for (const auto & validMove : validMoves)
     {
         auto memorial = be.applyUndoableSimpleMove(validMove);
-        auto nextBeta = evaluateMax(be, depth - 1, color, alfa, beta);
+        auto nextBeta = evaluateMax(be, moveGenerator, depth - 1, color, alfa, beta);
         be.undoMove(memorial);
 
         greatestValue = std::min(greatestValue, nextBeta);
@@ -58,12 +63,13 @@ int evaluateMin(BoardEngine& be,
 }
 
 int evaluateMax(BoardEngine& be,
-                        unsigned char depth,
-                        NOTATION::COLOR::color color,
-                        int alfa,
-                        int beta)
+                CachedMoveGenerator& moveGenerator,
+                unsigned char depth,
+                NOTATION::COLOR::color color,
+                int alfa,
+                int beta)
 {
-    auto validMoves = be.generateMoves();
+    auto validMoves = moveGenerator.generate(be);
     auto gameResult = be.getResult(not validMoves.empty());
     if(gameResult == Result::draw)
     {
@@ -82,7 +88,7 @@ int evaluateMax(BoardEngine& be,
     for (const auto & validMove : validMoves)
     {
         auto memorial = be.applyUndoableSimpleMove(validMove);
-        auto nextAlfa = evaluateMin(be, depth - 1, color, alfa, beta);
+        auto nextAlfa = evaluateMin(be, moveGenerator, depth - 1, color, alfa, beta);
         be.undoMove(memorial);
 
         greatestValue = std::max(greatestValue, nextAlfa);
@@ -99,9 +105,9 @@ int evaluateMax(BoardEngine& be,
 namespace alfaBeta
 {
 
-Move evaluate(BoardEngine be, unsigned char depth)
+Move evaluate(BoardEngine be, CachedMoveGenerator& moveGenerator, unsigned char depth)
 {
-    auto validMoves = be.generateMoves();
+    auto validMoves = moveGenerator.generate(be);
     auto greatestMove = 0u;
 
     int alfa = std::numeric_limits<int>::min();
@@ -112,7 +118,7 @@ Move evaluate(BoardEngine be, unsigned char depth)
     for (auto i = 0u; i < validMoves.size(); ++i)
     {
         auto memorial = be.applyUndoableSimpleMove(validMoves[i]);
-        auto nextAlfa = evaluateMin(be, depth - 1, playerOnMove, alfa, beta);
+        auto nextAlfa = evaluateMin(be, moveGenerator, depth - 1, playerOnMove, alfa, beta);
         be.undoMove(memorial);
 
         if (nextAlfa > alfa)

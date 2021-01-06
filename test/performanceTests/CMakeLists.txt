@@ -9,7 +9,7 @@ add_executable(pt
         main.cpp
         ../utils/BoardGenerationUtils.cpp
         MinMaxTests.cpp
-        AlfaBetaTests.cpp)
+        AlfaBetaTests.cpp AlfaBetaWithTransictionsTest.cpp)
 
 
 add_dependencies(pt googletest)

@@ -2,6 +2,7 @@
 
 #include <common/IPLayer.hpp>
 #include <BoardEngine.hpp>
+#include <common/CachedMoveGenerator/CachedMoveGenerator.hpp>
 
 class SimpleComputerPlayer
         : public IPlayer
@@ -14,4 +15,6 @@ private:
     Color playerColor_;
     char lastMove_[20];
     BoardEngine be;
+
+    CachedMoveGenerator cachedMoveGenerator_;
 };

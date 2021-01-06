@@ -1,7 +1,8 @@
 #include "MinMax.hpp"
 
-
 #include <common/evaluators/MaterialEvaluator.hpp>
+
+#include <limits>
 
 namespace
 {
@@ -28,9 +29,9 @@ int evaluateMin(BoardEngine& be, unsigned char depth, NOTATION::COLOR::color col
 
     auto greatestValue = std::numeric_limits<int>::max();
 
-    for (auto i = 0u; i < validMoves.size(); ++i)
+    for (const auto & validMove : validMoves)
     {
-        auto memorial = be.applyUndoableSimpleMove(validMoves[i]);
+        auto memorial = be.applyUndoableSimpleMove(validMove);
         auto nodeVal = evaluateMax(be, depth - 1, color);
         be.undoMove(memorial);
 
@@ -61,9 +62,9 @@ int evaluateMax(BoardEngine& be, unsigned char depth, NOTATION::COLOR::color col
 
     auto greatestValue = std::numeric_limits<int>::min();
 
-    for (auto i = 0u; i < validMoves.size(); ++i)
+    for (const auto & validMove : validMoves)
     {
-        auto memorial = be.applyUndoableSimpleMove(validMoves[i]);
+        auto memorial = be.applyUndoableSimpleMove(validMove);
         auto nodeVal = evaluateMin(be, depth - 1, color);
         be.undoMove(memorial);
 

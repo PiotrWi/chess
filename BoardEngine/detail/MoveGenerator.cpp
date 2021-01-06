@@ -22,6 +22,7 @@ class StrategyWithAlwaysCheckChecking
 private:
     static bool isValid(const Move& move)
     {
+
         Board boardCopy = *ctx.board;
         MoveApplier::applyMove(boardCopy, move);
         return not CheckChecker::isAttackedOn(boardCopy, ctx.board->playerOnMove, ctx.kingPosition);
@@ -222,7 +223,7 @@ const std::pair<unsigned char, unsigned char> knightMoves[] = {
 void (*generateKnightMovesWithCheckCheck)(unsigned char i)
     = generateFixedMoves<StrategyWithAlwaysCheckChecking::addForUsualPiece, 8, knightMoves>;
 void (*generateKnightMovesWithNoCheck)(unsigned char i)
-= generateFixedMoves<StrategyWithAlwaysCheckChecking::addForUsualPiece, 8, knightMoves>;
+= generateFixedMoves<StrategyWithNoChecking::addForUsualPiece, 8, knightMoves>;
 
 
 const std::pair<unsigned char, unsigned char> kingMoves[] = {
@@ -297,9 +298,12 @@ void generateLineMoves(unsigned char i)
 
 const std::pair<unsigned char, unsigned char> rockMoves[] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
 void (*generateRockMoves)(unsigned char i) = generateLineMoves<StrategyWithAlwaysCheckChecking, 4, rockMoves>;
+void (*generateRockMovesNoChecking)(unsigned char i) = generateLineMoves<StrategyWithNoChecking, 4, rockMoves>;
+
 
 const std::pair<unsigned char, unsigned char> bishopMoves[] = {{-1, -1}, {-1, 1}, {1, -1}, {1, 1}};
 void (*generateBishopMoves)(unsigned char i) = generateLineMoves<StrategyWithAlwaysCheckChecking, 4, bishopMoves>;
+void (*generateBishopMovesNoChecking)(unsigned char i) = generateLineMoves<StrategyWithNoChecking, 4, bishopMoves>;
 
 template <typename TMoveAddingStrategy, NOTATION::COLOR::color c>
 void dispatchToGenerateStandardPawnMoves(unsigned char i);
@@ -380,14 +384,14 @@ void generateWithAllMoveAllowance(unsigned char i)
             generateKnightMovesWithNoCheck(i);
             return;
         case (NOTATION::PIECE_FEATURES::CAN_ATTACK_ON_LINES):
-            generateRockMoves(i);
+            generateRockMovesNoChecking(i);
             return;
         case (NOTATION::PIECE_FEATURES::CAN_ATTACK_ON_DIAGONAL):
-            generateBishopMoves(i);
+            generateBishopMovesNoChecking(i);
             return;
         case (NOTATION::PIECES::QUEEN):
-            generateBishopMoves(i);
-            generateRockMoves(i);
+            generateBishopMovesNoChecking(i);
+            generateRockMovesNoChecking(i);
             return;
     }
 }
