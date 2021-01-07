@@ -80,7 +80,7 @@ Move createMove (const std::string& moveStr,
 std::vector<char> createMoveStr(const Move& m)
 {
     std::vector<char> out;
-    out.reserve(6 + (m.isPromoted ? 2 : 0));
+    out.resize(6 + (m.isPromoted ? 2 : 0));
 
     out[0] = 'a' + NotationConversions::getColumnNum(m.source);
     out[1] = '1' + NotationConversions::getRow(m.source);
