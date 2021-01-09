@@ -11,9 +11,9 @@ class BoardBasedTest
 {
 public:
     virtual Board createBoard(const char* boardString) const = 0;
-    void setAsMoved(Board& board, const char* fieldStr) const
+    void revokeCastlingRights(Board& board, unsigned char rightBit) const
     {
-    	board[fieldStr] |= NOTATION::MOVED::MOVED_MASK;
+    	board.castlingRights &= (~rightBit);
     }
 };
 
@@ -752,17 +752,17 @@ TEST_F(MoveValidatorTests_WhiteKingOnMove, DoNotAllowCastleWhenMoved)
             "        "
             "♖   ♔  ♖";
     Board board = createBoard(boardString);
-    setAsMoved(board, "a1");
+    revokeCastlingRights(board, NOTATION::CASTLING_RIGHTS::WHITE_LONG_BIT);
     ASSERT_TRUE(MoveValidator::validateMove(board, createMove("O-O", color_)));
     ASSERT_FALSE(MoveValidator::validateMove(board, createMove("O-O-O", color_)));
 
     board = createBoard(boardString);
-    setAsMoved(board, "h1");
+    revokeCastlingRights(board, NOTATION::CASTLING_RIGHTS::WHITE_SHORT_BIT);
     ASSERT_FALSE(MoveValidator::validateMove(board, createMove("O-O", color_)));
     ASSERT_TRUE(MoveValidator::validateMove(board, createMove("O-O-O", color_)));
 
     board = createBoard(boardString);
-    setAsMoved(board, "e1");
+    revokeCastlingRights(board, NOTATION::CASTLING_RIGHTS::WHITE_SHORT_BIT | NOTATION::CASTLING_RIGHTS::WHITE_LONG_BIT);
     ASSERT_FALSE(MoveValidator::validateMove(board, createMove("O-O", color_)));
     ASSERT_FALSE(MoveValidator::validateMove(board, createMove("O-O-O", color_)));
 }
@@ -849,17 +849,17 @@ TEST_F(MoveValidatorTests_BlackKingOnMove, DoNotAllowCastleWhenMoved)
             "        "
             "    ♔   ";
     Board board = createBoard(boardString);
-    setAsMoved(board, "a8");
+    revokeCastlingRights(board, NOTATION::CASTLING_RIGHTS::BLACK_LONG_BIT);
     ASSERT_TRUE(MoveValidator::validateMove(board, createMove("O-O", color_)));
     ASSERT_FALSE(MoveValidator::validateMove(board, createMove("O-O-O", color_)));
 
     board = createBoard(boardString);
-    setAsMoved(board, "h8");
+    revokeCastlingRights(board, NOTATION::CASTLING_RIGHTS::BLACK_SHORT_BIT);
     ASSERT_FALSE(MoveValidator::validateMove(board, createMove("O-O", color_)));
     ASSERT_TRUE(MoveValidator::validateMove(board, createMove("O-O-O", color_)));
 
     board = createBoard(boardString);
-    setAsMoved(board, "e8");
+    revokeCastlingRights(board, NOTATION::CASTLING_RIGHTS::BLACK_SHORT_BIT | NOTATION::CASTLING_RIGHTS::BLACK_LONG_BIT);
     ASSERT_FALSE(MoveValidator::validateMove(board, createMove("O-O", color_)));
     ASSERT_FALSE(MoveValidator::validateMove(board, createMove("O-O-O", color_)));
 }

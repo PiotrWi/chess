@@ -6,7 +6,7 @@
 namespace
 {
 
-bool applyCasltingRules(Board& board, uint64_t& positionHash, const Move& move)
+void applyCasltingRules(Board& board, uint64_t& positionHash, const Move& move)
 {
     if (NotationConversions::getPieceType(board[move.source]) == NOTATION::PIECES::KING)
     {
@@ -27,37 +27,72 @@ bool applyCasltingRules(Board& board, uint64_t& positionHash, const Move& move)
                 auto rockSource = NotationConversions::getFieldNum(row, COLUMN::A);
                 auto rockDestination = NotationConversions::getFieldNum(row, COLUMN::D);
 
-                board[rockDestination] = board[rockSource] | NOTATION::MOVED::MOVED_MASK;
-                hash::switchField(positionHash, rockDestination, board[rockDestination]);
-                hash::switchField(positionHash, board[rockSource], board[rockDestination]);
+                board[rockDestination] = board[rockSource];
+                positionHash = hash::switchField(positionHash, rockDestination, board[rockDestination]);
+                positionHash = hash::switchField(positionHash, rockSource, board[rockSource]);
                 board[rockSource] = 0u;
-
             }
             else
             {
                 auto rockSource = NotationConversions::getFieldNum(row, COLUMN::H);
                 auto rockDestination = NotationConversions::getFieldNum(row, COLUMN::F);
 
-                board[rockDestination] = board[rockSource] | NOTATION::MOVED::MOVED_MASK;
-                hash::switchField(positionHash, rockDestination, board[rockDestination]);
-                hash::switchField(positionHash, board[rockSource], board[rockDestination]);
+                board[rockDestination] = board[rockSource];
+                positionHash = hash::switchField(positionHash, rockDestination, board[rockDestination]);
+                positionHash = hash::switchField(positionHash, rockSource, board[rockSource]);
                 board[rockSource] = 0u;
             }
-            return true;
         }
     }
-    return false;
+}
+
+void conditionallyRevokeCastlingRights(Board& board, uint64_t& positionHash, const Move& move)
+{
+    switch (move.source)
+    {
+        case 0:
+            positionHash = hash::switchCastlingRights(positionHash, board.castlingRights);
+            board.castlingRights = board.castlingRights & (~NOTATION::CASTLING_RIGHTS::WHITE_LONG_BIT);
+            positionHash = hash::switchCastlingRights(positionHash, board.castlingRights);
+            return;
+        case 4:
+            positionHash = hash::switchCastlingRights(positionHash, board.castlingRights);
+            board.castlingRights = board.castlingRights & (~NOTATION::CASTLING_RIGHTS::WHITE_LONG_BIT);
+            board.castlingRights = board.castlingRights & (~NOTATION::CASTLING_RIGHTS::WHITE_SHORT_BIT);
+            positionHash = hash::switchCastlingRights(positionHash, board.castlingRights);
+            return;
+        case 7:
+            positionHash = hash::switchCastlingRights(positionHash, board.castlingRights);
+            board.castlingRights = board.castlingRights & (~NOTATION::CASTLING_RIGHTS::WHITE_SHORT_BIT);
+            positionHash = hash::switchCastlingRights(positionHash, board.castlingRights);
+            return;
+        case 56:
+            positionHash = hash::switchCastlingRights(positionHash, board.castlingRights);
+            board.castlingRights = board.castlingRights & (~NOTATION::CASTLING_RIGHTS::BLACK_LONG_BIT);
+            positionHash = hash::switchCastlingRights(positionHash, board.castlingRights);
+            return;
+        case 60:
+            positionHash = hash::switchCastlingRights(positionHash, board.castlingRights);
+            board.castlingRights = board.castlingRights & (~NOTATION::CASTLING_RIGHTS::BLACK_LONG_BIT);
+            board.castlingRights = board.castlingRights & (~NOTATION::CASTLING_RIGHTS::BLACK_SHORT_BIT);
+            positionHash = hash::switchCastlingRights(positionHash, board.castlingRights);
+            return;
+        case 63:
+            positionHash = hash::switchCastlingRights(positionHash, board.castlingRights);
+            board.castlingRights = board.castlingRights & (~NOTATION::CASTLING_RIGHTS::BLACK_SHORT_BIT);
+            positionHash = hash::switchCastlingRights(positionHash, board.castlingRights);
+            return;
+    }
 }
 
 void applyPromotionRules(Board& board, uint64_t& positionHash, const Move& move)
 {
     if (move.isPromoted)
     {
-        hash::switchField(positionHash, move.destination, board[move.destination]);
+        positionHash = hash::switchField(positionHash, move.destination, board[move.destination]);
         board[move.destination] = static_cast<unsigned char>(board.playerOnMove) |
-                                  (move.promoteTo & NOTATION::PIECES::PIECES_MASK) |
-                                  NOTATION::MOVED::MOVED_MASK;
-        hash::switchField(positionHash, move.destination, board[move.destination]);
+                                  (move.promoteTo & NOTATION::PIECES::PIECES_MASK);
+        positionHash = hash::switchField(positionHash, move.destination, board[move.destination]);
     }
 }
 
@@ -66,7 +101,7 @@ unsigned char abs(signed char num)
     return (num > 0) ? num : -1 * num;
 }
 
-bool applyEnPassantRules(Board& board, uint64_t& positionHash, const Move& move)
+void applyEnPassantRules(Board& board, uint64_t& positionHash, const Move& move)
 {
     if (NotationConversions::getPieceType(board[move.source]) == NOTATION::PIECES::PAWN
         and move.destination == board.validEnPassant)
@@ -86,101 +121,44 @@ bool applyEnPassantRules(Board& board, uint64_t& positionHash, const Move& move)
         }
         positionHash = hash::switchEnPassant(positionHash, board.validEnPassant);
         board.validEnPassant = -1;
-        return true;
+        return;
     }
     if (NotationConversions::getPieceType(board[move.source]) == NOTATION::PIECES::PAWN)
     {
-        // TODO Condition can be further detailed to set this field less often.
         auto moveDiff = move.source-move.destination;
         if (abs(moveDiff) == 2 * NOTATION::COORDINATES::ROW_DIFF)
         {
-            positionHash = hash::switchEnPassant(positionHash, board.validEnPassant);
-            board.validEnPassant = (move.source + move.destination) / 2;
-            positionHash = hash::switchEnPassant(positionHash, board.validEnPassant);
-
-            return false;
+            auto col = NotationConversions::getColumnNum(move.destination);
+            if (
+                (col < 7
+                    && ((board[move.destination + 1])
+                        == (NOTATION::PIECES::PAWN | (~board[move.source] & NOTATION::COLOR::COLOR_MASK))))
+                or
+                (col > 0
+                    && ((board[move.destination - 1])
+                        == (NOTATION::PIECES::PAWN | (~board[move.source] & NOTATION::COLOR::COLOR_MASK)))))
+            {
+                positionHash = hash::switchEnPassant(positionHash, board.validEnPassant);
+                board.validEnPassant = (move.source + move.destination) / 2;
+                positionHash = hash::switchEnPassant(positionHash, board.validEnPassant);
+            }
+            else
+            {
+                positionHash = hash::switchEnPassant(positionHash, board.validEnPassant);
+                board.validEnPassant = -1;
+            }
+            return;
         }
     }
 
     positionHash = hash::switchEnPassant(positionHash, board.validEnPassant);
     board.validEnPassant = -1;
-    return false;
 }
 
 }  // namespace
 
 namespace MoveApplier
 {
-
-MoveMemorial applyTmpMove(Board& board, uint64_t& positionHash, const Move& move)
-{
-    MoveMemorial moveMemorial;
-
-    moveMemorial.positionHash = positionHash;
-    moveMemorial.sourceField = move.source;
-    moveMemorial.targetField = move.destination;
-
-    moveMemorial.sourceVal = board[move.source];
-    moveMemorial.targetVal = board[move.destination];
-
-    moveMemorial.wasCasling = applyCasltingRules(board, positionHash, move);
-    moveMemorial.enPasant = applyEnPassantRules(board, positionHash, move);
-
-    positionHash = hash::switchField(positionHash, move.destination, board[move.destination]);
-    board[move.destination] = board[move.source] | NOTATION::MOVED::MOVED_MASK;
-    positionHash = hash::switchField(positionHash, move.destination, board[move.destination]);
-
-    positionHash = hash::switchField(positionHash, move.source, board[move.source]);
-    board[move.source] = 0;
-    applyPromotionRules(board, positionHash, move);
-
-    positionHash = hash::switchColor(positionHash);
-    ++board.playerOnMove;
-    return moveMemorial;
-}
-
-void undoMove(Board& board, uint64_t& positionHash, const MoveMemorial& memorial)
-{
-    ++board.playerOnMove;
-
-    board[memorial.sourceField] = memorial.sourceVal;
-    board[memorial.targetField] = memorial.targetVal;
-
-    if (memorial.wasCasling)
-    {
-        if (memorial.sourceField > memorial.targetField)
-        {
-            for (auto field = memorial.sourceField +1; field < memorial.targetField; ++field)
-            {
-                board[field] = 0;
-            }
-        }
-        else
-        {
-            for (auto field = memorial.targetField +1; field < memorial.sourceField; ++field)
-            {
-                board[field] = 0;
-            }
-        }
-    }
-    if(memorial.enPasant)
-    {
-        const auto sourceColumn = NotationConversions::getColumnNum(memorial.sourceField);
-        const auto targetColumn = NotationConversions::getColumnNum(memorial.targetField);
-
-        auto oppositePawn = board[memorial.sourceField] ^ NOTATION::COLOR::COLOR_MASK;
-        if (targetColumn < sourceColumn)
-        {
-            board[memorial.sourceField - 1] = oppositePawn;
-        }
-        else
-        {
-            board[memorial.sourceField - 1] = oppositePawn;
-        }
-    }
-
-    positionHash = memorial.positionHash;
-}
 
 void applyMove(Board& board, const Move& move)
 {
@@ -192,10 +170,11 @@ void applyMove(Board& board, const Move& move)
 void applyMove(Board& board, uint64_t& positionHash, const Move& move)
 {
     applyCasltingRules(board, positionHash, move);
+    conditionallyRevokeCastlingRights(board, positionHash, move);
     applyEnPassantRules(board, positionHash, move);
 
     positionHash = hash::switchField(positionHash, move.destination, board[move.destination]);
-    board[move.destination] = board[move.source] | NOTATION::MOVED::MOVED_MASK;
+    board[move.destination] = board[move.source];
     positionHash = hash::switchField(positionHash, move.destination, board[move.destination]);
 
     positionHash = hash::switchField(positionHash, move.source, board[move.source]);

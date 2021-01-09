@@ -59,7 +59,7 @@ public:
         {
             return;
         }
-        unsigned char pattern = ((*ctx.board)[source] & NOTATION::COLOR::COLOR_MASK) | NOTATION::MOVED::MOVED_MASK;
+        unsigned char pattern = ((*ctx.board)[source] & NOTATION::COLOR::COLOR_MASK);
         ctx.allMoves->emplace_back(source, destination, true, NOTATION::PIECES::QUEEN | pattern);
         ctx.allMoves->emplace_back(source, destination, true, NOTATION::PIECES::BISHOP | pattern);
         ctx.allMoves->emplace_back(source, destination, true, NOTATION::PIECES::ROCK | pattern);
@@ -77,7 +77,7 @@ public:
 
     static void addAndPromote(unsigned char source, unsigned char destination)
     {
-        unsigned char pattern = ((*ctx.board)[source] & NOTATION::COLOR::COLOR_MASK) | NOTATION::MOVED::MOVED_MASK;
+        unsigned char pattern = ((*ctx.board)[source] & NOTATION::COLOR::COLOR_MASK);
         ctx.allMoves->emplace_back(source, destination, true, NOTATION::PIECES::QUEEN | pattern);
         ctx.allMoves->emplace_back(source, destination, true, NOTATION::PIECES::BISHOP | pattern);
         ctx.allMoves->emplace_back(source, destination, true, NOTATION::PIECES::ROCK | pattern);
@@ -156,7 +156,7 @@ void generateEnPasant()
         if (enPassantCol < 7u)
         {
             auto whitePawnLocCandidate = (ctx.board)->validEnPassant - NOTATION::COORDINATES::ROW_DIFF + 1;
-            if (((*ctx.board)[whitePawnLocCandidate] & NOTATION::COLOR_AND_PIECE_MASK) ==
+            if ((*ctx.board)[whitePawnLocCandidate] ==
                 (NOTATION::PIECES::PAWN | NOTATION::COLOR::WHITE))
             {
                 TMoveAddingStrategy::addForUsualPiece(whitePawnLocCandidate, (ctx.board)->validEnPassant);
@@ -165,7 +165,7 @@ void generateEnPasant()
         if (enPassantCol > 0u)
         {
             auto whitePawnLocCandidate = (ctx.board)->validEnPassant - NOTATION::COORDINATES::ROW_DIFF - 1;
-            if (((*ctx.board)[whitePawnLocCandidate] & NOTATION::COLOR_AND_PIECE_MASK) ==
+            if ((*ctx.board)[whitePawnLocCandidate] ==
                 (NOTATION::PIECES::PAWN | NOTATION::COLOR::WHITE))
             {
                 TMoveAddingStrategy::addForUsualPiece(whitePawnLocCandidate, (ctx.board)->validEnPassant);
@@ -177,7 +177,7 @@ void generateEnPasant()
         if (enPassantCol < 7u)
         {
             auto whitePawnLocCandidate = (ctx.board)->validEnPassant + NOTATION::COORDINATES::ROW_DIFF + 1;
-            if (((*ctx.board)[whitePawnLocCandidate] & NOTATION::COLOR_AND_PIECE_MASK) ==
+            if ((*ctx.board)[whitePawnLocCandidate] ==
                 (NOTATION::PIECES::PAWN | NOTATION::COLOR::WHITE))
             {
                 TMoveAddingStrategy::addForUsualPiece(whitePawnLocCandidate, (ctx.board)->validEnPassant);
@@ -186,7 +186,7 @@ void generateEnPasant()
         if (enPassantCol > 0u)
         {
             auto whitePawnLocCandidate = (ctx.board)->validEnPassant + NOTATION::COORDINATES::ROW_DIFF - 1;
-            if (((*ctx.board)[whitePawnLocCandidate] & NOTATION::COLOR_AND_PIECE_MASK) ==
+            if ((*ctx.board)[whitePawnLocCandidate] ==
                 (NOTATION::PIECES::PAWN | NOTATION::COLOR::WHITE))
             {
                 TMoveAddingStrategy::addForUsualPiece(whitePawnLocCandidate, (ctx.board)->validEnPassant);
@@ -230,25 +230,14 @@ const std::pair<unsigned char, unsigned char> kingMoves[] = {
 	{1, 0}, {1, 1}, {0, 1}, {-1, 1}, {-1, 0}, {-1, -1}, {0, -1}, {1, -1} };
 void (*generateNormalKingMoves)(unsigned char i) = generateFixedMoves<StrategyWithAlwaysCheckChecking::addForKing ,8, kingMoves>;
 
-void generateCasles(unsigned char i)
+template<NOTATION::COLOR::color c>
+void generateCasles(unsigned char i);
+
+template<>
+void generateCasles<NOTATION::COLOR::color::white>(unsigned char i)
 {
-	auto wasKingMoved = ((*ctx.board)[i] & NOTATION::MOVED::MOVED_MASK) != 0;
-	if (wasKingMoved)
-	{
-		return;
-	}
-
-	if (CheckChecker::isAttackedOn(*ctx.board, ctx.pieceColor, i))
-	{
-		return;
-	}
-
-	const auto notMovedRockPattern = NOTATION::PIECES::ROCK;
-
-	// long casle
-	unsigned char quensRockPosition = i - 4;
-	if (((*ctx.board)[quensRockPosition] & NOTATION::MOVED_AND_PIECE_MASK)
-		== notMovedRockPattern
+    using namespace NOTATION::CASTLING_RIGHTS;
+    if (ctx.board->castlingRights & WHITE_LONG_BIT
 		and not CheckChecker::isAttackedOn(*ctx.board, ctx.pieceColor, i-1)
 		and (*ctx.board)[i-1] == 0
 		and (*ctx.board)[i-2] == 0
@@ -257,16 +246,35 @@ void generateCasles(unsigned char i)
         StrategyWithAlwaysCheckChecking::addForKing(i, i-2);
 	}
 
-	// short castle
-	unsigned char kingsRockPosition = i + 3;
-	if (((*ctx.board)[kingsRockPosition] & NOTATION::MOVED_AND_PIECE_MASK)
-		== notMovedRockPattern
-		and not CheckChecker::isAttackedOn(*ctx.board, ctx.pieceColor, i+1)
-		and (*ctx.board)[i+1] == 0
-		and (*ctx.board)[i+2] == 0)
-	{
+    if (ctx.board->castlingRights & WHITE_SHORT_BIT
+        and not CheckChecker::isAttackedOn(*ctx.board, ctx.pieceColor, i+1)
+        and (*ctx.board)[i+1] == 0
+        and (*ctx.board)[i+2] == 0)
+    {
         StrategyWithAlwaysCheckChecking::addForKing(i, i+2);
-	}
+    }
+}
+
+template<>
+void generateCasles<NOTATION::COLOR::color::black>(unsigned char i)
+{
+    using namespace NOTATION::CASTLING_RIGHTS;
+    if (ctx.board->castlingRights & BLACK_LONG_BIT
+        and not CheckChecker::isAttackedOn(*ctx.board, ctx.pieceColor, i-1)
+        and (*ctx.board)[i-1] == 0
+        and (*ctx.board)[i-2] == 0
+        and (*ctx.board)[i-3] == 0)
+    {
+        StrategyWithAlwaysCheckChecking::addForKing(i, i-2);
+    }
+
+    if (ctx.board->castlingRights & BLACK_SHORT_BIT
+        and not CheckChecker::isAttackedOn(*ctx.board, ctx.pieceColor, i+1)
+        and (*ctx.board)[i+1] == 0
+        and (*ctx.board)[i+2] == 0)
+    {
+        StrategyWithAlwaysCheckChecking::addForKing(i, i+2);
+    }
 }
 
 template <typename TMoveAddingStrategy, size_t N, const std::pair<unsigned char, unsigned char> TMoves[N]>
@@ -347,7 +355,7 @@ void dispatchToGenerateStandardPawnMoves<StrategyWithNoChecking, NOTATION::COLOR
 template <NOTATION::COLOR::color c>
 void dispatchToProperHandler(unsigned char i)
 {
-    switch (((*ctx.board)[i] & NOTATION::COLOR_AND_PIECE_MASK) ^ static_cast<unsigned char>(c))
+    switch ((*ctx.board)[i] ^ static_cast<unsigned char>(c))
     {
         case (NOTATION::PIECES::PAWN):
             dispatchToGenerateStandardPawnMoves<StrategyWithAlwaysCheckChecking, c>(i);
@@ -367,7 +375,6 @@ void dispatchToProperHandler(unsigned char i)
             return;
         case (NOTATION::PIECES::KING):
             generateNormalKingMoves(i);
-            generateCasles(i);
             return;
     }
 }
@@ -375,7 +382,7 @@ void dispatchToProperHandler(unsigned char i)
 template <NOTATION::COLOR::color c>
 void generateWithAllMoveAllowance(unsigned char i)
 {
-    switch (((*ctx.board)[i] & NOTATION::COLOR_AND_PIECE_MASK) ^ static_cast<unsigned char>(c))
+    switch ((*ctx.board)[i] ^ static_cast<unsigned char>(c))
     {
         case (NOTATION::PIECES::PAWN):
             dispatchToGenerateStandardPawnMoves<StrategyWithNoChecking, c>(i);
@@ -406,10 +413,11 @@ void evaluateForCheckedPosition()
     generateEnPasant<StrategyWithAlwaysCheckChecking>();
 }
 
+template <NOTATION::COLOR::color c>
 void evaluateForKing()
 {
     generateNormalKingMoves(ctx.kingPosition);
-    generateCasles(ctx.kingPosition);
+    generateCasles<c>(ctx.kingPosition);
 
 }
 
@@ -807,7 +815,7 @@ void evaluateNotCheckedPostions()
             generateWithAllMoveAllowance<c>(i);
         }
     }
-    evaluateForKing();
+    evaluateForKing<c>();
     generateEnPasant<StrategyWithAlwaysCheckChecking>();
 }
 

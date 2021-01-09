@@ -51,11 +51,13 @@ const unsigned char& Board::operator[](const unsigned char field) const noexcept
 bool operator==(const Board& lhs, const Board& rhs) noexcept
 {
     return lhs.validEnPassant == rhs.validEnPassant and lhs.playerOnMove == rhs.playerOnMove
+        and lhs.castlingRights == rhs.castlingRights
         and std::equal(std::begin(lhs.fields), std::end(lhs.fields), std::begin(rhs.fields));
 }
 
 void initDefault(Board& board) noexcept
 {
+    board.castlingRights = NOTATION::CASTLING_RIGHTS::CASTLING_MASK;
     board.validEnPassant = -1;
 
     board["a1"] = NOTATION::COLOR::WHITE | NOTATION::PIECES::ROCK;

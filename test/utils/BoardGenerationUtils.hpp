@@ -9,7 +9,7 @@ extern const char* InitialBoardString;
 
 Board createBoard(const char* position,
         NOTATION::COLOR::color playerOnMove = NOTATION::COLOR::color::white);
-void setMovedBit(Board&, const char*);
+void revokeCastlingRights(Board& board, unsigned char rightBit);
 void setValidEnPassant(Board& board, const char* posStr);
 
 }  // namespace utils

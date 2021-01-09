@@ -30,9 +30,7 @@ std::ostream& operator<<(std::ostream& os, const Board& board) noexcept
 	{
 		for (auto col = 0; col < 8; ++col)
 		{
-			os << symbolToPieceMapping[(board[row+col]
-				& NOTATION::COLOR_AND_PIECE_MASK)];
-
+			os << symbolToPieceMapping[(board[row+col])];
 		}
 		os << std::endl;
 	}

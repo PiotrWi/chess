@@ -45,6 +45,12 @@ bool isRowInBoard(unsigned char row)
 {
     return !(row & 0b11111000)/*row < 8u*/;
 }
+
+bool isWithCorrectRow(unsigned char position)
+{
+    return (0b11000000 & position) == 0u;
+}
+
 bool isColumnInBoard(unsigned char col)
 {
     return !(col & 0b11111000)/*col < 8u*/;

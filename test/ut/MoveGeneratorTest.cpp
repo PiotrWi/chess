@@ -64,7 +64,7 @@ TEST_F(MoveGeneratorTests, shouldReturnInitialMoves)
 	auto knightInitialMoves = map(
 			{"b1-a3", "b1-c3", "g1-f3", "g1-h3"}, WHITE);
 
-	Board board = utils::createBoard(utils::InitialBoardString);
+    Board board = utils::createBoard(utils::InitialBoardString);
 	ASSERT_THAT(sut.generate(board, WHITE),
 		::testing::UnorderedElementsAreArray(pawnInitialMoves + knightInitialMoves));
 }
@@ -118,7 +118,7 @@ TEST_F(MoveGeneratorTests, shouldCorectlyAnalyzePosWithMoves)
 		"        "
 		"    ♔  ♙"
 		"♖      ♖");
-
+	utils::revokeCastlingRights(board, NOTATION::CASTLING_RIGHTS::WHITE_SHORT_BIT | NOTATION::CASTLING_RIGHTS::WHITE_LONG_BIT);
 	auto moveKingToInitialPosition = createMove("e2-e1", WHITE);
 	MoveApplier::applyMove(board, moveKingToInitialPosition);
 
@@ -230,8 +230,9 @@ TEST_F(MoveGeneratorTests, shouldPreventIllegalCasles_2)
 	auto kingMoves = map(
 		{shortCastle, "e1-e2", "e1-f2", "e1-f1", "e1-d2", "e1-d1"}, WHITE);
 
-	auto moveKingToInitialPosition = createMove("b1-a1", WHITE);
-    MoveApplier::applyMove(board, moveKingToInitialPosition);
+	utils::revokeCastlingRights(board, NOTATION::CASTLING_RIGHTS::WHITE_LONG_BIT); // TODO  Likely it shall be revisited
+	auto moveRockToInitialPosition = createMove("b1-a1", WHITE);
+    MoveApplier::applyMove(board, moveRockToInitialPosition);
 
 	auto moveWitePawnToPieces = createMove("e7-e8", BLACK);
     MoveApplier::applyMove(board, moveWitePawnToPieces);
@@ -273,8 +274,9 @@ TEST_F(MoveGeneratorTests, shouldPreventIllegalCasles_3)
 	auto kingMoves = map(
 		{longCastle, "e1-e2", "e1-f2", "e1-f1", "e1-d2", "e1-d1"}, WHITE);
 
-	auto moveKingToInitialPosition = createMove("g1-h1", WHITE);
-    MoveApplier::applyMove(board, moveKingToInitialPosition);
+	auto moveRockToInitialPosition = createMove("g1-h1", WHITE);
+    MoveApplier::applyMove(board, moveRockToInitialPosition);
+    utils::revokeCastlingRights(board, NOTATION::CASTLING_RIGHTS::WHITE_SHORT_BIT);
 
 	auto moveWitePawnToPieces = createMove("e7-e8", BLACK);
     MoveApplier::applyMove(board, moveWitePawnToPieces);
@@ -303,7 +305,7 @@ TEST_F(MoveGeneratorTests, shouldFindPromotions)
 		"        "
 		"        "
 		"   ♔    ");
-
+    utils::revokeCastlingRights(board, NOTATION::CASTLING_RIGHTS::WHITE_SHORT_BIT | NOTATION::CASTLING_RIGHTS::WHITE_LONG_BIT);
 	auto pawnMoves = map(
 		{"d7-c8=Q", "d7-c8=N", "d7-c8=B", "d7-c8=R",
 		"d7-d8=Q", "d7-d8=N", "d7-d8=B", "d7-d8=R",
@@ -311,7 +313,6 @@ TEST_F(MoveGeneratorTests, shouldFindPromotions)
 
 	auto kingMoves = map(
 		{"d1-c1", "d1-c2", "d1-d2"}, WHITE);
-	utils::setMovedBit(board, "d1");
 	ASSERT_THAT(sut.generate(board, WHITE),
 		::testing::UnorderedElementsAreArray(pawnMoves+kingMoves));
 }
@@ -429,7 +430,7 @@ TEST_F(MoveGeneratorTests,  shouldCorectlyAnalyzePosForBlack_2)
                                   "♙     ♙ "
                                   "  ♗  ♙  "
                                   "     ♕♔ ", BLACK);
-    utils::setMovedBit(board, "g8");
+    utils::revokeCastlingRights(board, NOTATION::CASTLING_RIGHTS::BLACK_SHORT_BIT | NOTATION::CASTLING_RIGHTS::BLACK_LONG_BIT);
     ASSERT_THAT(sut.generate(board, BLACK),
                 ::testing::UnorderedElementsAreArray(pawnMoves+rockMoves+queenMoves+kingMoves));
 }
@@ -453,6 +454,7 @@ TEST_F(MoveGeneratorTests, shouldFindBlackPromotions)
 		{"g7-g8", "g7-h8", "g7-h7", "g7-h6",
 		"g7-g6", "g7-f6", "g7-f7", "g7-f8"}, BLACK);
 
+    utils::revokeCastlingRights(board, NOTATION::CASTLING_RIGHTS::BLACK_SHORT_BIT | NOTATION::CASTLING_RIGHTS::BLACK_LONG_BIT);
 	ASSERT_THAT(sut.generate(board, BLACK),
 		::testing::UnorderedElementsAreArray(pawnMoves+kingMoves));
 }
@@ -533,6 +535,7 @@ TEST_F(MoveGeneratorTests, shallNotAllowToMoveDiagonalBlack)
                                     "  ♕   ♕ "
                                     "        "
                                     "        ", BLACK);
+    utils::revokeCastlingRights(board, NOTATION::CASTLING_RIGHTS::BLACK_SHORT_BIT | NOTATION::CASTLING_RIGHTS::BLACK_LONG_BIT);
     ASSERT_THAT(sut.generate(board, BLACK),
                 ::testing::UnorderedElementsAreArray(kingMoves));
 }
@@ -551,10 +554,9 @@ TEST_F(MoveGeneratorTests, shallNotAllowToMovePawnWhenPinned)
                                     "        "
                                     "        "
                                     "        ", BLACK);
-    ASSERT_THAT(sut.generate(board, BLACK),
-                ::testing::UnorderedElementsAreArray(kingMoves));
 
-    utils::setMovedBit(board, "h5");
+    utils::revokeCastlingRights(board, NOTATION::CASTLING_RIGHTS::BLACK_SHORT_BIT | NOTATION::CASTLING_RIGHTS::BLACK_LONG_BIT);
+
     ASSERT_THAT(sut.generate(board, BLACK),
                 ::testing::UnorderedElementsAreArray(kingMoves));
 }

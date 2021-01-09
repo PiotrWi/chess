@@ -2,7 +2,6 @@
 
 #include <algorithm>
 #include <stdint.h>
-#include <utility>
 #include <vector>
 
 #include <detail/CheckChecker.hpp>
@@ -32,6 +31,29 @@ namespace PiecesCount
 {
 
 using type = unsigned char;
+
+/*
+constexpr uint64_t COLOR_64_MASK = ((uint64_t)NOTATION::COLOR::COLOR_MASK)
+        | ((uint64_t)NOTATION::COLOR::COLOR_MASK << 8u)
+        | ((uint64_t)NOTATION::COLOR::COLOR_MASK << 16u)
+        | ((uint64_t)NOTATION::COLOR::COLOR_MASK << 24u)
+        | ((uint64_t)NOTATION::COLOR::COLOR_MASK << 32u)
+        | ((uint64_t)NOTATION::COLOR::COLOR_MASK << 40u)
+        | ((uint64_t)NOTATION::COLOR::COLOR_MASK << 48u)
+        | ((uint64_t)NOTATION::COLOR::COLOR_MASK << 56u);
+
+type evaluate(const Board& board)
+{
+	using namespace NOTATION::PIECES;
+
+    type count = 0;
+	for (auto i = 0u; i < 8u; ++i)
+	{
+		count += __builtin_popcountll(((uint64_t*)(board.fields))[i] & COLOR_64_MASK);
+	}
+	return count;
+}
+ */
 
 type evaluate(const Board& board)
 {
@@ -70,20 +92,10 @@ namespace
 bool are3Repeatitions(std::vector<Node>& nodes)
 {
 	auto compare = [](const Board& lhs, const Board& rhs) {
-        using namespace NOTATION;
-	    constexpr u_int64_t mask = (COLOR_AND_PIECE_MASK)
-            | (static_cast<u_int64_t>(COLOR_AND_PIECE_MASK) << 8)
-            | (static_cast<u_int64_t>(COLOR_AND_PIECE_MASK) << 16)
-            | (static_cast<u_int64_t>(COLOR_AND_PIECE_MASK) << 24)
-            | (static_cast<u_int64_t>(COLOR_AND_PIECE_MASK) << 32)
-            | (static_cast<u_int64_t>(COLOR_AND_PIECE_MASK) << 40)
-            | (static_cast<u_int64_t>(COLOR_AND_PIECE_MASK) << 48)
-            | (static_cast<u_int64_t>(COLOR_AND_PIECE_MASK) << 56);
-
 		for (auto i = 0; i != 8; ++i)
 		{
-            if((mask & (*((u_int64_t*)(lhs.fields) + i))) !=
-                        (mask & (*((u_int64_t*)(rhs.fields) + i))))
+            if((*((u_int64_t*)(lhs.fields) + i)) !=
+                        (*((u_int64_t*)(rhs.fields) + i)))
 				return false;
 		}
 		return true;

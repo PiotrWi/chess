@@ -6,7 +6,7 @@ static int mapToValue(unsigned char field)
 {
     using namespace NOTATION::PIECES;
     using namespace NOTATION::COLOR;
-    switch (field & NOTATION::COLOR_AND_PIECE_MASK)
+    switch (field)
     {
         case WHITE | PAWN: return 100;
         case WHITE | KNIGHT: return 300;

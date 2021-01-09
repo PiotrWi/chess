@@ -9,7 +9,7 @@ namespace
 
 unsigned char createPiece(const char pieceSign, NOTATION::COLOR::color playerOnMove)
 {
-	unsigned char pattern = static_cast<unsigned char>(playerOnMove) | NOTATION::MOVED::MOVED_MASK;
+	unsigned char pattern = static_cast<unsigned char>(playerOnMove);
 	switch (pieceSign)
 	{
 	case 'Q':

@@ -101,7 +101,7 @@ bool validatePawn()
             if (rowDifference == 1)
             {
                 if (ctx.move->destination == ctx.board->validEnPassant or
-                    ((*ctx.board)[ctx.move->destination] & NOTATION::COLOR_AND_PIECE_MASK) ==
+                    (*ctx.board)[ctx.move->destination] ==
                     (NOTATION::PIECES::PAWN | NOTATION::COLOR::BLACK))
                 {
                     return true;
@@ -113,7 +113,7 @@ bool validatePawn()
             if (rowDifference == -1)
             {
                 if (ctx.move->destination == ctx.board->validEnPassant or
-                    ((*ctx.board)[ctx.move->destination] & NOTATION::COLOR_AND_PIECE_MASK) ==
+                    (*ctx.board)[ctx.move->destination] ==
                     (NOTATION::PIECES::PAWN | NOTATION::COLOR::WHITE))
                 {
                     return true;
@@ -208,10 +208,6 @@ bool validateKing()
 
 	if (colDiffAbs == 2)
 	{
-		auto notMovedRockPattern = NOTATION::PIECES::ROCK
-			| static_cast<unsigned char>(ctx.pieceColor);
-		auto hasKingMoved = (*ctx.board)[ctx.move->source]
-						& NOTATION::MOVED::MOVED_MASK;
 		unsigned rockColumn = 0;
 
 		if (ctx.targetColumn > ctx.sourceColumn)
@@ -219,6 +215,21 @@ bool validateKing()
             rockColumn = 7;
 		}
 
+		auto hasRights = [&]() -> bool {
+		    if (ctx.pieceColor == NOTATION::COLOR::color::white)
+            {
+		        if (rockColumn == 0)
+                {
+                    return ctx.board->castlingRights & NOTATION::CASTLING_RIGHTS::WHITE_LONG_BIT;
+                }
+                return ctx.board->castlingRights & NOTATION::CASTLING_RIGHTS::WHITE_SHORT_BIT;
+            }
+            if (rockColumn == 0)
+            {
+                return ctx.board->castlingRights & NOTATION::CASTLING_RIGHTS::BLACK_LONG_BIT;
+            }
+            return ctx.board->castlingRights & NOTATION::CASTLING_RIGHTS::BLACK_SHORT_BIT;
+		};
 		auto isCheckInBetween = [&]() -> bool {
 			auto boardCopy = *ctx.board;
 			auto moveCopy = *ctx.move;
@@ -228,10 +239,7 @@ bool validateKing()
 			return CheckChecker::isCheckOn(boardCopy, ctx.board->playerOnMove);
 		};
 
-		return (hasKingMoved == false)
-			and (notMovedRockPattern == (*ctx.board)[
-				NotationConversions::getFieldNum(ctx.sourceRow , rockColumn)])
-			and not isCheckInBetween();
+		return hasRights() and not isCheckInBetween();
 	}
 	return (rowDiffAbs == 0 || rowDiffAbs == 1) and (colDiffAbs == 0 or colDiffAbs == 1);
 }

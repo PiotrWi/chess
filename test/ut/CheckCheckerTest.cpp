@@ -2,7 +2,7 @@
 
 #include <publicIf/Board.hpp>
 #include <detail/CheckChecker.hpp>
-
+#include <publicIf/NotationConversions.hpp>
 #include <utils/BoardGenerationUtils.hpp>
 
 /* PAWN based */
@@ -17,17 +17,58 @@ TEST(CheckCheckershould, FindCheckByPawn)
 			"        "
 			"        "
 			"    ♔   ");
-	ASSERT_TRUE(CheckChecker::isCheckOn(board, NOTATION::COLOR::color::black));
-	ASSERT_FALSE(CheckChecker::isCheckOn(board, NOTATION::COLOR::color::white));
-}
+    ASSERT_EQ(NotationConversions::getFieldNum("e1"), CheckChecker::findKing(board, NOTATION::COLOR::color::white));
+    ASSERT_EQ(NotationConversions::getFieldNum("d7"), CheckChecker::findKing(board, NOTATION::COLOR::color::black));
 
+    ASSERT_TRUE(CheckChecker::isCheckOn(board, NOTATION::COLOR::color::black));
+	ASSERT_FALSE(CheckChecker::isCheckOn(board, NOTATION::COLOR::color::white));
+
+    board = utils::createBoard(
+            "        "
+            "   ♚    "
+            "    ♙   "
+            "        "
+            "        "
+            "        "
+            "        "
+            "    ♔   ");
+
+    ASSERT_TRUE(CheckChecker::isCheckOn(board, NOTATION::COLOR::color::black));
+    ASSERT_FALSE(CheckChecker::isCheckOn(board, NOTATION::COLOR::color::white));
+
+    board = utils::createBoard(
+            "        "
+            "   ♚    "
+            "        "
+            "        "
+            "        "
+            "        "
+            "     ♟  "
+            "    ♔   ");
+
+    ASSERT_FALSE(CheckChecker::isCheckOn(board, NOTATION::COLOR::color::black));
+    ASSERT_TRUE(CheckChecker::isCheckOn(board, NOTATION::COLOR::color::white));
+
+    board = utils::createBoard(
+            "        "
+            "   ♚    "
+            "        "
+            "        "
+            "        "
+            "        "
+            "   ♟    "
+            "    ♔   ");
+
+    ASSERT_FALSE(CheckChecker::isCheckOn(board, NOTATION::COLOR::color::black));
+    ASSERT_TRUE(CheckChecker::isCheckOn(board, NOTATION::COLOR::color::white));
+}
 
 TEST(CheckCheckershould, DoNotFindCheckByPawn)
 {
     Board board = utils::createBoard(
 			"        "
-			"   ♚    "
-			"   ♙    "
+			"♚       "
+			"♙      ♙"
 			"        "
 			"        "
 			"        "
@@ -35,6 +76,19 @@ TEST(CheckCheckershould, DoNotFindCheckByPawn)
 			"    ♔   ");
 	ASSERT_FALSE(CheckChecker::isCheckOn(board, NOTATION::COLOR::color::black));
 	ASSERT_FALSE(CheckChecker::isCheckOn(board, NOTATION::COLOR::color::white));
+
+    board = utils::createBoard(
+            "        "
+            "   ♚    "
+            "   ♙    "
+            "        "
+            "        "
+            "        "
+            "♟      ♟"
+            "       ♔");
+    ASSERT_FALSE(CheckChecker::isCheckOn(board, NOTATION::COLOR::color::black));
+    ASSERT_FALSE(CheckChecker::isCheckOn(board, NOTATION::COLOR::color::white));
+
 }
 
 TEST(CheckCheckershould, DoFindCheckByPawn_2)
@@ -189,7 +243,7 @@ TEST(CheckCheckershould, NotFindCheckByBishopWhenpieceBetween)
 	ASSERT_FALSE(CheckChecker::isCheckOn(board, NOTATION::COLOR::color::white));
 }
 
-TEST(CheckCheckershould, FindCheckByGueen)
+TEST(CheckCheckershould, FindCheckByQueen)
 {
     Board board = utils::createBoard(
 			"        "
@@ -217,6 +271,73 @@ TEST(CheckCheckershould, FindCheckByKnight)
 			"♖♘♗♔♕♗ ♖");
 	ASSERT_TRUE(CheckChecker::isCheckOn(board, NOTATION::COLOR::color::black));
 	ASSERT_TRUE(CheckChecker::isCheckOn(board, NOTATION::COLOR::color::white));
+
+    board = utils::createBoard(
+            "        "
+            "        "
+            "     ♘  "
+            "        "
+            "    ♚   "
+            "        "
+            "        "
+            "   ♔    ");
+    ASSERT_TRUE(CheckChecker::isCheckOn(board, NOTATION::COLOR::color::black));
+
+    board = utils::createBoard(
+            "        "
+            "        "
+            "   ♘    "
+            "        "
+            "    ♚   "
+            "        "
+            "        "
+            "   ♔    ");
+    ASSERT_TRUE(CheckChecker::isCheckOn(board, NOTATION::COLOR::color::black));
+
+    board = utils::createBoard(
+            "        "
+            "        "
+            "        "
+            "  ♘     "
+            "    ♚   "
+            "        "
+            "        "
+            "   ♔    ");
+    ASSERT_TRUE(CheckChecker::isCheckOn(board, NOTATION::COLOR::color::black));
+
+    board = utils::createBoard(
+            "        "
+            "        "
+            "        "
+            "      ♘ "
+            "    ♚   "
+            "        "
+            "        "
+            "   ♔    ");
+    ASSERT_TRUE(CheckChecker::isCheckOn(board, NOTATION::COLOR::color::black));
+
+    board = utils::createBoard(
+            "        "
+            "        "
+            "        "
+            "        "
+            "    ♚   "
+            "      ♘ "
+            "        "
+            "   ♔    ");
+    ASSERT_TRUE(CheckChecker::isCheckOn(board, NOTATION::COLOR::color::black));
+
+
+    board = utils::createBoard(
+            "        "
+            "        "
+            "        "
+            "        "
+            "    ♚   "
+            "  ♘     "
+            "        "
+            "   ♔    ");
+    ASSERT_TRUE(CheckChecker::isCheckOn(board, NOTATION::COLOR::color::black));
 }
 
 TEST(CheckCheckershould, FindCheckByKing)

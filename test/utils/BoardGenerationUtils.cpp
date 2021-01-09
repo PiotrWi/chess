@@ -86,13 +86,14 @@ Board createBoard(const char* position,
 	}
     board.validEnPassant = -1;
     board.playerOnMove = playerOnMove;
+    board.castlingRights = NOTATION::CASTLING_RIGHTS::CASTLING_MASK;
 
 	return board;
 }
 
-void setMovedBit(Board& board, const char* posStr)
+void revokeCastlingRights(Board& board, unsigned char rightBit)
 {
-	board[posStr] |= NOTATION::MOVED::MOVED_MASK;
+    board.castlingRights &= (~rightBit);
 }
 
 void setValidEnPassant(Board& board, const char* posStr)

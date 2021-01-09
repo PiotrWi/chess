@@ -17,9 +17,6 @@ public:
     bool validateMove(const Move&) const;
 
     void applyMove(const Move&);
-    MoveApplier::MoveMemorial applyUndoableMove(const Move&);
-// TODO: There is something wrong with move unoing
-    void undoMove(const MoveApplier::MoveMemorial);
 
     MoveApplier::SimpleMoveMemorial applyUndoableSimpleMove(const Move&);
     void undoMove(MoveApplier::SimpleMoveMemorial);

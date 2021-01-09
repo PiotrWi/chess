@@ -17,7 +17,6 @@ public:
     {
         using namespace NOTATION::COLOR;
         using namespace NOTATION::PIECES;
-        using namespace NOTATION::MOVED;
 
         std::random_device rd;
         std::mt19937_64 gen(rd());
@@ -38,27 +37,15 @@ public:
             hashes[i][BLACK | BISHOP] = dis(gen);
             hashes[i][BLACK | QUEEN] = dis(gen);
             hashes[i][BLACK | KING] = dis(gen);
-
-            hashes[i][WHITE | NOTATION::PIECES::ROCK | MOVED_MASK] = dis(gen);
-            hashes[i][WHITE | NOTATION::PIECES::KING | MOVED_MASK] = dis(gen);
-            hashes[i][BLACK | NOTATION::PIECES::ROCK | MOVED_MASK] = dis(gen);
-            hashes[i][BLACK | NOTATION::PIECES::KING | MOVED_MASK] = dis(gen);
-
-            // bellow one shall have same hash.
-            // In current MOVED_MASK representation, it would be a pessimisation.
-            hashes[i][WHITE | PAWN | MOVED_MASK] = dis(gen);
-            hashes[i][WHITE | KNIGHT | MOVED_MASK] = dis(gen);
-            hashes[i][WHITE | BISHOP | MOVED_MASK] = dis(gen);
-            hashes[i][WHITE | QUEEN | MOVED_MASK] = dis(gen);
-            hashes[i][BLACK | PAWN | MOVED_MASK] = dis(gen);
-            hashes[i][BLACK | KNIGHT | MOVED_MASK] = dis(gen);
-            hashes[i][BLACK | BISHOP | MOVED_MASK] = dis(gen);
-            hashes[i][BLACK | QUEEN | MOVED_MASK] = dis(gen);
         }
         blackHash = dis(gen);
         for (auto i = 1u; i < CFieldCount; ++i)
         {
             validEnPassant[i] = dis(gen);
+        }
+        for (auto i = 0u; i < 16; ++i)
+        {
+            castlingRights[i] = dis(gen);
         }
     }
 
@@ -76,10 +63,16 @@ public:
     {
         return validEnPassant;
     }
+
+    auto getCastlingRights()
+    {
+        return castlingRights;
+    }
 private:
     uint64_t hashes[64][256] = {};
     uint64_t blackHash = {};
     uint64_t validEnPassant[65] = {};
+    uint64_t castlingRights[16] = {};
 };
 
 Hash HASH;
@@ -104,6 +97,8 @@ uint64_t hash(Board &board) noexcept
 
     h ^= HASH.getEnPassant()[board.validEnPassant + 1];
 
+    h ^= HASH.getCastlingRights()[board.castlingRights];
+
     return h;
 }
 
@@ -120,6 +115,11 @@ uint64_t switchField(uint64_t oldHash, unsigned char fieldIndex, unsigned char v
 uint64_t switchEnPassant(uint64_t oldHash, signed char newVal) noexcept
 {
     return oldHash ^ HASH.getEnPassant()[newVal+1];
+}
+
+uint64_t switchCastlingRights(uint64_t oldHash, unsigned char val) noexcept
+{
+    return oldHash ^ HASH.getCastlingRights()[val];
 }
 
 }

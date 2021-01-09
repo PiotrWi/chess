@@ -17,13 +17,6 @@ std::pair<signed char, signed char> modifyCoordinates(std::pair<unsigned char, u
 	return co;
 }
 
-unsigned char getColoredPiece(const Board& board,
-	unsigned char row,
-	unsigned char col) noexcept
-{
-	return board[NotationConversions::getFieldNum(row, col)] & NOTATION::COLOR_AND_PIECE_MASK;
-}
-
 bool isAttackedByOppositePawn(const Board& board,
                               NOTATION::COLOR::color pawnColor,
                               unsigned char row,
@@ -31,6 +24,9 @@ bool isAttackedByOppositePawn(const Board& board,
 {
 	unsigned char pawnRow = 0;
 	auto pawnMask = NOTATION::PIECES::PAWN;
+    unsigned char leftColumn = col - 1;
+    unsigned char rightColumn = col + 1;
+
 	if (pawnColor == NOTATION::COLOR::color::white)
 	{
 		pawnRow = row-1;
@@ -42,12 +38,9 @@ bool isAttackedByOppositePawn(const Board& board,
 		pawnMask |= NOTATION::COLOR::BLACK;
 	}
 
-	unsigned char leftColumn = col - 1;
-	unsigned char rightColumn = col + 1;
-
 	return NotationConversions::isRowInBoard(pawnRow) and
-			((NotationConversions::isColumnInBoard(leftColumn) and getColoredPiece(board, pawnRow, leftColumn) == pawnMask)
-			or (NotationConversions::isColumnInBoard(rightColumn) and getColoredPiece(board, pawnRow, rightColumn) == pawnMask));
+			((NotationConversions::isColumnInBoard(leftColumn) and board[NotationConversions::getFieldNum(pawnRow, leftColumn)] == pawnMask)
+			or (NotationConversions::isColumnInBoard(rightColumn) and board[NotationConversions::getFieldNum(pawnRow, rightColumn)] == pawnMask));
 }
 
 bool isAttackedOnDiagonalByOppositeBishopOrQueen(const Board& board,
@@ -69,7 +62,7 @@ bool isAttackedOnDiagonalByOppositeBishopOrQueen(const Board& board,
 			NotationConversions::isRowInBoard(co.first) && NotationConversions::isColumnInBoard(co.second);
 			co = modifyCoordinates(co, dir))
 		{
-			const auto& field = getColoredPiece(board, co.first, co.second);
+			const auto& field = board[NotationConversions::getFieldNum(co.first, co.second)];
 			if (field != 0u)
 			{
 				if ((field & pattern) == pattern)
@@ -103,7 +96,7 @@ bool isAttackedByRookOrQueen(const Board& board,
 			NotationConversions::isRowInBoard(co.first) && NotationConversions::isColumnInBoard(co.second);
 			co = modifyCoordinates(co, dir))
 		{
-			const auto& field = getColoredPiece(board, co.first, co.second);
+			const auto& field = board[NotationConversions::getFieldNum(co.first, co.second)];
 			if (field != 0u)
 			{
 				if ((field & pattern) == pattern)
@@ -141,7 +134,7 @@ bool isAttackedByKing(const Board& board,
 		{
 			continue;
 		}
-		const auto& field = getColoredPiece(board, co.first, co.second);
+		const auto& field = board[NotationConversions::getFieldNum(co.first, co.second)];
 
 		if (field == kingPattern)
 		{
@@ -174,7 +167,7 @@ bool isAttackedByKnight(const Board& board,
 		if (!NotationConversions::isRowInBoard(co.first) or !NotationConversions::isColumnInBoard(co.second))
 		    continue;
 
-	    const auto& field = getColoredPiece(board, co.first, co.second);
+	    const auto& field = board[NotationConversions::getFieldNum(co.first, co.second)];
 
 		if (field == knightPattern)
 		{
@@ -208,20 +201,16 @@ bool isAttackedOn(const Board& board,
 unsigned char findKing(const Board& board, const NOTATION::COLOR::color c) noexcept
 {
     unsigned char KING_MASQ = static_cast<unsigned char>(c) | NOTATION::PIECES::KING;
-    unsigned char kingPos = std::find_if(board.fields, board.fields + 64, [&](auto&& field){
-        return KING_MASQ == (field & NOTATION::COLOR_AND_PIECE_MASK);
-    }) - board.fields;
+    unsigned char kingPos = std::find(board.fields, board.fields + 64, KING_MASQ) - board.fields;
     return kingPos;
 }
 
 bool isCheckOn(const Board& board, const NOTATION::COLOR::color c) noexcept
 {
     unsigned char KING_MASQ = static_cast<unsigned char>(c) | NOTATION::PIECES::KING;
-    unsigned char kingPos = std::find_if(board.fields, board.fields + 64, [&](auto&& field){
-        return KING_MASQ == (field & NOTATION::COLOR_AND_PIECE_MASK);
-    }) - board.fields;
+    unsigned char kingPos = std::find(board.fields, board.fields + 64, KING_MASQ) - board.fields;
 
-	return isAttackedOn(board, c, kingPos);
+    return isAttackedOn(board, c, kingPos);
 }
 
 }

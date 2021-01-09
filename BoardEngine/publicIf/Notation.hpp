@@ -34,14 +34,6 @@ enum class color : unsigned char {
 };
 }  // namespace COLOR
 
-namespace MOVED
-{
-// TODO:  To consider different approach. This can affect hashing.
-//        Two same positions may end as different hash.
-//        Especially in early stages of the game.
-constexpr unsigned char MOVED_MASK = (1u << 7);
-}  //namespace MOVED
-
 namespace COORDINATES
 {
 namespace COLUMN
@@ -59,7 +51,14 @@ constexpr unsigned char H = 7;
 constexpr unsigned char ROW_DIFF = 8;
 }  // namespace COORDINATES
 
-constexpr unsigned char COLOR_AND_PIECE_MASK = PIECES::PIECES_MASK | COLOR::COLOR_MASK;
-constexpr unsigned char MOVED_AND_PIECE_MASK = PIECES::PIECES_MASK | MOVED::MOVED_MASK;
+namespace CASTLING_RIGHTS
+{
+constexpr unsigned char WHITE_LONG_BIT = 1;
+constexpr unsigned char WHITE_SHORT_BIT = 2;
+constexpr unsigned char BLACK_LONG_BIT = 4;
+constexpr unsigned char BLACK_SHORT_BIT = 8;
+
+constexpr unsigned char CASTLING_MASK = WHITE_LONG_BIT | WHITE_SHORT_BIT | BLACK_LONG_BIT | BLACK_SHORT_BIT;
+}
 
 }  // namespace NOTATION

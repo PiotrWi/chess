@@ -45,16 +45,6 @@ std::vector<Move> BoardEngine::generateMovesFor(NOTATION::COLOR::color color) co
     return MoveGenerator::MoveGenerator::generate(board, color);
 }
 
-MoveApplier::MoveMemorial BoardEngine::applyUndoableMove(const Move & move)
-{
-    return MoveApplier::applyTmpMove(board, hash_, move, resultEvaluator);
-}
-
-void BoardEngine::undoMove(const MoveApplier::MoveMemorial moveMemorial)
-{
-    MoveApplier::undoMove(board, hash_, moveMemorial, resultEvaluator);
-}
-
 MoveApplier::SimpleMoveMemorial BoardEngine::applyUndoableSimpleMove(const Move& move)
 {
     return MoveApplier::applyTmpMoveSimple(board, hash_, move, resultEvaluator);
