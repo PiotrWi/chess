@@ -38,11 +38,15 @@ bool operator==(const Move& lfs, const Move& rhs) noexcept
 ExtendedMove::ExtendedMove(unsigned char sourceIn,
              unsigned char destinationIn,
              unsigned char flagsIn,
-             unsigned char promotingIn) noexcept
+             unsigned char promotingIn,
+             unsigned char sourcePieceIn,
+             unsigned char targetPieceIn) noexcept
     : source(sourceIn)
     , destination(destinationIn)
     , flags(flagsIn)
-    , promoting(promotingIn) {}
+    , promoting(promotingIn)
+    , sourcePiece(sourcePieceIn)
+    , targetPiece(targetPieceIn) {}
 
 ExtendedMove::operator Move() const
 {
@@ -59,15 +63,15 @@ bool operator ==(const ExtendedMove& lhs, const ExtendedMove& rhs) noexcept
 
 ExtendedMove convertMoveToExtended(const Board& board, const Move& move) noexcept
 {
-    const auto& target = board[move.destination];
-    const auto& source = board[move.source] & NOTATION::PIECES::PIECES_MASK;
+    const unsigned char& target = board[move.destination];
+    const unsigned char& source = board[move.source] & NOTATION::PIECES::PIECES_MASK;
 
     unsigned char flags = ((move.isPromoted == true) ? ExtendedMove::promotionMask : 0u)
             | ((target != 0u) ? ExtendedMove::beatingMask : 0u)
             | ((source == NOTATION::PIECES::PAWN) ? ExtendedMove::pawnMoveMask : 0u)
             | ((source == NOTATION::PIECES::KING) ? ExtendedMove::kingMoveMask : 0u);
 
-    return ExtendedMove{move.source, move.destination, flags, move.promoteTo};
+    return ExtendedMove{move.source, move.destination, flags, move.promoteTo, source, target};
 }
 
 ///////////////////////////////////

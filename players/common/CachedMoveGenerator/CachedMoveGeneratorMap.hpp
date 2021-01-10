@@ -8,7 +8,7 @@
 class CachedMoveGeneratorMap
 {
 public:
-    const std::vector<Move>* generate(const BoardEngine& be);
+    const std::vector<ExtendedMove>* generate(const BoardEngine& be);
 private:
-    containers::HashMap<std::vector<Move>, Board, 24u> cache_;
+    containers::HashMap<std::vector<ExtendedMove>, Board, 24u> cache_;
 };

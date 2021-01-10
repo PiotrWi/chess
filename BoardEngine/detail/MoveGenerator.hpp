@@ -10,9 +10,9 @@ namespace MoveGenerator
 class MoveGenerator
 {
 public:
-	static std::vector<Move> generate(const Board&
+	static std::vector<ExtendedMove> generate(const Board&
 		, NOTATION::COLOR::color);
-    static  std::vector<Move> generate(const Board&);
+    static  std::vector<ExtendedMove> generate(const Board&);
 };
 
 }  // namespace MoveGenerator

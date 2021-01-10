@@ -46,11 +46,11 @@ std::vector<Move> map(const char* (&&in)[N], NOTATION::COLOR::color c)
 	return moves;
 }
 
-/*std::ostream& operator<<(std::ostream& os, const std::vector<Move>& moves)
+std::ostream& operator<<(std::ostream& os, const std::vector<ExtendedMove>& moves)
 {
-    std::copy(moves.begin(), moves.end(), std::ostream_iterator<Move>(os, " "));
+    std::copy(moves.begin(), moves.end(), std::ostream_iterator<ExtendedMove>(os, " "));
     return os;
-}*/
+}
 
 }  // namespace
 
@@ -75,21 +75,25 @@ TEST_F(MoveGeneratorTests, shouldCorectlyAnalyzePos_2)
 		{"b2-b3", "b2-b4", "c2-c3", "c2-c4", "d4-e5",
 		"e4-d5", "e4-f5", "g2-g3", "g2-g4",
 		"h2-h3", "h2-h4"}, WHITE);
-
-	auto knightMoves = map(
+	//       b2-b3    b2-b4    c2-c3    c2-c4     d4-e5
+    //   e4-d5    e4-f5    g2-g3     g2-g4
+	//   h2-h3 h2-h4
+    auto knightMoves = map(
 		{"a3-b5", "a3-c4", "a3-b1",
 		"f3-d2", "f3-e5", "f3-g5", "f3-h4", "f3-g1"}, WHITE);
-
+    //       a3-b5    a3-c4    a3-b1
+    //   f3-d2             f3-g5    f3-h4    f3-g1
 	auto rockMoves = map(
 		{"a1-b1", "h1-g1"}, WHITE);
-
+	//       a1-b1    h1-g1
 	auto bishopMoves = map(
 		{"c1-d2", "c1-e3", "c1-f4", "c1-g5", "c1-h6",
 		"f1-e2", "f1-d3", "f1-c4", "f1-b5", "f1-a6"}, WHITE);
-
+    //       c1-d2    c1-e3    c1-f4    c1-g5    c1-h6
+    //   f1-e2    f1-d3    f1-c4    f1-b5    f1-a6
 	auto queenMoves = map(
 		{"d1-d2", "d1-d3", "d1-e2"}, WHITE);
-
+    //       d1-d2    d1-d3    d1-e2
 	auto kingMoves = map(
 		{"e1-d2", "e1-e2"}, WHITE);
 
@@ -102,7 +106,8 @@ TEST_F(MoveGeneratorTests, shouldCorectlyAnalyzePos_2)
 		"♘    ♘  "
 		"♙♙♙  ♙♙♙"
 		"♖ ♗♕♔♗ ♖");
-
+    //          e1-e2 e1-d2
+    std::cout << sut.generate(board, WHITE) << std::endl;
 	ASSERT_THAT(sut.generate(board, WHITE),
 		::testing::UnorderedElementsAreArray(pawnMoves+knightMoves+rockMoves+bishopMoves+queenMoves+kingMoves));
 }

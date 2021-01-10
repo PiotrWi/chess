@@ -25,8 +25,8 @@ public:
 
     Result getResult();
     Result getResult(bool availableMoves);
-    std::vector<Move> generateMoves() const;
-    std::vector<Move> generateMovesFor(NOTATION::COLOR::color) const;
+    std::vector<ExtendedMove> generateMoves() const;
+    std::vector<ExtendedMove> generateMovesFor(NOTATION::COLOR::color) const;
 
     Board board;
     ResultEvaluator resultEvaluator;

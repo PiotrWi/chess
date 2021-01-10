@@ -35,12 +35,12 @@ Result BoardEngine::getResult(bool availableMoves)
     return resultEvaluator.evaluate(availableMoves);
 }
 
-std::vector<Move> BoardEngine::generateMoves() const
+std::vector<ExtendedMove> BoardEngine::generateMoves() const
 {
     return MoveGenerator::MoveGenerator::generate(board);
 }
 
-std::vector<Move> BoardEngine::generateMovesFor(NOTATION::COLOR::color color) const
+std::vector<ExtendedMove> BoardEngine::generateMovesFor(NOTATION::COLOR::color color) const
 {
     return MoveGenerator::MoveGenerator::generate(board, color);
 }

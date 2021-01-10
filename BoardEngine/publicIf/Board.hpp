@@ -44,12 +44,16 @@ struct ExtendedMove
     ExtendedMove(unsigned char sourceIn,
                  unsigned char destinationIn,
                  unsigned char flagsIn,
-                 unsigned char promotingIn) noexcept;
+                 unsigned char promotingIn,
+                 unsigned char sourcePieceIn,
+                 unsigned char targetPieceIn) noexcept;
 
     unsigned char source;
     unsigned char destination;
     unsigned char flags;
     unsigned char promoting;
+    unsigned char sourcePiece;
+    unsigned char targetPiece;
 
     operator Move() const;
 };
