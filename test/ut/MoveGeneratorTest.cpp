@@ -560,3 +560,29 @@ TEST_F(MoveGeneratorTests, shallNotAllowToMovePawnWhenPinned)
     ASSERT_THAT(sut.generate(board, BLACK),
                 ::testing::UnorderedElementsAreArray(kingMoves));
 }
+
+
+
+// CUSTOM from BUG fixing
+TEST_F(MoveGeneratorTests, Custom_1)
+{
+    auto board = utils::createBoard("♜♞♝ ♚ ♞♜"
+        "♟♟♟  ♟♟♟"
+        "    ♟   "
+        "   ♛    "
+        "   ♙    "
+        "♙ ♝     "
+        " ♙♙  ♙♙♙"
+        "♖ ♗♕♔♗♘♖");
+
+    auto kingMoves = map(
+            {"e1-e2"}, WHITE);
+    auto pawnMoves = map(
+            {"b2-c3"}, WHITE);
+    auto queenMoves = map(
+            {"d1-d2"}, WHITE);
+    auto bishopMoves = map(
+            {"c1-d2"}, WHITE);
+    ASSERT_THAT(sut.generate(board, WHITE),
+                ::testing::UnorderedElementsAreArray(kingMoves + pawnMoves + queenMoves + bishopMoves));
+}

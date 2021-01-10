@@ -47,9 +47,11 @@ int evaluateMin(BoardEngine& be,
     }
 
     auto greatestValue = std::numeric_limits<int>::max();
+
+    auto memorial = be.getMemorial();
     for (const auto & validMove : validMoves)
     {
-        auto memorial = be.applyUndoableSimpleMove(validMove);
+        be.applyMove(validMove);
         auto nextBeta = evaluateMax(be, moveGenerator, depth - 1, color, alfa, beta);
         be.undoMove(memorial);
 
@@ -84,10 +86,11 @@ int evaluateMax(BoardEngine& be,
         return materialEvaluator::evaluate(be.board, color);
     }
 
+    auto memorial = be.getMemorial();
     auto greatestValue = std::numeric_limits<int>::min();
     for (const auto & validMove : validMoves)
     {
-        auto memorial = be.applyUndoableSimpleMove(validMove);
+        be.applyMove(validMove);
         auto nextAlfa = evaluateMin(be, moveGenerator, depth - 1, color, alfa, beta);
         be.undoMove(memorial);
 
@@ -115,9 +118,10 @@ Move evaluate(BoardEngine be, CachedMoveGenerator& moveGenerator, unsigned char 
 
     auto playerOnMove = be.board.playerOnMove;
 
+    auto memorial = be.getMemorial();
     for (auto i = 0u; i < validMoves.size(); ++i)
     {
-        auto memorial = be.applyUndoableSimpleMove(validMoves[i]);
+        be.applyMove(validMoves[i]);
         auto nextAlfa = evaluateMin(be, moveGenerator, depth - 1, playerOnMove, alfa, beta);
         be.undoMove(memorial);
 

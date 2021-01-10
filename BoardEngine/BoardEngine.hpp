@@ -16,8 +16,8 @@ public:
 
     bool validateMove(const Move&) const;
 
+    MoveApplier::SimpleMoveMemorial getMemorial() const;
     void applyMove(const Move&);
-
     MoveApplier::SimpleMoveMemorial applyUndoableSimpleMove(const Move&);
     void undoMove(MoveApplier::SimpleMoveMemorial);
 

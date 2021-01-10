@@ -1,7 +1,4 @@
 #include "MoveValidator.hpp"
-#include <iostream>
-
-#include <utility>
 
 #include <publicIf/Board.hpp>
 #include <detail/MoveApplier.hpp>
@@ -55,7 +52,7 @@ bool noCheckAfterMove()
 
 bool validatePawn()
 {
-	constexpr unsigned char singeRow = 8u;
+	constexpr unsigned char singeRow = NOTATION::COORDINATES::ROW_DIFF;
     auto isBeating = (ctx.sourceColumn != ctx.targetColumn);
 	auto rowDifference = ctx.targetRow - ctx.sourceRow;
 
@@ -101,8 +98,7 @@ bool validatePawn()
             if (rowDifference == 1)
             {
                 if (ctx.move->destination == ctx.board->validEnPassant or
-                    (*ctx.board)[ctx.move->destination] ==
-                    (NOTATION::PIECES::PAWN | NOTATION::COLOR::BLACK))
+                ((*ctx.board)[ctx.move->destination] & NOTATION::COLOR::COLOR_MASK) == NOTATION::COLOR::BLACK)
                 {
                     return true;
                 }
@@ -113,8 +109,7 @@ bool validatePawn()
             if (rowDifference == -1)
             {
                 if (ctx.move->destination == ctx.board->validEnPassant or
-                    (*ctx.board)[ctx.move->destination] ==
-                    (NOTATION::PIECES::PAWN | NOTATION::COLOR::WHITE))
+                    ((*ctx.board)[ctx.move->destination] & NOTATION::COLOR::COLOR_MASK) == NOTATION::COLOR::WHITE)
                 {
                     return true;
                 }

@@ -29,10 +29,10 @@ int evaluateMin(BoardEngine& be, unsigned char depth, NOTATION::COLOR::color col
     }
 
     auto greatestValue = std::numeric_limits<int>::max();
-
+    auto memorial = be.getMemorial();
     for (const auto & validMove : validMoves)
     {
-        auto memorial = be.applyUndoableSimpleMove(validMove);
+        be.applyMove(validMove);
         auto nodeVal = evaluateMax(be, depth - 1, color);
         be.undoMove(memorial);
 
@@ -62,10 +62,11 @@ int evaluateMax(BoardEngine& be, unsigned char depth, NOTATION::COLOR::color col
     }
 
     auto greatestValue = std::numeric_limits<int>::min();
+    auto memorial = be.getMemorial();
 
     for (const auto & validMove : validMoves)
     {
-        auto memorial = be.applyUndoableSimpleMove(validMove);
+        be.applyMove(validMove);
         auto nodeVal = evaluateMin(be, depth - 1, color);
         be.undoMove(memorial);
 
@@ -89,10 +90,10 @@ Move evaluate(BoardEngine be, unsigned char depth)
     auto greatestValue = std::numeric_limits<int>::min();
 
     auto playerOnMove = be.board.playerOnMove;
-
+    auto memorial = be.getMemorial();
     for (auto i = 0u; i < validMoves.size(); ++i)
     {
-        auto memorial = be.applyUndoableSimpleMove(validMoves[i]);
+        be.applyMove(validMoves[i]);
         auto nodeVal = evaluateMin(be, depth - 1, playerOnMove);
         be.undoMove(memorial);
 

@@ -5,6 +5,9 @@
 #include <ostream>
 #include <publicIf/NotationConversions.hpp>
 
+///////////////////////////////////
+// MOVE
+///////////////////////////////////
 Move::Move() noexcept
 	: source(0)
 	, destination(0)
@@ -27,6 +30,49 @@ bool operator==(const Move& lfs, const Move& rhs) noexcept
 {
 	return *reinterpret_cast<const uint32_t*>(&lfs) == *reinterpret_cast<const uint32_t*>(&rhs);
 }
+
+///////////////////////////////////
+// Extended Move
+///////////////////////////////////
+
+ExtendedMove::ExtendedMove(unsigned char sourceIn,
+             unsigned char destinationIn,
+             unsigned char flagsIn,
+             unsigned char promotingIn) noexcept
+    : source(sourceIn)
+    , destination(destinationIn)
+    , flags(flagsIn)
+    , promoting(promotingIn) {}
+
+ExtendedMove::operator Move() const
+{
+    return Move(source, destination, flags & ExtendedMove::promotionMask, promoting);
+}
+
+bool operator ==(const ExtendedMove& lhs, const ExtendedMove& rhs) noexcept
+{
+    return lhs.source == rhs.source
+        and lhs.destination == rhs.destination
+        and lhs.flags == rhs.flags
+        and lhs.promoting == rhs.promoting;
+}
+
+ExtendedMove convertMoveToExtended(const Board& board, const Move& move) noexcept
+{
+    const auto& target = board[move.destination];
+    const auto& source = board[move.source] & NOTATION::PIECES::PIECES_MASK;
+
+    unsigned char flags = ((move.isPromoted == true) ? ExtendedMove::promotionMask : 0u)
+            | ((target != 0u) ? ExtendedMove::beatingMask : 0u)
+            | ((source == NOTATION::PIECES::PAWN) ? ExtendedMove::pawnMoveMask : 0u)
+            | ((source == NOTATION::PIECES::KING) ? ExtendedMove::kingMoveMask : 0u);
+
+    return ExtendedMove{move.source, move.destination, flags, move.promoteTo};
+}
+
+///////////////////////////////////
+// Board
+///////////////////////////////////
 
 unsigned char& Board::operator[](const char* field) noexcept
 {

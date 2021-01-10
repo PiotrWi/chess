@@ -61,5 +61,4 @@ TEST(AlfaBetaTrasictionMap, PerformanceTest_10_black)
     CachedMoveGeneratorMap mg;
     be.applyMove(createMove("e2-e4", NOTATION::COLOR::color::white));
     alfaBeta::evaluate(be, mg, 10);
-}
-*/
+}*/

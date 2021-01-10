@@ -861,9 +861,4 @@ std::vector<Move> MoveGenerator::generate(const Board& board)
     return generate(board, board.playerOnMove);
 }
 
-std::vector<MoveDecorator> MoveGenerator::generateWithAdditionalInfo(const Board&)
-{
-    return std::vector<MoveDecorator>{};
-}
-
 }  // namespace MoveGenerator

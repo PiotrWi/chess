@@ -3,6 +3,22 @@
 #include <iosfwd>
 #include <publicIf/Notation.hpp>
 
+struct Board
+{
+    NOTATION::COLOR::color playerOnMove = NOTATION::COLOR::color::white;
+    signed char validEnPassant = -1;
+    unsigned char castlingRights = 15u;
+    unsigned char fields[64] = {}; // "0 belongs to A1, 1 belongs to B1, 8 belongs to A2
+
+    unsigned char& operator[](const char*) noexcept;
+    unsigned char& operator[](const unsigned char) noexcept;
+    const unsigned char& operator[](const char*) const noexcept;
+    const unsigned char& operator[](const unsigned char) const noexcept;
+};
+
+bool operator==(const Board& lhs, const Board& rhs) noexcept;
+
+void initDefault(Board& board) noexcept;
 struct Move
 {
 	Move() noexcept;
@@ -17,19 +33,28 @@ struct Move
 
 bool operator==(const Move& lfs, const Move& rhs) noexcept;
 
-struct Board
+struct ExtendedMove
 {
-	NOTATION::COLOR::color playerOnMove = NOTATION::COLOR::color::white;
-	signed char validEnPassant = -1;
-	unsigned char castlingRights = 15u;
-	unsigned char fields[64] = {}; // "0 belongs to A1, 1 belongs to B1, 8 belongs to A2
+    constexpr static unsigned char promotionMask = 0b00000001;
+    constexpr static unsigned char beatingMask   = 0b00000010;
+    constexpr static unsigned char pawnMoveMask  = 0b00000100;
+    constexpr static unsigned char kingMoveMask  = 0b00001000;
 
-	unsigned char& operator[](const char*) noexcept;
-	unsigned char& operator[](const unsigned char) noexcept;
-	const unsigned char& operator[](const char*) const noexcept;
-	const unsigned char& operator[](const unsigned char) const noexcept;
+    ExtendedMove() noexcept = default;
+    ExtendedMove(unsigned char sourceIn,
+                 unsigned char destinationIn,
+                 unsigned char flagsIn,
+                 unsigned char promotingIn) noexcept;
+
+    unsigned char source;
+    unsigned char destination;
+    unsigned char flags;
+    unsigned char promoting;
+
+    operator Move() const;
 };
 
-bool operator==(const Board& lhs, const Board& rhs) noexcept;
+bool operator ==(const ExtendedMove& lfs, const ExtendedMove& rhs) noexcept;
 
-void initDefault(Board& board) noexcept;
+// For non time relevant usages
+ExtendedMove convertMoveToExtended(const Board&, const Move&) noexcept;

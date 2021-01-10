@@ -880,3 +880,19 @@ TEST_F(MoveValidatorTests_BlackKingOnMove, DoNotAllowCastlesOverAtackedFields)
     ASSERT_FALSE(MoveValidator::validateMove(board, createMove("O-O", color_)));
     ASSERT_FALSE(MoveValidator::validateMove(board, createMove("O-O-O", color_)));
 }
+
+
+// CUSTOM from BUG fixing
+TEST_F(WhiteOnMove, Custom_1)
+{
+    auto board = utils::createBoard("♜♞♝ ♚ ♞♜"
+                                    "♟♟♟  ♟♟♟"
+                                    "    ♟   "
+                                    "   ♛    "
+                                    "   ♙    "
+                                    "♙ ♝     "
+                                    " ♙♙  ♙♙♙"
+                                    "♖ ♗♕♔♗♘♖");
+
+    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("b2-c3", color_)));
+}

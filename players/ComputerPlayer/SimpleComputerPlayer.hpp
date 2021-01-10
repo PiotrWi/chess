@@ -17,5 +17,5 @@ private:
     char lastMove_[20];
     BoardEngine be;
 
-    CachedMoveGenerator cachedMoveGenerator_;
+    CachedMoveGeneratorMap cachedMoveGenerator_;
 };

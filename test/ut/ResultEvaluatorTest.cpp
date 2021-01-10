@@ -25,8 +25,9 @@ public:
                            const NOTATION::COLOR::color c)
     {
         auto move = createMove(moveStr, c);
+        auto extendMove = convertMoveToExtended(board, move);
         MoveApplier::applyMove(board, move);
-        sut.storeBoard(board);
+        sut.storeBoard(board, extendMove);
     }
 
     template<size_t N>
@@ -78,7 +79,7 @@ TEST_F (ResultEvaluatorShould, findMateOnWhite)
 			"        "
 			"        ", WHITE);
 
-    sut.storeBoard(board);
+    sut.storeBoard(board, {});
     ASSERT_EQ(sut.evaluate(), Result::blackWon);
 }
 
@@ -95,7 +96,7 @@ TEST_F (ResultEvaluatorShould, findDrawByNoMove)
 			"        "
 			"        ", BLACK);
 
-    sut.storeBoard(board);
+    sut.storeBoard(board, {});
     ASSERT_EQ(sut.evaluate(), Result::draw);
 }
 

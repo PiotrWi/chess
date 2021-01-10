@@ -50,6 +50,12 @@ MoveApplier::SimpleMoveMemorial BoardEngine::applyUndoableSimpleMove(const Move&
     return MoveApplier::applyTmpMoveSimple(board, hash_, move, resultEvaluator);
 }
 
+MoveApplier::SimpleMoveMemorial BoardEngine::getMemorial() const
+{
+    MoveApplier::SimpleMoveMemorial memorial {board, hash_};
+    return memorial;
+}
+
 void BoardEngine::undoMove(MoveApplier::SimpleMoveMemorial sm)
 {
     return MoveApplier::undoMove(board, hash_, sm, resultEvaluator);

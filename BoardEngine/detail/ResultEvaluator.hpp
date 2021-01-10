@@ -10,14 +10,10 @@ struct Node
 {
     Node();
     Node(const Board&,
-         uint64_t,
-         unsigned char ,
          unsigned char,
          unsigned char);
 
     Board board;
-    uint64_t pawnsHash;
-    unsigned char piecesCount;
     unsigned char repeatedTime = 0u;
     unsigned char noSignificantMoves_ = 0u;
 };
@@ -26,7 +22,8 @@ class ResultEvaluator
 {
 public:
     ResultEvaluator();
-	void storeBoard(const Board&);
+    void storeBoard(const Board& board, const ExtendedMove& move);
+
     void removeSingle();
 
 	Result evaluate();
