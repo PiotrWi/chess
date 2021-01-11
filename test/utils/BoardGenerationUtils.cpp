@@ -88,6 +88,36 @@ Board createBoard(const char* position,
     board.playerOnMove = playerOnMove;
     board.castlingRights = NOTATION::CASTLING_RIGHTS::CASTLING_MASK;
 
+    if (board["e1"] != (NOTATION::COLOR::WHITE | NOTATION::PIECES::KING))
+	{
+    	revokeCastlingRights(board,
+						  NOTATION::CASTLING_RIGHTS::WHITE_LONG_BIT | NOTATION::CASTLING_RIGHTS::WHITE_SHORT_BIT);
+	}
+	if (board["a1"] != (NOTATION::COLOR::WHITE | NOTATION::PIECES::ROCK))
+	{
+		revokeCastlingRights(board,
+							 NOTATION::CASTLING_RIGHTS::WHITE_LONG_BIT);
+	}
+	if (board["h1"] != (NOTATION::COLOR::WHITE | NOTATION::PIECES::ROCK))
+	{
+		revokeCastlingRights(board,
+							 NOTATION::CASTLING_RIGHTS::WHITE_SHORT_BIT);
+	}
+	if (board["e8"] != (NOTATION::COLOR::BLACK | NOTATION::PIECES::KING))
+	{
+		revokeCastlingRights(board,
+							 NOTATION::CASTLING_RIGHTS::BLACK_LONG_BIT | NOTATION::CASTLING_RIGHTS::BLACK_SHORT_BIT);
+	}
+	if (board["a8"] != (NOTATION::COLOR::BLACK | NOTATION::PIECES::ROCK))
+	{
+		revokeCastlingRights(board,
+							 NOTATION::CASTLING_RIGHTS::BLACK_SHORT_BIT);
+	}
+	if (board["h8"] != (NOTATION::COLOR::BLACK | NOTATION::PIECES::ROCK))
+	{
+		revokeCastlingRights(board,
+							 NOTATION::CASTLING_RIGHTS::BLACK_LONG_BIT);
+	}
 	return board;
 }
 

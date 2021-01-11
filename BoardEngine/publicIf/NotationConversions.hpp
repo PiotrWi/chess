@@ -21,7 +21,12 @@ bool isColumnInBoard(unsigned char col);
 
 }
 
-NOTATION::COLOR::color operator+(const NOTATION::COLOR::color& c, unsigned char);
+constexpr NOTATION::COLOR::color operator+(NOTATION::COLOR::color c, unsigned char)
+{
+    auto colorNum = static_cast<unsigned char>(c);
+    return NOTATION::COLOR::color(colorNum ^ NOTATION::COLOR::COLOR_MASK);
+}
+
 NOTATION::COLOR::color operator++(NOTATION::COLOR::color& c);
 NOTATION::COLOR::color operator++(NOTATION::COLOR::color& c, int);
 bool operator==(const unsigned char, const NOTATION::COLOR::color);

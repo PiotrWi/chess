@@ -8,6 +8,8 @@ namespace CheckChecker
 {
 unsigned char findKing(const Board& board, const NOTATION::COLOR::color c) noexcept;
 
+bool isAttackedOnRapid(const Board& board, NOTATION::COLOR::color c, unsigned char fieldPosition);
+
 bool isAttackedOn(const Board& board,
 		NOTATION::COLOR::color playerColor,
 		unsigned char field) noexcept;

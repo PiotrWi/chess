@@ -10,5 +10,5 @@ add_library(board
 		detail/ResultEvaluator.cpp
 		detail/MoveApplier.cpp
 		BoardEngine.cpp
-		notations/LongAlgebraicNotation.cpp hashing/zobrist.hpp hashing/Zobrish.cpp)
+		notations/LongAlgebraicNotation.cpp hashing/zobrist.hpp hashing/Zobrish.cpp FieldLookup/FieldLookup.hpp)
 	
