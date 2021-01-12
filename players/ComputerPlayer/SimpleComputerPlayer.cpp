@@ -1,6 +1,6 @@
 #include "SimpleComputerPlayer.hpp"
 #include <cstring>
-#include <notations/LongAlgebraicNotation.hpp>
+#include <notations/coordinationnotation.hpp>
 #include <common/searchingAlgorithms/MinMax.hpp>
 #include <common/searchingAlgorithms/AlfaBeta.hpp>
 #include <common/searchingAlgorithms/AlfaBetaWithTransitctionTable.hpp>
@@ -15,12 +15,12 @@ const char *SimpleComputerPlayer::act(const char *string)
 {
     if (string != nullptr)
     {
-        be.applyMove(createMove(string, be.board.playerOnMove));
+        be.applyMove(notations::coordinates::createMove(string, be.board.playerOnMove));
     }
 //    cachedMoveGenerator_ = {};
     auto move = alfaBeta::evaluate(be, cachedMoveGenerator_, 8);
     be.applyMove(move);
-    strcpy(lastMove_, createMoveStr(move).data());
+    strcpy(lastMove_, notations::coordinates::createMoveStr(move).data());
     return lastMove_;
 }
 

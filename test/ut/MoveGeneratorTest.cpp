@@ -6,7 +6,7 @@
 #include <detail/MoveApplier.hpp>
 #include <detail/MoveGenerator.hpp>
 #include <utils/BoardGenerationUtils.hpp>
-#include <notations/LongAlgebraicNotation.hpp>
+#include <notations/coordinationnotation.hpp>
 
 class MoveGeneratorTests
 	: public ::testing::Test
@@ -41,7 +41,7 @@ std::vector<Move> map(const char* (&&in)[N], NOTATION::COLOR::color c)
 
 	for (auto i = 0u; i < N; ++i)
 	{
-		moves.emplace_back(createMove(in[i], c));
+        moves.emplace_back(notations::coordinates::createMove(in[i], c));
 	}
 	return moves;
 }
@@ -124,10 +124,10 @@ TEST_F(MoveGeneratorTests, shouldCorectlyAnalyzePosWithMoves)
 		"    ♔  ♙"
 		"♖      ♖");
 	utils::revokeCastlingRights(board, NOTATION::CASTLING_RIGHTS::WHITE_SHORT_BIT | NOTATION::CASTLING_RIGHTS::WHITE_LONG_BIT);
-	auto moveKingToInitialPosition = createMove("e2-e1", WHITE);
+    auto moveKingToInitialPosition = notations::coordinates::createMove("e2-e1", WHITE);
 	MoveApplier::applyMove(board, moveKingToInitialPosition);
 
-	auto moveWitePawnToPieces = createMove("c7-c5", BLACK);
+    auto moveWitePawnToPieces = notations::coordinates::createMove("c7-c5", BLACK);
     MoveApplier::applyMove(board, moveWitePawnToPieces);
 
 //	"    ♚   "
@@ -236,10 +236,10 @@ TEST_F(MoveGeneratorTests, shouldPreventIllegalCasles_2)
 		{shortCastle, "e1-e2", "e1-f2", "e1-f1", "e1-d2", "e1-d1"}, WHITE);
 
 	utils::revokeCastlingRights(board, NOTATION::CASTLING_RIGHTS::WHITE_LONG_BIT); // TODO  Likely it shall be revisited
-	auto moveRockToInitialPosition = createMove("b1-a1", WHITE);
+    auto moveRockToInitialPosition = notations::coordinates::createMove("b1-a1", WHITE);
     MoveApplier::applyMove(board, moveRockToInitialPosition);
 
-	auto moveWitePawnToPieces = createMove("e7-e8", BLACK);
+    auto moveWitePawnToPieces = notations::coordinates::createMove("e7-e8", BLACK);
     MoveApplier::applyMove(board, moveWitePawnToPieces);
 
 //	"    ♚   "
@@ -279,11 +279,11 @@ TEST_F(MoveGeneratorTests, shouldPreventIllegalCasles_3)
 	auto kingMoves = map(
 		{longCastle, "e1-e2", "e1-f2", "e1-f1", "e1-d2", "e1-d1"}, WHITE);
 
-	auto moveRockToInitialPosition = createMove("g1-h1", WHITE);
+    auto moveRockToInitialPosition = notations::coordinates::createMove("g1-h1", WHITE);
     MoveApplier::applyMove(board, moveRockToInitialPosition);
     utils::revokeCastlingRights(board, NOTATION::CASTLING_RIGHTS::WHITE_SHORT_BIT);
 
-	auto moveWitePawnToPieces = createMove("e7-e8", BLACK);
+    auto moveWitePawnToPieces = notations::coordinates::createMove("e7-e8", BLACK);
     MoveApplier::applyMove(board, moveWitePawnToPieces);
 
 //	"    ♚   "

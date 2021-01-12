@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 
 #include <BoardEngine.hpp>
-#include <notations/LongAlgebraicNotation.hpp>
+#include <notations/coordinationnotation.hpp>
 #include <common/searchingAlgorithms/AlfaBetaWithTransitctionTable.hpp>
 
 TEST(AlfaBetaTrasiction, PerformanceTest_2)
@@ -29,7 +29,7 @@ TEST(AlfaBetaTrasiction, PerformanceTest_6_black)
 {
     BoardEngine be;
     CachedMoveGenerator mg;
-    be.applyMove(createMove("e2-e4", NOTATION::COLOR::color::white));
+    be.applyMove(notations::coordinates::createMove("e2-e4", NOTATION::COLOR::color::white));
     alfaBeta::evaluate(be, mg, 6);
 }
 
@@ -44,6 +44,6 @@ TEST(AlfaBetaTrasiction, PerformanceTest_8_black)
 {
     BoardEngine be;
     CachedMoveGenerator mg;
-    be.applyMove(createMove("e2-e4", NOTATION::COLOR::color::white));
+    be.applyMove(notations::coordinates::createMove("e2-e4", NOTATION::COLOR::color::white));
     alfaBeta::evaluate(be, mg, 8);
 }

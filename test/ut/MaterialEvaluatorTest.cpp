@@ -2,7 +2,7 @@
 #include <utils/BoardGenerationUtils.hpp>
 #include <common/evaluators/MaterialEvaluator.hpp>
 #include <detail/MoveApplier.hpp>
-#include <notations/LongAlgebraicNotation.hpp>
+#include <notations/coordinationnotation.hpp>
 
 TEST(MaterialEvaluatorShall, EvaluateFirstPosition)
 {
@@ -24,11 +24,11 @@ TEST(MaterialEvaluatorShall, EvaluateAfterFirstMoves)
         "♙♙♙♙♙♙♙♙"
         "♖♘♗♕♔♗♘♖";*/
     auto initialBoard = utils::createBoard(utils::InitialBoardString,NOTATION::COLOR::color::white );
-    MoveApplier::applyMove(initialBoard, createMove("e2-e4", NOTATION::COLOR::color::white));
+    MoveApplier::applyMove(initialBoard, notations::coordinates::createMove("e2-e4", NOTATION::COLOR::color::white));
     ASSERT_EQ(0, materialEvaluator::evaluate(initialBoard, NOTATION::COLOR::color::white ));
     ASSERT_EQ(0, materialEvaluator::evaluate(initialBoard, NOTATION::COLOR::color::black ));
 
-    MoveApplier::applyMove(initialBoard, createMove("e7-e5", NOTATION::COLOR::color::black));
+    MoveApplier::applyMove(initialBoard, notations::coordinates::createMove("e7-e5", NOTATION::COLOR::color::black));
     ASSERT_EQ(0, materialEvaluator::evaluate(initialBoard, NOTATION::COLOR::color::white ));
     ASSERT_EQ(0, materialEvaluator::evaluate(initialBoard, NOTATION::COLOR::color::black ));
 }

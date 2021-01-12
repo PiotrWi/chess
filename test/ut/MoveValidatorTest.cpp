@@ -4,7 +4,7 @@
 #include <detail/MoveValidator.hpp>
 
 #include <utils/BoardGenerationUtils.hpp>
-#include <notations/LongAlgebraicNotation.hpp>
+#include <notations/coordinationnotation.hpp>
 
 class BoardBasedTest
     : public ::testing::Test
@@ -52,7 +52,7 @@ class MoveValidatorTests_BlackPawnsInitialMovesTest
 TEST_P(MoveValidatorTests_BlackPawnsInitialMovesTest, AAllowToMovePawn)
 {
     Board board = createBoard(utils::InitialBoardString);
-    auto move = createMove(GetParam(), color_);
+    auto move = notations::coordinates::createMove(GetParam(), color_);
 
     ASSERT_TRUE(MoveValidator::validateMove(board, move));
 }
@@ -72,7 +72,7 @@ class MoveValidatorTests_WhitePawnsInitialMovesTest
 TEST_P(MoveValidatorTests_WhitePawnsInitialMovesTest, AllowToMovePawn)
 {
 	Board board = createBoard(utils::InitialBoardString);
-    auto move = createMove(GetParam(), color_);
+    auto move = notations::coordinates::createMove(GetParam(), color_);
 
 	ASSERT_TRUE(MoveValidator::validateMove(board, move));
 }
@@ -95,12 +95,12 @@ TEST_F(MoveValidatorTests_WhitePawnOnMove, DoNotAllowIncorectPawnMoves)
                 "♙♙♙♙♙♙♙♙"
                 "♖♘♗♕♔♗♘♖");
 
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("d2-d3", color_)));
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("d2-d4", color_)));
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("d2-c3", color_)));
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("d2-e3", color_)));
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("d2-c2", color_)));
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("d2-e2", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("d2-d3", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("d2-d4", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("d2-c3", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("d2-e3", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("d2-c2", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("d2-e2", color_)));
 }
 
 TEST_F(MoveValidatorTests_WhitePawnOnMove, AllowStandardBeats)
@@ -115,9 +115,9 @@ TEST_F(MoveValidatorTests_WhitePawnOnMove, AllowStandardBeats)
                 "♙♙♙♙ ♙♙♙"
                 "♖♘♗♕♔♗♘♖");
 
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("e4-d5", color_)));
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("e4-f5", color_)));
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("e4-e5", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("e4-d5", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("e4-f5", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("e4-e5", color_)));
 }
 
 TEST_F(MoveValidatorTests_WhitePawnOnMove, AllowBeatsOnFly)
@@ -131,13 +131,13 @@ TEST_F(MoveValidatorTests_WhitePawnOnMove, AllowBeatsOnFly)
                 "        "
                 "♙♙♙♙ ♙♙♙"
                 "♖♘♗♕♔♗♘♖");
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("e5-e6", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("e5-e6", color_)));
 
     utils::setValidEnPassant(board, "d6");
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("e5-d6", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("e5-d6", color_)));
 
     utils::setValidEnPassant(board, "f6");
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("e5-f6", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("e5-f6", color_)));
 }
 
 TEST_F(MoveValidatorTests_WhitePawnOnMove, DoNotAllowToCheckAfterMove)
@@ -152,9 +152,9 @@ TEST_F(MoveValidatorTests_WhitePawnOnMove, DoNotAllowToCheckAfterMove)
                 "        "
                 "        ");
 
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("e5-g6", color_)));
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("f4-f5", color_)));
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("d5-d6", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("e5-g6", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("f4-f5", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("d5-d6", color_)));
 }
 
 
@@ -172,12 +172,12 @@ TEST_F(MoveValidatorTests_BlackPawnOnMove, DoNotAllowIncorectPawnMoves)
                 "♙♙♙ ♙♙♙♙"
                 "♖♘♗♕♔♗♘♖");
 
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("d7-d6", color_)));
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("d7-d5", color_)));
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("d7-c6", color_)));
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("d7-e6", color_)));
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("d7-e7", color_)));
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("d7-c7", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("d7-d6", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("d7-d5", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("d7-c6", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("d7-e6", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("d7-e7", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("d7-c7", color_)));
 }
 
 TEST_F(MoveValidatorTests_BlackPawnOnMove, AllowStandardBeats)
@@ -192,9 +192,9 @@ TEST_F(MoveValidatorTests_BlackPawnOnMove, AllowStandardBeats)
                 "♙♙♙  ♙♙♙"
                 "♖♘♗♕♔♗♘♖");
 
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("e5-d4", color_)));
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("e5-f4", color_)));
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("e5-e4", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("e5-d4", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("e5-f4", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("e5-e4", color_)));
 }
 
 TEST_F(MoveValidatorTests_BlackPawnOnMove, AllowBeatsOnFly)
@@ -208,13 +208,13 @@ TEST_F(MoveValidatorTests_BlackPawnOnMove, AllowBeatsOnFly)
                 "    ♙   "
                 "♙♙♙   ♙♙"
                 "♖♘♗♕♔♗♘♖");
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("e4-e3", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("e4-e3", color_)));
 
     utils::setValidEnPassant(board, "d3");
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("e4-d3", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("e4-d3", color_)));
 
     utils::setValidEnPassant(board, "f3");
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("e4-f3", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("e4-f3", color_)));
 }
 
 TEST_F(MoveValidatorTests_BlackPawnOnMove, DoNotAllowToCheckAfterMove)
@@ -229,9 +229,9 @@ TEST_F(MoveValidatorTests_BlackPawnOnMove, DoNotAllowToCheckAfterMove)
                 "        "
                 "    ♔   ");
 
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("e6-g5", color_)));
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("g7-g6", color_)));
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("d6-d5", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("e6-g5", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("g7-g6", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("d6-d5", color_)));
 }
 
 /*******************************************************************
@@ -244,8 +244,8 @@ TEST_F(MoveValidatorTests_WhiteRockOnMove, DoNotAllowIncorectPawnMoves)
 {
     Board board = createBoard(utils::InitialBoardString);
 
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("a1-a3", color_)));
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("a1-c1", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("a1-a3", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("a1-c1", color_)));
 }
 
 class MoveValidatorTests_WhiteRockAllMovies
@@ -266,7 +266,7 @@ TEST_P(MoveValidatorTests_WhiteRockAllMovies, AllowRockMovies)
                 "        "
                 "    ♔   ");
 
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove(GetParam(), color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove(GetParam(), color_)));
 }
 
 INSTANTIATE_TEST_SUITE_P(MoveValidatorTests_WhiteRockAllMovies, MoveValidatorTests_WhiteRockAllMovies, testing::Values(
@@ -285,10 +285,10 @@ TEST_F(MoveValidatorTests_WhiteRockOnMove, DoNotAllowIncorectMoves)
                 "        "
                 "♖  ♔    ");
 
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("a1-d1", color_)));
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("a1-e1", color_)));
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("a1-b2", color_)));
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("a1-a8", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("a1-d1", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("a1-e1", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("a1-b2", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("a1-a8", color_)));
 }
 
 TEST_F(MoveValidatorTests_WhiteRockOnMove, AllowBeats)
@@ -303,8 +303,8 @@ TEST_F(MoveValidatorTests_WhiteRockOnMove, AllowBeats)
                 "   ♔    "
                 "♖ ♜     ");
 
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("a1-c1", color_)));
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("a1-a7", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("a1-c1", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("a1-a7", color_)));
 }
 
 
@@ -314,8 +314,8 @@ TEST_F(MoveValidatorTests_BlackRockOnMove, DoNotAllowIncorectMoves)
 {
     Board board = createBoard(utils::InitialBoardString);
 
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("a8-a7", color_)));
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("a8-c8", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("a8-a7", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("a8-c8", color_)));
 }
 
 class MoveValidatorTests_BlackRockAllMovies
@@ -336,7 +336,7 @@ TEST_P(MoveValidatorTests_BlackRockAllMovies, AllowRockMovies)
                 "        "
                 "    ♔   ");
 
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove(GetParam(), color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove(GetParam(), color_)));
 }
 
 INSTANTIATE_TEST_SUITE_P(MoveValidatorTests_BlackRockAllMovies, MoveValidatorTests_BlackRockAllMovies, testing::Values(
@@ -355,10 +355,10 @@ TEST_F(MoveValidatorTests_BlackRockOnMove, DoNotAllowIncorectMoves2)
                 "♟       "
                 "♖  ♔    ");
 
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("a8-e8", color_)));
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("a8-a2", color_)));
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("a8-a1", color_)));
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("a8-h8", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("a8-e8", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("a8-a2", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("a8-a1", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("a8-h8", color_)));
 }
 
 TEST_F(MoveValidatorTests_BlackRockOnMove, AllowBeats)
@@ -373,8 +373,8 @@ TEST_F(MoveValidatorTests_BlackRockOnMove, AllowBeats)
                 "♖       "
                 "   ♔    ");
 
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("a8-e8", color_)));
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("a8-a2", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("a8-e8", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("a8-a2", color_)));
 }
 
 /*******************************************************************
@@ -387,14 +387,14 @@ TEST_F(MoveValidatorTests_WhiteKnightOnMove, CheckInitialMoves)
 {
     Board board = createBoard(utils::InitialBoardString);
 
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("b1-a3", color_)));
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("b1-c3", color_)));
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("b1-d2", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("b1-a3", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("b1-c3", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("b1-d2", color_)));
 
 
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("g1-f3", color_)));
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("g1-h3", color_)));
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("g1-e2", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("g1-f3", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("g1-h3", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("g1-e2", color_)));
 }
 
 TEST_F(MoveValidatorTests_WhiteKnightOnMove, CheckAllMoves)
@@ -409,16 +409,16 @@ TEST_F(MoveValidatorTests_WhiteKnightOnMove, CheckAllMoves)
                 "        "
                 "    ♔   ");
 
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("c4-a3", color_)));
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("c4-a5", color_)));
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("c4-b2", color_)));
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("c4-b6", color_)));
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("c4-d2", color_)));
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("c4-d6", color_)));
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("c4-e3", color_)));
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("c4-e5", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("c4-a3", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("c4-a5", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("c4-b2", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("c4-b6", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("c4-d2", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("c4-d6", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("c4-e3", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("c4-e5", color_)));
 
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("c4-d4", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("c4-d4", color_)));
 }
 
 
@@ -428,14 +428,14 @@ TEST_F(MoveValidatorTests_BlackKnightOnMove, CheckInitialMoves)
 {
     Board board = createBoard(utils::InitialBoardString);
 
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("b8-a6", color_)));
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("b8-c6", color_)));
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("b8-d7", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("b8-a6", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("b8-c6", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("b8-d7", color_)));
 
 
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("g8-f6", color_)));
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("g8-h6", color_)));
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("g8-e7", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("g8-f6", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("g8-h6", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("g8-e7", color_)));
 }
 
 TEST_F(MoveValidatorTests_BlackKnightOnMove, CheckAllMoves)
@@ -450,16 +450,16 @@ TEST_F(MoveValidatorTests_BlackKnightOnMove, CheckAllMoves)
                 "        "
                 "    ♔   ");
 
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("c4-a3", color_)));
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("c4-a5", color_)));
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("c4-b2", color_)));
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("c4-b6", color_)));
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("c4-d2", color_)));
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("c4-d6", color_)));
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("c4-e3", color_)));
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("c4-e5", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("c4-a3", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("c4-a5", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("c4-b2", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("c4-b6", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("c4-d2", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("c4-d6", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("c4-e3", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("c4-e5", color_)));
 
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("c4-d4", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("c4-d4", color_)));
 }
 
 /*******************************************************************
@@ -472,12 +472,12 @@ TEST_F(MoveValidatorTests_WhiteBishopOnMove, CheckInitialMoves)
 {
     Board board = createBoard(utils::InitialBoardString);
 
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("c1-b2", color_)));
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("c1-a3", color_)));
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("c1-d2", color_)));
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("c1-e2", color_)));
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("f1-e2", color_)));
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("f1-g3", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("c1-b2", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("c1-a3", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("c1-d2", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("c1-e2", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("f1-e2", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("f1-g3", color_)));
 }
 
 TEST_F(MoveValidatorTests_WhiteBishopOnMove, CheckAllMoves)
@@ -492,25 +492,25 @@ TEST_F(MoveValidatorTests_WhiteBishopOnMove, CheckAllMoves)
             "        "
             "    ♔   ");
 
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("e4-d3", color_)));
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("e4-c2", color_)));
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("e4-b1", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("e4-d3", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("e4-c2", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("e4-b1", color_)));
 
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("e4-f3", color_)));
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("e4-g2", color_)));
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("e4-h1", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("e4-f3", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("e4-g2", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("e4-h1", color_)));
 
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("e4-f5", color_)));
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("e4-g6", color_)));
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("e4-h7", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("e4-f5", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("e4-g6", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("e4-h7", color_)));
 
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("e4-d5", color_)));
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("e4-c6", color_)));
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("e4-b7", color_)));
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("e4-a8", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("e4-d5", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("e4-c6", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("e4-b7", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("e4-a8", color_)));
 
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("e4-e5", color_)));
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("e4-f4", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("e4-e5", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("e4-f4", color_)));
 }
 
 
@@ -526,17 +526,17 @@ TEST_F(MoveValidatorTests_WhiteBishopOnMove, StandardBeats)
             "  ♜   ♜ "
             "    ♔   ");
 
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("e4-g6", color_)));
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("e4-h7", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("e4-g6", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("e4-h7", color_)));
 
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("e4-c6", color_)));
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("e4-b7", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("e4-c6", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("e4-b7", color_)));
 
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("e4-c2", color_)));
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("e4-b1", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("e4-c2", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("e4-b1", color_)));
 
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("e4-g2", color_)));
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("e4-h1", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("e4-g2", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("e4-h1", color_)));
 }
 
 class MoveValidatorTests_BlackBishopOnMove : public BlackOnMove {};
@@ -545,12 +545,12 @@ TEST_F(MoveValidatorTests_BlackBishopOnMove, CheckInitialMoves)
 {
     Board board = createBoard(utils::InitialBoardString);
 
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("c8-b7", color_)));
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("c8-a6", color_)));
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("c8-d7", color_)));
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("c8-e7", color_)));
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("f8-e7", color_)));
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("f8-g6", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("c8-b7", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("c8-a6", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("c8-d7", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("c8-e7", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("f8-e7", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("f8-g6", color_)));
 }
 
 TEST_F(MoveValidatorTests_BlackBishopOnMove, CheckAllMoves)
@@ -565,24 +565,24 @@ TEST_F(MoveValidatorTests_BlackBishopOnMove, CheckAllMoves)
             "        "
             "    ♔   ");
 
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("e5-d4", color_)));
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("e5-c3", color_)));
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("e5-b2", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("e5-d4", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("e5-c3", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("e5-b2", color_)));
 
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("e5-f4", color_)));
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("e5-g3", color_)));
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("e5-h2", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("e5-f4", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("e5-g3", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("e5-h2", color_)));
 
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("e5-f6", color_)));
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("e5-g7", color_)));
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("e5-h8", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("e5-f6", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("e5-g7", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("e5-h8", color_)));
 
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("e5-d6", color_)));
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("e5-c7", color_)));
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("e5-b8", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("e5-d6", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("e5-c7", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("e5-b8", color_)));
 
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("e5-e5", color_)));
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("e5-f5", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("e5-e5", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("e5-f5", color_)));
 }
 
 
@@ -598,17 +598,17 @@ TEST_F(MoveValidatorTests_BlackBishopOnMove, StandardBeats)
             " ♖     ♖"
             "    ♔   ");
 
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("e5-g7", color_)));
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("e5-h8", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("e5-g7", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("e5-h8", color_)));
 
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("e5-c7", color_)));
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("e5-b8", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("e5-c7", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("e5-b8", color_)));
 
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("e5-c3", color_)));
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("e5-b2", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("e5-c3", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("e5-b2", color_)));
 
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("e5-g3", color_)));
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("e5-h2", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("e5-g3", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("e5-h2", color_)));
 }
 
 /*******************************************************************
@@ -621,11 +621,11 @@ TEST_F(MoveValidatorTests_WhiteQueenOnMove, CheckInitialMoves)
 {
     Board board = createBoard(utils::InitialBoardString);
 
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("d1-c1", color_)));
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("d1-c2", color_)));
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("d1-d2", color_)));
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("d1-e2", color_)));
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("d1-e1", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("d1-c1", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("d1-c2", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("d1-d2", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("d1-e2", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("d1-e1", color_)));
 }
 
 TEST_F(MoveValidatorTests_WhiteQueenOnMove, CheckAllMoves)
@@ -640,14 +640,14 @@ TEST_F(MoveValidatorTests_WhiteQueenOnMove, CheckAllMoves)
             "        "
             "    ♔   "); //c4
 
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("c4-a4", color_)));
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("c4-a6", color_)));
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("c4-c8", color_)));
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("c4-g8", color_)));
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("c4-c8", color_)));
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("c4-f1", color_)));
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("c4-c1", color_)));
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("c4-a2", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("c4-a4", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("c4-a6", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("c4-c8", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("c4-g8", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("c4-c8", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("c4-f1", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("c4-c1", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("c4-a2", color_)));
 }
 
 class MoveValidatorTests_BlackQueenOnMove : public BlackOnMove {};
@@ -656,11 +656,11 @@ TEST_F(MoveValidatorTests_BlackQueenOnMove, CheckInitialMoves)
 {
     Board board = createBoard(utils::InitialBoardString);
 
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("d8-c8", color_)));
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("d8-c7", color_)));
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("d8-d7", color_)));
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("d8-e7", color_)));
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("d8-e8", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("d8-c8", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("d8-c7", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("d8-d7", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("d8-e7", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("d8-e8", color_)));
 }
 
 TEST_F(MoveValidatorTests_BlackQueenOnMove, CheckAllMoves)
@@ -675,14 +675,14 @@ TEST_F(MoveValidatorTests_BlackQueenOnMove, CheckAllMoves)
             "        "
             "    ♔   "); //c4
 
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("c4-a4", color_)));
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("c4-a6", color_)));
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("c4-c8", color_)));
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("c4-g8", color_)));
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("c4-c8", color_)));
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("c4-f1", color_)));
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("c4-c1", color_)));
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("c4-a2", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("c4-a4", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("c4-a6", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("c4-c8", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("c4-g8", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("c4-c8", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("c4-f1", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("c4-c1", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("c4-a2", color_)));
 }
 
 /*******************************************************************
@@ -695,11 +695,11 @@ TEST_F(MoveValidatorTests_WhiteKingOnMove, CheckInitialMoves)
 {
     Board board = createBoard(utils::InitialBoardString);
 
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("e1-d1", color_)));
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("e1-d2", color_)));
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("e1-e2", color_)));
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("e1-f2", color_)));
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("e1-f1", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("e1-d1", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("e1-d2", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("e1-e2", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("e1-f2", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("e1-f1", color_)));
 }
 
 TEST_F(MoveValidatorTests_WhiteKingOnMove, CheckAllMoves)
@@ -714,14 +714,14 @@ TEST_F(MoveValidatorTests_WhiteKingOnMove, CheckAllMoves)
             "    ♔   "
             "        "); //c4
 
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("e2-e1", color_)));
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("e2-f1", color_)));
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("e2-f2", color_)));
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("e2-f3", color_)));
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("e2-e3", color_)));
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("e2-d3", color_)));
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("e2-d2", color_)));
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("e2-d1", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("e2-e1", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("e2-f1", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("e2-f2", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("e2-f3", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("e2-e3", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("e2-d3", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("e2-d2", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("e2-d1", color_)));
 }
 
 TEST_F(MoveValidatorTests_WhiteKingOnMove, CheckCastles)
@@ -736,8 +736,8 @@ TEST_F(MoveValidatorTests_WhiteKingOnMove, CheckCastles)
             "        "
             "♖   ♔  ♖");
 
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("O-O", color_)));
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("O-O-O", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("O-O", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("O-O-O", color_)));
 }
 
 TEST_F(MoveValidatorTests_WhiteKingOnMove, DoNotAllowCastleWhenMoved)
@@ -753,18 +753,18 @@ TEST_F(MoveValidatorTests_WhiteKingOnMove, DoNotAllowCastleWhenMoved)
             "♖   ♔  ♖";
     Board board = createBoard(boardString);
     revokeCastlingRights(board, NOTATION::CASTLING_RIGHTS::WHITE_LONG_BIT);
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("O-O", color_)));
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("O-O-O", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("O-O", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("O-O-O", color_)));
 
     board = createBoard(boardString);
     revokeCastlingRights(board, NOTATION::CASTLING_RIGHTS::WHITE_SHORT_BIT);
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("O-O", color_)));
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("O-O-O", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("O-O", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("O-O-O", color_)));
 
     board = createBoard(boardString);
     revokeCastlingRights(board, NOTATION::CASTLING_RIGHTS::WHITE_SHORT_BIT | NOTATION::CASTLING_RIGHTS::WHITE_LONG_BIT);
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("O-O", color_)));
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("O-O-O", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("O-O", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("O-O-O", color_)));
 }
 
 
@@ -780,8 +780,8 @@ TEST_F(MoveValidatorTests_WhiteKingOnMove, DoNotAllowCastlesOverAtackedFields)
             "        "
             "♖   ♔  ♖");
 
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("O-O", color_)));
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("O-O-O", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("O-O", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("O-O-O", color_)));
 }
 
 
@@ -791,11 +791,11 @@ TEST_F(MoveValidatorTests_BlackKingOnMove, CheckInitialMoves)
 {
     Board board = createBoard(utils::InitialBoardString);
 
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("e8-d8", color_)));
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("e8-d7", color_)));
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("e8-e7", color_)));
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("e8-f7", color_)));
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("e8-f8", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("e8-d8", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("e8-d7", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("e8-e7", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("e8-f7", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("e8-f8", color_)));
 }
 
 TEST_F(MoveValidatorTests_BlackKingOnMove, CheckAllMoves)
@@ -810,14 +810,14 @@ TEST_F(MoveValidatorTests_BlackKingOnMove, CheckAllMoves)
             "        "
             "    ♔   "); //c4
 
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("b7-a8", color_)));
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("b7-b8", color_)));
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("b7-c8", color_)));
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("b7-c7", color_)));
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("b7-c6", color_)));
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("b7-b6", color_)));
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("b7-a6", color_)));
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("b7-a7", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("b7-a8", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("b7-b8", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("b7-c8", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("b7-c7", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("b7-c6", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("b7-b6", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("b7-a6", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("b7-a7", color_)));
 }
 
 
@@ -833,8 +833,8 @@ TEST_F(MoveValidatorTests_BlackKingOnMove, CheckCastles)
             "        "
             "    ♔   ");
 
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("O-O", color_)));
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("O-O-O", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("O-O", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("O-O-O", color_)));
 }
 
 TEST_F(MoveValidatorTests_BlackKingOnMove, DoNotAllowCastleWhenMoved)
@@ -850,18 +850,18 @@ TEST_F(MoveValidatorTests_BlackKingOnMove, DoNotAllowCastleWhenMoved)
             "    ♔   ";
     Board board = createBoard(boardString);
     revokeCastlingRights(board, NOTATION::CASTLING_RIGHTS::BLACK_LONG_BIT);
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("O-O", color_)));
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("O-O-O", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("O-O", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("O-O-O", color_)));
 
     board = createBoard(boardString);
     revokeCastlingRights(board, NOTATION::CASTLING_RIGHTS::BLACK_SHORT_BIT);
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("O-O", color_)));
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("O-O-O", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("O-O", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("O-O-O", color_)));
 
     board = createBoard(boardString);
     revokeCastlingRights(board, NOTATION::CASTLING_RIGHTS::BLACK_SHORT_BIT | NOTATION::CASTLING_RIGHTS::BLACK_LONG_BIT);
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("O-O", color_)));
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("O-O-O", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("O-O", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("O-O-O", color_)));
 }
 
 
@@ -877,8 +877,8 @@ TEST_F(MoveValidatorTests_BlackKingOnMove, DoNotAllowCastlesOverAtackedFields)
             "        "
             "   ♖♔♖  ");
 
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("O-O", color_)));
-    ASSERT_FALSE(MoveValidator::validateMove(board, createMove("O-O-O", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("O-O", color_)));
+    ASSERT_FALSE(MoveValidator::validateMove(board, notations::coordinates::createMove("O-O-O", color_)));
 }
 
 
@@ -894,5 +894,5 @@ TEST_F(WhiteOnMove, Custom_1)
                                     " ♙♙  ♙♙♙"
                                     "♖ ♗♕♔♗♘♖");
 
-    ASSERT_TRUE(MoveValidator::validateMove(board, createMove("b2-c3", color_)));
+    ASSERT_TRUE(MoveValidator::validateMove(board, notations::coordinates::createMove("b2-c3", color_)));
 }

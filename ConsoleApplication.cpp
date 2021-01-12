@@ -4,7 +4,7 @@
 #include <iostream>
 #include <publicIf/BoardIO.hpp>
 
-#include <notations/LongAlgebraicNotation.hpp>
+#include <notations/coordinationnotation.hpp>
 
 ConsoleApplication::ConsoleApplication()
     {}
@@ -75,7 +75,7 @@ void ConsoleApplication::start()
             {
                 lastMoveTmp = player.act(lastMoveStr);
                 std::cout << "player move is: " << lastMoveTmp << std::endl;
-                lastMove = createMove(lastMoveTmp, color);
+                lastMove = notations::coordinates::createMove(lastMoveTmp, color);
             } while(!validateAndReject(lastMove, *whitePlayer_));
             lastMoveStr = lastMoveTmp;
             boardEngine_.applyMove(lastMove);

@@ -13,6 +13,10 @@ add_library(board
                 detail/MoveApplier.hpp
 		detail/MoveApplier.cpp
 		BoardEngine.cpp
+                notations/common.hpp
+                notations/common.cpp
+                notations/coordinationnotation.hpp
+                notations/coordinationnotation.cpp
                 notations/LongAlgebraicNotation.hpp
                 notations/LongAlgebraicNotation.cpp
                 hashing/zobrist.hpp

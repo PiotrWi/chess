@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 
 #include <BoardEngine.hpp>
-#include <notations/LongAlgebraicNotation.hpp>
+#include <notations/coordinationnotation.hpp>
 #include <common/searchingAlgorithms/AlfaBeta.hpp>
 
 /* measurements
@@ -33,7 +33,7 @@ TEST(AlfaBeta, PerformanceTest_6)
 TEST(AlfaBeta, PerformanceTest_6_black)
 {
     BoardEngine be;
-    be.applyMove(createMove("e2-e4", NOTATION::COLOR::color::white));
+    be.applyMove(notations::coordinates::createMove("e2-e4", NOTATION::COLOR::color::white));
     alfaBeta::evaluate(be, 6);
 }
 
@@ -46,6 +46,6 @@ TEST(AlfaBeta, PerformanceTest_8)
 TEST(AlfaBeta, PerformanceTest_8_black)
 {
     BoardEngine be;
-    be.applyMove(createMove("e2-e4", NOTATION::COLOR::color::white));
+    be.applyMove(notations::coordinates::createMove("e2-e4", NOTATION::COLOR::color::white));
     alfaBeta::evaluate(be, 8);
 }

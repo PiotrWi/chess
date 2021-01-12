@@ -6,7 +6,7 @@
 #include <detail/ResultEvaluator.hpp>
 
 #include <utils/BoardGenerationUtils.hpp>
-#include <notations/LongAlgebraicNotation.hpp>
+#include <notations/coordinationnotation.hpp>
 
 namespace
 {
@@ -24,7 +24,7 @@ public:
                            const char* moveStr,
                            const NOTATION::COLOR::color c)
     {
-        auto move = createMove(moveStr, c);
+        auto move = notations::coordinates::createMove(moveStr, c);
         auto extendMove = convertMoveToExtended(board, move);
         MoveApplier::applyMove(board, move);
         sut.storeBoard(board, extendMove);
