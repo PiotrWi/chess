@@ -12,7 +12,7 @@ namespace long_algebraic
 {
 
 ExtendedMove createExtendedMove (const std::string& moveStr,
-    NOTATION::COLOR::color playerOnMove, unsigned char targetField)
+    NOTATION::COLOR::color playerOnMove, const Board& board)
 {
     if (moveStr == "O-O")
     {
@@ -35,6 +35,7 @@ ExtendedMove createExtendedMove (const std::string& moveStr,
     unsigned char sourcePosition = 0;
     unsigned char sourcePiece = 0;
     unsigned char targetPosition = 0;
+    unsigned char targetPiece = 0;
     unsigned char promoteTo = 0;
 
     unsigned char position = 0;
@@ -63,6 +64,8 @@ ExtendedMove createExtendedMove (const std::string& moveStr,
     }
 
     targetPosition = NotationConversions::getFieldNum(moveStr.substr(position, 2).c_str());
+    targetPiece = board[targetPosition];
+
     position += 2;
 
     if (moveStr.size() > position)
@@ -72,7 +75,7 @@ ExtendedMove createExtendedMove (const std::string& moveStr,
 
     }
 
-    return ExtendedMove{sourcePosition, targetPosition, flags, promoteTo, sourcePiece, targetField};
+    return ExtendedMove{sourcePosition, targetPosition, flags, promoteTo, sourcePiece, targetPiece};
 }
 
 std::vector<char> createMoveStr(const ExtendedMove& move)

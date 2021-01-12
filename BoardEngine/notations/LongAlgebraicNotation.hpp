@@ -23,7 +23,7 @@ namespace long_algebraic
  * \return
  */
 ExtendedMove createExtendedMove (const std::string& moveStr,
-    NOTATION::COLOR::color playerOnMove, unsigned char targetField);
+    NOTATION::COLOR::color playerOnMove, const Board& board);
 
 /*!
  * \brief Create move string in complete long agebraic notation.
