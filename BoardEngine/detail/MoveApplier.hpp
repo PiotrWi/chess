@@ -21,8 +21,9 @@ SimpleMoveMemorial applyTmpMoveSimple(Board&, uint64_t& positionHash, const Move
 
 template <class TResultEvaluator> void applyMove(Board& board, uint64_t& positionHash, const Move& move, TResultEvaluator& resultEvaluator)
 {
+    auto extendedMove = convertMoveToExtended(board, move);
     applyMove(board, positionHash, move);
-    resultEvaluator.storeBoard(board, convertMoveToExtended(board, move));
+    resultEvaluator.storeBoard(board, extendedMove);
 }
 
 template <class TResultEvaluator> SimpleMoveMemorial applyTmpMoveSimple(Board& board,

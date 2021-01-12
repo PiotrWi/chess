@@ -24,13 +24,6 @@ unsigned char getFieldNum(const unsigned char row, const unsigned char col)
 	return (row << 3u) | col;
 }
 
-unsigned char getFieldNum(const char* field)
-{
-	unsigned char collumn = field[0] - 'a';
-    unsigned char row = field[1] - '1';
-	return row*8u + collumn;
-}
-
 unsigned char getPieceType(unsigned char piece)
 {
 	return NOTATION::PIECES::PIECES_MASK & piece;

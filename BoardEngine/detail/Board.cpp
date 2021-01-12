@@ -35,19 +35,6 @@ bool operator==(const Move& lfs, const Move& rhs) noexcept
 // Extended Move
 ///////////////////////////////////
 
-ExtendedMove::ExtendedMove(unsigned char sourceIn,
-             unsigned char destinationIn,
-             unsigned char flagsIn,
-             unsigned char promotingIn,
-             unsigned char sourcePieceIn,
-             unsigned char targetPieceIn) noexcept
-    : source(sourceIn)
-    , destination(destinationIn)
-    , flags(flagsIn)
-    , promoting(promotingIn)
-    , sourcePiece(sourcePieceIn)
-    , targetPiece(targetPieceIn) {}
-
 ExtendedMove::operator Move() const
 {
     return Move(source, destination, flags & ExtendedMove::promotionMask, promoting);
@@ -72,6 +59,54 @@ ExtendedMove convertMoveToExtended(const Board& board, const Move& move) noexcep
             | ((source == NOTATION::PIECES::KING) ? ExtendedMove::kingMoveMask : 0u);
 
     return ExtendedMove{move.source, move.destination, flags, move.promoteTo, source, target};
+}
+ExtendedMove::ExtendedMove(unsigned char sourceIn,
+             unsigned char destinationIn,
+             unsigned char flagsIn,
+             unsigned char promotingIn,
+             unsigned char sourcePieceIn,
+             unsigned char targetPieceIn) noexcept
+    : source(sourceIn)
+    , destination(destinationIn)
+    , flags(flagsIn)
+    , promoting(promotingIn)
+    , sourcePiece(sourcePieceIn)
+    , targetPiece(targetPieceIn) {}
+
+ExtendedMove ExtendedMove::whiteShortCaste()
+{
+    return ExtendedMove{NotationConversions::getFieldNum("e1"),
+                        NotationConversions::getFieldNum("g1"),
+                        0,
+                        ExtendedMove::kingMoveMask,
+                        NOTATION::PIECES::KING, 0};
+}
+
+ExtendedMove ExtendedMove::whiteLongCaste()
+{
+    return ExtendedMove{NotationConversions::getFieldNum("e1"),
+                        NotationConversions::getFieldNum("c1"),
+                        0,
+                        ExtendedMove::kingMoveMask,
+                        NOTATION::PIECES::KING, 0};
+}
+
+ExtendedMove ExtendedMove::blackShortCaste()
+{
+    return ExtendedMove{NotationConversions::getFieldNum("e8"),
+                        NotationConversions::getFieldNum("g8"),
+                        0,
+                        ExtendedMove::kingMoveMask,
+                        NOTATION::PIECES::KING, 0};
+}
+
+ExtendedMove ExtendedMove::blackLongCaste()
+{
+    return ExtendedMove{NotationConversions::getFieldNum("e8"),
+                        NotationConversions::getFieldNum("c8"),
+                        0,
+                        ExtendedMove::kingMoveMask,
+                        NOTATION::PIECES::KING, 0};
 }
 
 ///////////////////////////////////

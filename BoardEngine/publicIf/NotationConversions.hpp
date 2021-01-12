@@ -10,7 +10,13 @@ NOTATION::COLOR::color switchColor(const NOTATION::COLOR::color c);
 unsigned char getColumnNum(unsigned char field);
 unsigned char getRow(unsigned char field);
 unsigned char getFieldNum(const unsigned char row, const unsigned char col);
-unsigned char getFieldNum(const char* field);
+
+constexpr unsigned char getFieldNum(const char* field)
+{
+    unsigned char collumn = field[0] - 'a';
+    unsigned char row = field[1] - '1';
+    return row*8u + collumn;
+}
 
 unsigned char getPieceType(unsigned char piece);
 

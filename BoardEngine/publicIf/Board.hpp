@@ -56,6 +56,10 @@ struct ExtendedMove
     unsigned char targetPiece;
 
     operator Move() const;
+    static ExtendedMove whiteShortCaste();
+    static ExtendedMove whiteLongCaste();
+    static ExtendedMove blackShortCaste();
+    static ExtendedMove blackLongCaste();
 };
 
 bool operator ==(const ExtendedMove& lfs, const ExtendedMove& rhs) noexcept;
