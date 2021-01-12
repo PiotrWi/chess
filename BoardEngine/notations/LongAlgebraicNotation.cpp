@@ -1,11 +1,18 @@
 #include "LongAlgebraicNotation.hpp"
 
+#include <algorithm>
 #include <ostream>
 
 #include <publicIf/NotationConversions.hpp>
 
 namespace
 {
+
+constexpr unsigned char writablePieces[] = {NOTATION::PIECES::QUEEN,
+                                            NOTATION::PIECES::BISHOP,
+                                            NOTATION::PIECES::ROCK,
+                                            NOTATION::PIECES::KNIGHT,
+                                            NOTATION::PIECES::KING};
 
 unsigned char createPiece(const char pieceSign, NOTATION::COLOR::color playerOnMove)
 {
@@ -35,6 +42,7 @@ char pieceToLiteral(unsigned char field)
         case NOTATION::PIECES::BISHOP: return 'B';
         case NOTATION::PIECES::ROCK: return 'R';
         case NOTATION::PIECES::KNIGHT: return 'N';
+        case NOTATION::PIECES::KING: return 'K';
     }
     return ' ';
 }
@@ -215,13 +223,38 @@ ExtendedMove createExtendedMove (const std::string& moveStr,
     return ExtendedMove{sourcePosition, targetPosition, flags, promoteTo, sourcePiece, targetField};
 }
 
-std::vector<char> createMoveStr(const ExtendedMove&)
+std::vector<char> createMoveStr(const ExtendedMove& move)
 {
     std::vector<char> out;
-    return {};
+
+    if (std::any_of(std::begin(writablePieces), std::end(writablePieces), [&](auto&& writablePiece)
+    {
+        return (move.sourcePiece & NOTATION::PIECES::PIECES_MASK) == writablePiece;
+    }))
+    {
+        out.push_back(pieceToLiteral(move.sourcePiece));
+    }
+    out.push_back('a' + NotationConversions::getColumnNum(move.source));
+    out.push_back('1' + NotationConversions::getRow(move.source));
+
+    if (move.flags & ExtendedMove::beatingMask)
+    {
+        out.push_back('x');
+    }
+
+    out.push_back('a' + NotationConversions::getColumnNum(move.destination));
+    out.push_back('1' + NotationConversions::getRow(move.destination));
+
+    if (move.flags & ExtendedMove::promotionMask)
+    {
+        out.push_back('=');
+        out.push_back(pieceToLiteral(move.promoting));
+    }
+
+    return out;
 }
 
-std::ostream& operator<<(std::ostream& os, const ExtendedMove&)
+std::ostream& operator<<(std::ostream& os, const ExtendedMove& move)
 {
-    return os;
+    return os << (const char*)(createMoveStr(move).data());
 }
