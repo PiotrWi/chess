@@ -2,7 +2,7 @@
 
 #include <algorithm>
 #include <utility>
-
+/*
 static int mapToValue(unsigned char field)
 {
     switch (field & NOTATION::PIECES::PIECES_MASK)
@@ -29,7 +29,7 @@ static int mapToMovePriority(unsigned char field)
     }
     return  0;
 }
-
+*/
 const std::vector<ExtendedMove>* CachedMoveGeneratorMap::generate(const BoardEngine &be)
 {
     auto hash = be.getHash();
@@ -38,10 +38,10 @@ const std::vector<ExtendedMove>* CachedMoveGeneratorMap::generate(const BoardEng
     if (!elem)
     {
         auto moves = be.generateMoves();
-        std::sort(moves.begin(), moves.end(), [](auto&& lhs, auto&& rhs){
+        /*std::sort(moves.begin(), moves.end(), [](auto&& lhs, auto&& rhs){
             return std::tuple<const int&, const int&>(mapToValue(lhs.targetPiece), mapToMovePriority(lhs.sourcePiece))
                 > std::tuple<const int&, const int&>(mapToValue(rhs.targetPiece), mapToMovePriority(rhs.sourcePiece));
-        });
+        });*/
         return cache_.store(hash, be.board, std::move(moves));
     }
     return elem;

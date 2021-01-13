@@ -28,7 +28,7 @@ ExtendedMove createExtendedMove (const std::string& moveStr,
         {
             return ExtendedMove::whiteLongCaste();
         }
-        return ExtendedMove::whiteLongCaste();
+        return ExtendedMove::blackLongCaste();
     }
 
     unsigned char flags = 0;
@@ -54,7 +54,7 @@ ExtendedMove createExtendedMove (const std::string& moveStr,
         flags |= ExtendedMove::pawnMoveMask;
     }
 
-    sourcePiece = NotationConversions::getFieldNum(moveStr.substr(position, 2).c_str());
+    sourcePosition = NotationConversions::getFieldNum(moveStr.substr(position, 2).c_str());
     position += 2;
 
     if (moveStr[position] == 'x')

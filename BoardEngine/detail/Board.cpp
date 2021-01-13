@@ -77,36 +77,36 @@ ExtendedMove ExtendedMove::whiteShortCaste()
 {
     return ExtendedMove{NotationConversions::getFieldNum("e1"),
                         NotationConversions::getFieldNum("g1"),
-                        0,
                         ExtendedMove::kingMoveMask,
-                        NOTATION::PIECES::KING, 0};
+                        0,
+                        NOTATION::PIECES::KING | NOTATION::COLOR::WHITE, 0};
 }
 
 ExtendedMove ExtendedMove::whiteLongCaste()
 {
     return ExtendedMove{NotationConversions::getFieldNum("e1"),
                         NotationConversions::getFieldNum("c1"),
-                        0,
                         ExtendedMove::kingMoveMask,
-                        NOTATION::PIECES::KING, 0};
+                        0,
+                        NOTATION::PIECES::KING | NOTATION::COLOR::WHITE, 0};
 }
 
 ExtendedMove ExtendedMove::blackShortCaste()
 {
     return ExtendedMove{NotationConversions::getFieldNum("e8"),
                         NotationConversions::getFieldNum("g8"),
-                        0,
                         ExtendedMove::kingMoveMask,
-                        NOTATION::PIECES::KING, 0};
+                        0,
+                        NOTATION::PIECES::KING | NOTATION::COLOR::BLACK, 0};
 }
 
 ExtendedMove ExtendedMove::blackLongCaste()
 {
     return ExtendedMove{NotationConversions::getFieldNum("e8"),
                         NotationConversions::getFieldNum("c8"),
-                        0,
                         ExtendedMove::kingMoveMask,
-                        NOTATION::PIECES::KING, 0};
+                        0,
+                        NOTATION::PIECES::KING | NOTATION::COLOR::BLACK, 0};
 }
 
 ///////////////////////////////////

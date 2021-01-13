@@ -366,7 +366,7 @@ TEST(CheckCheckershould, workWithRapid)
             "        "
             " ♟      "
             "♔      ♚");
-    ASSERT_TRUE(CheckChecker::isAttackedOnRapid(board, NOTATION::COLOR::color::white, 0));
+    ASSERT_TRUE(CheckChecker::isCheckOn(board, NOTATION::COLOR::color::white));
 }
 
 
@@ -381,5 +381,5 @@ TEST(CheckCheckershould, Custom_1)
             "      ♙♛"
             " ♟   ♙  "
             "     ♔  ");
-    ASSERT_TRUE(CheckChecker::isAttackedOnRapid(board, NOTATION::COLOR::color::white, 0));
+    ASSERT_TRUE(CheckChecker::isCheckOn(board, NOTATION::COLOR::color::white));
 }
