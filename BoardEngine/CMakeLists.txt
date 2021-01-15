@@ -9,8 +9,8 @@ add_library(board
 		detail/BoardIO.cpp
                 detail/CheckChecker.hpp
 		detail/CheckChecker.cpp
-                detail/MoveGenerator.hpp
-		detail/MoveGenerator.cpp
+		MoveGenerator/MoveGenerator.hpp
+		MoveGenerator/MoveGenerator.cpp
                 detail/MoveValidator.hpp
 		detail/MoveValidator.cpp
                 publicIf/NotationConversions.hpp
@@ -29,5 +29,5 @@ add_library(board
                 notations/LongAlgebraicNotation.cpp
                 hashing/zobrist.hpp
                 hashing/Zobrish.cpp
-                FieldLookup/FieldLookup.hpp)
+                FieldLookup/FieldLookup.hpp detail/PinnedMovesChecker.hpp MoveGenerator/MoveGeneratorContext.hpp)
 	

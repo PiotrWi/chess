@@ -22,9 +22,13 @@ public:
     void undoMove(MoveApplier::SimpleMoveMemorial);
 
     uint64_t getHash() const;
+    uint64_t getHash(NOTATION::COLOR::color) const;
 
     Result getResult();
     Result getResult(bool availableMoves);
+    unsigned generateValidMoveCount() const;
+    unsigned generateValidMoveCount(NOTATION::COLOR::color) const;
+
     std::vector<ExtendedMove> generateMoves() const;
     std::vector<ExtendedMove> generateMovesFor(NOTATION::COLOR::color) const;
 

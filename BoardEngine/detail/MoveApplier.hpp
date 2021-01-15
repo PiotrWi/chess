@@ -19,7 +19,10 @@ void applyMove(Board& board, const Move& move);
 void applyMove(Board&, uint64_t& positionHash, const Move&);
 SimpleMoveMemorial applyTmpMoveSimple(Board&, uint64_t& positionHash, const Move&);
 
-template <class TResultEvaluator> void applyMove(Board& board, uint64_t& positionHash, const Move& move, TResultEvaluator& resultEvaluator)
+template <class TResultEvaluator> void applyMove(Board& board,
+        uint64_t& positionHash,
+        const Move& move,
+        TResultEvaluator& resultEvaluator)
 {
     auto extendedMove = convertMoveToExtended(board, move);
     applyMove(board, positionHash, move);

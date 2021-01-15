@@ -1,10 +1,10 @@
 #include <gtest/gtest.h>
-#include <common/CachedMoveGenerator/CachedMoveGenerator.hpp>
+#include <common/MoveGenerators/CachedMoveGenerator.hpp>
 #include <BoardEngine.hpp>
 
 TEST(CachedMoveGeneratorShall, beReturnList)
 {
     BoardEngine be;
-    CachedMoveGenerator moveGenerator;
+    players::common::move_generators::CachedMoveGenerator moveGenerator;
     ASSERT_FALSE(moveGenerator.generate(be).empty());
 }

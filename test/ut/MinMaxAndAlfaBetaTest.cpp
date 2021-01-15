@@ -6,17 +6,21 @@
 #include <utils/BoardGenerationUtils.hpp>
 #include <notations/coordinationnotation.hpp>
 
+#include <common/MoveGenerators/MoveGenerator.hpp>
+
+players::common::move_generators::MoveGenerator mg;
+
 TEST(MinMaxAndAlfaBeta, shallReturnSameValues)
 {
     BoardEngine be;
-    ASSERT_EQ(minMax::evaluate(be, 2), alfaBeta::evaluate(be, 2));
-    ASSERT_EQ(minMax::evaluate(be, 3), alfaBeta::evaluate(be, 3));
-    ASSERT_EQ(minMax::evaluate(be, 4), alfaBeta::evaluate(be, 4));
+    ASSERT_EQ(minMax::evaluate(be, 2), alfaBeta::evaluate(be, mg, 2));
+    ASSERT_EQ(minMax::evaluate(be, 3), alfaBeta::evaluate(be, mg, 3));
+    ASSERT_EQ(minMax::evaluate(be, 4), alfaBeta::evaluate(be, mg, 4));
 
     be.applyMove(notations::coordinates::createMove("e2-e4", NOTATION::COLOR::color::white));
-    ASSERT_EQ(minMax::evaluate(be, 2), alfaBeta::evaluate(be, 2));
-    ASSERT_EQ(minMax::evaluate(be, 3), alfaBeta::evaluate(be, 3));
-    ASSERT_EQ(minMax::evaluate(be, 4), alfaBeta::evaluate(be, 4));
+    ASSERT_EQ(minMax::evaluate(be, 2), alfaBeta::evaluate(be, mg, 2));
+    ASSERT_EQ(minMax::evaluate(be, 3), alfaBeta::evaluate(be, mg, 3));
+    ASSERT_EQ(minMax::evaluate(be, 4), alfaBeta::evaluate(be, mg, 4));
 }
 
 TEST(MinMaxAndAlfaBeta, shallFindObviousMate)
@@ -36,9 +40,9 @@ TEST(MinMaxAndAlfaBeta, shallFindObviousMate)
     ASSERT_EQ(expectedMove, minMax::evaluate(be, 3));
     // ASSERT_EQ(expectedMove, minMax::evaluate(be, 4));
 
-    ASSERT_EQ(expectedMove, alfaBeta::evaluate(be, 2));
-    ASSERT_EQ(expectedMove, alfaBeta::evaluate(be, 3));
-    ASSERT_EQ(expectedMove, alfaBeta::evaluate(be, 4));
+    ASSERT_EQ(expectedMove, alfaBeta::evaluate(be, mg, 2));
+    ASSERT_EQ(expectedMove, alfaBeta::evaluate(be, mg, 3));
+    ASSERT_EQ(expectedMove, alfaBeta::evaluate(be, mg, 4));
 }
 
 TEST(MinMaxAndAlfaBeta, shallFindObviousMateForBlack)
@@ -58,43 +62,7 @@ TEST(MinMaxAndAlfaBeta, shallFindObviousMateForBlack)
     ASSERT_EQ(expectedMove, minMax::evaluate(be, 3));
     ASSERT_EQ(expectedMove, minMax::evaluate(be, 4));
 
-    ASSERT_EQ(expectedMove, alfaBeta::evaluate(be, 2));
-    ASSERT_EQ(expectedMove, alfaBeta::evaluate(be, 3));
-    ASSERT_EQ(expectedMove, alfaBeta::evaluate(be, 4));
-}
-
-TEST(MinMaxAndAlfaBeta, shallSolvePuzzle)
-{
-    BoardEngine be;
-    be.board = utils::createBoard ("  ♜     "
-                                   " ♞   ♟♚ "
-                                   "♟♝ ♟  ♟ "
-                                   "   ♙♟  ♟"
-                                   "    ♙  ♙"
-                                   "♙    ♕♙♛"
-                                   "  ♗  ♙  "
-                                   "   ♖♘ ♔ ", NOTATION::COLOR::color::white);
-
-    auto expectedMove = notations::coordinates::createMove("d1-b1", NOTATION::COLOR::color::white);
-    ASSERT_EQ(expectedMove, minMax::evaluate(be, 4));
-
-    ASSERT_EQ(expectedMove, alfaBeta::evaluate(be, 4));
-}
-
-TEST(MinMaxAndAlfaBeta, shallSolvePuzzle_2)
-{
-    BoardEngine be;
-    be.board = utils::createBoard ("  ♜♚    "
-                                   " ♛   ♟♟ "
-                                   "    ♟  ♟"
-                                   "        "
-                                   "♟ ♙  ♖ ♙"
-                                   "♙     ♙ "
-                                   "  ♗  ♙  "
-                                   "     ♕♔ ", NOTATION::COLOR::color::black);
-
-    auto expectedMove = notations::coordinates::createMove("e6-e5", NOTATION::COLOR::color::black);
-    ASSERT_EQ(expectedMove, minMax::evaluate(be, 4));
-
-    ASSERT_EQ(expectedMove, alfaBeta::evaluate(be, 6));
+    ASSERT_EQ(expectedMove, alfaBeta::evaluate(be, mg, 2));
+    ASSERT_EQ(expectedMove, alfaBeta::evaluate(be, mg, 3));
+    ASSERT_EQ(expectedMove, alfaBeta::evaluate(be, mg, 4));
 }

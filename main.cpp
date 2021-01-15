@@ -5,6 +5,7 @@
 #include <iostream>
 #include <HumanPlayer/HumanPlayer.hpp>
 #include <ComputerPlayer/SimpleComputerPlayer.hpp>
+#include <ComputerPlayer/CachedPlayer.hpp>
 #include "ConsoleApplication.hpp"
 
 std::unique_ptr<IPlayer> createPlayer(const char* playerType)
@@ -13,9 +14,13 @@ std::unique_ptr<IPlayer> createPlayer(const char* playerType)
     {
         return std::make_unique<HumanPlayer>();
     }
-    if (strcmp(playerType, "simpleComputerPlayer") == 0)
+    if (strcmp(playerType, "simplePlayer") == 0)
     {
         return std::make_unique<SimpleComputerPlayer>();
+    }
+    if (strcmp(playerType, "cachedPlayer") == 0)
+    {
+        return std::make_unique<CachedPlayer>();
     }
     assert(false);
     return {};
@@ -30,7 +35,9 @@ int main(int argc, char** argv)
         std::cout << "./chess --whitePlayer playerType --blackPlayer playerType" << std::endl;
         std::cout << "where player types are:" << std::endl;
         std::cout << "  humanPlayer" << std::endl;
-        std::cout << "  simpleComputerPlayer" << std::endl;
+        std::cout << "  simplePlayer" << std::endl;
+        std::cout << "  cachedPlayer" << std::endl;
+
         return 1;
     }
 

@@ -5,6 +5,6 @@
 namespace moveCountEvaluator
 {
 
-int evaluate(int playerOnMoveMovesCount, BoardEngine be);
+int evaluate(int playerOnMoveMovesCount, int oponentMovesCount);
 
 }

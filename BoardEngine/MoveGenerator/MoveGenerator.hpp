@@ -12,7 +12,10 @@ class MoveGenerator
 public:
 	static std::vector<ExtendedMove> generate(const Board&
 		, NOTATION::COLOR::color);
-    static  std::vector<ExtendedMove> generate(const Board&);
+    static std::vector<ExtendedMove> generate(const Board&);
+    static unsigned getMoveCount(const Board&
+            , NOTATION::COLOR::color);
+    static unsigned getMoveCount(const Board&);
 };
 
 }  // namespace MoveGenerator

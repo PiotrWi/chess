@@ -1,13 +1,12 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
-#include <iostream>
-
 #include <detail/MoveApplier.hpp>
 #include <hashing/zobrist.hpp>
 #include <publicIf/BoardIO.hpp>
 #include <utils/BoardGenerationUtils.hpp>
 #include <notations/coordinationnotation.hpp>
+#include <notations/LongAlgebraicNotation.hpp>
 
 namespace
 {
@@ -54,7 +53,7 @@ TEST_F(MoveApplierShould, storeMoveToResultEvaluator)
             "♖♘♗♕♔♗♘♖", BLACK);
 
     EXPECT_CALL(resultEvaluatorMock, storeBoard(_, _));
-    MoveApplier::applyMove(board, hash, notations::coordinates::createMove("e2-e4", WHITE), resultEvaluatorMock);
+    MoveApplier::applyMove(board, hash, notations::long_algebraic::createExtendedMove("e2e4", WHITE, board), resultEvaluatorMock);
 
     ASSERT_EQ(expectedBoard, board);
     ASSERT_EQ(hash, getHastForBoard(expectedBoard));
@@ -99,7 +98,7 @@ TEST_F(MoveApplierShould, doCastlesForWhite)
     uint64_t hash = getHastForBoard(shortCaste);
 
     EXPECT_CALL(resultEvaluatorMock, storeBoard(_, _));
-    MoveApplier::applyMove(shortCaste, hash, notations::coordinates::createMove("O-O", WHITE), resultEvaluatorMock);
+    MoveApplier::applyMove(shortCaste, hash, notations::long_algebraic::createExtendedMove("O-O", WHITE, shortCaste), resultEvaluatorMock);
     ASSERT_EQ(shortCastleExpectedBoard, shortCaste);
     ASSERT_EQ(hash, getHastForBoard(shortCastleExpectedBoard));
 
@@ -108,7 +107,7 @@ TEST_F(MoveApplierShould, doCastlesForWhite)
     hash = getHastForBoard(longCastle);
 
     EXPECT_CALL(resultEvaluatorMock, storeBoard(_, _));
-    MoveApplier::applyMove(longCastle, hash, notations::coordinates::createMove("O-O-O", WHITE), resultEvaluatorMock);
+    MoveApplier::applyMove(longCastle, hash, notations::long_algebraic::createExtendedMove("O-O-O", WHITE, longCastle), resultEvaluatorMock);
     ASSERT_EQ(longCastleExpectedBoard, longCastle);
     ASSERT_EQ(hash, getHastForBoard(longCastleExpectedBoard));
 }

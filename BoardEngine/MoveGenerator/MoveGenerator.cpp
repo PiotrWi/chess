@@ -1,31 +1,17 @@
 #include "MoveGenerator.hpp"
+#include "MoveGeneratorContext.hpp"
 #include <publicIf/NotationConversions.hpp>
 #include <detail/CheckChecker.hpp>
 #include <detail/MoveApplier.hpp>
 #include <cstdint>
 #include <FieldLookup/FieldLookup.hpp>
+#include <detail/PinnedMovesChecker.hpp>
 
 namespace MoveGenerator
 {
 
 namespace
 {
-
-thread_local struct MoveContext{
-	const Board* board;
-	NOTATION::COLOR::color pieceColor;
-	unsigned char kingPosition;
-
-	unsigned Nbeatings;
-	ExtendedMove beatings[255];
-    unsigned Npromotions;
-    ExtendedMove promotions[255];
-    unsigned NUsualMoves;
-    ExtendedMove usualMoves[255];
-    unsigned NkingMoves;
-    ExtendedMove kingMoves[255];
-
-} ctx;
 
 bool isChecked(const ExtendedMove& move);
 bool isKingCheckedAfterMove(const ExtendedMove& move);
@@ -57,22 +43,21 @@ public:
     static void addAndPromote(unsigned char source, unsigned char destination)
     {
         constexpr unsigned char MASK = ExtendedMove::promotionMask | ExtendedMove::pawnMoveMask;
-        unsigned char pattern = ((*ctx.board)[source] & NOTATION::COLOR::COLOR_MASK);
-
-        unsigned char pawn = NOTATION::PIECES::PAWN | pattern;
+        constexpr unsigned char c_bin = static_cast<unsigned char>(c);
+        constexpr unsigned char pawn = NOTATION::PIECES::PAWN | c_bin;
 
         ExtendedMove m = ExtendedMove(source, destination,
                                       MASK,
-                                      NOTATION::PIECES::QUEEN | pattern,
+                                      NOTATION::PIECES::QUEEN | c_bin,
                                       pawn, 0);
         if (not isValid(m))
         {
             return;
         }
         ctx.promotions[ctx.Npromotions++] = m;
-        ctx.usualMoves[ctx.NUsualMoves++] =  ExtendedMove(source, destination, MASK, NOTATION::PIECES::BISHOP | pattern, pawn, 0);
-        ctx.usualMoves[ctx.NUsualMoves++] =  ExtendedMove(source, destination, MASK, NOTATION::PIECES::ROCK | pattern, pawn, 0);
-        ctx.usualMoves[ctx.NUsualMoves++] =  ExtendedMove(source, destination, MASK, NOTATION::PIECES::KNIGHT | pattern, pawn, 0);
+        ctx.pawnsMoves[ctx.NPawnsMoves++] =  ExtendedMove(source, destination, MASK, NOTATION::PIECES::BISHOP | c_bin, pawn, 0);
+        ctx.pawnsMoves[ctx.NPawnsMoves++] =  ExtendedMove(source, destination, MASK, NOTATION::PIECES::ROCK | c_bin, pawn, 0);
+        ctx.pawnsMoves[ctx.NPawnsMoves++] =  ExtendedMove(source, destination, MASK, NOTATION::PIECES::KNIGHT | c_bin, pawn, 0);
     }
 
     static void addAndPromoteWithBeating(unsigned char source, unsigned char destination, unsigned char targetField)
@@ -80,14 +65,12 @@ public:
         constexpr unsigned char MASK = ExtendedMove::promotionMask
                                        | ExtendedMove::pawnMoveMask
                                        | ExtendedMove::beatingMask;
-
-        unsigned char pattern = ((*ctx.board)[source] & NOTATION::COLOR::COLOR_MASK);
-
-        unsigned char pawn = NOTATION::PIECES::PAWN | pattern;
+        constexpr unsigned char c_bin = static_cast<unsigned char>(c);
+        unsigned char pawn = NOTATION::PIECES::PAWN | c_bin;
 
         ExtendedMove m = ExtendedMove(source, destination,
                                       MASK,
-                                      NOTATION::PIECES::QUEEN | pattern,
+                                      NOTATION::PIECES::QUEEN | c_bin,
                                       pawn, targetField);
         if (not isValid(m))
         {
@@ -95,9 +78,9 @@ public:
         }
 
         ctx.beatings[ctx.Nbeatings++] = m;
-        ctx.usualMoves[ctx.NUsualMoves++] =  ExtendedMove(source, destination, MASK, NOTATION::PIECES::BISHOP | pattern, pawn, 0);
-        ctx.usualMoves[ctx.NUsualMoves++] =  ExtendedMove(source, destination, MASK, NOTATION::PIECES::ROCK | pattern, pawn, 0);
-        ctx.usualMoves[ctx.NUsualMoves++] =  ExtendedMove(source, destination, MASK, NOTATION::PIECES::KNIGHT | pattern, pawn, 0);
+        ctx.pawnsMoves[ctx.NPawnsMoves++] =  ExtendedMove(source, destination, MASK, NOTATION::PIECES::BISHOP | c_bin, pawn, 0);
+        ctx.pawnsMoves[ctx.NPawnsMoves++] =  ExtendedMove(source, destination, MASK, NOTATION::PIECES::ROCK | c_bin, pawn, 0);
+        ctx.pawnsMoves[ctx.NPawnsMoves++] =  ExtendedMove(source, destination, MASK, NOTATION::PIECES::KNIGHT | c_bin, pawn, 0);
     }
 
     static void addPawn(unsigned char source, unsigned char destination)
@@ -110,12 +93,13 @@ public:
         {
             return;
         }
-        ctx.usualMoves[ctx.NUsualMoves++] = m;
+        ctx.pawnsMoves[ctx.NPawnsMoves++] = m;
     }
 
     static void addPawnWithBeating(unsigned char source, unsigned char destination, unsigned char targetField)
     {
         constexpr unsigned char MASK = ExtendedMove::pawnMoveMask | ExtendedMove::beatingMask;
+
         constexpr unsigned char pawn = NOTATION::PIECES::PAWN | static_cast<unsigned char>(c);
 
         ExtendedMove m = ExtendedMove(source, destination, MASK, 0, pawn, targetField);
@@ -136,7 +120,7 @@ public:
         {
             return;
         }
-        ctx.usualMoves[ctx.NUsualMoves++] = m;
+        ctx.figuresMoves[ctx.NFiguresMoves++] = m;
     }
 
     static void addKnightWithBeating(unsigned char source, unsigned char destination, unsigned char targetField)
@@ -162,7 +146,7 @@ public:
         {
             return;
         }
-        ctx.kingMoves[ctx.NkingMoves++] = m;
+        ctx.kingMoves[ctx.NKingMoves++] = m;
     }
 
     static void addKingWithBeating(unsigned char source, unsigned char destination, unsigned char targetField)
@@ -188,7 +172,7 @@ public:
         {
             return;
         }
-        ctx.usualMoves[ctx.NUsualMoves++] = m;
+        ctx.figuresMoves[ctx.NFiguresMoves++] = m;
     }
 
     static void addRockWithBeating(unsigned char source, unsigned char destination, unsigned char targetField)
@@ -214,7 +198,7 @@ public:
         {
             return;
         }
-        ctx.usualMoves[ctx.NUsualMoves++] = m;
+        ctx.figuresMoves[ctx.NFiguresMoves++] = m;
     }
 
     static void addBishopWithBeating(unsigned char source, unsigned char destination, unsigned char targetField)
@@ -240,7 +224,7 @@ public:
         {
             return;
         }
-        ctx.usualMoves[ctx.NUsualMoves++] = m;
+        ctx.figuresMoves[ctx.NFiguresMoves++] = m;
     }
 
     static void addQueenWithBeating(unsigned char source, unsigned char destination, unsigned char targetField)
@@ -395,58 +379,6 @@ static void proccess()
 }
 };
 
-template <typename NOTATION::COLOR::color c,
-        void (*TVerifyAndAdd)(unsigned char, unsigned char),
-        void (*TVerifyAndAddBeating)(unsigned char, unsigned char, unsigned char),
-        size_t N,
-        const std::pair<unsigned char, unsigned char> TMoves[N]>
-class GenerateFixedMoves
-{
-public:
-    static void proccess(unsigned char i)
-    {
-        constexpr unsigned char TOpositeColor = (static_cast<unsigned char>(c) ^ NOTATION::COLOR::COLOR_MASK);
-        const auto row = NotationConversions::getRow(i);
-        const auto col = NotationConversions::getColumnNum(i);
-
-        for (auto* diff = TMoves; diff < TMoves + N; ++diff)
-        {
-            unsigned char targerRow = row + diff->first;
-            unsigned char targerCol = col + diff->second;
-            if (NotationConversions::isColumnInBoard(targerCol)
-                && NotationConversions::isRowInBoard(targerRow))
-            {
-                unsigned char destination = NotationConversions::getFieldNum(targerRow, targerCol);
-                const auto& field = (*ctx.board)[destination];
-
-                if (field == 0)
-                {
-                    TVerifyAndAdd(i, destination);
-                }
-                if ((field & NOTATION::COLOR::COLOR_MASK) == TOpositeColor)
-                {
-                    TVerifyAndAddBeating(i, destination, field);
-                }
-            }
-        }
-    }
-};
-
-template <NOTATION::COLOR::color C, template<NOTATION::COLOR::color> typename AddingStrategy>
-class GenerateKnightMoves
-{
-    constexpr static std::pair<unsigned char, unsigned char> knightMoves[] = {
-            {1, -2}, {2, -1}, {2, 1}, {1, 2}, {-1, 2}, {-2, 1}, {-2, -1}, {-1, -2} };
-public:
-    static void proccess(unsigned char i)
-    {
-        GenerateFixedMoves<C,
-            AddingStrategy<C>::addKnight,
-            AddingStrategy<C>::addKnightWithBeating,
-            8u, knightMoves>::proccess(i);
-    }
-};
-
 template <NOTATION::COLOR::color C, const unsigned char i, template<NOTATION::COLOR::color> typename AddingStrategy>
 class GenerateKnightMoves2
 {
@@ -455,7 +387,7 @@ public:
     {
         constexpr unsigned char TOpositeColor = (static_cast<unsigned char>(C) ^ NOTATION::COLOR::COLOR_MASK);
 
-        for (auto* pos = FieldLookup<C, i>::KnightPossibleMoves;
+        for (const auto* pos = FieldLookup<C, i>::KnightPossibleMoves;
             pos < FieldLookup<C, i>::KnightPossibleMoves + FieldLookup<C, i>::KnightPossibleMovesSize;
             ++pos)
         {
@@ -481,7 +413,7 @@ public:
     {
         constexpr unsigned char TOpositeColor = (static_cast<unsigned char>(C) ^ NOTATION::COLOR::COLOR_MASK);
 
-        for (auto* pos = FieldLookup<C, i>::KingPossibleMoves;
+        for (const auto* pos = FieldLookup<C, i>::KingPossibleMoves;
              pos < FieldLookup<C, i>::KingPossibleMoves + FieldLookup<C, i>::KingPossibleMovesSize;
              ++pos)
         {
@@ -498,22 +430,6 @@ public:
         }
     }
 };
-
-template <NOTATION::COLOR::color C>
-class GenerateKingMoves
-{
-    constexpr static const std::pair<unsigned char, unsigned char> kingMoves[] = {
-        {1, 0}, {1, 1}, {0, 1}, {-1, 1}, {-1, 0}, {-1, -1}, {0, -1}, {1, -1} };
-public:
-    static void proccess(unsigned char i)
-    {
-        GenerateFixedMoves<C,
-                StrategyWithAlwaysCheckChecking<C>::addKing,
-                StrategyWithAlwaysCheckChecking<C>::addKingWithBeating,
-                8u, kingMoves>::proccess(i);
-    }
-};
-
 
 template<NOTATION::COLOR::color c>
 void generateCasles(unsigned char i);
@@ -562,83 +478,294 @@ void generateCasles<NOTATION::COLOR::color::black>(unsigned char i)
     }
 }
 
-template <typename NOTATION::COLOR::color color,
-        void (*TVerifyAndAdd)(unsigned char, unsigned char),
-        void (*TVerifyAndAddBeating)(unsigned char, unsigned char, unsigned char),
-        size_t N,
-        const std::pair<unsigned char, unsigned char> TMoves[N]>
-class GenerateLineMoves
+template <NOTATION::COLOR::color C, const unsigned int i, template<NOTATION::COLOR::color> typename AddingStrategy>
+class GenerateRockMoves2
 {
 public:
-    static void proccess(unsigned char i)
+    static void proccess()
     {
-        const auto row = NotationConversions::getRow(i);
-        const auto col = NotationConversions::getColumnNum(i);
+        constexpr auto TOpositeColor = static_cast<unsigned char>(C+1);
 
-        for (auto* diff = TMoves; diff < TMoves + N; ++diff)
+        for (const auto* pos = FieldLookup<C, i>::BottomPossibleMoves;
+             pos < FieldLookup<C, i>::BottomPossibleMoves+FieldLookup<C,i>::BottomPossibleMovesSize;
+             ++pos)
         {
-            for (unsigned char r = row + diff->first, c = col + diff->second;
-                 r < 8u and c < 8u;
-                 r += diff->first, c+= diff->second)
+            if ((*ctx.board)[*pos] != 0)
             {
-                auto destination = NotationConversions::getFieldNum(r, c);
-                if ((*ctx.board)[destination] != 0)
+                if (TOpositeColor ==
+                    ((*ctx.board)[*pos] & NOTATION::COLOR::COLOR_MASK))
                 {
-                    if (static_cast<unsigned char>(ctx.pieceColor+1) ==
-                        ((*ctx.board)[destination] & NOTATION::COLOR::COLOR_MASK))
+                    AddingStrategy<C>::addRockWithBeating(i, *pos, (*ctx.board)[*pos]);
+                }
+                break;
+            }
+            AddingStrategy<C>::addRock(i, *pos);
+        }
+        for (const auto* pos = FieldLookup<C, i>::TopPossibleMoves;
+            pos < FieldLookup<C, i>::TopPossibleMoves+FieldLookup<C,i>::TopPossibleMovesSize;
+            ++pos)
+        {
+                if ((*ctx.board)[*pos] != 0)
+                {
+                    if (TOpositeColor ==
+                        ((*ctx.board)[*pos] & NOTATION::COLOR::COLOR_MASK))
                     {
-                        TVerifyAndAddBeating(i, destination, (*ctx.board)[destination]);
+                        AddingStrategy<C>::addRockWithBeating(i, *pos, (*ctx.board)[*pos]);
                     }
                     break;
                 }
-                TVerifyAndAdd(i, destination);
-            }
+            AddingStrategy<C>::addRock(i, *pos);
         }
-    };
-};
-
-template <NOTATION::COLOR::color C, template<NOTATION::COLOR::color> typename AddingStrategy>
-class GenerateRockMoves
-{
-    constexpr static std::pair<unsigned char, unsigned char> rockMoves[] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
-public:
-    static void proccess(unsigned char i)
-    {
-        GenerateLineMoves<C,
-                AddingStrategy<C>::addRock,
-                AddingStrategy<C>::addRockWithBeating,
-                4u, rockMoves>::proccess(i);
+        for (const auto* pos = FieldLookup<C, i>::LeftPossibleMoves;
+             pos < FieldLookup<C, i>::LeftPossibleMoves+FieldLookup<C,i>::LeftPossibleMovesSize;
+             ++pos)
+        {
+            if ((*ctx.board)[*pos] != 0)
+            {
+                if (TOpositeColor ==
+                    ((*ctx.board)[*pos] & NOTATION::COLOR::COLOR_MASK))
+                {
+                    AddingStrategy<C>::addRockWithBeating(i, *pos, (*ctx.board)[*pos]);
+                }
+                break;
+            }
+            AddingStrategy<C>::addRock(i, *pos);
+        }
+        for (const auto* pos = FieldLookup<C, i>::RightPossibleMoves;
+             pos < FieldLookup<C, i>::RightPossibleMoves+FieldLookup<C,i>::RightPossibleMovesSize;
+             ++pos)
+        {
+            if ((*ctx.board)[*pos] != 0)
+            {
+                if (TOpositeColor ==
+                    ((*ctx.board)[*pos] & NOTATION::COLOR::COLOR_MASK))
+                {
+                    AddingStrategy<C>::addRockWithBeating(i, *pos, (*ctx.board)[*pos]);
+                }
+                break;
+            }
+            AddingStrategy<C>::addRock(i, *pos);
+        }
     }
 };
 
-template <NOTATION::COLOR::color C, template<NOTATION::COLOR::color> typename AddingStrategy>
-class GenerateBishopMoves
+template <NOTATION::COLOR::color C, const unsigned int i, template<NOTATION::COLOR::color> typename AddingStrategy>
+class GenerateBishopMoves2
 {
-    constexpr static std::pair<unsigned char, unsigned char> bishopMoves[] = {{-1, -1}, {1, -1}, {-1, 1}, {1, 1}};
 public:
-    static void proccess(unsigned char i)
+    static void proccess()
     {
-        GenerateLineMoves<C,
-                AddingStrategy<C>::addBishop,
-                AddingStrategy<C>::addBishopWithBeating,
-                4u, bishopMoves>::proccess(i);
+        constexpr auto TOpositeColor = static_cast<unsigned char>(C+1);
+
+        constexpr auto blend = FieldLookup<C, i>::BottomLeftPossibleMoves+FieldLookup<C,i>::BottomLeftPossibleMovesSize;
+        for (const auto* pos = FieldLookup<C, i>::BottomLeftPossibleMoves;
+             pos < blend;
+             ++pos)
+        {
+            if ((*ctx.board)[*pos] != 0)
+            {
+                if (TOpositeColor ==
+                    ((*ctx.board)[*pos] & NOTATION::COLOR::COLOR_MASK))
+                {
+                    AddingStrategy<C>::addBishopWithBeating(i, *pos, (*ctx.board)[*pos]);
+                }
+                break;
+            }
+            AddingStrategy<C>::addBishop(i, *pos);
+        }
+        constexpr auto tlend = FieldLookup<C, i>::TopLeftPossibleMoves+FieldLookup<C,i>::TopLeftPossibleMovesSize;
+        for (const auto* pos = FieldLookup<C, i>::TopLeftPossibleMoves;
+             pos < tlend;
+             ++pos)
+        {
+            if ((*ctx.board)[*pos] != 0)
+            {
+                if (TOpositeColor ==
+                    ((*ctx.board)[*pos] & NOTATION::COLOR::COLOR_MASK))
+                {
+                    AddingStrategy<C>::addBishopWithBeating(i, *pos, (*ctx.board)[*pos]);
+                }
+                break;
+            }
+            AddingStrategy<C>::addBishop(i, *pos);
+        }
+        constexpr auto brend = FieldLookup<C, i>::BottomRightPossibleMoves+FieldLookup<C,i>::BottomRightPossibleMovesSize;
+        for (const auto* pos = FieldLookup<C, i>::BottomRightPossibleMoves;
+             pos < brend;
+             ++pos)
+        {
+            if ((*ctx.board)[*pos] != 0)
+            {
+                if (TOpositeColor ==
+                    ((*ctx.board)[*pos] & NOTATION::COLOR::COLOR_MASK))
+                {
+                    AddingStrategy<C>::addBishopWithBeating(i, *pos, (*ctx.board)[*pos]);
+                }
+                break;
+            }
+            AddingStrategy<C>::addBishop(i, *pos);
+        }
+        constexpr auto trend = FieldLookup<C, i>::TopRightPossibleMoves+FieldLookup<C,i>::TopRightPossibleMovesSize;
+        for (const auto* pos = FieldLookup<C, i>::TopRightPossibleMoves;
+             pos < trend;
+             ++pos)
+        {
+            if ((*ctx.board)[*pos] != 0)
+            {
+                if (TOpositeColor ==
+                    ((*ctx.board)[*pos] & NOTATION::COLOR::COLOR_MASK))
+                {
+                    AddingStrategy<C>::addBishopWithBeating(i, *pos, (*ctx.board)[*pos]);
+                }
+                break;
+            }
+            AddingStrategy<C>::addBishop(i, *pos);
+        }
     }
 };
 
-template <NOTATION::COLOR::color C, template<NOTATION::COLOR::color> typename AddingStrategy>
-class GenerateQueenMoves
+
+template <NOTATION::COLOR::color C, const unsigned int i, template<NOTATION::COLOR::color> typename AddingStrategy>
+class GenerateQueenMoves2
 {
-    constexpr static std::pair<unsigned char, unsigned char> queenMoves[] =
-            {{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {-1, -1}, {1, -1}, {-1, 1}, {1, 1}};
 public:
-    static void proccess(unsigned char i)
+    static void proccess()
     {
-        GenerateLineMoves<C,
-                AddingStrategy<C>::addQueen,
-                AddingStrategy<C>::addQueenWithBeating,
-                8u, queenMoves>::proccess(i);
+        constexpr auto TOpositeColor = static_cast<unsigned char>(C+1);
+
+        constexpr auto bend = FieldLookup<C, i>::BottomPossibleMoves+FieldLookup<C,i>::BottomPossibleMovesSize;
+        for (const auto* pos = FieldLookup<C, i>::BottomPossibleMoves;
+             pos < bend;
+             ++pos)
+        {
+            if ((*ctx.board)[*pos] != 0)
+            {
+                if (TOpositeColor ==
+                    ((*ctx.board)[*pos] & NOTATION::COLOR::COLOR_MASK))
+                {
+                    AddingStrategy<C>::addQueenWithBeating(i, *pos, (*ctx.board)[*pos]);
+                }
+                break;
+            }
+            AddingStrategy<C>::addQueen(i, *pos);
+        }
+
+        constexpr auto tend = FieldLookup<C, i>::TopPossibleMoves+FieldLookup<C,i>::TopPossibleMovesSize;
+        for (const auto* pos = FieldLookup<C, i>::TopPossibleMoves;
+             pos < tend;
+             ++pos)
+        {
+            if ((*ctx.board)[*pos] != 0)
+            {
+                if (TOpositeColor ==
+                    ((*ctx.board)[*pos] & NOTATION::COLOR::COLOR_MASK))
+                {
+                    AddingStrategy<C>::addQueenWithBeating(i, *pos, (*ctx.board)[*pos]);
+                }
+                break;
+            }
+            AddingStrategy<C>::addQueen(i, *pos);
+        }
+        constexpr auto lend = FieldLookup<C, i>::LeftPossibleMoves+FieldLookup<C,i>::LeftPossibleMovesSize;
+        for (const auto* pos = FieldLookup<C, i>::LeftPossibleMoves;
+             pos < lend;
+             ++pos)
+        {
+            if ((*ctx.board)[*pos] != 0)
+            {
+                if (TOpositeColor ==
+                    ((*ctx.board)[*pos] & NOTATION::COLOR::COLOR_MASK))
+                {
+                    AddingStrategy<C>::addQueenWithBeating(i, *pos, (*ctx.board)[*pos]);
+                }
+                break;
+            }
+            AddingStrategy<C>::addQueen(i, *pos);
+        }
+        constexpr auto rend = FieldLookup<C, i>::RightPossibleMoves+FieldLookup<C,i>::RightPossibleMovesSize;
+        for (const auto* pos = FieldLookup<C, i>::RightPossibleMoves;
+             pos < rend;
+             ++pos)
+        {
+            if ((*ctx.board)[*pos] != 0)
+            {
+                if (TOpositeColor ==
+                    ((*ctx.board)[*pos] & NOTATION::COLOR::COLOR_MASK))
+                {
+                    AddingStrategy<C>::addQueenWithBeating(i, *pos, (*ctx.board)[*pos]);
+                }
+                break;
+            }
+            AddingStrategy<C>::addQueen(i, *pos);
+        }
+
+        constexpr auto blend = FieldLookup<C, i>::BottomLeftPossibleMoves+FieldLookup<C,i>::BottomLeftPossibleMovesSize;
+        for (const auto* pos = FieldLookup<C, i>::BottomLeftPossibleMoves;
+             pos < blend;
+             ++pos)
+        {
+            if ((*ctx.board)[*pos] != 0)
+            {
+                if (TOpositeColor ==
+                    ((*ctx.board)[*pos] & NOTATION::COLOR::COLOR_MASK))
+                {
+                    AddingStrategy<C>::addQueenWithBeating(i, *pos, (*ctx.board)[*pos]);
+                }
+                break;
+            }
+            AddingStrategy<C>::addQueen(i, *pos);
+        }
+        constexpr auto tlend = FieldLookup<C, i>::TopLeftPossibleMoves+FieldLookup<C,i>::TopLeftPossibleMovesSize;
+        for (const auto* pos = FieldLookup<C, i>::TopLeftPossibleMoves;
+             pos < tlend;
+             ++pos)
+        {
+            if ((*ctx.board)[*pos] != 0)
+            {
+                if (TOpositeColor ==
+                    ((*ctx.board)[*pos] & NOTATION::COLOR::COLOR_MASK))
+                {
+                    AddingStrategy<C>::addQueenWithBeating(i, *pos, (*ctx.board)[*pos]);
+                }
+                break;
+            }
+            AddingStrategy<C>::addQueen(i, *pos);
+        }
+        constexpr auto brend = FieldLookup<C, i>::BottomRightPossibleMoves+FieldLookup<C,i>::BottomRightPossibleMovesSize;
+        for (const auto* pos = FieldLookup<C, i>::BottomRightPossibleMoves;
+             pos < brend;
+             ++pos)
+        {
+            if ((*ctx.board)[*pos] != 0)
+            {
+                if (TOpositeColor ==
+                    ((*ctx.board)[*pos] & NOTATION::COLOR::COLOR_MASK))
+                {
+                    AddingStrategy<C>::addQueenWithBeating(i, *pos, (*ctx.board)[*pos]);
+                }
+                break;
+            }
+            AddingStrategy<C>::addQueen(i, *pos);
+        }
+        constexpr auto trend = FieldLookup<C, i>::TopRightPossibleMoves+FieldLookup<C,i>::TopRightPossibleMovesSize;
+        for (const auto* pos = FieldLookup<C, i>::TopRightPossibleMoves;
+             pos < trend;
+             ++pos)
+        {
+            if ((*ctx.board)[*pos] != 0)
+            {
+                if (TOpositeColor ==
+                    ((*ctx.board)[*pos] & NOTATION::COLOR::COLOR_MASK))
+                {
+                    AddingStrategy<C>::addQueenWithBeating(i, *pos, (*ctx.board)[*pos]);
+                }
+                break;
+            }
+            AddingStrategy<C>::addQueen(i, *pos);
+        }
     }
 };
+
 
 template <typename TMoveAddingStrategy, NOTATION::COLOR::color c>
 void dispatchToGenerateStandardPawnMoves(unsigned char i);
@@ -692,13 +819,13 @@ void dispatchToProperHandler()
             GenerateKnightMoves2<c, i, StrategyWithAlwaysCheckChecking>::proccess();
             return;
         case (NOTATION::PIECE_FEATURES::CAN_ATTACK_ON_LINES):
-            GenerateRockMoves<c, StrategyWithAlwaysCheckChecking>::proccess(i);
+            GenerateRockMoves2<c, i, StrategyWithAlwaysCheckChecking>::proccess();
             return;
         case (NOTATION::PIECE_FEATURES::CAN_ATTACK_ON_DIAGONAL):
-            GenerateBishopMoves<c, StrategyWithAlwaysCheckChecking>::proccess(i);
+            GenerateBishopMoves2<c, i, StrategyWithAlwaysCheckChecking>::proccess();
             return;
         case (NOTATION::PIECES::QUEEN):
-            GenerateQueenMoves<c, StrategyWithAlwaysCheckChecking>::proccess(i);
+            GenerateQueenMoves2<c, i, StrategyWithAlwaysCheckChecking>::proccess();
             return;
         case (NOTATION::PIECES::KING):
             GenerateKingMoves2<c, i>::proccess();
@@ -719,13 +846,13 @@ void generateWithAllMoveAllowance()
             GenerateKnightMoves2<c, i, StrategyWithNoChecking>::proccess();
             return;
         case (NOTATION::PIECE_FEATURES::CAN_ATTACK_ON_LINES):
-            GenerateRockMoves<c, StrategyWithNoChecking>::proccess(i);
+            GenerateRockMoves2<c, i, StrategyWithNoChecking>::proccess();
             return;
         case (NOTATION::PIECE_FEATURES::CAN_ATTACK_ON_DIAGONAL):
-            GenerateBishopMoves<c, StrategyWithNoChecking>::proccess(i);
+            GenerateBishopMoves2<c, i, StrategyWithNoChecking>::proccess();
             return;
         case (NOTATION::PIECES::QUEEN):
-            GenerateQueenMoves<c, StrategyWithNoChecking>::proccess(i);
+            GenerateQueenMoves2<c, i, StrategyWithNoChecking>::proccess();
             return;
         case (NOTATION::PIECES::KING):
             GenerateKingMoves2<c, i>::proccess();
@@ -804,114 +931,7 @@ void evaluateForCheckedPosition()
     GenerateEnPasant<c, StrategyWithAlwaysCheckChecking<c>>::proccess();
 }
 
-template<NOTATION::COLOR::color c, unsigned char i, const unsigned char TSize, const unsigned char* begin>
-uint64_t evaluateInSingleDiagonal(uint64_t wasChecked)
-{
-    auto piecePos = 0;
-    constexpr auto TOppositeColor = c+1;
 
-    for (const unsigned char* pos = begin;
-        pos < begin + TSize;
-        ++pos)
-    {
-        if (((*ctx.board)[*pos] & NOTATION::COLOR::COLOR_MASK) == TOppositeColor)
-        {
-            break;
-        }
-        if (((*ctx.board)[*pos] & NOTATION::COLOR::COLOR_MASK) == c)
-        {
-            piecePos = *pos;
-            for (++pos;
-                 pos < begin + TSize;
-                 ++pos)
-            {
-                if (((*ctx.board)[*pos] & NOTATION::COLOR::COLOR_MASK) == TOppositeColor)
-                {
-                    if ((*ctx.board)[*pos] & NOTATION::PIECE_FEATURES::CAN_ATTACK_ON_DIAGONAL)
-                    {
-                        return wasChecked | (1lu << piecePos);
-                    }
-                }
-                if (((*ctx.board)[*pos] & NOTATION::COLOR::COLOR_MASK) == c)
-                {
-                    return wasChecked;
-                }
-            }
-        }
-    }
-    return wasChecked;
-}
-
-template<NOTATION::COLOR::color c, unsigned char i, const unsigned char TSize, const unsigned char* begin>
-uint64_t evaluateInSingleLine(uint64_t wasChecked)
-{
-    auto piecePos = 0;
-    constexpr auto TOppositeColor = c + 1;
-    for (const unsigned char* pos = begin;
-         pos < begin + TSize;
-         ++pos)
-    {
-        if (((*ctx.board)[*pos] & NOTATION::COLOR::COLOR_MASK) == TOppositeColor)
-        {
-            break;
-        }
-        if (((*ctx.board)[*pos] & NOTATION::COLOR::COLOR_MASK) == c)
-        {
-            piecePos = *pos;
-
-            for (++pos;
-                 pos < begin + TSize;
-                 ++pos)
-            {
-                if (((*ctx.board)[*pos] & NOTATION::COLOR::COLOR_MASK) == TOppositeColor)
-                {
-                    if ((*ctx.board)[*pos] & NOTATION::PIECE_FEATURES::CAN_ATTACK_ON_LINES)
-                    {
-                        return wasChecked | (1lu << piecePos);
-                    }
-                }
-                if (((*ctx.board)[*pos] & NOTATION::COLOR::COLOR_MASK) == c)
-                {
-                    return wasChecked;
-                }
-            }
-        }
-    }
-    return wasChecked;
-}
-
-template <NOTATION::COLOR::color c, unsigned char TKingPos>
-uint64_t findPinned()
-{
-    uint64_t pinned = 0;
-
-    pinned = evaluateInSingleLine<c, TKingPos,
-            FieldLookup<c, TKingPos>::TopPossibleMovesSize,
-            FieldLookup<c, TKingPos>::TopPossibleMoves>(pinned);
-    pinned = evaluateInSingleLine<c, TKingPos,
-            FieldLookup<c, TKingPos>::BottomPossibleMovesSize,
-            FieldLookup<c, TKingPos>::BottomPossibleMoves>(pinned);
-    pinned = evaluateInSingleLine<c, TKingPos,
-            FieldLookup<c, TKingPos>::LeftPossibleMovesSize,
-            FieldLookup<c, TKingPos>::LeftPossibleMoves>(pinned);
-    pinned = evaluateInSingleLine<c, TKingPos,
-            FieldLookup<c, TKingPos>::RightPossibleMovesSize,
-            FieldLookup<c, TKingPos>::RightPossibleMoves>(pinned);
-    pinned = evaluateInSingleDiagonal<c, TKingPos,
-            FieldLookup<c, TKingPos>::TopLeftPossibleMovesSize,
-            FieldLookup<c, TKingPos>::TopLeftPossibleMoves>(pinned);
-    pinned = evaluateInSingleDiagonal<c, TKingPos,
-            FieldLookup<c, TKingPos>::TopRightPossibleMovesSize,
-            FieldLookup<c, TKingPos>::TopRightPossibleMoves>(pinned);
-    pinned = evaluateInSingleDiagonal<c, TKingPos,
-            FieldLookup<c, TKingPos>::BottomLeftPossibleMovesSize,
-            FieldLookup<c, TKingPos>::BottomLeftPossibleMoves>(pinned);
-    pinned = evaluateInSingleDiagonal<c, TKingPos,
-            FieldLookup<c, TKingPos>::BottomRightPossibleMovesSize,
-            FieldLookup<c, TKingPos>::BottomRightPossibleMoves>(pinned);
-
-    return pinned;
-}
 
 template <NOTATION::COLOR::color c>
 void evaluateNotCheckedPostions(uint64_t pinnedMask)
@@ -986,153 +1006,20 @@ void evaluateNotCheckedPostions(uint64_t pinnedMask)
 
 }  // namespace
 
-static uint64_t (*whiteLookup[])()  = {
-        findPinned<NOTATION::COLOR::color::white, 0>,
-        findPinned<NOTATION::COLOR::color::white, 1>,
-        findPinned<NOTATION::COLOR::color::white, 2>,
-        findPinned<NOTATION::COLOR::color::white, 3>,
-        findPinned<NOTATION::COLOR::color::white, 4>,
-        findPinned<NOTATION::COLOR::color::white, 5>,
-        findPinned<NOTATION::COLOR::color::white, 6>,
-        findPinned<NOTATION::COLOR::color::white, 7>,
-        findPinned<NOTATION::COLOR::color::white, 8>,
-        findPinned<NOTATION::COLOR::color::white, 9>,
-        findPinned<NOTATION::COLOR::color::white, 10>,
-        findPinned<NOTATION::COLOR::color::white, 11>,
-        findPinned<NOTATION::COLOR::color::white, 12>,
-        findPinned<NOTATION::COLOR::color::white, 13>,
-        findPinned<NOTATION::COLOR::color::white, 14>,
-        findPinned<NOTATION::COLOR::color::white, 15>,
-        findPinned<NOTATION::COLOR::color::white, 16>,
-        findPinned<NOTATION::COLOR::color::white, 17>,
-        findPinned<NOTATION::COLOR::color::white, 18>,
-        findPinned<NOTATION::COLOR::color::white, 19>,
-        findPinned<NOTATION::COLOR::color::white, 20>,
-        findPinned<NOTATION::COLOR::color::white, 21>,
-        findPinned<NOTATION::COLOR::color::white, 22>,
-        findPinned<NOTATION::COLOR::color::white, 23>,
-        findPinned<NOTATION::COLOR::color::white, 24>,
-        findPinned<NOTATION::COLOR::color::white, 25>,
-        findPinned<NOTATION::COLOR::color::white, 26>,
-        findPinned<NOTATION::COLOR::color::white, 27>,
-        findPinned<NOTATION::COLOR::color::white, 28>,
-        findPinned<NOTATION::COLOR::color::white, 29>,
-        findPinned<NOTATION::COLOR::color::white, 30>,
-        findPinned<NOTATION::COLOR::color::white, 31>,
-        findPinned<NOTATION::COLOR::color::white, 32>,
-        findPinned<NOTATION::COLOR::color::white, 33>,
-        findPinned<NOTATION::COLOR::color::white, 34>,
-        findPinned<NOTATION::COLOR::color::white, 35>,
-        findPinned<NOTATION::COLOR::color::white, 36>,
-        findPinned<NOTATION::COLOR::color::white, 37>,
-        findPinned<NOTATION::COLOR::color::white, 38>,
-        findPinned<NOTATION::COLOR::color::white, 39>,
-        findPinned<NOTATION::COLOR::color::white, 40>,
-        findPinned<NOTATION::COLOR::color::white, 41>,
-        findPinned<NOTATION::COLOR::color::white, 42>,
-        findPinned<NOTATION::COLOR::color::white, 43>,
-        findPinned<NOTATION::COLOR::color::white, 44>,
-        findPinned<NOTATION::COLOR::color::white, 45>,
-        findPinned<NOTATION::COLOR::color::white, 46>,
-        findPinned<NOTATION::COLOR::color::white, 47>,
-        findPinned<NOTATION::COLOR::color::white, 48>,
-        findPinned<NOTATION::COLOR::color::white, 49>,
-        findPinned<NOTATION::COLOR::color::white, 50>,
-        findPinned<NOTATION::COLOR::color::white, 51>,
-        findPinned<NOTATION::COLOR::color::white, 52>,
-        findPinned<NOTATION::COLOR::color::white, 53>,
-        findPinned<NOTATION::COLOR::color::white, 54>,
-        findPinned<NOTATION::COLOR::color::white, 55>,
-        findPinned<NOTATION::COLOR::color::white, 56>,
-        findPinned<NOTATION::COLOR::color::white, 57>,
-        findPinned<NOTATION::COLOR::color::white, 58>,
-        findPinned<NOTATION::COLOR::color::white, 59>,
-        findPinned<NOTATION::COLOR::color::white, 60>,
-        findPinned<NOTATION::COLOR::color::white, 61>,
-        findPinned<NOTATION::COLOR::color::white, 62>,
-        findPinned<NOTATION::COLOR::color::white, 63>,
-};
 
 
-static uint64_t(*blackLookup[])()  = {
-        findPinned<NOTATION::COLOR::color::black, 0>,
-        findPinned<NOTATION::COLOR::color::black, 1>,
-        findPinned<NOTATION::COLOR::color::black, 2>,
-        findPinned<NOTATION::COLOR::color::black, 3>,
-        findPinned<NOTATION::COLOR::color::black, 4>,
-        findPinned<NOTATION::COLOR::color::black, 5>,
-        findPinned<NOTATION::COLOR::color::black, 6>,
-        findPinned<NOTATION::COLOR::color::black, 7>,
-        findPinned<NOTATION::COLOR::color::black, 8>,
-        findPinned<NOTATION::COLOR::color::black, 9>,
-        findPinned<NOTATION::COLOR::color::black, 10>,
-        findPinned<NOTATION::COLOR::color::black, 11>,
-        findPinned<NOTATION::COLOR::color::black, 12>,
-        findPinned<NOTATION::COLOR::color::black, 13>,
-        findPinned<NOTATION::COLOR::color::black, 14>,
-        findPinned<NOTATION::COLOR::color::black, 15>,
-        findPinned<NOTATION::COLOR::color::black, 16>,
-        findPinned<NOTATION::COLOR::color::black, 17>,
-        findPinned<NOTATION::COLOR::color::black, 18>,
-        findPinned<NOTATION::COLOR::color::black, 19>,
-        findPinned<NOTATION::COLOR::color::black, 20>,
-        findPinned<NOTATION::COLOR::color::black, 21>,
-        findPinned<NOTATION::COLOR::color::black, 22>,
-        findPinned<NOTATION::COLOR::color::black, 23>,
-        findPinned<NOTATION::COLOR::color::black, 24>,
-        findPinned<NOTATION::COLOR::color::black, 25>,
-        findPinned<NOTATION::COLOR::color::black, 26>,
-        findPinned<NOTATION::COLOR::color::black, 27>,
-        findPinned<NOTATION::COLOR::color::black, 28>,
-        findPinned<NOTATION::COLOR::color::black, 29>,
-        findPinned<NOTATION::COLOR::color::black, 30>,
-        findPinned<NOTATION::COLOR::color::black, 31>,
-        findPinned<NOTATION::COLOR::color::black, 32>,
-        findPinned<NOTATION::COLOR::color::black, 33>,
-        findPinned<NOTATION::COLOR::color::black, 34>,
-        findPinned<NOTATION::COLOR::color::black, 35>,
-        findPinned<NOTATION::COLOR::color::black, 36>,
-        findPinned<NOTATION::COLOR::color::black, 37>,
-        findPinned<NOTATION::COLOR::color::black, 38>,
-        findPinned<NOTATION::COLOR::color::black, 39>,
-        findPinned<NOTATION::COLOR::color::black, 40>,
-        findPinned<NOTATION::COLOR::color::black, 41>,
-        findPinned<NOTATION::COLOR::color::black, 42>,
-        findPinned<NOTATION::COLOR::color::black, 43>,
-        findPinned<NOTATION::COLOR::color::black, 44>,
-        findPinned<NOTATION::COLOR::color::black, 45>,
-        findPinned<NOTATION::COLOR::color::black, 46>,
-        findPinned<NOTATION::COLOR::color::black, 47>,
-        findPinned<NOTATION::COLOR::color::black, 48>,
-        findPinned<NOTATION::COLOR::color::black, 49>,
-        findPinned<NOTATION::COLOR::color::black, 50>,
-        findPinned<NOTATION::COLOR::color::black, 51>,
-        findPinned<NOTATION::COLOR::color::black, 52>,
-        findPinned<NOTATION::COLOR::color::black, 53>,
-        findPinned<NOTATION::COLOR::color::black, 54>,
-        findPinned<NOTATION::COLOR::color::black, 55>,
-        findPinned<NOTATION::COLOR::color::black, 56>,
-        findPinned<NOTATION::COLOR::color::black, 57>,
-        findPinned<NOTATION::COLOR::color::black, 58>,
-        findPinned<NOTATION::COLOR::color::black, 59>,
-        findPinned<NOTATION::COLOR::color::black, 60>,
-        findPinned<NOTATION::COLOR::color::black, 61>,
-        findPinned<NOTATION::COLOR::color::black, 62>,
-        findPinned<NOTATION::COLOR::color::black, 63>,
-};
-
-std::vector<ExtendedMove> MoveGenerator::generate(const Board& board,
-	NOTATION::COLOR::color c)
+static void generateImpl(const Board& board,
+                         NOTATION::COLOR::color c)
 {
-	std::vector<ExtendedMove> allMoves;
-	ctx.board = &board;
-	ctx.pieceColor = c;
+    ctx.board = &board;
+    ctx.pieceColor = c;
     ctx.kingPosition = CheckChecker::findKing(board, c);
 
     ctx.Nbeatings = 0;
     ctx.Npromotions = 0;
-    ctx.NUsualMoves = 0;
-    ctx.NkingMoves = 0;
+    ctx.NFiguresMoves = 0;
+    ctx.NPawnsMoves = 0;
+    ctx.NKingMoves = 0;
 
     auto isChecked = CheckChecker::isAttackedOn(*ctx.board, ctx.pieceColor, ctx.kingPosition);
     if (c == NOTATION::COLOR::color::white)
@@ -1143,35 +1030,94 @@ std::vector<ExtendedMove> MoveGenerator::generate(const Board& board,
         }
         else
         {
-            auto pinnedFiels = whiteLookup[ctx.kingPosition]();
-            evaluateNotCheckedPostions<NOTATION::COLOR::color::white>(pinnedFiels);
+            auto pinnedFields = findPinned<NOTATION::COLOR::color::white>(board, ctx.kingPosition);
+            evaluateNotCheckedPostions<NOTATION::COLOR::color::white>(pinnedFields);
         }
     }
-	else
+    else
     {
-	    if(isChecked)
+        if(isChecked)
         {
-	        evaluateForCheckedPosition<NOTATION::COLOR::color::black>();
+            evaluateForCheckedPosition<NOTATION::COLOR::color::black>();
         }
-	    else
+        else
         {
-            auto pinnedFiels = blackLookup[ctx.kingPosition]();
-            evaluateNotCheckedPostions<NOTATION::COLOR::color::black>(pinnedFiels);
+            auto pinnedFields = findPinned<NOTATION::COLOR::color::black>(board, ctx.kingPosition);
+            evaluateNotCheckedPostions<NOTATION::COLOR::color::black>(pinnedFields);
         }
     }
+}
 
-    allMoves.reserve(ctx.NkingMoves + ctx.NUsualMoves + ctx.Npromotions + ctx.Nbeatings);
+std::vector<ExtendedMove> MoveGenerator::generate(const Board& board,
+	NOTATION::COLOR::color c)
+{
+    generateImpl(board, c);
+	std::vector<ExtendedMove> allMoves;
+
+    allMoves.reserve(ctx.NKingMoves + ctx.NFiguresMoves + ctx.NPawnsMoves + ctx.Npromotions + ctx.Nbeatings);
 	allMoves.insert(allMoves.end(), ctx.beatings, ctx.beatings + ctx.Nbeatings);
     allMoves.insert(allMoves.end(), ctx.promotions, ctx.promotions + ctx.Npromotions);
-    allMoves.insert(allMoves.end(), ctx.usualMoves, ctx.usualMoves + ctx.NUsualMoves);
-    allMoves.insert(allMoves.end(), ctx.kingMoves, ctx.kingMoves + ctx.NkingMoves);
+    allMoves.insert(allMoves.end(), ctx.figuresMoves, ctx.figuresMoves + ctx.NFiguresMoves);
+    allMoves.insert(allMoves.end(), ctx.pawnsMoves, ctx.pawnsMoves + ctx.NPawnsMoves);
+    allMoves.insert(allMoves.end(), ctx.kingMoves, ctx.kingMoves + ctx.NKingMoves);
 
+    if (allMoves.empty())
+    {
+        return {};
+    }
+    static auto mapToValue = [](unsigned char field) -> int
+    {
+        using namespace NOTATION::PIECES;
+        using namespace NOTATION::COLOR;
+        switch (field)
+        {
+            case WHITE | PAWN: return 100;
+            case WHITE | KNIGHT: return 300;
+            case WHITE | BISHOP: return 300;
+            case WHITE | ROCK: return 500;
+            case WHITE | QUEEN: return 900;
+            case WHITE | KING: return  300;
+            case BLACK | PAWN: return 100;
+            case BLACK | KNIGHT: return 300;
+            case BLACK | BISHOP: return 300;
+            case BLACK | ROCK: return 500;
+            case BLACK | QUEEN: return 900;
+            case BLACK | KING: return  300;
+        }
+        return  0;
+    };
+    auto maxElem = 0;
+    auto maxVal = mapToValue(allMoves.begin()->targetPiece) + mapToValue(allMoves.begin()->promoting);
+    for (auto i = 1u;
+        i < ctx.Nbeatings+ ctx.Npromotions;
+        ++i)
+    {
+        auto curVal = mapToValue(allMoves[i].targetPiece) + mapToValue(allMoves[i].promoting);
+        if (curVal > maxVal)
+        {
+            maxElem = i;
+            maxVal = curVal;
+        }
+    }
+    std::swap(allMoves[0], allMoves[maxElem]);
     return allMoves;
 }
 
 std::vector<ExtendedMove> MoveGenerator::generate(const Board& board)
 {
     return generate(board, board.playerOnMove);
+}
+
+unsigned MoveGenerator::getMoveCount(const Board& board
+        , NOTATION::COLOR::color c)
+{
+    generateImpl(board, c);
+    return ctx.NKingMoves + ctx.NFiguresMoves + ctx.NPawnsMoves + ctx.Npromotions + ctx.Nbeatings;
+}
+
+unsigned MoveGenerator::getMoveCount(const Board& board)
+{
+    return getMoveCount(board, board.playerOnMove);
 }
 
 }  // namespace MoveGenerator

@@ -1,6 +1,6 @@
 #include "BoardEngine.hpp"
 #include <detail/MoveValidator.hpp>
-#include <detail/MoveGenerator.hpp>
+#include <MoveGenerator/MoveGenerator.hpp>
 #include <hashing/zobrist.hpp>
 
 BoardEngine::BoardEngine()
@@ -20,10 +20,6 @@ bool BoardEngine::validateMove(const Move& move) const
     return MoveValidator::validateMove(board, move);
 }
 
-void BoardEngine::applyMove(const Move& move)
-{
-    MoveApplier::applyMove(board, hash_, move, resultEvaluator);
-}
 
 Result BoardEngine::getResult()
 {
@@ -35,6 +31,16 @@ Result BoardEngine::getResult(bool availableMoves)
     return resultEvaluator.evaluate(availableMoves);
 }
 
+unsigned BoardEngine::generateValidMoveCount() const
+{
+    return MoveGenerator::MoveGenerator::getMoveCount(board);
+}
+
+unsigned BoardEngine::generateValidMoveCount(NOTATION::COLOR::color c) const
+{
+    return MoveGenerator::MoveGenerator::getMoveCount(board, c);
+}
+
 std::vector<ExtendedMove> BoardEngine::generateMoves() const
 {
     return MoveGenerator::MoveGenerator::generate(board);
@@ -43,6 +49,11 @@ std::vector<ExtendedMove> BoardEngine::generateMoves() const
 std::vector<ExtendedMove> BoardEngine::generateMovesFor(NOTATION::COLOR::color color) const
 {
     return MoveGenerator::MoveGenerator::generate(board, color);
+}
+
+void BoardEngine::applyMove(const Move& move)
+{
+    MoveApplier::applyMove(board, hash_, move, resultEvaluator);
 }
 
 MoveApplier::SimpleMoveMemorial BoardEngine::applyUndoableSimpleMove(const Move& move)
@@ -65,3 +76,13 @@ uint64_t BoardEngine::getHash() const
 {
     return hash_;
 }
+
+uint64_t BoardEngine::getHash(NOTATION::COLOR::color c) const
+{
+    if (c == board.playerOnMove)
+    {
+        return hash_;
+    }
+    return hash::switchColor(hash_);
+}
+

@@ -4,7 +4,7 @@
 #include <vector>
 
 #include <detail/MoveApplier.hpp>
-#include <detail/MoveGenerator.hpp>
+#include <MoveGenerator/MoveGenerator.hpp>
 #include <utils/BoardGenerationUtils.hpp>
 #include <notations/coordinationnotation.hpp>
 #include <notations/LongAlgebraicNotation.hpp>

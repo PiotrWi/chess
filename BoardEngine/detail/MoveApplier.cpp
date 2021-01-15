@@ -166,7 +166,6 @@ void applyMove(Board& board, const Move& move)
     applyMove(board, nop, move);
 }
 
-
 void applyMove(Board& board, uint64_t& positionHash, const Move& move)
 {
     applyCasltingRules(board, positionHash, move);

@@ -1,29 +1,30 @@
-#include "SimpleComputerPlayer.hpp"
+#include "CachedPlayer.hpp"
 #include <cstring>
 #include <notations/coordinationnotation.hpp>
 #include <common/searchingAlgorithms/AlfaBeta.hpp>
-#include <common/MoveGenerators/MoveGenerator.hpp>
 
-void SimpleComputerPlayer::init(Color c)
+void CachedPlayer::init(Color)
 {
-    playerColor_ = c;
 }
 
-const char *SimpleComputerPlayer::act(const char *string)
+const char* CachedPlayer::act(const char *string)
 {
     if (string != nullptr)
     {
         be.applyMove(notations::coordinates::createMove(string, be.board.playerOnMove));
     }
 
-    auto mg = players::common::move_generators::MoveGenerator();
-    auto move = alfaBeta::evaluate(be, mg, 6);
+    auto move = alfaBeta::evaluate(be, cmg_, 8);
     be.applyMove(move);
+
+    cmg_.makeOlder();
+    cmg_.clearOlderThan(3u);
+
     strcpy(lastMove_, notations::coordinates::createMoveStr(move).data());
     return lastMove_;
 }
 
-void SimpleComputerPlayer::rejectLast()
+void CachedPlayer::rejectLast()
 {
 
 }

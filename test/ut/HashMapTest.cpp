@@ -23,4 +23,5 @@ TEST(HashMapShall, beCreated)
     hashMap.store(hash, anotherKey, anotherValue);
     ASSERT_EQ(*hashMap.get(hash, key), value);
     ASSERT_EQ(*hashMap.get(hash, anotherKey), anotherValue);
+    hashMap.removeOlderThan(3);
 }

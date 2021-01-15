@@ -5,7 +5,7 @@
 #include <vector>
 
 #include <detail/CheckChecker.hpp>
-#include <detail/MoveGenerator.hpp>
+#include <MoveGenerator/MoveGenerator.hpp>
 #include <publicIf/Notation.hpp>
 
 Node::Node() {}

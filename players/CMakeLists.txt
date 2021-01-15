@@ -12,17 +12,13 @@ add_library(Players
         ComputerPlayer/SimpleComputerPlayer.cpp
         ComputerPlayer/SimpleComputerPlayer.hpp
         common/searchingAlgorithms/AlfaBeta.hpp
-        common/searchingAlgorithms/AlfaBeta.cpp
         common/evaluators/MoveCountEvaluator.cpp
         common/containers/HashTable.hpp
-        common/CachedMoveGenerator/CachedMoveGenerator.hpp
-        common/CachedMoveGenerator/CachedMoveGenerator.cpp
-        common/searchingAlgorithms/AlfaBetaWithTransitctionTable.hpp
-        common/searchingAlgorithms/AlfaBetaWithTransitcionTable.cpp
+        common/MoveGenerators/CachedMoveGenerator.hpp
+        common/MoveGenerators/CachedMoveGenerator.cpp
         common/containers/HashMap.hpp
-        common/CachedMoveGenerator/CachedMoveGeneratorMap.cpp
-        common/CachedMoveGenerator/CachedMoveGeneratorMap.hpp
-        common/searchingAlgorithms/AlfaBetaTransictionTableMap.cpp
-        common/searchingAlgorithms/AlfaBetaTransictionTableMap.hpp)
+        common/MoveGenerators/CachedMoveGeneratorMap.cpp
+        common/MoveGenerators/CachedMoveGeneratorMap.hpp
+        common/MoveGenerators/MoveGenerator.hpp common/MoveGenerators/MoveGenerator.cpp ComputerPlayer/CachedPlayer.cpp ComputerPlayer/CachedPlayer.hpp)
 
 target_link_libraries(Players board)

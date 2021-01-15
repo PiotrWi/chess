@@ -10,8 +10,12 @@ endif()
 
 project(chess LANGUAGES CXX)
 
-SET(CMAKE_CXX_FLAGS  "-O3 -Wall -Wextra -Werror -Wpedantic -pedantic-errors -std=c++17 -flto -fuse-ld=gold -m64")
-#SET(CMAKE_CXX_FLAGS  "-Og -g -Wall -Wextra -Werror -Wpedantic -pedantic-errors -std=c++17 -fuse-ld=gold")
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+	SET(CMAKE_CXX_FLAGS  "-Og -g -Wall -Wextra -Werror -Wpedantic -pedantic-errors -std=c++17 -fuse-ld=gold")
+else()
+	SET(CMAKE_CXX_FLAGS  "-O3 -Wall -Wextra -Werror -Wpedantic -pedantic-errors -std=c++17 -flto -fuse-ld=gold -m64")
+endif()
+
 
 # end of section flags
 

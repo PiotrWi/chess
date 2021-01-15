@@ -1,13 +1,11 @@
 #include "MoveCountEvaluator.hpp"
-#include <publicIf/NotationConversions.hpp>
 
 namespace moveCountEvaluator
 {
 
-int evaluate(int playerOnMoveMovesCount, BoardEngine be)
+int evaluate(int playerOnMoveMovesCount, int oponentMovesCount)
 {
-    auto oponentMovesCount = be.generateMovesFor(be.board.playerOnMove + 1).size();
-    return (playerOnMoveMovesCount - oponentMovesCount) * 1;
+    return (playerOnMoveMovesCount - oponentMovesCount) * 10;
 }
 
 }
