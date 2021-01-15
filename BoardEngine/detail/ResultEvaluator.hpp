@@ -22,12 +22,15 @@ class ResultEvaluator
 {
 public:
     ResultEvaluator();
-    void storeBoard(const Board& board, const ExtendedMove& move);
 
+    void storeBoard(const Board& board, const ExtendedMove& move);
     void removeSingle();
 
 	Result evaluate();
     Result evaluate(bool movesAvailable);
 
+    bool isDrawByRepeatitions();
+    Result getResultNoRepeatitions(bool movesAvailable) const;
+private:
     std::vector<Node> boardsToEvaluate;
 };

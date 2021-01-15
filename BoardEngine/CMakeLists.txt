@@ -29,5 +29,5 @@ add_library(board
                 notations/LongAlgebraicNotation.cpp
                 hashing/zobrist.hpp
                 hashing/Zobrish.cpp
-                FieldLookup/FieldLookup.hpp detail/PinnedMovesChecker.hpp MoveGenerator/MoveGeneratorContext.hpp)
+                FieldLookup/FieldLookup.hpp detail/PinnedMovesChecker.hpp MoveGenerator/MoveGeneratorContext.hpp MoveGenerator/Strategy.hpp)
 	

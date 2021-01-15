@@ -19,6 +19,6 @@ add_library(Players
         common/containers/HashMap.hpp
         common/MoveGenerators/CachedMoveGeneratorMap.cpp
         common/MoveGenerators/CachedMoveGeneratorMap.hpp
-        common/MoveGenerators/MoveGenerator.hpp common/MoveGenerators/MoveGenerator.cpp ComputerPlayer/CachedPlayer.cpp ComputerPlayer/CachedPlayer.hpp)
+        common/MoveGenerators/MoveGenerator.hpp common/MoveGenerators/MoveGenerator.cpp ComputerPlayer/CachedPlayer.cpp ComputerPlayer/CachedPlayer.hpp common/searchingAlgorithms/AlfaBetaPvs.hpp)
 
 target_link_libraries(Players board)

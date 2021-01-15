@@ -32,6 +32,7 @@ TEST(AlfaBeta, PerformanceTest_6_black)
     alfaBeta::evaluate(be, mg, 6);
 }
 
+/*
 TEST(AlfaBeta, PerformanceTest_8)
 {
     BoardEngine be;
@@ -44,3 +45,4 @@ TEST(AlfaBeta, PerformanceTest_8_black)
     be.applyMove(notations::coordinates::createMove("e2-e4", NOTATION::COLOR::color::white));
     alfaBeta::evaluate(be, mg, 8);
 }
+*/

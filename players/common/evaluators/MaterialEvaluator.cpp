@@ -26,6 +26,7 @@ static int mapToValue(unsigned char field)
 
 namespace materialEvaluator
 {
+
 int evaluate(const Board &board, NOTATION::COLOR::color c)
 {
     int value = 0;
@@ -37,4 +38,6 @@ int evaluate(const Board &board, NOTATION::COLOR::color c)
         return -1 * value;
     return value;
 }
-}
+
+}  // namespace materialEvaluator
+

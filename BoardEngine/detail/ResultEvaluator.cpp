@@ -102,3 +102,30 @@ Result ResultEvaluator::evaluate()
     const auto& board = boardsToEvaluate.back().board;
     return evaluate(not MoveGenerator::MoveGenerator().generate(board, board.playerOnMove).empty());
 }
+
+bool ResultEvaluator::isDrawByRepeatitions()
+{
+    return are3Repeatitions(boardsToEvaluate);
+}
+
+Result ResultEvaluator::getResultNoRepeatitions(bool movesAvailable) const
+{
+    if (not movesAvailable)
+    {
+        const auto& board = boardsToEvaluate.back().board;
+        if (CheckChecker::isCheckOn(board, board.playerOnMove))
+        {
+            return (board.playerOnMove == NOTATION::COLOR::color::white)
+                   ? Result::blackWon
+                   : Result::whiteWon;
+        }
+        return Result::draw;
+    }
+
+    if (boardsToEvaluate.back().noSignificantMoves_ >= 100)
+    {
+        return Result::draw;
+    }
+
+    return Result::ongoing;
+}

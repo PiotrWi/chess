@@ -5,7 +5,7 @@
 #include <common/MoveGenerators//CachedMoveGeneratorMap.hpp>
 
 class CachedPlayer
-        : public IPlayer
+    : public IPlayer
 {
 public:
     const char *act(const char *string) override;

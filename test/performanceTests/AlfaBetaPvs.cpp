@@ -3,64 +3,63 @@
 #include <BoardEngine.hpp>
 #include <notations/coordinationnotation.hpp>
 #include <common/MoveGenerators/CachedMoveGeneratorMap.hpp>
-#include <common/searchingAlgorithms/AlfaBeta.hpp>
+#include <common/searchingAlgorithms/AlfaBetaPvs.hpp>
 
-TEST(AlfaBetaTrasictionMap, PerformanceTest_2)
+TEST(AlfaBetaPvs, PerformanceTest_2)
 {
     BoardEngine be;
     players::common::move_generators::CachedMoveGeneratorMap mg;
-    alfaBeta::evaluate(be, mg, 2);
+    alfaBetaPvs::evaluate(be, mg, 2);
 }
 
-TEST(AlfaBetaTrasictionMap, PerformanceTest_4)
+TEST(AlfaBetaPvs, PerformanceTest_4)
 {
     BoardEngine be;
     players::common::move_generators::CachedMoveGeneratorMap mg;
-    alfaBeta::evaluate(be, mg, 4);
+    alfaBetaPvs::evaluate(be, mg, 4);
 }
 
-TEST(AlfaBetaTrasictionMap, PerformanceTest_6)
+TEST(AlfaBetaPvs, PerformanceTest_6)
 {
     BoardEngine be;
     players::common::move_generators::CachedMoveGeneratorMap mg;
-    alfaBeta::evaluate(be, mg, 6);
+    alfaBetaPvs::evaluate(be, mg, 6);
 }
 
-TEST(AlfaBetaTrasictionMap, PerformanceTest_6_black)
-{
-    BoardEngine be;
-    players::common::move_generators::CachedMoveGeneratorMap mg;
-    be.applyMove(notations::coordinates::createMove("e2-e4", NOTATION::COLOR::color::white));
-    alfaBeta::evaluate(be, mg, 6);
-}
-
-TEST(AlfaBetaTrasictionMap, PerformanceTest_8)
-{
-    BoardEngine be;
-    players::common::move_generators::CachedMoveGeneratorMap mg;
-    alfaBeta::evaluate(be, mg, 8);
-}
-
-TEST(AlfaBetaTrasictionMap, PerformanceTest_8_killer)
-{
-    BoardEngine be;
-    players::common::move_generators::CachedMoveGeneratorMap mg;
-    alfaBeta::evaluate(be, mg, 2);
-    alfaBeta::evaluate(be, mg, 4);
-    alfaBeta::evaluate(be, mg, 6);
-    alfaBeta::evaluate(be, mg, 8);
-}
-
-/*
-TEST(AlfaBetaTrasictionMap, PerformanceTest_8_black)
+TEST(AlfaBetaPvs, PerformanceTest_6_black)
 {
     BoardEngine be;
     players::common::move_generators::CachedMoveGeneratorMap mg;
     be.applyMove(notations::coordinates::createMove("e2-e4", NOTATION::COLOR::color::white));
-    alfaBeta::evaluate(be, mg, 8);
+    alfaBetaPvs::evaluate(be, mg, 6);
 }
 
-TEST(AlfaBetaTrasictionMap, PerformanceTest_10)
+TEST(AlfaBetaPvs, PerformanceTest_8)
+{
+    BoardEngine be;
+    players::common::move_generators::CachedMoveGeneratorMap mg;
+    alfaBetaPvs::evaluate(be, mg, 8);
+}
+
+TEST(AlfaBetaPvs, PerformanceTest_8_killer)
+{
+    BoardEngine be;
+    players::common::move_generators::CachedMoveGeneratorMap mg;
+    alfaBetaPvs::evaluate(be, mg, 2);
+    alfaBetaPvs::evaluate(be, mg, 4);
+    alfaBetaPvs::evaluate(be, mg, 6);
+    alfaBetaPvs::evaluate(be, mg, 8);
+}
+
+TEST(AlfaBetaPvs, PerformanceTest_8_black)
+{
+    BoardEngine be;
+    players::common::move_generators::CachedMoveGeneratorMap mg;
+    be.applyMove(notations::coordinates::createMove("e2-e4", NOTATION::COLOR::color::white));
+    alfaBetaPvs::evaluate(be, mg, 8);
+}
+
+/*TEST(AlfaBetaTrasictionMap, PerformanceTest_10)
 {
     BoardEngine be;
     CachedMoveGeneratorMap mg;

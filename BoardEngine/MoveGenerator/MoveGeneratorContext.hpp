@@ -21,4 +21,4 @@ thread_local struct MoveContext{
     ExtendedMove kingMoves[11];
 } ctx;
 
-}
+}  // namespace MoveGenerator

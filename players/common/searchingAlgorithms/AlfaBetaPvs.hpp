@@ -69,10 +69,24 @@ int evaluateMax(BoardEngine& be,
 
     auto memorial = be.getMemorial();
     auto greatestMove = 0;
+    auto nextAlfa = -1000000;
+    auto pvFound = false;
+
     for (auto i = 0u; i < validMoves.size(); ++i)
     {
         be.applyMove(validMoves[i]);
-        auto nextAlfa = -evaluateMax(be, moveGenerator, depth - 1, color, -beta, -alfa);
+        if (pvFound)
+        {
+            nextAlfa = - evaluateMax(be, moveGenerator, depth - 1, color, -alfa - 1, -alfa);
+            if (nextAlfa > alfa && nextAlfa < beta)
+            {
+                nextAlfa = -evaluateMax(be, moveGenerator, depth - 1, color, -beta, -alfa);
+            }
+        }
+        else
+        {
+            nextAlfa = -evaluateMax(be, moveGenerator, depth - 1, color, -beta, -alfa);
+        }
         be.undoMove(memorial);
 
         if (beta <= nextAlfa)
@@ -82,6 +96,7 @@ int evaluateMax(BoardEngine& be,
         }
         if (nextAlfa > alfa)
         {
+            pvFound = true;
             greatestMove = i;
             alfa = nextAlfa;
         }
@@ -92,7 +107,7 @@ int evaluateMax(BoardEngine& be,
 
 }  // namespace
 
-namespace alfaBeta
+namespace alfaBetaPvs
 {
 
 template <typename TMoveGenerator>
@@ -106,15 +121,29 @@ Move evaluate(BoardEngine be, TMoveGenerator& moveGenerator, unsigned char depth
 
     auto playerOnMove = be.board.playerOnMove;
 
+    auto pvFound = false;
+    auto nextAlfa = -1000000;
     auto memorial = be.getMemorial();
     for (auto i = 0u; i < validMoves.size(); ++i)
     {
-        be.applyMove(validMoves[i]);                                           //-inf   +inf
-        auto nextAlfa = -evaluateMax(be, moveGenerator, depth - 1, playerOnMove, -beta, -alfa);
+        be.applyMove(validMoves[i]);
+        if (pvFound)
+        {
+            nextAlfa = - evaluateMax(be, moveGenerator, depth - 1, playerOnMove, -alfa - 1, -alfa);
+            if (nextAlfa > alfa && nextAlfa < beta)
+            {
+                nextAlfa = -evaluateMax(be, moveGenerator, depth - 1, playerOnMove, -beta, -alfa);
+            }
+        }
+        else
+        {
+            nextAlfa = -evaluateMax(be, moveGenerator, depth - 1, playerOnMove, -beta, -alfa);
+        }
         be.undoMove(memorial);
 
         if (nextAlfa > alfa)
         {
+            pvFound = true;
             alfa = nextAlfa;
             greatestMove = i;
         }
