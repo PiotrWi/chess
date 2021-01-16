@@ -1,7 +1,7 @@
 #include "CachedPlayer.hpp"
 #include <cstring>
 #include <notations/coordinationnotation.hpp>
-#include <common/searchingAlgorithms/AlfaBeta.hpp>
+#include <common/searchingAlgorithms/AlfaBetaPvs.hpp>
 
 void CachedPlayer::init(Color)
 {
@@ -13,13 +13,15 @@ const char* CachedPlayer::act(const char *string)
     {
         be.applyMove(notations::coordinates::createMove(string, be.board.playerOnMove));
     }
-
-    auto move = alfaBeta::evaluate(be, cmg_, 6);
+    alfaBetaPvs::evaluate(be, cmg_, 2);
+    alfaBetaPvs::evaluate(be, cmg_, 4);
+    alfaBetaPvs::evaluate(be, cmg_, 6);
+    auto move = alfaBetaPvs::evaluate(be, cmg_, 8);
     be.applyMove(move);
 
     cmg_ = {};
-    /*cmg_.makeOlder();
-    cmg_.clearOlderThan(3u);*/
+//    cmg_.makeOlder();
+//    cmg_.clearOlderThan(2u);
 
     strcpy(lastMove_, notations::coordinates::createMoveStr(move).data());
     return lastMove_;

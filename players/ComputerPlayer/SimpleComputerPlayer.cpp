@@ -2,7 +2,7 @@
 #include <cstring>
 #include <notations/coordinationnotation.hpp>
 #include <common/searchingAlgorithms/AlfaBeta.hpp>
-#include <common/MoveGenerators/MoveGenerator.hpp>
+#include <common/CachedEngines/MoveGenerator.hpp>
 
 void SimpleComputerPlayer::init(Color c)
 {

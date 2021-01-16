@@ -3,7 +3,7 @@
 #include <BoardEngine.hpp>
 #include <notations/coordinationnotation.hpp>
 #include <common/searchingAlgorithms/AlfaBeta.hpp>
-#include <common/MoveGenerators/MoveGenerator.hpp>
+#include <common/CachedEngines/MoveGenerator.hpp>
 
 players::common::move_generators::MoveGenerator mg;
 

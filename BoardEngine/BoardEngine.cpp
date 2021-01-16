@@ -31,6 +31,16 @@ Result BoardEngine::getResult(bool availableMoves)
     return resultEvaluator.evaluate(availableMoves);
 }
 
+bool BoardEngine::are3Repeatitions()
+{
+    return resultEvaluator.isDrawByRepeatitions();
+}
+
+Result BoardEngine::getREsultWithoutRepeatitionCheck(bool availableMoves) const
+{
+    return resultEvaluator.getResultNoRepeatitions(availableMoves);
+}
+
 unsigned BoardEngine::generateValidMoveCount() const
 {
     return MoveGenerator::MoveGenerator::getMoveCount(board);

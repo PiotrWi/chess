@@ -1,5 +1,6 @@
 #pragma once
 
+#include <iostream>
 #include <utility>
 #include <vector>
 #include <cassert>
@@ -42,11 +43,43 @@ public:
             table(1 << THashWidth, nullptr)
     {
     }
+
+    HashMap(const HashMap&) = delete;
+    HashMap& operator= (const HashMap& in) = delete;
+    HashMap& operator=(HashMap&& in)
+    {
+        clear();
+        this->table = in.table;
+        in.table = {};
+        return *this;
+    }
+    HashMap(HashMap&& in)
+    {
+        this->table = in.table;
+        in.table = {};
+    }
+
+    void clear()
+    {
+        for (auto*& elem : table)
+        {
+            if (elem != nullptr)
+            {
+                delete elem;
+                elem = nullptr;
+            }
+        }
+    }
+
     ~HashMap()
     {
-        for (auto* elem : table)
+        for (auto elem : table)
         {
-            delete elem;
+            if (elem != nullptr)
+            {
+                std::cout << "not Empty" << std::endl;
+                delete elem;
+            }
         }
     }
 
@@ -93,11 +126,31 @@ public:
         {
             if (node->key == key)
             {
+                node->age = 0;
                 return &(node->val);
             }
             node = node->next;
         }
         return nullptr;
+    }
+
+    bool getOrCreate(uint64_t hash, const TKey& key, TValue*& out)
+    {
+        auto index = hash & hashMask;
+        Node* node = table[index];
+        while (node != nullptr)
+        {
+            if (node->key == key)
+            {
+                node->age = 0;
+                out = &(node->val);
+                return false;
+            }
+            node = node->next;
+        }
+        table[index] = new Node{key, {}, table[index]};
+        out = &(table[index]->val);
+        return true;
     }
 
     TValue* store(uint64_t hash, const TKey& key, const TValue& val)

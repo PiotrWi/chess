@@ -2,7 +2,7 @@
 
 #include <BoardEngine.hpp>
 #include <notations/coordinationnotation.hpp>
-#include <common/MoveGenerators/CachedMoveGenerator.hpp>
+#include <common/CachedEngines/CachedMoveGenerator.hpp>
 #include <common/searchingAlgorithms/AlfaBeta.hpp>
 
 TEST(AlfaBetaTrasiction, PerformanceTest_2)

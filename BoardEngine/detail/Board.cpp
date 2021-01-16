@@ -5,6 +5,7 @@
 #include <ostream>
 #include <publicIf/NotationConversions.hpp>
 
+#include <cassert>
 ///////////////////////////////////
 // MOVE
 ///////////////////////////////////
@@ -18,13 +19,25 @@ Move::Move(unsigned char s, unsigned char d, bool isPromoted, unsigned char prom
 	: source(s)
 	, destination(d)
 	, isPromoted(isPromoted)
-	, promoteTo(promoteTo) {}
+	, promoteTo(promoteTo)
+{
+#ifdef ASSERTSON
+    assert(source < 64);
+    assert(destination < 64);
+#endif
+}
 
 Move::Move(const char* sourceStr, const char* destinationStr, bool isPromoted, unsigned char promoteTo) noexcept
 	: source(NotationConversions::getFieldNum(sourceStr))
 	, destination(NotationConversions::getFieldNum(destinationStr))
 	, isPromoted(isPromoted)
-	, promoteTo(promoteTo) {}
+	, promoteTo(promoteTo)
+{
+#ifdef ASSERTSON
+    assert(source < 64);
+    assert(destination < 64);
+#endif
+}
 
 bool operator==(const Move& lfs, const Move& rhs) noexcept
 {
@@ -71,7 +84,13 @@ ExtendedMove::ExtendedMove(unsigned char sourceIn,
     , flags(flagsIn)
     , promoting(promotingIn)
     , sourcePiece(sourcePieceIn)
-    , targetPiece(targetPieceIn) {}
+    , targetPiece(targetPieceIn)
+{
+#ifdef ASSERTSON
+    assert(source < 64);
+    assert(destination < 64);
+#endif
+}
 
 ExtendedMove ExtendedMove::whiteShortCaste()
 {
@@ -120,7 +139,10 @@ unsigned char& Board::operator[](const char* field) noexcept
 
 unsigned char& Board::operator[](const unsigned char field) noexcept
 {
-	return fields[field];
+#ifdef ASSERTSON
+    assert(field < 64);
+#endif
+    return fields[field];
 }
 
 const unsigned char& Board::operator[](const char* field) const noexcept
@@ -130,6 +152,9 @@ const unsigned char& Board::operator[](const char* field) const noexcept
 
 const unsigned char& Board::operator[](const unsigned char field) const noexcept
 {
+#ifdef ASSERTSON
+    assert(field < 64);
+#endif
 	return const_cast<Board&>(*this)[field];
 }
 

@@ -16,47 +16,34 @@ template <typename TMoveGenerator>
 int evaluateMax(BoardEngine& be,
                 TMoveGenerator& moveGenerator,
                 unsigned char depth,
-                NOTATION::COLOR::color color,
                 int alfa,
                 int beta);
 
 template <typename TMoveGenerator>
 int evaluatePosition(BoardEngine& be,
-                     TMoveGenerator& moveGenerator,
-                     NOTATION::COLOR::color color)
+                     TMoveGenerator& moveGenerator)
 {
-    auto validMoves = moveGenerator.generate(be);
-    auto gameResult = be.getResult(not validMoves.empty());
-    if(gameResult == Result::draw)
+    if(be.are3Repeatitions())
     {
         return 0;
     }
 
-    if ((gameResult == Result::whiteWon) | (gameResult == Result::blackWon))
-    {
-        return -10000000;
-    }
-
-    auto oponentValidMoves = moveGenerator.generate(be, (be.board.playerOnMove + 1));
-
-    return materialEvaluator::evaluate(be.board, color) + moveCountEvaluator::evaluate(validMoves.size(),
-                                                                                       oponentValidMoves.size());
+    return moveGenerator.getEvaluationValue(be);
 }
 
 template <typename TMoveGenerator>
 int evaluateMax(BoardEngine& be,
                 TMoveGenerator& moveGenerator,
                 unsigned char depth,
-                NOTATION::COLOR::color color,
                 int alfa,
                 int beta)
 {
     if (depth == 0)
     {
-        return evaluatePosition(be, moveGenerator, color);
+        return evaluatePosition(be, moveGenerator);
     }
 
-    auto validMoves = moveGenerator.generate(be);
+    auto validMoves = moveGenerator.generate(be, depth);
     auto gameResult = be.getResult(not validMoves.empty());
     if(gameResult == Result::draw)
     {
@@ -72,12 +59,12 @@ int evaluateMax(BoardEngine& be,
     for (auto i = 0u; i < validMoves.size(); ++i)
     {
         be.applyMove(validMoves[i]);
-        auto nextAlfa = -evaluateMax(be, moveGenerator, depth - 1, color, -beta, -alfa);
+        auto nextAlfa = -evaluateMax(be, moveGenerator, depth - 1, -beta, -alfa);
         be.undoMove(memorial);
 
         if (beta <= nextAlfa)
         {
-            moveGenerator.setKillerMove(be, i);
+            moveGenerator.setKillerMove(be, i, depth);
             return beta;
         }
         if (nextAlfa > alfa)
@@ -86,7 +73,7 @@ int evaluateMax(BoardEngine& be,
             alfa = nextAlfa;
         }
     }
-    moveGenerator.setKillerMove(be, greatestMove);
+    moveGenerator.setKillerMove(be, greatestMove, depth);
     return alfa;
 }
 
@@ -98,19 +85,17 @@ namespace alfaBeta
 template <typename TMoveGenerator>
 Move evaluate(BoardEngine be, TMoveGenerator& moveGenerator, unsigned char depth)
 {
-    auto validMoves = moveGenerator.generate(be);
+    auto validMoves = moveGenerator.generate(be, depth);
     auto greatestMove = 0u;
 
     int alfa = -10000000;
     int beta = 10000000;
 
-    auto playerOnMove = be.board.playerOnMove;
-
     auto memorial = be.getMemorial();
     for (auto i = 0u; i < validMoves.size(); ++i)
     {
-        be.applyMove(validMoves[i]);                                           //-inf   +inf
-        auto nextAlfa = -evaluateMax(be, moveGenerator, depth - 1, playerOnMove, -beta, -alfa);
+        be.applyMove(validMoves[i]);
+        auto nextAlfa = -evaluateMax(be, moveGenerator, depth - 1, -beta, -alfa);
         be.undoMove(memorial);
 
         if (nextAlfa > alfa)

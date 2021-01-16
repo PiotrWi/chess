@@ -14,11 +14,11 @@ add_library(Players
         common/searchingAlgorithms/AlfaBeta.hpp
         common/evaluators/MoveCountEvaluator.cpp
         common/containers/HashTable.hpp
-        common/MoveGenerators/CachedMoveGenerator.hpp
-        common/MoveGenerators/CachedMoveGenerator.cpp
+        common/CachedEngines/CachedMoveGenerator.hpp
+        common/CachedEngines/CachedMoveGenerator.cpp
         common/containers/HashMap.hpp
-        common/MoveGenerators/CachedMoveGeneratorMap.cpp
-        common/MoveGenerators/CachedMoveGeneratorMap.hpp
-        common/MoveGenerators/MoveGenerator.hpp common/MoveGenerators/MoveGenerator.cpp ComputerPlayer/CachedPlayer.cpp ComputerPlayer/CachedPlayer.hpp common/searchingAlgorithms/AlfaBetaPvs.hpp)
+        common/CachedEngines/CachedEngineWithMap.cpp
+        common/CachedEngines/CachedEngineWithMap.hpp
+        common/CachedEngines/MoveGenerator.hpp common/CachedEngines/MoveGenerator.cpp ComputerPlayer/CachedPlayer.cpp ComputerPlayer/CachedPlayer.hpp common/searchingAlgorithms/AlfaBetaPvs.hpp common/evaluators/MaterialAndMoveCountEvaluator.hpp)
 
 target_link_libraries(Players board)

@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-
+#include <utility>
 #include <common/containers/HashMap.hpp>
 
 TEST(HashMapShall, beCreated)
@@ -23,5 +23,8 @@ TEST(HashMapShall, beCreated)
     hashMap.store(hash, anotherKey, anotherValue);
     ASSERT_EQ(*hashMap.get(hash, key), value);
     ASSERT_EQ(*hashMap.get(hash, anotherKey), anotherValue);
-    hashMap.removeOlderThan(3);
+    // hashMap.removeOlderThan(3);
+    hashMap = std::move(containers::HashMap<int, unsigned  long, 5u>());
+    std::cout << "lock" << std::endl;
+
 }
