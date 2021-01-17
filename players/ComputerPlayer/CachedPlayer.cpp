@@ -13,15 +13,10 @@ const char* CachedPlayer::act(const char *string)
     {
         be.applyMove(notations::coordinates::createMove(string, be.board.playerOnMove));
     }
-    alfaBetaPvs::evaluate(be, cmg_, 2);
-    alfaBetaPvs::evaluate(be, cmg_, 4);
-    alfaBetaPvs::evaluate(be, cmg_, 6);
-    auto move = alfaBetaPvs::evaluate(be, cmg_, 8);
+    auto move = alfaBetaPvs::evaluateIterative(be, cmg_, 8);
     be.applyMove(move);
 
     cmg_ = {};
-//    cmg_.makeOlder();
-//    cmg_.clearOlderThan(2u);
 
     strcpy(lastMove_, notations::coordinates::createMoveStr(move).data());
     return lastMove_;

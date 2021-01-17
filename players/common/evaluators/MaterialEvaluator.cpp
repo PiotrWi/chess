@@ -27,14 +27,14 @@ static int mapToValue(unsigned char field)
 namespace materialEvaluator
 {
 
-int evaluate(const Board &board, NOTATION::COLOR::color c)
+int evaluate(const Board &board, NOTATION::COLOR::color playerOnMove)
 {
     int value = 0;
     for (const auto field : board.fields)
     {
         value += mapToValue(field);
     }
-    if (c == NOTATION::COLOR::color::black)
+    if (playerOnMove == NOTATION::COLOR::color::black)
         return -1 * value;
     return value;
 }

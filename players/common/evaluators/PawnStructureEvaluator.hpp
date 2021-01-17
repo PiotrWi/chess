@@ -3,7 +3,7 @@
 #include <publicIf/Board.hpp>
 #include <publicIf/Notation.hpp>
 
-namespace materialEvaluator
+namespace pawnStructureEvaluator
 {
 
 int evaluate(const Board &, NOTATION::COLOR::color playerOnMove);

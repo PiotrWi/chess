@@ -7,7 +7,7 @@ namespace
 {
 
 std::map<unsigned char, const char*> symbolToPieceMapping = {
-	std::make_pair(0u, " "),
+	std::make_pair(0u, "."),
 	std::make_pair(NOTATION::COLOR::BLACK | NOTATION::PIECES::ROCK, "♜"),
 	std::make_pair(NOTATION::COLOR::BLACK | NOTATION::PIECES::KNIGHT, "♞"),
 	std::make_pair(NOTATION::COLOR::BLACK | NOTATION::PIECES::BISHOP, "♝"),
@@ -30,9 +30,10 @@ std::ostream& operator<<(std::ostream& os, const Board& board) noexcept
 	{
 		for (auto col = 0; col < 8; ++col)
 		{
-			os << symbolToPieceMapping[(board[row+col])];
+			os << symbolToPieceMapping[(board[row+col])] << " ";
 		}
 		os << std::endl;
+        os << std::endl;
 	}
 	return os;
 }

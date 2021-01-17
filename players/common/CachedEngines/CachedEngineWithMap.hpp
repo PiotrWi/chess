@@ -36,13 +36,22 @@ struct CacheEntity
      *    - Precondition: KillerMoves {depth = d, killerInNode = -1, returnedKiller = 0, returnedFromDifferentNode = f}
      *    - State before moves are return: {depth = d, killerInNode = 0, returnedKiller = X, returnedFromDifferentNode = t}
      *    - Move order is: {#K, #0, .... #{K-1}, #{K-1}, #{N-1}}
-
      */
     struct KillerMoves
     {
         signed char killerInNode = -1;
         signed char returnedKiller = -1;
         bool returnedFromDifferentNode = false;
+    };
+
+    /**
+     *
+     */
+    struct PreviousEvaluations
+    {
+        bool betaCutOff;
+        bool alfaCutOff;
+        int evaluationValue;
     };
     std::vector<ExtendedMove> precalculatedMoves;
     KillerMoves killers[10]{{-1, -1, false},

@@ -77,7 +77,6 @@ public:
         {
             if (elem != nullptr)
             {
-                std::cout << "not Empty" << std::endl;
                 delete elem;
             }
         }

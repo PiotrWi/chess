@@ -12,6 +12,8 @@
 namespace
 {
 
+ExtendedMove bestMove;
+
 template <typename TMoveGenerator>
 int evaluatePosition(BoardEngine& be,
                      TMoveGenerator& moveGenerator)
@@ -24,7 +26,7 @@ int evaluatePosition(BoardEngine& be,
     return moveGenerator.getEvaluationValue(be) ;
 }
 
-template <typename TMoveGenerator>
+template <typename TMoveGenerator, bool SaveMove>
 int evaluateMax(BoardEngine& be,
                 TMoveGenerator& moveGenerator,
                 unsigned char depth,
@@ -57,21 +59,22 @@ int evaluateMax(BoardEngine& be,
         be.applyMove(validMoves[i]);
         if (pvFound)
         {
-            nextAlfa = - evaluateMax(be, moveGenerator, depth - 1, -alfa - 1, -alfa);
+            nextAlfa = - evaluateMax<TMoveGenerator, false>(be, moveGenerator, depth - 1, -alfa - 1, -alfa);
             if (nextAlfa > alfa && nextAlfa < beta)
             {
-                nextAlfa = -evaluateMax(be, moveGenerator, depth - 1, -beta, -alfa);
+                nextAlfa = -evaluateMax<TMoveGenerator, false>(be, moveGenerator, depth - 1, -beta, -alfa);
             }
         }
         else
         {
-            nextAlfa = -evaluateMax(be, moveGenerator, depth - 1, -beta, -alfa);
+            nextAlfa = -evaluateMax<TMoveGenerator, false>(be, moveGenerator, depth - 1, -beta, -alfa);
         }
         be.undoMove(memorial);
 
         if (beta <= nextAlfa)
         {
             moveGenerator.setKillerMove(be, i, depth);
+            if (SaveMove) bestMove = validMoves[i];
             return beta;
         }
         if (nextAlfa > alfa)
@@ -82,6 +85,7 @@ int evaluateMax(BoardEngine& be,
         }
     }
     moveGenerator.setKillerMove(be, greatestMove, depth);
+    if (SaveMove) bestMove = validMoves[greatestMove];
     return alfa;
 }
 
@@ -93,40 +97,50 @@ namespace alfaBetaPvs
 template <typename TMoveGenerator>
 Move evaluate(BoardEngine be, TMoveGenerator& moveGenerator, unsigned char depth)
 {
-    auto validMoves = moveGenerator.generate(be, depth);
-    auto greatestMove = 0u;
-
     int alfa = -10000000;
     int beta = 10000000;
 
-    auto pvFound = false;
-    auto nextAlfa = -1000000;
-    auto memorial = be.getMemorial();
-    for (auto i = 0u; i < validMoves.size(); ++i)
-    {
-        be.applyMove(validMoves[i]);
-        if (pvFound)
-        {
-            nextAlfa = - evaluateMax(be, moveGenerator, depth - 1, -alfa - 1, -alfa);
-            if (nextAlfa > alfa && nextAlfa < beta)
-            {
-                nextAlfa = -evaluateMax(be, moveGenerator, depth - 1, -beta, -alfa);
-            }
-        }
-        else
-        {
-            nextAlfa = -evaluateMax(be, moveGenerator, depth - 1, -beta, -alfa);
-        }
-        be.undoMove(memorial);
+    evaluateMax<TMoveGenerator, true>(be, moveGenerator, depth, alfa, beta);
+    return bestMove;
+}
 
-        if (nextAlfa > alfa)
+
+
+constexpr auto mateValue = 10000000;
+constexpr auto InitialAlpha = -mateValue - 1;
+constexpr auto InitialBeta = mateValue + 1;
+
+/**
+ * @brief
+ * NOTE: Currently only even depth are supported. Horizont effect shall be lower for these.
+ */
+template <typename TMoveGenerator>
+Move evaluateIterative(BoardEngine be, TMoveGenerator& moveGenerator, unsigned char maxDepth)
+{
+    int alpha = InitialAlpha;
+    int beta = InitialBeta;
+
+    for (auto depth = 2u; depth <= maxDepth; depth+=2)
+    {
+        auto val = evaluateMax<TMoveGenerator, true>(be, moveGenerator, depth, alpha, beta);
+        if (val <= alpha)
         {
-            pvFound = true;
-            alfa = nextAlfa;
-            greatestMove = i;
+            val = evaluateMax<TMoveGenerator, true>(be, moveGenerator, depth, InitialAlpha, alpha + 1);
+#ifdef ASSERTSON
+            assert(val < alpha + 1);
+#endif
         }
+        else if (val >= beta)
+        {
+            val = evaluateMax<TMoveGenerator, true>(be, moveGenerator, depth, beta - 1, InitialBeta);
+#ifdef ASSERTSON
+            assert(val > beta - 1);
+#endif
+        }
+        alpha = val - 100;
+        beta = val + 100;
     }
-    return validMoves[greatestMove];
+    return bestMove;
 }
 
 }  // namespace alfaBeta
