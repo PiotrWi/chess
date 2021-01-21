@@ -106,6 +106,7 @@ std::vector<char> createMoveStr(const ExtendedMove& move)
         out.push_back(pieceToLiteral(move.promoting));
     }
 
+    out.push_back('\0');
     return out;
 }
 

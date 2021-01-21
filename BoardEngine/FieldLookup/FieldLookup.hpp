@@ -42,9 +42,13 @@ struct FieldLookup
 
     static constexpr unsigned char BottomRightPossibleMovesSize = 0u;
     static constexpr unsigned char BottomRightPossibleMoves[1] = {};
+
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 0;
+    static constexpr unsigned char PawnAttackCandidates[1] = {};
 };template <>
-struct FieldLookup<NOTATION::COLOR::color::white, 0>
-{
+struct FieldLookup<NOTATION::COLOR::color::white, 0>{
     static constexpr unsigned char OppositePawnPositionsSize = 1;
     static constexpr unsigned char OppositePawnPositions[1] = {9};
     static constexpr unsigned char KingPossibleMovesSize = 3;
@@ -67,10 +71,13 @@ struct FieldLookup<NOTATION::COLOR::color::white, 0>
     static constexpr unsigned char LeftPossibleMoves[1] = {};
     static constexpr unsigned char RightPossibleMovesSize = 7;
     static constexpr unsigned char RightPossibleMoves[7] = {1, 2, 3, 4, 5, 6, 7};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 0;
+    static constexpr unsigned char PawnAttackCandidates[1] = {};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::white, 1>
-{
+struct FieldLookup<NOTATION::COLOR::color::white, 1>{
     static constexpr unsigned char OppositePawnPositionsSize = 2;
     static constexpr unsigned char OppositePawnPositions[2] = {8, 10};
     static constexpr unsigned char KingPossibleMovesSize = 5;
@@ -93,10 +100,13 @@ struct FieldLookup<NOTATION::COLOR::color::white, 1>
     static constexpr unsigned char LeftPossibleMoves[1] = {0};
     static constexpr unsigned char RightPossibleMovesSize = 6;
     static constexpr unsigned char RightPossibleMoves[6] = {2, 3, 4, 5, 6, 7};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 0;
+    static constexpr unsigned char PawnAttackCandidates[1] = {};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::white, 2>
-{
+struct FieldLookup<NOTATION::COLOR::color::white, 2>{
     static constexpr unsigned char OppositePawnPositionsSize = 2;
     static constexpr unsigned char OppositePawnPositions[2] = {9, 11};
     static constexpr unsigned char KingPossibleMovesSize = 5;
@@ -119,10 +129,13 @@ struct FieldLookup<NOTATION::COLOR::color::white, 2>
     static constexpr unsigned char LeftPossibleMoves[2] = {1, 0};
     static constexpr unsigned char RightPossibleMovesSize = 5;
     static constexpr unsigned char RightPossibleMoves[5] = {3, 4, 5, 6, 7};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 0;
+    static constexpr unsigned char PawnAttackCandidates[1] = {};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::white, 3>
-{
+struct FieldLookup<NOTATION::COLOR::color::white, 3>{
     static constexpr unsigned char OppositePawnPositionsSize = 2;
     static constexpr unsigned char OppositePawnPositions[2] = {10, 12};
     static constexpr unsigned char KingPossibleMovesSize = 5;
@@ -145,10 +158,13 @@ struct FieldLookup<NOTATION::COLOR::color::white, 3>
     static constexpr unsigned char LeftPossibleMoves[3] = {2, 1, 0};
     static constexpr unsigned char RightPossibleMovesSize = 4;
     static constexpr unsigned char RightPossibleMoves[4] = {4, 5, 6, 7};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 0;
+    static constexpr unsigned char PawnAttackCandidates[1] = {};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::white, 4>
-{
+struct FieldLookup<NOTATION::COLOR::color::white, 4>{
     static constexpr unsigned char OppositePawnPositionsSize = 2;
     static constexpr unsigned char OppositePawnPositions[2] = {11, 13};
     static constexpr unsigned char KingPossibleMovesSize = 5;
@@ -171,10 +187,13 @@ struct FieldLookup<NOTATION::COLOR::color::white, 4>
     static constexpr unsigned char LeftPossibleMoves[4] = {3, 2, 1, 0};
     static constexpr unsigned char RightPossibleMovesSize = 3;
     static constexpr unsigned char RightPossibleMoves[3] = {5, 6, 7};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 0;
+    static constexpr unsigned char PawnAttackCandidates[1] = {};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::white, 5>
-{
+struct FieldLookup<NOTATION::COLOR::color::white, 5>{
     static constexpr unsigned char OppositePawnPositionsSize = 2;
     static constexpr unsigned char OppositePawnPositions[2] = {12, 14};
     static constexpr unsigned char KingPossibleMovesSize = 5;
@@ -197,10 +216,13 @@ struct FieldLookup<NOTATION::COLOR::color::white, 5>
     static constexpr unsigned char LeftPossibleMoves[5] = {4, 3, 2, 1, 0};
     static constexpr unsigned char RightPossibleMovesSize = 2;
     static constexpr unsigned char RightPossibleMoves[2] = {6, 7};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 0;
+    static constexpr unsigned char PawnAttackCandidates[1] = {};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::white, 6>
-{
+struct FieldLookup<NOTATION::COLOR::color::white, 6>{
     static constexpr unsigned char OppositePawnPositionsSize = 2;
     static constexpr unsigned char OppositePawnPositions[2] = {13, 15};
     static constexpr unsigned char KingPossibleMovesSize = 5;
@@ -223,10 +245,13 @@ struct FieldLookup<NOTATION::COLOR::color::white, 6>
     static constexpr unsigned char LeftPossibleMoves[6] = {5, 4, 3, 2, 1, 0};
     static constexpr unsigned char RightPossibleMovesSize = 1;
     static constexpr unsigned char RightPossibleMoves[1] = {7};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 0;
+    static constexpr unsigned char PawnAttackCandidates[1] = {};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::white, 7>
-{
+struct FieldLookup<NOTATION::COLOR::color::white, 7>{
     static constexpr unsigned char OppositePawnPositionsSize = 1;
     static constexpr unsigned char OppositePawnPositions[1] = {14};
     static constexpr unsigned char KingPossibleMovesSize = 3;
@@ -249,10 +274,13 @@ struct FieldLookup<NOTATION::COLOR::color::white, 7>
     static constexpr unsigned char LeftPossibleMoves[7] = {6, 5, 4, 3, 2, 1, 0};
     static constexpr unsigned char RightPossibleMovesSize = 0;
     static constexpr unsigned char RightPossibleMoves[1] = {};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 0;
+    static constexpr unsigned char PawnAttackCandidates[1] = {};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::white, 8>
-{
+struct FieldLookup<NOTATION::COLOR::color::white, 8>{
     static constexpr unsigned char OppositePawnPositionsSize = 1;
     static constexpr unsigned char OppositePawnPositions[1] = {17};
     static constexpr unsigned char KingPossibleMovesSize = 5;
@@ -275,10 +303,13 @@ struct FieldLookup<NOTATION::COLOR::color::white, 8>
     static constexpr unsigned char LeftPossibleMoves[1] = {};
     static constexpr unsigned char RightPossibleMovesSize = 7;
     static constexpr unsigned char RightPossibleMoves[7] = {9, 10, 11, 12, 13, 14, 15};
+    static constexpr bool CanPawnMove2Fields = true;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 1;
+    static constexpr unsigned char PawnAttackCandidates[1] = {17};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::white, 9>
-{
+struct FieldLookup<NOTATION::COLOR::color::white, 9>{
     static constexpr unsigned char OppositePawnPositionsSize = 2;
     static constexpr unsigned char OppositePawnPositions[2] = {16, 18};
     static constexpr unsigned char KingPossibleMovesSize = 8;
@@ -301,10 +332,13 @@ struct FieldLookup<NOTATION::COLOR::color::white, 9>
     static constexpr unsigned char LeftPossibleMoves[1] = {8};
     static constexpr unsigned char RightPossibleMovesSize = 6;
     static constexpr unsigned char RightPossibleMoves[6] = {10, 11, 12, 13, 14, 15};
+    static constexpr bool CanPawnMove2Fields = true;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 2;
+    static constexpr unsigned char PawnAttackCandidates[2] = {16, 18};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::white, 10>
-{
+struct FieldLookup<NOTATION::COLOR::color::white, 10>{
     static constexpr unsigned char OppositePawnPositionsSize = 2;
     static constexpr unsigned char OppositePawnPositions[2] = {17, 19};
     static constexpr unsigned char KingPossibleMovesSize = 8;
@@ -327,10 +361,13 @@ struct FieldLookup<NOTATION::COLOR::color::white, 10>
     static constexpr unsigned char LeftPossibleMoves[2] = {9, 8};
     static constexpr unsigned char RightPossibleMovesSize = 5;
     static constexpr unsigned char RightPossibleMoves[5] = {11, 12, 13, 14, 15};
+    static constexpr bool CanPawnMove2Fields = true;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 2;
+    static constexpr unsigned char PawnAttackCandidates[2] = {17, 19};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::white, 11>
-{
+struct FieldLookup<NOTATION::COLOR::color::white, 11>{
     static constexpr unsigned char OppositePawnPositionsSize = 2;
     static constexpr unsigned char OppositePawnPositions[2] = {18, 20};
     static constexpr unsigned char KingPossibleMovesSize = 8;
@@ -353,10 +390,13 @@ struct FieldLookup<NOTATION::COLOR::color::white, 11>
     static constexpr unsigned char LeftPossibleMoves[3] = {10, 9, 8};
     static constexpr unsigned char RightPossibleMovesSize = 4;
     static constexpr unsigned char RightPossibleMoves[4] = {12, 13, 14, 15};
+    static constexpr bool CanPawnMove2Fields = true;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 2;
+    static constexpr unsigned char PawnAttackCandidates[2] = {18, 20};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::white, 12>
-{
+struct FieldLookup<NOTATION::COLOR::color::white, 12>{
     static constexpr unsigned char OppositePawnPositionsSize = 2;
     static constexpr unsigned char OppositePawnPositions[2] = {19, 21};
     static constexpr unsigned char KingPossibleMovesSize = 8;
@@ -379,10 +419,13 @@ struct FieldLookup<NOTATION::COLOR::color::white, 12>
     static constexpr unsigned char LeftPossibleMoves[4] = {11, 10, 9, 8};
     static constexpr unsigned char RightPossibleMovesSize = 3;
     static constexpr unsigned char RightPossibleMoves[3] = {13, 14, 15};
+    static constexpr bool CanPawnMove2Fields = true;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 2;
+    static constexpr unsigned char PawnAttackCandidates[2] = {19, 21};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::white, 13>
-{
+struct FieldLookup<NOTATION::COLOR::color::white, 13>{
     static constexpr unsigned char OppositePawnPositionsSize = 2;
     static constexpr unsigned char OppositePawnPositions[2] = {20, 22};
     static constexpr unsigned char KingPossibleMovesSize = 8;
@@ -405,10 +448,13 @@ struct FieldLookup<NOTATION::COLOR::color::white, 13>
     static constexpr unsigned char LeftPossibleMoves[5] = {12, 11, 10, 9, 8};
     static constexpr unsigned char RightPossibleMovesSize = 2;
     static constexpr unsigned char RightPossibleMoves[2] = {14, 15};
+    static constexpr bool CanPawnMove2Fields = true;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 2;
+    static constexpr unsigned char PawnAttackCandidates[2] = {20, 22};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::white, 14>
-{
+struct FieldLookup<NOTATION::COLOR::color::white, 14>{
     static constexpr unsigned char OppositePawnPositionsSize = 2;
     static constexpr unsigned char OppositePawnPositions[2] = {21, 23};
     static constexpr unsigned char KingPossibleMovesSize = 8;
@@ -431,10 +477,13 @@ struct FieldLookup<NOTATION::COLOR::color::white, 14>
     static constexpr unsigned char LeftPossibleMoves[6] = {13, 12, 11, 10, 9, 8};
     static constexpr unsigned char RightPossibleMovesSize = 1;
     static constexpr unsigned char RightPossibleMoves[1] = {15};
+    static constexpr bool CanPawnMove2Fields = true;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 2;
+    static constexpr unsigned char PawnAttackCandidates[2] = {21, 23};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::white, 15>
-{
+struct FieldLookup<NOTATION::COLOR::color::white, 15>{
     static constexpr unsigned char OppositePawnPositionsSize = 1;
     static constexpr unsigned char OppositePawnPositions[1] = {22};
     static constexpr unsigned char KingPossibleMovesSize = 5;
@@ -457,10 +506,13 @@ struct FieldLookup<NOTATION::COLOR::color::white, 15>
     static constexpr unsigned char LeftPossibleMoves[7] = {14, 13, 12, 11, 10, 9, 8};
     static constexpr unsigned char RightPossibleMovesSize = 0;
     static constexpr unsigned char RightPossibleMoves[1] = {};
+    static constexpr bool CanPawnMove2Fields = true;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 1;
+    static constexpr unsigned char PawnAttackCandidates[1] = {22};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::white, 16>
-{
+struct FieldLookup<NOTATION::COLOR::color::white, 16>{
     static constexpr unsigned char OppositePawnPositionsSize = 1;
     static constexpr unsigned char OppositePawnPositions[1] = {25};
     static constexpr unsigned char KingPossibleMovesSize = 5;
@@ -483,10 +535,13 @@ struct FieldLookup<NOTATION::COLOR::color::white, 16>
     static constexpr unsigned char LeftPossibleMoves[1] = {};
     static constexpr unsigned char RightPossibleMovesSize = 7;
     static constexpr unsigned char RightPossibleMoves[7] = {17, 18, 19, 20, 21, 22, 23};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 1;
+    static constexpr unsigned char PawnAttackCandidates[1] = {25};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::white, 17>
-{
+struct FieldLookup<NOTATION::COLOR::color::white, 17>{
     static constexpr unsigned char OppositePawnPositionsSize = 2;
     static constexpr unsigned char OppositePawnPositions[2] = {24, 26};
     static constexpr unsigned char KingPossibleMovesSize = 8;
@@ -509,10 +564,13 @@ struct FieldLookup<NOTATION::COLOR::color::white, 17>
     static constexpr unsigned char LeftPossibleMoves[1] = {16};
     static constexpr unsigned char RightPossibleMovesSize = 6;
     static constexpr unsigned char RightPossibleMoves[6] = {18, 19, 20, 21, 22, 23};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 2;
+    static constexpr unsigned char PawnAttackCandidates[2] = {24, 26};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::white, 18>
-{
+struct FieldLookup<NOTATION::COLOR::color::white, 18>{
     static constexpr unsigned char OppositePawnPositionsSize = 2;
     static constexpr unsigned char OppositePawnPositions[2] = {25, 27};
     static constexpr unsigned char KingPossibleMovesSize = 8;
@@ -535,10 +593,13 @@ struct FieldLookup<NOTATION::COLOR::color::white, 18>
     static constexpr unsigned char LeftPossibleMoves[2] = {17, 16};
     static constexpr unsigned char RightPossibleMovesSize = 5;
     static constexpr unsigned char RightPossibleMoves[5] = {19, 20, 21, 22, 23};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 2;
+    static constexpr unsigned char PawnAttackCandidates[2] = {25, 27};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::white, 19>
-{
+struct FieldLookup<NOTATION::COLOR::color::white, 19>{
     static constexpr unsigned char OppositePawnPositionsSize = 2;
     static constexpr unsigned char OppositePawnPositions[2] = {26, 28};
     static constexpr unsigned char KingPossibleMovesSize = 8;
@@ -561,10 +622,13 @@ struct FieldLookup<NOTATION::COLOR::color::white, 19>
     static constexpr unsigned char LeftPossibleMoves[3] = {18, 17, 16};
     static constexpr unsigned char RightPossibleMovesSize = 4;
     static constexpr unsigned char RightPossibleMoves[4] = {20, 21, 22, 23};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 2;
+    static constexpr unsigned char PawnAttackCandidates[2] = {26, 28};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::white, 20>
-{
+struct FieldLookup<NOTATION::COLOR::color::white, 20>{
     static constexpr unsigned char OppositePawnPositionsSize = 2;
     static constexpr unsigned char OppositePawnPositions[2] = {27, 29};
     static constexpr unsigned char KingPossibleMovesSize = 8;
@@ -587,10 +651,13 @@ struct FieldLookup<NOTATION::COLOR::color::white, 20>
     static constexpr unsigned char LeftPossibleMoves[4] = {19, 18, 17, 16};
     static constexpr unsigned char RightPossibleMovesSize = 3;
     static constexpr unsigned char RightPossibleMoves[3] = {21, 22, 23};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 2;
+    static constexpr unsigned char PawnAttackCandidates[2] = {27, 29};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::white, 21>
-{
+struct FieldLookup<NOTATION::COLOR::color::white, 21>{
     static constexpr unsigned char OppositePawnPositionsSize = 2;
     static constexpr unsigned char OppositePawnPositions[2] = {28, 30};
     static constexpr unsigned char KingPossibleMovesSize = 8;
@@ -613,10 +680,13 @@ struct FieldLookup<NOTATION::COLOR::color::white, 21>
     static constexpr unsigned char LeftPossibleMoves[5] = {20, 19, 18, 17, 16};
     static constexpr unsigned char RightPossibleMovesSize = 2;
     static constexpr unsigned char RightPossibleMoves[2] = {22, 23};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 2;
+    static constexpr unsigned char PawnAttackCandidates[2] = {28, 30};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::white, 22>
-{
+struct FieldLookup<NOTATION::COLOR::color::white, 22>{
     static constexpr unsigned char OppositePawnPositionsSize = 2;
     static constexpr unsigned char OppositePawnPositions[2] = {29, 31};
     static constexpr unsigned char KingPossibleMovesSize = 8;
@@ -639,10 +709,13 @@ struct FieldLookup<NOTATION::COLOR::color::white, 22>
     static constexpr unsigned char LeftPossibleMoves[6] = {21, 20, 19, 18, 17, 16};
     static constexpr unsigned char RightPossibleMovesSize = 1;
     static constexpr unsigned char RightPossibleMoves[1] = {23};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 2;
+    static constexpr unsigned char PawnAttackCandidates[2] = {29, 31};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::white, 23>
-{
+struct FieldLookup<NOTATION::COLOR::color::white, 23>{
     static constexpr unsigned char OppositePawnPositionsSize = 1;
     static constexpr unsigned char OppositePawnPositions[1] = {30};
     static constexpr unsigned char KingPossibleMovesSize = 5;
@@ -665,10 +738,13 @@ struct FieldLookup<NOTATION::COLOR::color::white, 23>
     static constexpr unsigned char LeftPossibleMoves[7] = {22, 21, 20, 19, 18, 17, 16};
     static constexpr unsigned char RightPossibleMovesSize = 0;
     static constexpr unsigned char RightPossibleMoves[1] = {};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 1;
+    static constexpr unsigned char PawnAttackCandidates[1] = {30};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::white, 24>
-{
+struct FieldLookup<NOTATION::COLOR::color::white, 24>{
     static constexpr unsigned char OppositePawnPositionsSize = 1;
     static constexpr unsigned char OppositePawnPositions[1] = {33};
     static constexpr unsigned char KingPossibleMovesSize = 5;
@@ -691,10 +767,13 @@ struct FieldLookup<NOTATION::COLOR::color::white, 24>
     static constexpr unsigned char LeftPossibleMoves[1] = {};
     static constexpr unsigned char RightPossibleMovesSize = 7;
     static constexpr unsigned char RightPossibleMoves[7] = {25, 26, 27, 28, 29, 30, 31};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 1;
+    static constexpr unsigned char PawnAttackCandidates[1] = {33};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::white, 25>
-{
+struct FieldLookup<NOTATION::COLOR::color::white, 25>{
     static constexpr unsigned char OppositePawnPositionsSize = 2;
     static constexpr unsigned char OppositePawnPositions[2] = {32, 34};
     static constexpr unsigned char KingPossibleMovesSize = 8;
@@ -717,10 +796,13 @@ struct FieldLookup<NOTATION::COLOR::color::white, 25>
     static constexpr unsigned char LeftPossibleMoves[1] = {24};
     static constexpr unsigned char RightPossibleMovesSize = 6;
     static constexpr unsigned char RightPossibleMoves[6] = {26, 27, 28, 29, 30, 31};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 2;
+    static constexpr unsigned char PawnAttackCandidates[2] = {32, 34};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::white, 26>
-{
+struct FieldLookup<NOTATION::COLOR::color::white, 26>{
     static constexpr unsigned char OppositePawnPositionsSize = 2;
     static constexpr unsigned char OppositePawnPositions[2] = {33, 35};
     static constexpr unsigned char KingPossibleMovesSize = 8;
@@ -743,10 +825,13 @@ struct FieldLookup<NOTATION::COLOR::color::white, 26>
     static constexpr unsigned char LeftPossibleMoves[2] = {25, 24};
     static constexpr unsigned char RightPossibleMovesSize = 5;
     static constexpr unsigned char RightPossibleMoves[5] = {27, 28, 29, 30, 31};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 2;
+    static constexpr unsigned char PawnAttackCandidates[2] = {33, 35};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::white, 27>
-{
+struct FieldLookup<NOTATION::COLOR::color::white, 27>{
     static constexpr unsigned char OppositePawnPositionsSize = 2;
     static constexpr unsigned char OppositePawnPositions[2] = {34, 36};
     static constexpr unsigned char KingPossibleMovesSize = 8;
@@ -769,10 +854,13 @@ struct FieldLookup<NOTATION::COLOR::color::white, 27>
     static constexpr unsigned char LeftPossibleMoves[3] = {26, 25, 24};
     static constexpr unsigned char RightPossibleMovesSize = 4;
     static constexpr unsigned char RightPossibleMoves[4] = {28, 29, 30, 31};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 2;
+    static constexpr unsigned char PawnAttackCandidates[2] = {34, 36};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::white, 28>
-{
+struct FieldLookup<NOTATION::COLOR::color::white, 28>{
     static constexpr unsigned char OppositePawnPositionsSize = 2;
     static constexpr unsigned char OppositePawnPositions[2] = {35, 37};
     static constexpr unsigned char KingPossibleMovesSize = 8;
@@ -795,10 +883,13 @@ struct FieldLookup<NOTATION::COLOR::color::white, 28>
     static constexpr unsigned char LeftPossibleMoves[4] = {27, 26, 25, 24};
     static constexpr unsigned char RightPossibleMovesSize = 3;
     static constexpr unsigned char RightPossibleMoves[3] = {29, 30, 31};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 2;
+    static constexpr unsigned char PawnAttackCandidates[2] = {35, 37};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::white, 29>
-{
+struct FieldLookup<NOTATION::COLOR::color::white, 29>{
     static constexpr unsigned char OppositePawnPositionsSize = 2;
     static constexpr unsigned char OppositePawnPositions[2] = {36, 38};
     static constexpr unsigned char KingPossibleMovesSize = 8;
@@ -821,10 +912,13 @@ struct FieldLookup<NOTATION::COLOR::color::white, 29>
     static constexpr unsigned char LeftPossibleMoves[5] = {28, 27, 26, 25, 24};
     static constexpr unsigned char RightPossibleMovesSize = 2;
     static constexpr unsigned char RightPossibleMoves[2] = {30, 31};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 2;
+    static constexpr unsigned char PawnAttackCandidates[2] = {36, 38};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::white, 30>
-{
+struct FieldLookup<NOTATION::COLOR::color::white, 30>{
     static constexpr unsigned char OppositePawnPositionsSize = 2;
     static constexpr unsigned char OppositePawnPositions[2] = {37, 39};
     static constexpr unsigned char KingPossibleMovesSize = 8;
@@ -847,10 +941,13 @@ struct FieldLookup<NOTATION::COLOR::color::white, 30>
     static constexpr unsigned char LeftPossibleMoves[6] = {29, 28, 27, 26, 25, 24};
     static constexpr unsigned char RightPossibleMovesSize = 1;
     static constexpr unsigned char RightPossibleMoves[1] = {31};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 2;
+    static constexpr unsigned char PawnAttackCandidates[2] = {37, 39};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::white, 31>
-{
+struct FieldLookup<NOTATION::COLOR::color::white, 31>{
     static constexpr unsigned char OppositePawnPositionsSize = 1;
     static constexpr unsigned char OppositePawnPositions[1] = {38};
     static constexpr unsigned char KingPossibleMovesSize = 5;
@@ -873,10 +970,13 @@ struct FieldLookup<NOTATION::COLOR::color::white, 31>
     static constexpr unsigned char LeftPossibleMoves[7] = {30, 29, 28, 27, 26, 25, 24};
     static constexpr unsigned char RightPossibleMovesSize = 0;
     static constexpr unsigned char RightPossibleMoves[1] = {};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 1;
+    static constexpr unsigned char PawnAttackCandidates[1] = {38};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::white, 32>
-{
+struct FieldLookup<NOTATION::COLOR::color::white, 32>{
     static constexpr unsigned char OppositePawnPositionsSize = 1;
     static constexpr unsigned char OppositePawnPositions[1] = {41};
     static constexpr unsigned char KingPossibleMovesSize = 5;
@@ -899,10 +999,13 @@ struct FieldLookup<NOTATION::COLOR::color::white, 32>
     static constexpr unsigned char LeftPossibleMoves[1] = {};
     static constexpr unsigned char RightPossibleMovesSize = 7;
     static constexpr unsigned char RightPossibleMoves[7] = {33, 34, 35, 36, 37, 38, 39};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 1;
+    static constexpr unsigned char PawnAttackCandidates[1] = {41};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::white, 33>
-{
+struct FieldLookup<NOTATION::COLOR::color::white, 33>{
     static constexpr unsigned char OppositePawnPositionsSize = 2;
     static constexpr unsigned char OppositePawnPositions[2] = {40, 42};
     static constexpr unsigned char KingPossibleMovesSize = 8;
@@ -925,10 +1028,13 @@ struct FieldLookup<NOTATION::COLOR::color::white, 33>
     static constexpr unsigned char LeftPossibleMoves[1] = {32};
     static constexpr unsigned char RightPossibleMovesSize = 6;
     static constexpr unsigned char RightPossibleMoves[6] = {34, 35, 36, 37, 38, 39};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 2;
+    static constexpr unsigned char PawnAttackCandidates[2] = {40, 42};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::white, 34>
-{
+struct FieldLookup<NOTATION::COLOR::color::white, 34>{
     static constexpr unsigned char OppositePawnPositionsSize = 2;
     static constexpr unsigned char OppositePawnPositions[2] = {41, 43};
     static constexpr unsigned char KingPossibleMovesSize = 8;
@@ -951,10 +1057,13 @@ struct FieldLookup<NOTATION::COLOR::color::white, 34>
     static constexpr unsigned char LeftPossibleMoves[2] = {33, 32};
     static constexpr unsigned char RightPossibleMovesSize = 5;
     static constexpr unsigned char RightPossibleMoves[5] = {35, 36, 37, 38, 39};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 2;
+    static constexpr unsigned char PawnAttackCandidates[2] = {41, 43};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::white, 35>
-{
+struct FieldLookup<NOTATION::COLOR::color::white, 35>{
     static constexpr unsigned char OppositePawnPositionsSize = 2;
     static constexpr unsigned char OppositePawnPositions[2] = {42, 44};
     static constexpr unsigned char KingPossibleMovesSize = 8;
@@ -977,10 +1086,13 @@ struct FieldLookup<NOTATION::COLOR::color::white, 35>
     static constexpr unsigned char LeftPossibleMoves[3] = {34, 33, 32};
     static constexpr unsigned char RightPossibleMovesSize = 4;
     static constexpr unsigned char RightPossibleMoves[4] = {36, 37, 38, 39};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 2;
+    static constexpr unsigned char PawnAttackCandidates[2] = {42, 44};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::white, 36>
-{
+struct FieldLookup<NOTATION::COLOR::color::white, 36>{
     static constexpr unsigned char OppositePawnPositionsSize = 2;
     static constexpr unsigned char OppositePawnPositions[2] = {43, 45};
     static constexpr unsigned char KingPossibleMovesSize = 8;
@@ -1003,10 +1115,13 @@ struct FieldLookup<NOTATION::COLOR::color::white, 36>
     static constexpr unsigned char LeftPossibleMoves[4] = {35, 34, 33, 32};
     static constexpr unsigned char RightPossibleMovesSize = 3;
     static constexpr unsigned char RightPossibleMoves[3] = {37, 38, 39};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 2;
+    static constexpr unsigned char PawnAttackCandidates[2] = {43, 45};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::white, 37>
-{
+struct FieldLookup<NOTATION::COLOR::color::white, 37>{
     static constexpr unsigned char OppositePawnPositionsSize = 2;
     static constexpr unsigned char OppositePawnPositions[2] = {44, 46};
     static constexpr unsigned char KingPossibleMovesSize = 8;
@@ -1029,10 +1144,13 @@ struct FieldLookup<NOTATION::COLOR::color::white, 37>
     static constexpr unsigned char LeftPossibleMoves[5] = {36, 35, 34, 33, 32};
     static constexpr unsigned char RightPossibleMovesSize = 2;
     static constexpr unsigned char RightPossibleMoves[2] = {38, 39};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 2;
+    static constexpr unsigned char PawnAttackCandidates[2] = {44, 46};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::white, 38>
-{
+struct FieldLookup<NOTATION::COLOR::color::white, 38>{
     static constexpr unsigned char OppositePawnPositionsSize = 2;
     static constexpr unsigned char OppositePawnPositions[2] = {45, 47};
     static constexpr unsigned char KingPossibleMovesSize = 8;
@@ -1055,10 +1173,13 @@ struct FieldLookup<NOTATION::COLOR::color::white, 38>
     static constexpr unsigned char LeftPossibleMoves[6] = {37, 36, 35, 34, 33, 32};
     static constexpr unsigned char RightPossibleMovesSize = 1;
     static constexpr unsigned char RightPossibleMoves[1] = {39};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 2;
+    static constexpr unsigned char PawnAttackCandidates[2] = {45, 47};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::white, 39>
-{
+struct FieldLookup<NOTATION::COLOR::color::white, 39>{
     static constexpr unsigned char OppositePawnPositionsSize = 1;
     static constexpr unsigned char OppositePawnPositions[1] = {46};
     static constexpr unsigned char KingPossibleMovesSize = 5;
@@ -1081,10 +1202,13 @@ struct FieldLookup<NOTATION::COLOR::color::white, 39>
     static constexpr unsigned char LeftPossibleMoves[7] = {38, 37, 36, 35, 34, 33, 32};
     static constexpr unsigned char RightPossibleMovesSize = 0;
     static constexpr unsigned char RightPossibleMoves[1] = {};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 1;
+    static constexpr unsigned char PawnAttackCandidates[1] = {46};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::white, 40>
-{
+struct FieldLookup<NOTATION::COLOR::color::white, 40>{
     static constexpr unsigned char OppositePawnPositionsSize = 1;
     static constexpr unsigned char OppositePawnPositions[1] = {49};
     static constexpr unsigned char KingPossibleMovesSize = 5;
@@ -1107,10 +1231,13 @@ struct FieldLookup<NOTATION::COLOR::color::white, 40>
     static constexpr unsigned char LeftPossibleMoves[1] = {};
     static constexpr unsigned char RightPossibleMovesSize = 7;
     static constexpr unsigned char RightPossibleMoves[7] = {41, 42, 43, 44, 45, 46, 47};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 1;
+    static constexpr unsigned char PawnAttackCandidates[1] = {49};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::white, 41>
-{
+struct FieldLookup<NOTATION::COLOR::color::white, 41>{
     static constexpr unsigned char OppositePawnPositionsSize = 2;
     static constexpr unsigned char OppositePawnPositions[2] = {48, 50};
     static constexpr unsigned char KingPossibleMovesSize = 8;
@@ -1133,10 +1260,13 @@ struct FieldLookup<NOTATION::COLOR::color::white, 41>
     static constexpr unsigned char LeftPossibleMoves[1] = {40};
     static constexpr unsigned char RightPossibleMovesSize = 6;
     static constexpr unsigned char RightPossibleMoves[6] = {42, 43, 44, 45, 46, 47};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 2;
+    static constexpr unsigned char PawnAttackCandidates[2] = {48, 50};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::white, 42>
-{
+struct FieldLookup<NOTATION::COLOR::color::white, 42>{
     static constexpr unsigned char OppositePawnPositionsSize = 2;
     static constexpr unsigned char OppositePawnPositions[2] = {49, 51};
     static constexpr unsigned char KingPossibleMovesSize = 8;
@@ -1159,10 +1289,13 @@ struct FieldLookup<NOTATION::COLOR::color::white, 42>
     static constexpr unsigned char LeftPossibleMoves[2] = {41, 40};
     static constexpr unsigned char RightPossibleMovesSize = 5;
     static constexpr unsigned char RightPossibleMoves[5] = {43, 44, 45, 46, 47};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 2;
+    static constexpr unsigned char PawnAttackCandidates[2] = {49, 51};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::white, 43>
-{
+struct FieldLookup<NOTATION::COLOR::color::white, 43>{
     static constexpr unsigned char OppositePawnPositionsSize = 2;
     static constexpr unsigned char OppositePawnPositions[2] = {50, 52};
     static constexpr unsigned char KingPossibleMovesSize = 8;
@@ -1185,10 +1318,13 @@ struct FieldLookup<NOTATION::COLOR::color::white, 43>
     static constexpr unsigned char LeftPossibleMoves[3] = {42, 41, 40};
     static constexpr unsigned char RightPossibleMovesSize = 4;
     static constexpr unsigned char RightPossibleMoves[4] = {44, 45, 46, 47};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 2;
+    static constexpr unsigned char PawnAttackCandidates[2] = {50, 52};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::white, 44>
-{
+struct FieldLookup<NOTATION::COLOR::color::white, 44>{
     static constexpr unsigned char OppositePawnPositionsSize = 2;
     static constexpr unsigned char OppositePawnPositions[2] = {51, 53};
     static constexpr unsigned char KingPossibleMovesSize = 8;
@@ -1211,10 +1347,13 @@ struct FieldLookup<NOTATION::COLOR::color::white, 44>
     static constexpr unsigned char LeftPossibleMoves[4] = {43, 42, 41, 40};
     static constexpr unsigned char RightPossibleMovesSize = 3;
     static constexpr unsigned char RightPossibleMoves[3] = {45, 46, 47};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 2;
+    static constexpr unsigned char PawnAttackCandidates[2] = {51, 53};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::white, 45>
-{
+struct FieldLookup<NOTATION::COLOR::color::white, 45>{
     static constexpr unsigned char OppositePawnPositionsSize = 2;
     static constexpr unsigned char OppositePawnPositions[2] = {52, 54};
     static constexpr unsigned char KingPossibleMovesSize = 8;
@@ -1237,10 +1376,13 @@ struct FieldLookup<NOTATION::COLOR::color::white, 45>
     static constexpr unsigned char LeftPossibleMoves[5] = {44, 43, 42, 41, 40};
     static constexpr unsigned char RightPossibleMovesSize = 2;
     static constexpr unsigned char RightPossibleMoves[2] = {46, 47};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 2;
+    static constexpr unsigned char PawnAttackCandidates[2] = {52, 54};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::white, 46>
-{
+struct FieldLookup<NOTATION::COLOR::color::white, 46>{
     static constexpr unsigned char OppositePawnPositionsSize = 2;
     static constexpr unsigned char OppositePawnPositions[2] = {53, 55};
     static constexpr unsigned char KingPossibleMovesSize = 8;
@@ -1263,10 +1405,13 @@ struct FieldLookup<NOTATION::COLOR::color::white, 46>
     static constexpr unsigned char LeftPossibleMoves[6] = {45, 44, 43, 42, 41, 40};
     static constexpr unsigned char RightPossibleMovesSize = 1;
     static constexpr unsigned char RightPossibleMoves[1] = {47};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 2;
+    static constexpr unsigned char PawnAttackCandidates[2] = {53, 55};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::white, 47>
-{
+struct FieldLookup<NOTATION::COLOR::color::white, 47>{
     static constexpr unsigned char OppositePawnPositionsSize = 1;
     static constexpr unsigned char OppositePawnPositions[1] = {54};
     static constexpr unsigned char KingPossibleMovesSize = 5;
@@ -1289,10 +1434,13 @@ struct FieldLookup<NOTATION::COLOR::color::white, 47>
     static constexpr unsigned char LeftPossibleMoves[7] = {46, 45, 44, 43, 42, 41, 40};
     static constexpr unsigned char RightPossibleMovesSize = 0;
     static constexpr unsigned char RightPossibleMoves[1] = {};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 1;
+    static constexpr unsigned char PawnAttackCandidates[1] = {54};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::white, 48>
-{
+struct FieldLookup<NOTATION::COLOR::color::white, 48>{
     static constexpr unsigned char OppositePawnPositionsSize = 0;
     static constexpr unsigned char OppositePawnPositions[1] = {};
     static constexpr unsigned char KingPossibleMovesSize = 5;
@@ -1315,10 +1463,13 @@ struct FieldLookup<NOTATION::COLOR::color::white, 48>
     static constexpr unsigned char LeftPossibleMoves[1] = {};
     static constexpr unsigned char RightPossibleMovesSize = 7;
     static constexpr unsigned char RightPossibleMoves[7] = {49, 50, 51, 52, 53, 54, 55};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = true;
+    static constexpr unsigned char PawnAttackCandidatesSize = 1;
+    static constexpr unsigned char PawnAttackCandidates[1] = {57};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::white, 49>
-{
+struct FieldLookup<NOTATION::COLOR::color::white, 49>{
     static constexpr unsigned char OppositePawnPositionsSize = 0;
     static constexpr unsigned char OppositePawnPositions[1] = {};
     static constexpr unsigned char KingPossibleMovesSize = 8;
@@ -1341,10 +1492,13 @@ struct FieldLookup<NOTATION::COLOR::color::white, 49>
     static constexpr unsigned char LeftPossibleMoves[1] = {48};
     static constexpr unsigned char RightPossibleMovesSize = 6;
     static constexpr unsigned char RightPossibleMoves[6] = {50, 51, 52, 53, 54, 55};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = true;
+    static constexpr unsigned char PawnAttackCandidatesSize = 2;
+    static constexpr unsigned char PawnAttackCandidates[2] = {56, 58};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::white, 50>
-{
+struct FieldLookup<NOTATION::COLOR::color::white, 50>{
     static constexpr unsigned char OppositePawnPositionsSize = 0;
     static constexpr unsigned char OppositePawnPositions[1] = {};
     static constexpr unsigned char KingPossibleMovesSize = 8;
@@ -1367,10 +1521,13 @@ struct FieldLookup<NOTATION::COLOR::color::white, 50>
     static constexpr unsigned char LeftPossibleMoves[2] = {49, 48};
     static constexpr unsigned char RightPossibleMovesSize = 5;
     static constexpr unsigned char RightPossibleMoves[5] = {51, 52, 53, 54, 55};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = true;
+    static constexpr unsigned char PawnAttackCandidatesSize = 2;
+    static constexpr unsigned char PawnAttackCandidates[2] = {57, 59};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::white, 51>
-{
+struct FieldLookup<NOTATION::COLOR::color::white, 51>{
     static constexpr unsigned char OppositePawnPositionsSize = 0;
     static constexpr unsigned char OppositePawnPositions[1] = {};
     static constexpr unsigned char KingPossibleMovesSize = 8;
@@ -1393,10 +1550,13 @@ struct FieldLookup<NOTATION::COLOR::color::white, 51>
     static constexpr unsigned char LeftPossibleMoves[3] = {50, 49, 48};
     static constexpr unsigned char RightPossibleMovesSize = 4;
     static constexpr unsigned char RightPossibleMoves[4] = {52, 53, 54, 55};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = true;
+    static constexpr unsigned char PawnAttackCandidatesSize = 2;
+    static constexpr unsigned char PawnAttackCandidates[2] = {58, 60};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::white, 52>
-{
+struct FieldLookup<NOTATION::COLOR::color::white, 52>{
     static constexpr unsigned char OppositePawnPositionsSize = 0;
     static constexpr unsigned char OppositePawnPositions[1] = {};
     static constexpr unsigned char KingPossibleMovesSize = 8;
@@ -1419,10 +1579,13 @@ struct FieldLookup<NOTATION::COLOR::color::white, 52>
     static constexpr unsigned char LeftPossibleMoves[4] = {51, 50, 49, 48};
     static constexpr unsigned char RightPossibleMovesSize = 3;
     static constexpr unsigned char RightPossibleMoves[3] = {53, 54, 55};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = true;
+    static constexpr unsigned char PawnAttackCandidatesSize = 2;
+    static constexpr unsigned char PawnAttackCandidates[2] = {59, 61};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::white, 53>
-{
+struct FieldLookup<NOTATION::COLOR::color::white, 53>{
     static constexpr unsigned char OppositePawnPositionsSize = 0;
     static constexpr unsigned char OppositePawnPositions[1] = {};
     static constexpr unsigned char KingPossibleMovesSize = 8;
@@ -1445,10 +1608,13 @@ struct FieldLookup<NOTATION::COLOR::color::white, 53>
     static constexpr unsigned char LeftPossibleMoves[5] = {52, 51, 50, 49, 48};
     static constexpr unsigned char RightPossibleMovesSize = 2;
     static constexpr unsigned char RightPossibleMoves[2] = {54, 55};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = true;
+    static constexpr unsigned char PawnAttackCandidatesSize = 2;
+    static constexpr unsigned char PawnAttackCandidates[2] = {60, 62};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::white, 54>
-{
+struct FieldLookup<NOTATION::COLOR::color::white, 54>{
     static constexpr unsigned char OppositePawnPositionsSize = 0;
     static constexpr unsigned char OppositePawnPositions[1] = {};
     static constexpr unsigned char KingPossibleMovesSize = 8;
@@ -1471,10 +1637,13 @@ struct FieldLookup<NOTATION::COLOR::color::white, 54>
     static constexpr unsigned char LeftPossibleMoves[6] = {53, 52, 51, 50, 49, 48};
     static constexpr unsigned char RightPossibleMovesSize = 1;
     static constexpr unsigned char RightPossibleMoves[1] = {55};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = true;
+    static constexpr unsigned char PawnAttackCandidatesSize = 2;
+    static constexpr unsigned char PawnAttackCandidates[2] = {61, 63};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::white, 55>
-{
+struct FieldLookup<NOTATION::COLOR::color::white, 55>{
     static constexpr unsigned char OppositePawnPositionsSize = 0;
     static constexpr unsigned char OppositePawnPositions[1] = {};
     static constexpr unsigned char KingPossibleMovesSize = 5;
@@ -1497,10 +1666,13 @@ struct FieldLookup<NOTATION::COLOR::color::white, 55>
     static constexpr unsigned char LeftPossibleMoves[7] = {54, 53, 52, 51, 50, 49, 48};
     static constexpr unsigned char RightPossibleMovesSize = 0;
     static constexpr unsigned char RightPossibleMoves[1] = {};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = true;
+    static constexpr unsigned char PawnAttackCandidatesSize = 1;
+    static constexpr unsigned char PawnAttackCandidates[1] = {62};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::white, 56>
-{
+struct FieldLookup<NOTATION::COLOR::color::white, 56>{
     static constexpr unsigned char OppositePawnPositionsSize = 0;
     static constexpr unsigned char OppositePawnPositions[1] = {};
     static constexpr unsigned char KingPossibleMovesSize = 3;
@@ -1523,10 +1695,13 @@ struct FieldLookup<NOTATION::COLOR::color::white, 56>
     static constexpr unsigned char LeftPossibleMoves[1] = {};
     static constexpr unsigned char RightPossibleMovesSize = 7;
     static constexpr unsigned char RightPossibleMoves[7] = {57, 58, 59, 60, 61, 62, 63};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 0;
+    static constexpr unsigned char PawnAttackCandidates[1] = {};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::white, 57>
-{
+struct FieldLookup<NOTATION::COLOR::color::white, 57>{
     static constexpr unsigned char OppositePawnPositionsSize = 0;
     static constexpr unsigned char OppositePawnPositions[1] = {};
     static constexpr unsigned char KingPossibleMovesSize = 5;
@@ -1549,10 +1724,13 @@ struct FieldLookup<NOTATION::COLOR::color::white, 57>
     static constexpr unsigned char LeftPossibleMoves[1] = {56};
     static constexpr unsigned char RightPossibleMovesSize = 6;
     static constexpr unsigned char RightPossibleMoves[6] = {58, 59, 60, 61, 62, 63};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 0;
+    static constexpr unsigned char PawnAttackCandidates[1] = {};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::white, 58>
-{
+struct FieldLookup<NOTATION::COLOR::color::white, 58>{
     static constexpr unsigned char OppositePawnPositionsSize = 0;
     static constexpr unsigned char OppositePawnPositions[1] = {};
     static constexpr unsigned char KingPossibleMovesSize = 5;
@@ -1575,10 +1753,13 @@ struct FieldLookup<NOTATION::COLOR::color::white, 58>
     static constexpr unsigned char LeftPossibleMoves[2] = {57, 56};
     static constexpr unsigned char RightPossibleMovesSize = 5;
     static constexpr unsigned char RightPossibleMoves[5] = {59, 60, 61, 62, 63};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 0;
+    static constexpr unsigned char PawnAttackCandidates[1] = {};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::white, 59>
-{
+struct FieldLookup<NOTATION::COLOR::color::white, 59>{
     static constexpr unsigned char OppositePawnPositionsSize = 0;
     static constexpr unsigned char OppositePawnPositions[1] = {};
     static constexpr unsigned char KingPossibleMovesSize = 5;
@@ -1601,10 +1782,13 @@ struct FieldLookup<NOTATION::COLOR::color::white, 59>
     static constexpr unsigned char LeftPossibleMoves[3] = {58, 57, 56};
     static constexpr unsigned char RightPossibleMovesSize = 4;
     static constexpr unsigned char RightPossibleMoves[4] = {60, 61, 62, 63};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 0;
+    static constexpr unsigned char PawnAttackCandidates[1] = {};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::white, 60>
-{
+struct FieldLookup<NOTATION::COLOR::color::white, 60>{
     static constexpr unsigned char OppositePawnPositionsSize = 0;
     static constexpr unsigned char OppositePawnPositions[1] = {};
     static constexpr unsigned char KingPossibleMovesSize = 5;
@@ -1627,10 +1811,13 @@ struct FieldLookup<NOTATION::COLOR::color::white, 60>
     static constexpr unsigned char LeftPossibleMoves[4] = {59, 58, 57, 56};
     static constexpr unsigned char RightPossibleMovesSize = 3;
     static constexpr unsigned char RightPossibleMoves[3] = {61, 62, 63};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 0;
+    static constexpr unsigned char PawnAttackCandidates[1] = {};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::white, 61>
-{
+struct FieldLookup<NOTATION::COLOR::color::white, 61>{
     static constexpr unsigned char OppositePawnPositionsSize = 0;
     static constexpr unsigned char OppositePawnPositions[1] = {};
     static constexpr unsigned char KingPossibleMovesSize = 5;
@@ -1653,10 +1840,13 @@ struct FieldLookup<NOTATION::COLOR::color::white, 61>
     static constexpr unsigned char LeftPossibleMoves[5] = {60, 59, 58, 57, 56};
     static constexpr unsigned char RightPossibleMovesSize = 2;
     static constexpr unsigned char RightPossibleMoves[2] = {62, 63};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 0;
+    static constexpr unsigned char PawnAttackCandidates[1] = {};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::white, 62>
-{
+struct FieldLookup<NOTATION::COLOR::color::white, 62>{
     static constexpr unsigned char OppositePawnPositionsSize = 0;
     static constexpr unsigned char OppositePawnPositions[1] = {};
     static constexpr unsigned char KingPossibleMovesSize = 5;
@@ -1679,10 +1869,13 @@ struct FieldLookup<NOTATION::COLOR::color::white, 62>
     static constexpr unsigned char LeftPossibleMoves[6] = {61, 60, 59, 58, 57, 56};
     static constexpr unsigned char RightPossibleMovesSize = 1;
     static constexpr unsigned char RightPossibleMoves[1] = {63};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 0;
+    static constexpr unsigned char PawnAttackCandidates[1] = {};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::white, 63>
-{
+struct FieldLookup<NOTATION::COLOR::color::white, 63>{
     static constexpr unsigned char OppositePawnPositionsSize = 0;
     static constexpr unsigned char OppositePawnPositions[1] = {};
     static constexpr unsigned char KingPossibleMovesSize = 3;
@@ -1705,10 +1898,13 @@ struct FieldLookup<NOTATION::COLOR::color::white, 63>
     static constexpr unsigned char LeftPossibleMoves[7] = {62, 61, 60, 59, 58, 57, 56};
     static constexpr unsigned char RightPossibleMovesSize = 0;
     static constexpr unsigned char RightPossibleMoves[1] = {};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 0;
+    static constexpr unsigned char PawnAttackCandidates[1] = {};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::black, 0>
-{
+struct FieldLookup<NOTATION::COLOR::color::black, 0>{
     static constexpr unsigned char OppositePawnPositionsSize = 0;
     static constexpr unsigned char OppositePawnPositions[1] = {};
     static constexpr unsigned char KingPossibleMovesSize = 3;
@@ -1731,10 +1927,13 @@ struct FieldLookup<NOTATION::COLOR::color::black, 0>
     static constexpr unsigned char LeftPossibleMoves[1] = {};
     static constexpr unsigned char RightPossibleMovesSize = 7;
     static constexpr unsigned char RightPossibleMoves[7] = {1, 2, 3, 4, 5, 6, 7};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 0;
+    static constexpr unsigned char PawnAttackCandidates[1] = {};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::black, 1>
-{
+struct FieldLookup<NOTATION::COLOR::color::black, 1>{
     static constexpr unsigned char OppositePawnPositionsSize = 0;
     static constexpr unsigned char OppositePawnPositions[1] = {};
     static constexpr unsigned char KingPossibleMovesSize = 5;
@@ -1757,10 +1956,13 @@ struct FieldLookup<NOTATION::COLOR::color::black, 1>
     static constexpr unsigned char LeftPossibleMoves[1] = {0};
     static constexpr unsigned char RightPossibleMovesSize = 6;
     static constexpr unsigned char RightPossibleMoves[6] = {2, 3, 4, 5, 6, 7};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 0;
+    static constexpr unsigned char PawnAttackCandidates[1] = {};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::black, 2>
-{
+struct FieldLookup<NOTATION::COLOR::color::black, 2>{
     static constexpr unsigned char OppositePawnPositionsSize = 0;
     static constexpr unsigned char OppositePawnPositions[1] = {};
     static constexpr unsigned char KingPossibleMovesSize = 5;
@@ -1783,10 +1985,13 @@ struct FieldLookup<NOTATION::COLOR::color::black, 2>
     static constexpr unsigned char LeftPossibleMoves[2] = {1, 0};
     static constexpr unsigned char RightPossibleMovesSize = 5;
     static constexpr unsigned char RightPossibleMoves[5] = {3, 4, 5, 6, 7};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 0;
+    static constexpr unsigned char PawnAttackCandidates[1] = {};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::black, 3>
-{
+struct FieldLookup<NOTATION::COLOR::color::black, 3>{
     static constexpr unsigned char OppositePawnPositionsSize = 0;
     static constexpr unsigned char OppositePawnPositions[1] = {};
     static constexpr unsigned char KingPossibleMovesSize = 5;
@@ -1809,10 +2014,13 @@ struct FieldLookup<NOTATION::COLOR::color::black, 3>
     static constexpr unsigned char LeftPossibleMoves[3] = {2, 1, 0};
     static constexpr unsigned char RightPossibleMovesSize = 4;
     static constexpr unsigned char RightPossibleMoves[4] = {4, 5, 6, 7};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 0;
+    static constexpr unsigned char PawnAttackCandidates[1] = {};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::black, 4>
-{
+struct FieldLookup<NOTATION::COLOR::color::black, 4>{
     static constexpr unsigned char OppositePawnPositionsSize = 0;
     static constexpr unsigned char OppositePawnPositions[1] = {};
     static constexpr unsigned char KingPossibleMovesSize = 5;
@@ -1835,10 +2043,13 @@ struct FieldLookup<NOTATION::COLOR::color::black, 4>
     static constexpr unsigned char LeftPossibleMoves[4] = {3, 2, 1, 0};
     static constexpr unsigned char RightPossibleMovesSize = 3;
     static constexpr unsigned char RightPossibleMoves[3] = {5, 6, 7};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 0;
+    static constexpr unsigned char PawnAttackCandidates[1] = {};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::black, 5>
-{
+struct FieldLookup<NOTATION::COLOR::color::black, 5>{
     static constexpr unsigned char OppositePawnPositionsSize = 0;
     static constexpr unsigned char OppositePawnPositions[1] = {};
     static constexpr unsigned char KingPossibleMovesSize = 5;
@@ -1861,10 +2072,13 @@ struct FieldLookup<NOTATION::COLOR::color::black, 5>
     static constexpr unsigned char LeftPossibleMoves[5] = {4, 3, 2, 1, 0};
     static constexpr unsigned char RightPossibleMovesSize = 2;
     static constexpr unsigned char RightPossibleMoves[2] = {6, 7};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 0;
+    static constexpr unsigned char PawnAttackCandidates[1] = {};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::black, 6>
-{
+struct FieldLookup<NOTATION::COLOR::color::black, 6>{
     static constexpr unsigned char OppositePawnPositionsSize = 0;
     static constexpr unsigned char OppositePawnPositions[1] = {};
     static constexpr unsigned char KingPossibleMovesSize = 5;
@@ -1887,10 +2101,13 @@ struct FieldLookup<NOTATION::COLOR::color::black, 6>
     static constexpr unsigned char LeftPossibleMoves[6] = {5, 4, 3, 2, 1, 0};
     static constexpr unsigned char RightPossibleMovesSize = 1;
     static constexpr unsigned char RightPossibleMoves[1] = {7};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 0;
+    static constexpr unsigned char PawnAttackCandidates[1] = {};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::black, 7>
-{
+struct FieldLookup<NOTATION::COLOR::color::black, 7>{
     static constexpr unsigned char OppositePawnPositionsSize = 0;
     static constexpr unsigned char OppositePawnPositions[1] = {};
     static constexpr unsigned char KingPossibleMovesSize = 3;
@@ -1913,10 +2130,13 @@ struct FieldLookup<NOTATION::COLOR::color::black, 7>
     static constexpr unsigned char LeftPossibleMoves[7] = {6, 5, 4, 3, 2, 1, 0};
     static constexpr unsigned char RightPossibleMovesSize = 0;
     static constexpr unsigned char RightPossibleMoves[1] = {};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 0;
+    static constexpr unsigned char PawnAttackCandidates[1] = {};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::black, 8>
-{
+struct FieldLookup<NOTATION::COLOR::color::black, 8>{
     static constexpr unsigned char OppositePawnPositionsSize = 0;
     static constexpr unsigned char OppositePawnPositions[1] = {};
     static constexpr unsigned char KingPossibleMovesSize = 5;
@@ -1939,10 +2159,13 @@ struct FieldLookup<NOTATION::COLOR::color::black, 8>
     static constexpr unsigned char LeftPossibleMoves[1] = {};
     static constexpr unsigned char RightPossibleMovesSize = 7;
     static constexpr unsigned char RightPossibleMoves[7] = {9, 10, 11, 12, 13, 14, 15};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = true;
+    static constexpr unsigned char PawnAttackCandidatesSize = 1;
+    static constexpr unsigned char PawnAttackCandidates[1] = {1};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::black, 9>
-{
+struct FieldLookup<NOTATION::COLOR::color::black, 9>{
     static constexpr unsigned char OppositePawnPositionsSize = 0;
     static constexpr unsigned char OppositePawnPositions[1] = {};
     static constexpr unsigned char KingPossibleMovesSize = 8;
@@ -1965,10 +2188,13 @@ struct FieldLookup<NOTATION::COLOR::color::black, 9>
     static constexpr unsigned char LeftPossibleMoves[1] = {8};
     static constexpr unsigned char RightPossibleMovesSize = 6;
     static constexpr unsigned char RightPossibleMoves[6] = {10, 11, 12, 13, 14, 15};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = true;
+    static constexpr unsigned char PawnAttackCandidatesSize = 2;
+    static constexpr unsigned char PawnAttackCandidates[2] = {0, 2};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::black, 10>
-{
+struct FieldLookup<NOTATION::COLOR::color::black, 10>{
     static constexpr unsigned char OppositePawnPositionsSize = 0;
     static constexpr unsigned char OppositePawnPositions[1] = {};
     static constexpr unsigned char KingPossibleMovesSize = 8;
@@ -1991,10 +2217,13 @@ struct FieldLookup<NOTATION::COLOR::color::black, 10>
     static constexpr unsigned char LeftPossibleMoves[2] = {9, 8};
     static constexpr unsigned char RightPossibleMovesSize = 5;
     static constexpr unsigned char RightPossibleMoves[5] = {11, 12, 13, 14, 15};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = true;
+    static constexpr unsigned char PawnAttackCandidatesSize = 2;
+    static constexpr unsigned char PawnAttackCandidates[2] = {1, 3};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::black, 11>
-{
+struct FieldLookup<NOTATION::COLOR::color::black, 11>{
     static constexpr unsigned char OppositePawnPositionsSize = 0;
     static constexpr unsigned char OppositePawnPositions[1] = {};
     static constexpr unsigned char KingPossibleMovesSize = 8;
@@ -2017,10 +2246,13 @@ struct FieldLookup<NOTATION::COLOR::color::black, 11>
     static constexpr unsigned char LeftPossibleMoves[3] = {10, 9, 8};
     static constexpr unsigned char RightPossibleMovesSize = 4;
     static constexpr unsigned char RightPossibleMoves[4] = {12, 13, 14, 15};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = true;
+    static constexpr unsigned char PawnAttackCandidatesSize = 2;
+    static constexpr unsigned char PawnAttackCandidates[2] = {2, 4};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::black, 12>
-{
+struct FieldLookup<NOTATION::COLOR::color::black, 12>{
     static constexpr unsigned char OppositePawnPositionsSize = 0;
     static constexpr unsigned char OppositePawnPositions[1] = {};
     static constexpr unsigned char KingPossibleMovesSize = 8;
@@ -2043,10 +2275,13 @@ struct FieldLookup<NOTATION::COLOR::color::black, 12>
     static constexpr unsigned char LeftPossibleMoves[4] = {11, 10, 9, 8};
     static constexpr unsigned char RightPossibleMovesSize = 3;
     static constexpr unsigned char RightPossibleMoves[3] = {13, 14, 15};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = true;
+    static constexpr unsigned char PawnAttackCandidatesSize = 2;
+    static constexpr unsigned char PawnAttackCandidates[2] = {3, 5};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::black, 13>
-{
+struct FieldLookup<NOTATION::COLOR::color::black, 13>{
     static constexpr unsigned char OppositePawnPositionsSize = 0;
     static constexpr unsigned char OppositePawnPositions[1] = {};
     static constexpr unsigned char KingPossibleMovesSize = 8;
@@ -2069,10 +2304,13 @@ struct FieldLookup<NOTATION::COLOR::color::black, 13>
     static constexpr unsigned char LeftPossibleMoves[5] = {12, 11, 10, 9, 8};
     static constexpr unsigned char RightPossibleMovesSize = 2;
     static constexpr unsigned char RightPossibleMoves[2] = {14, 15};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = true;
+    static constexpr unsigned char PawnAttackCandidatesSize = 2;
+    static constexpr unsigned char PawnAttackCandidates[2] = {4, 6};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::black, 14>
-{
+struct FieldLookup<NOTATION::COLOR::color::black, 14>{
     static constexpr unsigned char OppositePawnPositionsSize = 0;
     static constexpr unsigned char OppositePawnPositions[1] = {};
     static constexpr unsigned char KingPossibleMovesSize = 8;
@@ -2095,10 +2333,13 @@ struct FieldLookup<NOTATION::COLOR::color::black, 14>
     static constexpr unsigned char LeftPossibleMoves[6] = {13, 12, 11, 10, 9, 8};
     static constexpr unsigned char RightPossibleMovesSize = 1;
     static constexpr unsigned char RightPossibleMoves[1] = {15};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = true;
+    static constexpr unsigned char PawnAttackCandidatesSize = 2;
+    static constexpr unsigned char PawnAttackCandidates[2] = {5, 7};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::black, 15>
-{
+struct FieldLookup<NOTATION::COLOR::color::black, 15>{
     static constexpr unsigned char OppositePawnPositionsSize = 0;
     static constexpr unsigned char OppositePawnPositions[1] = {};
     static constexpr unsigned char KingPossibleMovesSize = 5;
@@ -2121,10 +2362,13 @@ struct FieldLookup<NOTATION::COLOR::color::black, 15>
     static constexpr unsigned char LeftPossibleMoves[7] = {14, 13, 12, 11, 10, 9, 8};
     static constexpr unsigned char RightPossibleMovesSize = 0;
     static constexpr unsigned char RightPossibleMoves[1] = {};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = true;
+    static constexpr unsigned char PawnAttackCandidatesSize = 1;
+    static constexpr unsigned char PawnAttackCandidates[1] = {6};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::black, 16>
-{
+struct FieldLookup<NOTATION::COLOR::color::black, 16>{
     static constexpr unsigned char OppositePawnPositionsSize = 1;
     static constexpr unsigned char OppositePawnPositions[1] = {9};
     static constexpr unsigned char KingPossibleMovesSize = 5;
@@ -2147,10 +2391,13 @@ struct FieldLookup<NOTATION::COLOR::color::black, 16>
     static constexpr unsigned char LeftPossibleMoves[1] = {};
     static constexpr unsigned char RightPossibleMovesSize = 7;
     static constexpr unsigned char RightPossibleMoves[7] = {17, 18, 19, 20, 21, 22, 23};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 1;
+    static constexpr unsigned char PawnAttackCandidates[1] = {9};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::black, 17>
-{
+struct FieldLookup<NOTATION::COLOR::color::black, 17>{
     static constexpr unsigned char OppositePawnPositionsSize = 2;
     static constexpr unsigned char OppositePawnPositions[2] = {8, 10};
     static constexpr unsigned char KingPossibleMovesSize = 8;
@@ -2173,10 +2420,13 @@ struct FieldLookup<NOTATION::COLOR::color::black, 17>
     static constexpr unsigned char LeftPossibleMoves[1] = {16};
     static constexpr unsigned char RightPossibleMovesSize = 6;
     static constexpr unsigned char RightPossibleMoves[6] = {18, 19, 20, 21, 22, 23};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 2;
+    static constexpr unsigned char PawnAttackCandidates[2] = {8, 10};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::black, 18>
-{
+struct FieldLookup<NOTATION::COLOR::color::black, 18>{
     static constexpr unsigned char OppositePawnPositionsSize = 2;
     static constexpr unsigned char OppositePawnPositions[2] = {9, 11};
     static constexpr unsigned char KingPossibleMovesSize = 8;
@@ -2199,10 +2449,13 @@ struct FieldLookup<NOTATION::COLOR::color::black, 18>
     static constexpr unsigned char LeftPossibleMoves[2] = {17, 16};
     static constexpr unsigned char RightPossibleMovesSize = 5;
     static constexpr unsigned char RightPossibleMoves[5] = {19, 20, 21, 22, 23};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 2;
+    static constexpr unsigned char PawnAttackCandidates[2] = {9, 11};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::black, 19>
-{
+struct FieldLookup<NOTATION::COLOR::color::black, 19>{
     static constexpr unsigned char OppositePawnPositionsSize = 2;
     static constexpr unsigned char OppositePawnPositions[2] = {10, 12};
     static constexpr unsigned char KingPossibleMovesSize = 8;
@@ -2225,10 +2478,13 @@ struct FieldLookup<NOTATION::COLOR::color::black, 19>
     static constexpr unsigned char LeftPossibleMoves[3] = {18, 17, 16};
     static constexpr unsigned char RightPossibleMovesSize = 4;
     static constexpr unsigned char RightPossibleMoves[4] = {20, 21, 22, 23};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 2;
+    static constexpr unsigned char PawnAttackCandidates[2] = {10, 12};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::black, 20>
-{
+struct FieldLookup<NOTATION::COLOR::color::black, 20>{
     static constexpr unsigned char OppositePawnPositionsSize = 2;
     static constexpr unsigned char OppositePawnPositions[2] = {11, 13};
     static constexpr unsigned char KingPossibleMovesSize = 8;
@@ -2251,10 +2507,13 @@ struct FieldLookup<NOTATION::COLOR::color::black, 20>
     static constexpr unsigned char LeftPossibleMoves[4] = {19, 18, 17, 16};
     static constexpr unsigned char RightPossibleMovesSize = 3;
     static constexpr unsigned char RightPossibleMoves[3] = {21, 22, 23};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 2;
+    static constexpr unsigned char PawnAttackCandidates[2] = {11, 13};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::black, 21>
-{
+struct FieldLookup<NOTATION::COLOR::color::black, 21>{
     static constexpr unsigned char OppositePawnPositionsSize = 2;
     static constexpr unsigned char OppositePawnPositions[2] = {12, 14};
     static constexpr unsigned char KingPossibleMovesSize = 8;
@@ -2277,10 +2536,13 @@ struct FieldLookup<NOTATION::COLOR::color::black, 21>
     static constexpr unsigned char LeftPossibleMoves[5] = {20, 19, 18, 17, 16};
     static constexpr unsigned char RightPossibleMovesSize = 2;
     static constexpr unsigned char RightPossibleMoves[2] = {22, 23};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 2;
+    static constexpr unsigned char PawnAttackCandidates[2] = {12, 14};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::black, 22>
-{
+struct FieldLookup<NOTATION::COLOR::color::black, 22>{
     static constexpr unsigned char OppositePawnPositionsSize = 2;
     static constexpr unsigned char OppositePawnPositions[2] = {13, 15};
     static constexpr unsigned char KingPossibleMovesSize = 8;
@@ -2303,10 +2565,13 @@ struct FieldLookup<NOTATION::COLOR::color::black, 22>
     static constexpr unsigned char LeftPossibleMoves[6] = {21, 20, 19, 18, 17, 16};
     static constexpr unsigned char RightPossibleMovesSize = 1;
     static constexpr unsigned char RightPossibleMoves[1] = {23};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 2;
+    static constexpr unsigned char PawnAttackCandidates[2] = {13, 15};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::black, 23>
-{
+struct FieldLookup<NOTATION::COLOR::color::black, 23>{
     static constexpr unsigned char OppositePawnPositionsSize = 1;
     static constexpr unsigned char OppositePawnPositions[1] = {14};
     static constexpr unsigned char KingPossibleMovesSize = 5;
@@ -2329,10 +2594,13 @@ struct FieldLookup<NOTATION::COLOR::color::black, 23>
     static constexpr unsigned char LeftPossibleMoves[7] = {22, 21, 20, 19, 18, 17, 16};
     static constexpr unsigned char RightPossibleMovesSize = 0;
     static constexpr unsigned char RightPossibleMoves[1] = {};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 1;
+    static constexpr unsigned char PawnAttackCandidates[1] = {14};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::black, 24>
-{
+struct FieldLookup<NOTATION::COLOR::color::black, 24>{
     static constexpr unsigned char OppositePawnPositionsSize = 1;
     static constexpr unsigned char OppositePawnPositions[1] = {17};
     static constexpr unsigned char KingPossibleMovesSize = 5;
@@ -2355,10 +2623,13 @@ struct FieldLookup<NOTATION::COLOR::color::black, 24>
     static constexpr unsigned char LeftPossibleMoves[1] = {};
     static constexpr unsigned char RightPossibleMovesSize = 7;
     static constexpr unsigned char RightPossibleMoves[7] = {25, 26, 27, 28, 29, 30, 31};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 1;
+    static constexpr unsigned char PawnAttackCandidates[1] = {17};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::black, 25>
-{
+struct FieldLookup<NOTATION::COLOR::color::black, 25>{
     static constexpr unsigned char OppositePawnPositionsSize = 2;
     static constexpr unsigned char OppositePawnPositions[2] = {16, 18};
     static constexpr unsigned char KingPossibleMovesSize = 8;
@@ -2381,10 +2652,13 @@ struct FieldLookup<NOTATION::COLOR::color::black, 25>
     static constexpr unsigned char LeftPossibleMoves[1] = {24};
     static constexpr unsigned char RightPossibleMovesSize = 6;
     static constexpr unsigned char RightPossibleMoves[6] = {26, 27, 28, 29, 30, 31};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 2;
+    static constexpr unsigned char PawnAttackCandidates[2] = {16, 18};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::black, 26>
-{
+struct FieldLookup<NOTATION::COLOR::color::black, 26>{
     static constexpr unsigned char OppositePawnPositionsSize = 2;
     static constexpr unsigned char OppositePawnPositions[2] = {17, 19};
     static constexpr unsigned char KingPossibleMovesSize = 8;
@@ -2407,10 +2681,13 @@ struct FieldLookup<NOTATION::COLOR::color::black, 26>
     static constexpr unsigned char LeftPossibleMoves[2] = {25, 24};
     static constexpr unsigned char RightPossibleMovesSize = 5;
     static constexpr unsigned char RightPossibleMoves[5] = {27, 28, 29, 30, 31};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 2;
+    static constexpr unsigned char PawnAttackCandidates[2] = {17, 19};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::black, 27>
-{
+struct FieldLookup<NOTATION::COLOR::color::black, 27>{
     static constexpr unsigned char OppositePawnPositionsSize = 2;
     static constexpr unsigned char OppositePawnPositions[2] = {18, 20};
     static constexpr unsigned char KingPossibleMovesSize = 8;
@@ -2433,10 +2710,13 @@ struct FieldLookup<NOTATION::COLOR::color::black, 27>
     static constexpr unsigned char LeftPossibleMoves[3] = {26, 25, 24};
     static constexpr unsigned char RightPossibleMovesSize = 4;
     static constexpr unsigned char RightPossibleMoves[4] = {28, 29, 30, 31};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 2;
+    static constexpr unsigned char PawnAttackCandidates[2] = {18, 20};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::black, 28>
-{
+struct FieldLookup<NOTATION::COLOR::color::black, 28>{
     static constexpr unsigned char OppositePawnPositionsSize = 2;
     static constexpr unsigned char OppositePawnPositions[2] = {19, 21};
     static constexpr unsigned char KingPossibleMovesSize = 8;
@@ -2459,10 +2739,13 @@ struct FieldLookup<NOTATION::COLOR::color::black, 28>
     static constexpr unsigned char LeftPossibleMoves[4] = {27, 26, 25, 24};
     static constexpr unsigned char RightPossibleMovesSize = 3;
     static constexpr unsigned char RightPossibleMoves[3] = {29, 30, 31};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 2;
+    static constexpr unsigned char PawnAttackCandidates[2] = {19, 21};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::black, 29>
-{
+struct FieldLookup<NOTATION::COLOR::color::black, 29>{
     static constexpr unsigned char OppositePawnPositionsSize = 2;
     static constexpr unsigned char OppositePawnPositions[2] = {20, 22};
     static constexpr unsigned char KingPossibleMovesSize = 8;
@@ -2485,10 +2768,13 @@ struct FieldLookup<NOTATION::COLOR::color::black, 29>
     static constexpr unsigned char LeftPossibleMoves[5] = {28, 27, 26, 25, 24};
     static constexpr unsigned char RightPossibleMovesSize = 2;
     static constexpr unsigned char RightPossibleMoves[2] = {30, 31};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 2;
+    static constexpr unsigned char PawnAttackCandidates[2] = {20, 22};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::black, 30>
-{
+struct FieldLookup<NOTATION::COLOR::color::black, 30>{
     static constexpr unsigned char OppositePawnPositionsSize = 2;
     static constexpr unsigned char OppositePawnPositions[2] = {21, 23};
     static constexpr unsigned char KingPossibleMovesSize = 8;
@@ -2511,10 +2797,13 @@ struct FieldLookup<NOTATION::COLOR::color::black, 30>
     static constexpr unsigned char LeftPossibleMoves[6] = {29, 28, 27, 26, 25, 24};
     static constexpr unsigned char RightPossibleMovesSize = 1;
     static constexpr unsigned char RightPossibleMoves[1] = {31};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 2;
+    static constexpr unsigned char PawnAttackCandidates[2] = {21, 23};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::black, 31>
-{
+struct FieldLookup<NOTATION::COLOR::color::black, 31>{
     static constexpr unsigned char OppositePawnPositionsSize = 1;
     static constexpr unsigned char OppositePawnPositions[1] = {22};
     static constexpr unsigned char KingPossibleMovesSize = 5;
@@ -2537,10 +2826,13 @@ struct FieldLookup<NOTATION::COLOR::color::black, 31>
     static constexpr unsigned char LeftPossibleMoves[7] = {30, 29, 28, 27, 26, 25, 24};
     static constexpr unsigned char RightPossibleMovesSize = 0;
     static constexpr unsigned char RightPossibleMoves[1] = {};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 1;
+    static constexpr unsigned char PawnAttackCandidates[1] = {22};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::black, 32>
-{
+struct FieldLookup<NOTATION::COLOR::color::black, 32>{
     static constexpr unsigned char OppositePawnPositionsSize = 1;
     static constexpr unsigned char OppositePawnPositions[1] = {25};
     static constexpr unsigned char KingPossibleMovesSize = 5;
@@ -2563,10 +2855,13 @@ struct FieldLookup<NOTATION::COLOR::color::black, 32>
     static constexpr unsigned char LeftPossibleMoves[1] = {};
     static constexpr unsigned char RightPossibleMovesSize = 7;
     static constexpr unsigned char RightPossibleMoves[7] = {33, 34, 35, 36, 37, 38, 39};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 1;
+    static constexpr unsigned char PawnAttackCandidates[1] = {25};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::black, 33>
-{
+struct FieldLookup<NOTATION::COLOR::color::black, 33>{
     static constexpr unsigned char OppositePawnPositionsSize = 2;
     static constexpr unsigned char OppositePawnPositions[2] = {24, 26};
     static constexpr unsigned char KingPossibleMovesSize = 8;
@@ -2589,10 +2884,13 @@ struct FieldLookup<NOTATION::COLOR::color::black, 33>
     static constexpr unsigned char LeftPossibleMoves[1] = {32};
     static constexpr unsigned char RightPossibleMovesSize = 6;
     static constexpr unsigned char RightPossibleMoves[6] = {34, 35, 36, 37, 38, 39};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 2;
+    static constexpr unsigned char PawnAttackCandidates[2] = {24, 26};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::black, 34>
-{
+struct FieldLookup<NOTATION::COLOR::color::black, 34>{
     static constexpr unsigned char OppositePawnPositionsSize = 2;
     static constexpr unsigned char OppositePawnPositions[2] = {25, 27};
     static constexpr unsigned char KingPossibleMovesSize = 8;
@@ -2615,10 +2913,13 @@ struct FieldLookup<NOTATION::COLOR::color::black, 34>
     static constexpr unsigned char LeftPossibleMoves[2] = {33, 32};
     static constexpr unsigned char RightPossibleMovesSize = 5;
     static constexpr unsigned char RightPossibleMoves[5] = {35, 36, 37, 38, 39};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 2;
+    static constexpr unsigned char PawnAttackCandidates[2] = {25, 27};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::black, 35>
-{
+struct FieldLookup<NOTATION::COLOR::color::black, 35>{
     static constexpr unsigned char OppositePawnPositionsSize = 2;
     static constexpr unsigned char OppositePawnPositions[2] = {26, 28};
     static constexpr unsigned char KingPossibleMovesSize = 8;
@@ -2641,10 +2942,13 @@ struct FieldLookup<NOTATION::COLOR::color::black, 35>
     static constexpr unsigned char LeftPossibleMoves[3] = {34, 33, 32};
     static constexpr unsigned char RightPossibleMovesSize = 4;
     static constexpr unsigned char RightPossibleMoves[4] = {36, 37, 38, 39};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 2;
+    static constexpr unsigned char PawnAttackCandidates[2] = {26, 28};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::black, 36>
-{
+struct FieldLookup<NOTATION::COLOR::color::black, 36>{
     static constexpr unsigned char OppositePawnPositionsSize = 2;
     static constexpr unsigned char OppositePawnPositions[2] = {27, 29};
     static constexpr unsigned char KingPossibleMovesSize = 8;
@@ -2667,10 +2971,13 @@ struct FieldLookup<NOTATION::COLOR::color::black, 36>
     static constexpr unsigned char LeftPossibleMoves[4] = {35, 34, 33, 32};
     static constexpr unsigned char RightPossibleMovesSize = 3;
     static constexpr unsigned char RightPossibleMoves[3] = {37, 38, 39};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 2;
+    static constexpr unsigned char PawnAttackCandidates[2] = {27, 29};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::black, 37>
-{
+struct FieldLookup<NOTATION::COLOR::color::black, 37>{
     static constexpr unsigned char OppositePawnPositionsSize = 2;
     static constexpr unsigned char OppositePawnPositions[2] = {28, 30};
     static constexpr unsigned char KingPossibleMovesSize = 8;
@@ -2693,10 +3000,13 @@ struct FieldLookup<NOTATION::COLOR::color::black, 37>
     static constexpr unsigned char LeftPossibleMoves[5] = {36, 35, 34, 33, 32};
     static constexpr unsigned char RightPossibleMovesSize = 2;
     static constexpr unsigned char RightPossibleMoves[2] = {38, 39};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 2;
+    static constexpr unsigned char PawnAttackCandidates[2] = {28, 30};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::black, 38>
-{
+struct FieldLookup<NOTATION::COLOR::color::black, 38>{
     static constexpr unsigned char OppositePawnPositionsSize = 2;
     static constexpr unsigned char OppositePawnPositions[2] = {29, 31};
     static constexpr unsigned char KingPossibleMovesSize = 8;
@@ -2719,10 +3029,13 @@ struct FieldLookup<NOTATION::COLOR::color::black, 38>
     static constexpr unsigned char LeftPossibleMoves[6] = {37, 36, 35, 34, 33, 32};
     static constexpr unsigned char RightPossibleMovesSize = 1;
     static constexpr unsigned char RightPossibleMoves[1] = {39};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 2;
+    static constexpr unsigned char PawnAttackCandidates[2] = {29, 31};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::black, 39>
-{
+struct FieldLookup<NOTATION::COLOR::color::black, 39>{
     static constexpr unsigned char OppositePawnPositionsSize = 1;
     static constexpr unsigned char OppositePawnPositions[1] = {30};
     static constexpr unsigned char KingPossibleMovesSize = 5;
@@ -2745,10 +3058,13 @@ struct FieldLookup<NOTATION::COLOR::color::black, 39>
     static constexpr unsigned char LeftPossibleMoves[7] = {38, 37, 36, 35, 34, 33, 32};
     static constexpr unsigned char RightPossibleMovesSize = 0;
     static constexpr unsigned char RightPossibleMoves[1] = {};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 1;
+    static constexpr unsigned char PawnAttackCandidates[1] = {30};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::black, 40>
-{
+struct FieldLookup<NOTATION::COLOR::color::black, 40>{
     static constexpr unsigned char OppositePawnPositionsSize = 1;
     static constexpr unsigned char OppositePawnPositions[1] = {33};
     static constexpr unsigned char KingPossibleMovesSize = 5;
@@ -2771,10 +3087,13 @@ struct FieldLookup<NOTATION::COLOR::color::black, 40>
     static constexpr unsigned char LeftPossibleMoves[1] = {};
     static constexpr unsigned char RightPossibleMovesSize = 7;
     static constexpr unsigned char RightPossibleMoves[7] = {41, 42, 43, 44, 45, 46, 47};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 1;
+    static constexpr unsigned char PawnAttackCandidates[1] = {33};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::black, 41>
-{
+struct FieldLookup<NOTATION::COLOR::color::black, 41>{
     static constexpr unsigned char OppositePawnPositionsSize = 2;
     static constexpr unsigned char OppositePawnPositions[2] = {32, 34};
     static constexpr unsigned char KingPossibleMovesSize = 8;
@@ -2797,10 +3116,13 @@ struct FieldLookup<NOTATION::COLOR::color::black, 41>
     static constexpr unsigned char LeftPossibleMoves[1] = {40};
     static constexpr unsigned char RightPossibleMovesSize = 6;
     static constexpr unsigned char RightPossibleMoves[6] = {42, 43, 44, 45, 46, 47};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 2;
+    static constexpr unsigned char PawnAttackCandidates[2] = {32, 34};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::black, 42>
-{
+struct FieldLookup<NOTATION::COLOR::color::black, 42>{
     static constexpr unsigned char OppositePawnPositionsSize = 2;
     static constexpr unsigned char OppositePawnPositions[2] = {33, 35};
     static constexpr unsigned char KingPossibleMovesSize = 8;
@@ -2823,10 +3145,13 @@ struct FieldLookup<NOTATION::COLOR::color::black, 42>
     static constexpr unsigned char LeftPossibleMoves[2] = {41, 40};
     static constexpr unsigned char RightPossibleMovesSize = 5;
     static constexpr unsigned char RightPossibleMoves[5] = {43, 44, 45, 46, 47};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 2;
+    static constexpr unsigned char PawnAttackCandidates[2] = {33, 35};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::black, 43>
-{
+struct FieldLookup<NOTATION::COLOR::color::black, 43>{
     static constexpr unsigned char OppositePawnPositionsSize = 2;
     static constexpr unsigned char OppositePawnPositions[2] = {34, 36};
     static constexpr unsigned char KingPossibleMovesSize = 8;
@@ -2849,10 +3174,13 @@ struct FieldLookup<NOTATION::COLOR::color::black, 43>
     static constexpr unsigned char LeftPossibleMoves[3] = {42, 41, 40};
     static constexpr unsigned char RightPossibleMovesSize = 4;
     static constexpr unsigned char RightPossibleMoves[4] = {44, 45, 46, 47};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 2;
+    static constexpr unsigned char PawnAttackCandidates[2] = {34, 36};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::black, 44>
-{
+struct FieldLookup<NOTATION::COLOR::color::black, 44>{
     static constexpr unsigned char OppositePawnPositionsSize = 2;
     static constexpr unsigned char OppositePawnPositions[2] = {35, 37};
     static constexpr unsigned char KingPossibleMovesSize = 8;
@@ -2875,10 +3203,13 @@ struct FieldLookup<NOTATION::COLOR::color::black, 44>
     static constexpr unsigned char LeftPossibleMoves[4] = {43, 42, 41, 40};
     static constexpr unsigned char RightPossibleMovesSize = 3;
     static constexpr unsigned char RightPossibleMoves[3] = {45, 46, 47};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 2;
+    static constexpr unsigned char PawnAttackCandidates[2] = {35, 37};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::black, 45>
-{
+struct FieldLookup<NOTATION::COLOR::color::black, 45>{
     static constexpr unsigned char OppositePawnPositionsSize = 2;
     static constexpr unsigned char OppositePawnPositions[2] = {36, 38};
     static constexpr unsigned char KingPossibleMovesSize = 8;
@@ -2901,10 +3232,13 @@ struct FieldLookup<NOTATION::COLOR::color::black, 45>
     static constexpr unsigned char LeftPossibleMoves[5] = {44, 43, 42, 41, 40};
     static constexpr unsigned char RightPossibleMovesSize = 2;
     static constexpr unsigned char RightPossibleMoves[2] = {46, 47};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 2;
+    static constexpr unsigned char PawnAttackCandidates[2] = {36, 38};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::black, 46>
-{
+struct FieldLookup<NOTATION::COLOR::color::black, 46>{
     static constexpr unsigned char OppositePawnPositionsSize = 2;
     static constexpr unsigned char OppositePawnPositions[2] = {37, 39};
     static constexpr unsigned char KingPossibleMovesSize = 8;
@@ -2927,10 +3261,13 @@ struct FieldLookup<NOTATION::COLOR::color::black, 46>
     static constexpr unsigned char LeftPossibleMoves[6] = {45, 44, 43, 42, 41, 40};
     static constexpr unsigned char RightPossibleMovesSize = 1;
     static constexpr unsigned char RightPossibleMoves[1] = {47};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 2;
+    static constexpr unsigned char PawnAttackCandidates[2] = {37, 39};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::black, 47>
-{
+struct FieldLookup<NOTATION::COLOR::color::black, 47>{
     static constexpr unsigned char OppositePawnPositionsSize = 1;
     static constexpr unsigned char OppositePawnPositions[1] = {38};
     static constexpr unsigned char KingPossibleMovesSize = 5;
@@ -2953,10 +3290,13 @@ struct FieldLookup<NOTATION::COLOR::color::black, 47>
     static constexpr unsigned char LeftPossibleMoves[7] = {46, 45, 44, 43, 42, 41, 40};
     static constexpr unsigned char RightPossibleMovesSize = 0;
     static constexpr unsigned char RightPossibleMoves[1] = {};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 1;
+    static constexpr unsigned char PawnAttackCandidates[1] = {38};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::black, 48>
-{
+struct FieldLookup<NOTATION::COLOR::color::black, 48>{
     static constexpr unsigned char OppositePawnPositionsSize = 1;
     static constexpr unsigned char OppositePawnPositions[1] = {41};
     static constexpr unsigned char KingPossibleMovesSize = 5;
@@ -2979,10 +3319,13 @@ struct FieldLookup<NOTATION::COLOR::color::black, 48>
     static constexpr unsigned char LeftPossibleMoves[1] = {};
     static constexpr unsigned char RightPossibleMovesSize = 7;
     static constexpr unsigned char RightPossibleMoves[7] = {49, 50, 51, 52, 53, 54, 55};
+    static constexpr bool CanPawnMove2Fields = true;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 1;
+    static constexpr unsigned char PawnAttackCandidates[1] = {41};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::black, 49>
-{
+struct FieldLookup<NOTATION::COLOR::color::black, 49>{
     static constexpr unsigned char OppositePawnPositionsSize = 2;
     static constexpr unsigned char OppositePawnPositions[2] = {40, 42};
     static constexpr unsigned char KingPossibleMovesSize = 8;
@@ -3005,10 +3348,13 @@ struct FieldLookup<NOTATION::COLOR::color::black, 49>
     static constexpr unsigned char LeftPossibleMoves[1] = {48};
     static constexpr unsigned char RightPossibleMovesSize = 6;
     static constexpr unsigned char RightPossibleMoves[6] = {50, 51, 52, 53, 54, 55};
+    static constexpr bool CanPawnMove2Fields = true;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 2;
+    static constexpr unsigned char PawnAttackCandidates[2] = {40, 42};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::black, 50>
-{
+struct FieldLookup<NOTATION::COLOR::color::black, 50>{
     static constexpr unsigned char OppositePawnPositionsSize = 2;
     static constexpr unsigned char OppositePawnPositions[2] = {41, 43};
     static constexpr unsigned char KingPossibleMovesSize = 8;
@@ -3031,10 +3377,13 @@ struct FieldLookup<NOTATION::COLOR::color::black, 50>
     static constexpr unsigned char LeftPossibleMoves[2] = {49, 48};
     static constexpr unsigned char RightPossibleMovesSize = 5;
     static constexpr unsigned char RightPossibleMoves[5] = {51, 52, 53, 54, 55};
+    static constexpr bool CanPawnMove2Fields = true;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 2;
+    static constexpr unsigned char PawnAttackCandidates[2] = {41, 43};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::black, 51>
-{
+struct FieldLookup<NOTATION::COLOR::color::black, 51>{
     static constexpr unsigned char OppositePawnPositionsSize = 2;
     static constexpr unsigned char OppositePawnPositions[2] = {42, 44};
     static constexpr unsigned char KingPossibleMovesSize = 8;
@@ -3057,10 +3406,13 @@ struct FieldLookup<NOTATION::COLOR::color::black, 51>
     static constexpr unsigned char LeftPossibleMoves[3] = {50, 49, 48};
     static constexpr unsigned char RightPossibleMovesSize = 4;
     static constexpr unsigned char RightPossibleMoves[4] = {52, 53, 54, 55};
+    static constexpr bool CanPawnMove2Fields = true;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 2;
+    static constexpr unsigned char PawnAttackCandidates[2] = {42, 44};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::black, 52>
-{
+struct FieldLookup<NOTATION::COLOR::color::black, 52>{
     static constexpr unsigned char OppositePawnPositionsSize = 2;
     static constexpr unsigned char OppositePawnPositions[2] = {43, 45};
     static constexpr unsigned char KingPossibleMovesSize = 8;
@@ -3083,10 +3435,13 @@ struct FieldLookup<NOTATION::COLOR::color::black, 52>
     static constexpr unsigned char LeftPossibleMoves[4] = {51, 50, 49, 48};
     static constexpr unsigned char RightPossibleMovesSize = 3;
     static constexpr unsigned char RightPossibleMoves[3] = {53, 54, 55};
+    static constexpr bool CanPawnMove2Fields = true;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 2;
+    static constexpr unsigned char PawnAttackCandidates[2] = {43, 45};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::black, 53>
-{
+struct FieldLookup<NOTATION::COLOR::color::black, 53>{
     static constexpr unsigned char OppositePawnPositionsSize = 2;
     static constexpr unsigned char OppositePawnPositions[2] = {44, 46};
     static constexpr unsigned char KingPossibleMovesSize = 8;
@@ -3109,10 +3464,13 @@ struct FieldLookup<NOTATION::COLOR::color::black, 53>
     static constexpr unsigned char LeftPossibleMoves[5] = {52, 51, 50, 49, 48};
     static constexpr unsigned char RightPossibleMovesSize = 2;
     static constexpr unsigned char RightPossibleMoves[2] = {54, 55};
+    static constexpr bool CanPawnMove2Fields = true;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 2;
+    static constexpr unsigned char PawnAttackCandidates[2] = {44, 46};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::black, 54>
-{
+struct FieldLookup<NOTATION::COLOR::color::black, 54>{
     static constexpr unsigned char OppositePawnPositionsSize = 2;
     static constexpr unsigned char OppositePawnPositions[2] = {45, 47};
     static constexpr unsigned char KingPossibleMovesSize = 8;
@@ -3135,10 +3493,13 @@ struct FieldLookup<NOTATION::COLOR::color::black, 54>
     static constexpr unsigned char LeftPossibleMoves[6] = {53, 52, 51, 50, 49, 48};
     static constexpr unsigned char RightPossibleMovesSize = 1;
     static constexpr unsigned char RightPossibleMoves[1] = {55};
+    static constexpr bool CanPawnMove2Fields = true;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 2;
+    static constexpr unsigned char PawnAttackCandidates[2] = {45, 47};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::black, 55>
-{
+struct FieldLookup<NOTATION::COLOR::color::black, 55>{
     static constexpr unsigned char OppositePawnPositionsSize = 1;
     static constexpr unsigned char OppositePawnPositions[1] = {46};
     static constexpr unsigned char KingPossibleMovesSize = 5;
@@ -3161,10 +3522,13 @@ struct FieldLookup<NOTATION::COLOR::color::black, 55>
     static constexpr unsigned char LeftPossibleMoves[7] = {54, 53, 52, 51, 50, 49, 48};
     static constexpr unsigned char RightPossibleMovesSize = 0;
     static constexpr unsigned char RightPossibleMoves[1] = {};
+    static constexpr bool CanPawnMove2Fields = true;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 1;
+    static constexpr unsigned char PawnAttackCandidates[1] = {46};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::black, 56>
-{
+struct FieldLookup<NOTATION::COLOR::color::black, 56>{
     static constexpr unsigned char OppositePawnPositionsSize = 1;
     static constexpr unsigned char OppositePawnPositions[1] = {49};
     static constexpr unsigned char KingPossibleMovesSize = 3;
@@ -3187,10 +3551,13 @@ struct FieldLookup<NOTATION::COLOR::color::black, 56>
     static constexpr unsigned char LeftPossibleMoves[1] = {};
     static constexpr unsigned char RightPossibleMovesSize = 7;
     static constexpr unsigned char RightPossibleMoves[7] = {57, 58, 59, 60, 61, 62, 63};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 0;
+    static constexpr unsigned char PawnAttackCandidates[1] = {};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::black, 57>
-{
+struct FieldLookup<NOTATION::COLOR::color::black, 57>{
     static constexpr unsigned char OppositePawnPositionsSize = 2;
     static constexpr unsigned char OppositePawnPositions[2] = {48, 50};
     static constexpr unsigned char KingPossibleMovesSize = 5;
@@ -3213,10 +3580,13 @@ struct FieldLookup<NOTATION::COLOR::color::black, 57>
     static constexpr unsigned char LeftPossibleMoves[1] = {56};
     static constexpr unsigned char RightPossibleMovesSize = 6;
     static constexpr unsigned char RightPossibleMoves[6] = {58, 59, 60, 61, 62, 63};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 0;
+    static constexpr unsigned char PawnAttackCandidates[1] = {};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::black, 58>
-{
+struct FieldLookup<NOTATION::COLOR::color::black, 58>{
     static constexpr unsigned char OppositePawnPositionsSize = 2;
     static constexpr unsigned char OppositePawnPositions[2] = {49, 51};
     static constexpr unsigned char KingPossibleMovesSize = 5;
@@ -3239,10 +3609,13 @@ struct FieldLookup<NOTATION::COLOR::color::black, 58>
     static constexpr unsigned char LeftPossibleMoves[2] = {57, 56};
     static constexpr unsigned char RightPossibleMovesSize = 5;
     static constexpr unsigned char RightPossibleMoves[5] = {59, 60, 61, 62, 63};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 0;
+    static constexpr unsigned char PawnAttackCandidates[1] = {};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::black, 59>
-{
+struct FieldLookup<NOTATION::COLOR::color::black, 59>{
     static constexpr unsigned char OppositePawnPositionsSize = 2;
     static constexpr unsigned char OppositePawnPositions[2] = {50, 52};
     static constexpr unsigned char KingPossibleMovesSize = 5;
@@ -3265,10 +3638,13 @@ struct FieldLookup<NOTATION::COLOR::color::black, 59>
     static constexpr unsigned char LeftPossibleMoves[3] = {58, 57, 56};
     static constexpr unsigned char RightPossibleMovesSize = 4;
     static constexpr unsigned char RightPossibleMoves[4] = {60, 61, 62, 63};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 0;
+    static constexpr unsigned char PawnAttackCandidates[1] = {};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::black, 60>
-{
+struct FieldLookup<NOTATION::COLOR::color::black, 60>{
     static constexpr unsigned char OppositePawnPositionsSize = 2;
     static constexpr unsigned char OppositePawnPositions[2] = {51, 53};
     static constexpr unsigned char KingPossibleMovesSize = 5;
@@ -3291,10 +3667,13 @@ struct FieldLookup<NOTATION::COLOR::color::black, 60>
     static constexpr unsigned char LeftPossibleMoves[4] = {59, 58, 57, 56};
     static constexpr unsigned char RightPossibleMovesSize = 3;
     static constexpr unsigned char RightPossibleMoves[3] = {61, 62, 63};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 0;
+    static constexpr unsigned char PawnAttackCandidates[1] = {};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::black, 61>
-{
+struct FieldLookup<NOTATION::COLOR::color::black, 61>{
     static constexpr unsigned char OppositePawnPositionsSize = 2;
     static constexpr unsigned char OppositePawnPositions[2] = {52, 54};
     static constexpr unsigned char KingPossibleMovesSize = 5;
@@ -3317,10 +3696,13 @@ struct FieldLookup<NOTATION::COLOR::color::black, 61>
     static constexpr unsigned char LeftPossibleMoves[5] = {60, 59, 58, 57, 56};
     static constexpr unsigned char RightPossibleMovesSize = 2;
     static constexpr unsigned char RightPossibleMoves[2] = {62, 63};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 0;
+    static constexpr unsigned char PawnAttackCandidates[1] = {};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::black, 62>
-{
+struct FieldLookup<NOTATION::COLOR::color::black, 62>{
     static constexpr unsigned char OppositePawnPositionsSize = 2;
     static constexpr unsigned char OppositePawnPositions[2] = {53, 55};
     static constexpr unsigned char KingPossibleMovesSize = 5;
@@ -3343,10 +3725,13 @@ struct FieldLookup<NOTATION::COLOR::color::black, 62>
     static constexpr unsigned char LeftPossibleMoves[6] = {61, 60, 59, 58, 57, 56};
     static constexpr unsigned char RightPossibleMovesSize = 1;
     static constexpr unsigned char RightPossibleMoves[1] = {63};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 0;
+    static constexpr unsigned char PawnAttackCandidates[1] = {};
 };
 template <>
-struct FieldLookup<NOTATION::COLOR::color::black, 63>
-{
+struct FieldLookup<NOTATION::COLOR::color::black, 63>{
     static constexpr unsigned char OppositePawnPositionsSize = 1;
     static constexpr unsigned char OppositePawnPositions[1] = {54};
     static constexpr unsigned char KingPossibleMovesSize = 3;
@@ -3369,4 +3754,8 @@ struct FieldLookup<NOTATION::COLOR::color::black, 63>
     static constexpr unsigned char LeftPossibleMoves[7] = {62, 61, 60, 59, 58, 57, 56};
     static constexpr unsigned char RightPossibleMovesSize = 0;
     static constexpr unsigned char RightPossibleMoves[1] = {};
+    static constexpr bool CanPawnMove2Fields = false;
+    static constexpr bool CanPawnPromote = false;
+    static constexpr unsigned char PawnAttackCandidatesSize = 0;
+    static constexpr unsigned char PawnAttackCandidates[1] = {};
 };

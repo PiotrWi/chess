@@ -17,7 +17,7 @@ const std::vector<ExtendedMove> CachedEngineWithMap::generate(const BoardEngine 
     auto hash = be.getHash();
     CacheEntity* elem;
     auto created = cache_.getOrCreate(hash, be.board, elem);
-    if (created)
+    if (created or elem->precalculatedMoves.empty())
     {
         elem->precalculatedMoves = be.generateMoves();
         elem->killers[depth] = InitialKiller;
@@ -79,7 +79,7 @@ const std::vector<ExtendedMove> CachedEngineWithMap::generate(const BoardEngine&
     auto hash = be.getHash(c);
 
     auto* elem = cache_.get(hash, be.board);
-    if (!elem)
+    if (!elem or elem->precalculatedMoves.empty())
     {
         CacheEntity entity;
         entity.precalculatedMoves = be.generateMovesFor(c);
@@ -192,6 +192,41 @@ void CachedEngineWithMap::setKillerMove(const BoardEngine& be, unsigned int inde
     }
 }
 
+void CachedEngineWithMap::setLowerBound(const BoardEngine &be, int value, unsigned char depth)
+{
+    auto hash = be.getHash();
+    CacheEntity* elem;
+    cache_.getOrCreate(hash, be.board, elem);
+    elem->previousEvaluations[depth].visitedBefore = true;
+    elem->previousEvaluations[depth].lowerValue = value;
+}
+
+void CachedEngineWithMap::setUpperBound(const BoardEngine &be, int value, unsigned char depth)
+{
+    auto hash = be.getHash();
+    CacheEntity* elem;
+    cache_.getOrCreate(hash, be.board, elem);
+    elem->previousEvaluations[depth].visitedBefore = true;
+    elem->previousEvaluations[depth].higherValue = value;
+}
+
+void CachedEngineWithMap::setLowerUpperBound(const BoardEngine &be, int valueMin, int valueMax, unsigned char depth)
+{
+    auto hash = be.getHash();
+    CacheEntity* elem;
+    cache_.getOrCreate(hash, be.board, elem);
+    elem->previousEvaluations[depth].visitedBefore = true;
+    elem->previousEvaluations[depth].lowerValue = valueMin;
+    elem->previousEvaluations[depth].higherValue = valueMax;
+}
+
+CacheEntity::PreviousEvaluations CachedEngineWithMap::getPreviousEvaluations(const BoardEngine &be, unsigned char depth)
+{
+    auto hash = be.getHash();
+    CacheEntity* elem;
+    cache_.getOrCreate(hash, be.board, elem);
+    return elem->previousEvaluations[depth];
+}
 
 }  // namespace players
 }  // namespace common

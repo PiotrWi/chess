@@ -13,6 +13,7 @@ class BoardEngine
 public:
     BoardEngine();
     BoardEngine(const BoardEngine&);
+    BoardEngine& operator=(const BoardEngine&);
 
     bool validateMove(const Move&) const;
 

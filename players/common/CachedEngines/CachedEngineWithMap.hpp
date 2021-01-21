@@ -39,6 +39,16 @@ struct CacheEntity
      */
     struct KillerMoves
     {
+        KillerMoves()
+            : killerInNode(-1)
+            , returnedKiller(-1)
+            , returnedFromDifferentNode(false) {}
+        KillerMoves(signed char KilerInNodeIn,
+                    signed char returendKilerIn,
+                    bool returnedFromDifferentNodeIn)
+                : killerInNode(KilerInNodeIn)
+                , returnedKiller(returendKilerIn)
+                , returnedFromDifferentNode(returnedFromDifferentNodeIn) {}
         signed char killerInNode = -1;
         signed char returnedKiller = -1;
         bool returnedFromDifferentNode = false;
@@ -49,24 +59,21 @@ struct CacheEntity
      */
     struct PreviousEvaluations
     {
-        bool betaCutOff;
-        bool alfaCutOff;
-        int evaluationValue;
+        PreviousEvaluations()
+            : visitedBefore(false)
+            , lowerValue(-10000001)
+            , higherValue(10000001) {}
+        bool visitedBefore = false;
+        int lowerValue = -10000001;
+        int higherValue = 10000001;
     };
-    std::vector<ExtendedMove> precalculatedMoves;
-    KillerMoves killers[10]{{-1, -1, false},
-                            {-1, -1, false},
-                            {-1, -1, false},
-                            {-1, -1, false},
-                            {-1, -1, false},
-                            {-1, -1, false},
-                            {-1, -1, false},
-                            {-1, -1, false},
-                            {-1, -1, false},
-                            {-1, -1, false}};
+
+    std::vector<ExtendedMove> precalculatedMoves = {};
+    KillerMoves killers[12] = {};
+    PreviousEvaluations previousEvaluations[12] = {};
 };
 
-constexpr CacheEntity::KillerMoves InitialKiller = {0, 0, false};
+static CacheEntity::KillerMoves InitialKiller = {0, 0, false};
 
 
 class CachedEngineWithMap
@@ -84,8 +91,15 @@ public:
                        unsigned int index,
                        unsigned char depth);
 
+    void setLowerBound(const BoardEngine &be, int value, unsigned char depth);
+    void setUpperBound(const BoardEngine &be, int value, unsigned char depth);
+    void setLowerUpperBound(const BoardEngine &be, int valueMin, int valueMax, unsigned char depth);
+
+    CacheEntity::PreviousEvaluations getPreviousEvaluations(const BoardEngine &be, unsigned char depth);
+
     void makeOlder();
     void clearOlderThan(unsigned char age);
+
     void clear();
 private:
     containers::HashMap<CacheEntity, Board, 22u> cache_;

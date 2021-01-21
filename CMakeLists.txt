@@ -29,6 +29,7 @@ add_subdirectory(BoardEngine)
 add_subdirectory(players)
 add_subdirectory(externals/gtest)
 add_subdirectory(test)
+add_subdirectory(applications)
 
 add_executable(chess main.cpp)
 

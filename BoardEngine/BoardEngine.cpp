@@ -15,6 +15,19 @@ BoardEngine::BoardEngine(const BoardEngine& other)
 {
 }
 
+BoardEngine& BoardEngine::operator=(const BoardEngine& be)
+{
+    if (&be == this)
+    {
+        return *this;
+    }
+    this->board = be.board;
+    resultEvaluator = be.resultEvaluator;
+    hash_ = be.hash_;
+    return *this;
+}
+
+
 bool BoardEngine::validateMove(const Move& move) const
 {
     return MoveValidator::validateMove(board, move);

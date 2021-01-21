@@ -33,6 +33,16 @@ int evaluateMax(BoardEngine& be,
                 int alfa,
                 int beta)
 {
+    auto previousEvaluations = moveGenerator.getPreviousEvaluations(be, depth);
+    if (previousEvaluations.visitedBefore)
+    {
+        if (previousEvaluations.lowerValue >= beta)
+            return beta;
+        if (previousEvaluations.higherValue <= alfa)
+            return alfa;
+        alfa = std::max(alfa, previousEvaluations.lowerValue);
+        beta = std::min(beta, previousEvaluations.higherValue);
+    }
     if (depth == 0)
     {
         return evaluatePosition(be, moveGenerator);
@@ -73,18 +83,25 @@ int evaluateMax(BoardEngine& be,
 
         if (beta <= nextAlfa)
         {
-            // setMinimalValue
+            moveGenerator.setLowerBound(be, nextAlfa, depth);
             moveGenerator.setKillerMove(be, i, depth);
             if (SaveMove) bestMove = validMoves[i];
             return beta;
         }
         if (nextAlfa > alfa)
         {
-            // setMinimalValue
             pvFound = true;
             greatestMove = i;
             alfa = nextAlfa;
         }
+    }
+    if (not pvFound)
+    {
+        moveGenerator.setUpperBound(be, nextAlfa, depth);
+    }
+    else
+    {
+        moveGenerator.setLowerUpperBound(be, alfa, beta, depth);
     }
     moveGenerator.setKillerMove(be, greatestMove, depth);
     if (SaveMove) bestMove = validMoves[greatestMove];
@@ -93,7 +110,7 @@ int evaluateMax(BoardEngine& be,
 
 }  // namespace
 
-namespace alfaBetaPvs
+namespace alfaBetaPvsMtd
 {
 
 template <typename TMoveGenerator>

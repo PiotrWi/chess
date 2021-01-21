@@ -1,7 +1,7 @@
 #include "CachedPlayer.hpp"
 #include <cstring>
 #include <notations/coordinationnotation.hpp>
-#include <common/searchingAlgorithms/AlfaBetaPvs.hpp>
+#include <common/searchingAlgorithms/AlfaBetaPvsMtd.hpp>
 
 void CachedPlayer::init(Color)
 {
@@ -13,7 +13,7 @@ const char* CachedPlayer::act(const char *string)
     {
         be.applyMove(notations::coordinates::createMove(string, be.board.playerOnMove));
     }
-    auto move = alfaBetaPvs::evaluateIterative(be, cmg_, 8);
+    auto move = alfaBetaPvsMtd::evaluateIterative(be, cmg_, 8);
     be.applyMove(move);
 
     cmg_ = {};

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <detail/MoveApplier.hpp>
+#include <detail/CheckChecker.hpp>
 
 namespace MoveGenerator
 {

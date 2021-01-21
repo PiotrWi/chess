@@ -13,7 +13,7 @@ add_executable(pt
         AlfaBetaWithTransictionsTest.cpp
         AldaBetaWithTransictionMapTest.cpp
         #FullSimulation.cpp
-        AlfaBetaPvs.cpp)
+        AlfaBetaPvs.cpp AlfaBetaMtdPvs.cpp)
 
 
 add_dependencies(pt googletest)
