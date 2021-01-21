@@ -21,7 +21,7 @@ void handleIsReady(IS_READY&)
 
 void handleBestMove(BEST_MOVE& bestMove)
 {
-    debug << "bestMove " + bestMove.bestMove;
+    debug << "bestmove " + bestMove.bestMove;
 }
 
 void readCommands()
@@ -58,14 +58,18 @@ void readCommands()
             std::vector<std::string> moves;
             if (word == "startpos")
             {
-                while (!ss.eof())
+                ss >> word;
+                if (word == "moves")
                 {
-                    ss >> word;
-                    moves.push_back(word);
+                    while (!ss.eof())
+                    {
+                        ss >> word;
+                        moves.push_back(word);
+                    }
                 }
+                auto event = POSSITION{true, moves};
+                eventPropagator.enqueue(event);
             }
-            auto event = POSSITION{false, moves};
-            eventPropagator.enqueue(event);
         }
 
         if (command.find("go") != std::string::npos)

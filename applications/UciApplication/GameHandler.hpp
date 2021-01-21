@@ -11,7 +11,7 @@ class GameHandler
 {
 public:
     GameHandler();
-    void startProccessing();
+    void startProcessing();
     void onPositionProc(POSSITION&);
     void onGo(GO&);
     void emitBestMove(const Move& );

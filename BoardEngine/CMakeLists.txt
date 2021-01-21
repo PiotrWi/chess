@@ -6,21 +6,21 @@ add_library(board
                 publicIf/Board.hpp
                 detail/Board.cpp
                 publicIf/BoardIO.hpp
-		detail/BoardIO.cpp
+				detail/BoardIO.cpp
                 detail/CheckChecker.hpp
-		detail/CheckChecker.cpp
-		MoveGenerator/MoveGenerator.hpp
-		MoveGenerator/MoveGenerator.cpp
+				detail/CheckChecker.cpp
+				MoveGenerator/MoveGenerator.hpp
+				MoveGenerator/MoveGenerator.cpp
                 detail/MoveValidator.hpp
-		detail/MoveValidator.cpp
+				detail/MoveValidator.cpp
                 publicIf/NotationConversions.hpp
-		detail/NotationConversions.cpp
+				detail/NotationConversions.cpp
                 detail/ResultEvaluator.hpp
-		detail/ResultEvaluator.cpp
+				detail/ResultEvaluator.cpp
                 detail/MoveApplier.hpp
-		detail/MoveApplier.cpp
+				detail/MoveApplier.cpp
                 BoardEngine.hpp
-		BoardEngine.cpp
+				BoardEngine.cpp
                 notations/common.hpp
                 notations/common.cpp
                 notations/coordinationnotation.hpp
@@ -29,5 +29,12 @@ add_library(board
                 notations/LongAlgebraicNotation.cpp
                 hashing/zobrist.hpp
                 hashing/Zobrish.cpp
-                FieldLookup/FieldLookup.hpp detail/PinnedMovesChecker.hpp MoveGenerator/MoveGeneratorContext.hpp MoveGenerator/Strategy.hpp MoveGenerator/MoveGeneratorLookupBackend.hpp MoveGenerator/MoveGeneratorBackend.hpp)
+                FieldLookup/FieldLookup.hpp
+				detail/PinnedMovesChecker.hpp
+				MoveGenerator/MoveGeneratorContext.hpp
+				MoveGenerator/Strategy.hpp
+				MoveGenerator/MoveGeneratorLookupBackend.hpp
+				MoveGenerator/MoveGeneratorBackend.hpp
+				notations/uci.hpp
+				notations/uci.cpp)
 	

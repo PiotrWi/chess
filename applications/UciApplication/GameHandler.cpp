@@ -1,9 +1,7 @@
 #include "GameHandler.hpp"
 #include <UciApplication/EventsPropagator.hpp>
-#include <notations/LongAlgebraicNotation.hpp>
+#include <notations/uci.hpp>
 #include <common/searchingAlgorithms/AlfaBetaPvs.hpp>
-
-#include <utils/DebugWrapper.hpp>
 
 std::unique_ptr<GameHandler> handler;
 
@@ -20,13 +18,13 @@ void onGoHandler(GO& event)
 void GameHandler::onGo(GO&)
 {
     cachedEngine = {};
-    auto move = alfaBetaPvs::evaluateIterative(be, cachedEngine, 2);
+    auto move = alfaBetaPvs::evaluateIterative(be, cachedEngine, 8);
     emitBestMove(move);
 }
 
 void GameHandler::emitBestMove(const Move& move)
 {
-    auto event = BEST_MOVE{notations::long_algebraic::createMoveStr(convertMoveToExtended(be.board, move)).data()};
+    auto event = BEST_MOVE{notations::uci::createMoveStr(convertMoveToExtended(be.board, move)).data()};
     eventPropagator.enqueue(event);
 }
 
@@ -34,9 +32,8 @@ GameHandler::GameHandler()
 {
 }
 
-void GameHandler::startProccessing()
+void GameHandler::startProcessing()
 {
-    debug.logInDebug("startProccessing");
     eventPropagator.registerToEvent(onPositionProcHandler);
     eventPropagator.registerToEvent(onGoHandler);
 }
@@ -48,7 +45,7 @@ void GameHandler::onPositionProc(POSSITION& event)
         be = {};
         for (const auto& moveStr : event.moves)
         {
-            auto move = notations::long_algebraic::createExtendedMove(moveStr, be.board.playerOnMove, be.board);
+            auto move = notations::uci::createExtendedMove(moveStr, be.board.playerOnMove, be.board);
             be.applyMove(move);
         }
     }
@@ -57,5 +54,5 @@ void GameHandler::onPositionProc(POSSITION& event)
 void handleUciNewGame(UCI_NEW_GAME&)
 {
     handler = std::make_unique<GameHandler>();
-    handler->startProccessing();
+    handler->startProcessing();
 }
