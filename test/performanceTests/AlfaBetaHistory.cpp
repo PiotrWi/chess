@@ -3,71 +3,72 @@
 #include <BoardEngine.hpp>
 #include <notations/coordinationnotation.hpp>
 #include <common/CachedEngines/CachedEngineWithMap.hpp>
+#include <common/CachedEngines/MoveGenerator.hpp>
 
-#include <common/searchingAlgorithms/AlfaBetaPvsMtd.hpp>
+#include <common/searchingAlgorithms/AlfaBetaPvsHistory.hpp>
 
-TEST(alfaBetaPvsMtd, PerformanceTest_2)
+TEST(alfaBetaPvsHistory, PerformanceTest_2)
 {
     BoardEngine be;
     players::common::move_generators::CachedEngineWithMap mg;
-    alfaBetaPvsMtd::evaluate(be, mg, 2);
+    alfaBetaPvsHistory::evaluate(be, mg, 2);
 }
 
-TEST(alfaBetaPvsMtd, PerformanceTest_4)
+TEST(alfaBetaPvsHistory, PerformanceTest_4)
 {
     BoardEngine be;
     players::common::move_generators::CachedEngineWithMap mg;
-    alfaBetaPvsMtd::evaluate(be, mg, 4);
+    alfaBetaPvsHistory::evaluate(be, mg, 4);
 }
 
-TEST(alfaBetaPvsMtd, PerformanceTest_6)
+TEST(alfaBetaPvsHistory, PerformanceTest_6)
 {
     BoardEngine be;
     players::common::move_generators::CachedEngineWithMap mg;
-    alfaBetaPvsMtd::evaluate(be, mg, 6);
+    alfaBetaPvsHistory::evaluate(be, mg, 6);
 }
 
-TEST(alfaBetaPvsMtd, PerformanceTest_6_black)
+TEST(alfaBetaPvsHistory, PerformanceTest_6_black)
 {
     BoardEngine be;
     players::common::move_generators::CachedEngineWithMap mg;
     be.applyMove(notations::coordinates::createMove("e2-e4", NOTATION::COLOR::color::white));
-    alfaBetaPvsMtd::evaluate(be, mg, 6);
+    alfaBetaPvsHistory::evaluate(be, mg, 6);
 }
 
-TEST(alfaBetaPvsMtd, PerformanceTest_8)
+TEST(alfaBetaPvsHistory, PerformanceTest_8)
 {
     BoardEngine be;
     players::common::move_generators::CachedEngineWithMap mg;
-    alfaBetaPvsMtd::evaluate(be, mg, 8);
+    alfaBetaPvsHistory::evaluate(be, mg, 8);
 }
 
-TEST(alfaBetaPvsMtd, PerformanceTest_8_killer)
+TEST(alfaBetaPvsHistory, PerformanceTest_8_killer)
 {
     BoardEngine be;
     players::common::move_generators::CachedEngineWithMap mg;
-    alfaBetaPvsMtd::evaluateIterative(be, mg, 8);
+    alfaBetaPvsHistory::evaluateIterative(be, mg, 8);
 }
 
-TEST(alfaBetaPvsMtd, PerformanceTest_8_black)
+TEST(alfaBetaPvsHistory, PerformanceTest_8_black)
 {
     BoardEngine be;
     players::common::move_generators::CachedEngineWithMap mg;
     be.applyMove(notations::coordinates::createMove("e2-e4", NOTATION::COLOR::color::white));
-    alfaBetaPvsMtd::evaluate(be, mg, 8);
+    alfaBetaPvsHistory::evaluate(be, mg, 8);
 }
 
-TEST(alfaBetaPvsMtd, PerformanceTest_8_black_killer)
+TEST(alfaBetaPvsHistory, PerformanceTest_8_black_killer)
 {
     BoardEngine be;
     players::common::move_generators::CachedEngineWithMap mg;
-    alfaBetaPvsMtd::evaluateIterative(be, mg, 8);
+    alfaBetaPvsHistory::evaluateIterative(be, mg, 8);
 }
 /*
-TEST(alfaBetaPvsMtd, PerformanceTest_10_killer)
+TEST(alfaBetaPvsHistory, PerformanceTest_10_killer)
 {
     BoardEngine be;
     players::common::move_generators::CachedEngineWithMap mg;
-    alfaBetaPvsMtd::evaluateIterative(be, mg, 10);
+    alfaBetaPvsHistory::evaluateIterative(be, mg, 10);
 }
  */

@@ -52,21 +52,6 @@ TEST(AlfaBetaTrasictionMap, PerformanceTest_8_killer)
 }
 
 /*
-TEST(AlfaBetaTrasictionMap, PerformanceTest_8_black)
-{
-    BoardEngine be;
-    players::common::move_generators::CachedEngineWithMap mg;
-    be.applyMove(notations::coordinates::createMove("e2-e4", NOTATION::COLOR::color::white));
-    alfaBeta::evaluate(be, mg, 8);
-}
-
-TEST(AlfaBetaTrasictionMap, PerformanceTest_10)
-{
-    BoardEngine be;
-    CachedEngineWithMap mg;
-    alfaBeta::evaluate(be, mg, 10);
-}
-
 TEST(AlfaBetaTrasictionMap, PerformanceTest_10_black)
 {
     BoardEngine be;

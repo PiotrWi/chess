@@ -79,8 +79,14 @@ TEST(AlfaBetaPvsNoCache, PerformanceTest_8_black)
     be.applyMove(notations::coordinates::createMove("e2-e4", NOTATION::COLOR::color::white));
     alfaBetaPvs::evaluate(be, mg, 8);
 }
-
-
+/*
+TEST(AlfaBetaPvs, PerformanceTest_10_killer)
+{
+    BoardEngine be;
+    players::common::move_generators::CachedEngineWithMap mg;
+    alfaBetaPvs::evaluateIterative(be, mg, 10);
+}
+*/
 /*TEST(AlfaBetaTrasictionMap, PerformanceTest_10)
 {
     BoardEngine be;

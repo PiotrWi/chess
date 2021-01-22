@@ -1,5 +1,7 @@
 #pragma once
 
+#pragma once
+
 #include <BoardEngine.hpp>
 
 #include <algorithm>
@@ -13,6 +15,21 @@ namespace
 {
 
 ExtendedMove bestMove;
+
+unsigned history[2][64][64] = {};
+
+void sortByHistory(NOTATION::COLOR::color c, std::vector<ExtendedMove>& moves)
+{
+    auto index = 1;
+    if (c == NOTATION::COLOR::color::white)
+    {
+        index = 0;
+    }
+    std::sort(moves.begin(), moves.end(), [&](auto& lhs, auto& rhs)
+    {
+        return history[index][lhs.source][lhs.destination] > history[index][rhs.source][rhs.destination];
+    });
+}
 
 template <typename TMoveGenerator>
 int evaluatePosition(BoardEngine& be,
@@ -54,6 +71,7 @@ int evaluateMax(BoardEngine& be,
     auto nextAlfa = -1000000;
     auto pvFound = false;
 
+    sortByHistory(be.board.playerOnMove, validMoves);
     for (auto i = 0u; i < validMoves.size(); ++i)
     {
         be.applyMove(validMoves[i]);
@@ -73,6 +91,16 @@ int evaluateMax(BoardEngine& be,
 
         if (beta <= nextAlfa)
         {
+            if ((validMoves[i].flags & ExtendedMove::beatingMask) == ExtendedMove::beatingMask)
+            {
+
+                auto index = 1;
+                if (be.board.playerOnMove == NOTATION::COLOR::color::white)
+                {
+                    index = 0;
+                }
+                history[index][validMoves[i].source][validMoves[i].destination] += depth*depth;
+            }
             moveGenerator.setKillerMove(be, i, depth);
             if (SaveMove) bestMove = validMoves[i];
             return beta;
@@ -91,12 +119,14 @@ int evaluateMax(BoardEngine& be,
 
 }  // namespace
 
-namespace alfaBetaPvs
+namespace alfaBetaPvsHistory
 {
 
 template <typename TMoveGenerator>
 Move evaluate(BoardEngine be, TMoveGenerator& moveGenerator, unsigned char depth)
 {
+    memset(history, 0, sizeof(history[0][0][0]) * 2 * 64 * 64);
+
     int alfa = -10000000;
     int beta = 10000000;
 
@@ -117,6 +147,8 @@ constexpr auto InitialBeta = mateValue + 1;
 template <typename TMoveGenerator>
 Move evaluateIterative(BoardEngine be, TMoveGenerator& moveGenerator, unsigned char maxDepth)
 {
+    memset(history, 0, sizeof(history[0][0][0]) * 2 * 64 * 64);
+
     int alpha = InitialAlpha;
     int beta = InitialBeta;
 

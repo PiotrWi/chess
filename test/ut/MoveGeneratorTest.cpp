@@ -600,3 +600,21 @@ TEST_F(MoveGeneratorTests, Custom_1)
     ASSERT_THAT(sut.generate(board, WHITE),
                 ::testing::UnorderedElementsAreArray(kingMoves + pawnMoves + queenMoves + bishopMoves));
 }
+
+TEST_F(MoveGeneratorTests, pt_knight)
+{
+    Board board = utils::createBoard(
+            "♚       "
+            "        "
+            "        "
+            "  ♘    ♘"
+            "        "
+            "♘    ♘  "
+            "        "
+            "       ♔");
+
+    for (auto i = 0; i < 100000; ++i)
+    {
+        ASSERT_TRUE(not sut.generate(board, WHITE).empty());
+    }
+}
