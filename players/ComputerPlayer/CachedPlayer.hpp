@@ -2,7 +2,7 @@
 
 #include <common/IPLayer.hpp>
 #include <BoardEngine.hpp>
-#include <common/CachedEngines/CachedEngineWithMap.hpp>
+#include <common/CachedEngines/FullCachedEngine.hpp>
 
 class CachedPlayer
     : public IPlayer
@@ -14,5 +14,5 @@ public:
 private:
     char lastMove_[20];
     BoardEngine be;
-    players::common::move_generators::CachedEngineWithMap cmg_;
+    players::common::move_generators::FullCachedEngine cmg_;
 };

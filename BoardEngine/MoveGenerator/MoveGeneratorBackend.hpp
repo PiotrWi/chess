@@ -1,7 +1,10 @@
 #pragma once
+#include "iostream"
 
 #include "Strategy.hpp"
 #include <publicIf/NotationConversions.hpp>
+
+#include <strings.h>
 
 namespace MoveGenerator
 {
@@ -311,12 +314,24 @@ void evaluateForCheckedPosition()
         dispatchToProperHandler<c>(i);
     }
 }
-
 template <NOTATION::COLOR::color c>
 void evaluateNotCheckedPostions(uint64_t pinnedMask)
 {
-    uint64_t wasChecked = 0;
-    wasChecked |= (1lu << ctx.kingPosition); // King moves are last to evaluate.
+    /*auto noCheckChecks = ~pinnedMask;
+    auto checkChecks = pinnedMask;
+
+    unsigned char index = 0;
+    while ((index = __builtin_ffsll(noCheckChecks)))
+    {
+        generateWithAllMoveAllowance<c>(index - 1);
+        noCheckChecks ^= (1lu << (index - 1));
+    }
+
+    while ((index = __builtin_ffsll(checkChecks)))
+    {
+        dispatchToProperHandler<c>(index -1);
+        checkChecks ^= (1lu << (index -1));
+    }*/
 
     for (unsigned char i = 0u; i < 64u; ++i)
     {

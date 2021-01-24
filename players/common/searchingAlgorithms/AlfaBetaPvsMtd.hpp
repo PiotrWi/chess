@@ -84,7 +84,6 @@ int evaluateMax(BoardEngine& be,
         if (beta <= nextAlfa)
         {
             moveGenerator.setLowerBound(be, nextAlfa, depth);
-            moveGenerator.setKillerMove(be, i, depth);
             if (SaveMove) bestMove = validMoves[i];
             return beta;
         }
@@ -97,13 +96,12 @@ int evaluateMax(BoardEngine& be,
     }
     if (not pvFound)
     {
-        moveGenerator.setUpperBound(be, nextAlfa, depth);
+        moveGenerator.setUpperBound(be, alfa, depth);
     }
     else
     {
         moveGenerator.setLowerUpperBound(be, alfa, beta, depth);
     }
-    moveGenerator.setKillerMove(be, greatestMove, depth);
     if (SaveMove) bestMove = validMoves[greatestMove];
     return alfa;
 }

@@ -8,15 +8,15 @@
 
 static int evaluateFunction(const BoardEngine& be)
 {
-    auto validMoves = be.generateMoves();
-    auto gameResult = be.getREsultWithoutRepeatitionCheck(not validMoves.empty());
+    auto validMoves = be.generateValidMoveCount();
+    auto gameResult = be.getREsultWithoutRepeatitionCheck(validMoves);
     if ((gameResult == Result::whiteWon) | (gameResult == Result::blackWon))
     {
         return -10000000;
     }
 
-    auto oponentValidMoves = be.generateMovesFor(be.board.playerOnMove + 1);
+    auto oponentValidMoves = be .generateValidMoveCount(be.board.playerOnMove + 1);
     return materialEvaluator::evaluate(be.board, be.board.playerOnMove)
-        + moveCountEvaluator::evaluate(validMoves.size(), oponentValidMoves.size())
+        + moveCountEvaluator::evaluate(validMoves, oponentValidMoves)
         + pawnStructureEvaluator::evaluate(be.board, be.board.playerOnMove);
 }
