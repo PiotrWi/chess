@@ -3,16 +3,35 @@
 #include <BoardEngine.hpp>
 
 #include <algorithm>
+#include <cstring>
 #include <vector>
 #include <common/CachedEngines/FullCachedEngine.hpp>
 
 #include <publicIf/NotationConversions.hpp>
+#include <common/Constants.hpp>
 
 namespace
 {
 
 ExtendedMove bestMove;
 unsigned history[2][64][64] = {};
+
+class MVVLVA_Comparator // Most valuable victim less valuable aggressor
+{
+public:
+    static bool compare(const ExtendedMove& lhs, const ExtendedMove& rhs)
+    {
+        auto lhsVal = (lhs.flags & ExtendedMove::promotionMask) ? FIGURES_VALUE::QUEEN : 0;
+        lhsVal += mapFigureToValue(lhs.targetPiece & NOTATION::PIECES::PIECES_MASK)
+                - mapFigureToValue(lhs.sourcePiece & NOTATION::PIECES::PIECES_MASK);
+
+        auto rhsVal = (rhs.flags & ExtendedMove::promotionMask) ? FIGURES_VALUE::QUEEN : 0;
+        rhsVal += mapFigureToValue(rhs.targetPiece & NOTATION::PIECES::PIECES_MASK)
+                  - mapFigureToValue(rhs.sourcePiece & NOTATION::PIECES::PIECES_MASK);
+
+        return lhsVal > rhsVal;
+    }
+};
 
 void setHistoryMove(const NOTATION::COLOR::color player, ExtendedMove& move, unsigned char depth)
 {
@@ -43,13 +62,6 @@ public:
     {
         if (bestMoveAnalyzed== false)
         {
-            auto firstNotBeatingIndex = std::find_if(ce_.precalculatedMoves.begin(),
-                                                ce_.precalculatedMoves.end(),
-                                                [](auto&& move) {
-                        return !(move.flags & ExtendedMove::beatingMask);
-            });
-            nonBeatingIndex = firstNotBeatingIndex - ce_.precalculatedMoves.begin();
-
             bestMoveAnalyzed = true;
             for (auto candidateDepth = depth_; candidateDepth > 0; --candidateDepth)
             {
@@ -64,13 +76,13 @@ public:
                         std::swap(*moveIt, ce_.precalculatedMoves.front());
                         ++index;
                         if (moveIt != ce_.precalculatedMoves.begin()
-                            && (moveIt->flags & ExtendedMove::beatingMask) != 0
-                            && ((moveIt-1)->flags & ExtendedMove::beatingMask) != 0)
+                            && (moveIt->flags & (ExtendedMove::beatingMask | ExtendedMove::promotionMask)) != 0
+                            && ((moveIt-1)->flags & (ExtendedMove::beatingMask | ExtendedMove::promotionMask)) != 0)
                         {
                             auto firstNotBeating = std::find_if(ce_.precalculatedMoves.begin(),
                                                              ce_.precalculatedMoves.end(),
                                                              [](auto&& move){
-                                return !(move.flags & ExtendedMove::beatingMask);
+                                return !(move.flags & (ExtendedMove::beatingMask | ExtendedMove::promotionMask));
                             });
                             if (firstNotBeating != ce_.precalculatedMoves.end())
                             {
@@ -83,8 +95,24 @@ public:
             }
         }
 
-        if (index < nonBeatingIndex)
+        if (beatingAndPromotionsAnalyzed == false)
         {
+            beatingAndPromotionsAnalyzed = true;
+            auto firstNotBeatingIt = std::find_if(ce_.precalculatedMoves.begin() + index,
+                ce_.precalculatedMoves.end(),
+                [](auto&& move) {
+                    return !(move.flags & (ExtendedMove::beatingMask | ExtendedMove::promotionMask));
+            });
+            nonPromotionNorBeatingIndex = firstNotBeatingIt - ce_.precalculatedMoves.begin();
+            std::sort(ce_.precalculatedMoves.begin() + index, firstNotBeatingIt, MVVLVA_Comparator::compare);
+        }
+
+        if (index < nonPromotionNorBeatingIndex)
+        {
+            if (beatingAndPromotionsAnalyzed == false)
+            {
+                beatingAndPromotionsAnalyzed = true;
+            }
             return ce_.precalculatedMoves[index++];
         }
 
@@ -104,9 +132,10 @@ private:
     players::common::move_generators::CacheFullEntity& ce_;
     unsigned char depth_;
     bool bestMoveAnalyzed = false;
+    bool beatingAndPromotionsAnalyzed = false;
     bool movesSortedByHistory = false;
     int index;
-    int nonBeatingIndex = 0;
+    int nonPromotionNorBeatingIndex = 0;
 };
 
 int evaluatePosition(BoardEngine& be, players::common::move_generators::FullCachedEngine& moveGenerator)

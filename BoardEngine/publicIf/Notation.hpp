@@ -61,4 +61,6 @@ constexpr unsigned char BLACK_SHORT_BIT = 8;
 constexpr unsigned char CASTLING_MASK = WHITE_LONG_BIT | WHITE_SHORT_BIT | BLACK_LONG_BIT | BLACK_SHORT_BIT;
 }
 
+constexpr signed char NO_ENPASANT = -1;
+
 }  // namespace NOTATION

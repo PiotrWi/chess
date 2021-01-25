@@ -3,25 +3,10 @@
 namespace NotationConversions
 {
 
-unsigned char getColumnNum(unsigned char field)
-{
-	return field & 0b111;
-}
-
-unsigned char getRow(unsigned char field)
-{
-	return (field >> 3u);
-}
-
 NOTATION::COLOR::color switchColor(const NOTATION::COLOR::color c)
 {
 	auto colorNum = static_cast<unsigned char>(c);
 	return NOTATION::COLOR::color(colorNum ^ NOTATION::COLOR::COLOR_MASK);
-}
-
-unsigned char getFieldNum(const unsigned char row, const unsigned char col)
-{
-	return (row << 3u) | col;
 }
 
 unsigned char getPieceType(unsigned char piece)

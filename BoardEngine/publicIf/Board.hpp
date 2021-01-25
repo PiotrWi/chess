@@ -6,8 +6,8 @@
 struct Board
 {
     NOTATION::COLOR::color playerOnMove = NOTATION::COLOR::color::white;
-    signed char validEnPassant = -1;
-    unsigned char castlingRights = 15u;
+    signed char validEnPassant = NOTATION::NO_ENPASANT;
+    unsigned char castlingRights = NOTATION::CASTLING_RIGHTS::CASTLING_MASK;
     unsigned char fields[64] = {}; // "0 belongs to A1, 1 belongs to B1, 8 belongs to A2
 
     unsigned char& operator[](const char*) noexcept;

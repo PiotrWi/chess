@@ -7,9 +7,20 @@ namespace NotationConversions
 
 NOTATION::COLOR::color switchColor(const NOTATION::COLOR::color c);
 
-unsigned char getColumnNum(unsigned char field);
-unsigned char getRow(unsigned char field);
-unsigned char getFieldNum(const unsigned char row, const unsigned char col);
+constexpr unsigned char getColumnNum(unsigned char field)
+{
+    return field & 0b111;
+}
+
+constexpr unsigned char getRow(unsigned char field)
+{
+    return (field >> 3u);
+}
+
+constexpr unsigned char getFieldNum(const unsigned char row, const unsigned char col)
+{
+    return (row << 3u) | col;
+}
 
 constexpr unsigned char getFieldNum(const char* field)
 {
