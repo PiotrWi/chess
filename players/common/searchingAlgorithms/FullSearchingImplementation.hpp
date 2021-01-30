@@ -138,6 +138,37 @@ private:
     int nonPromotionNorBeatingIndex = 0;
 };
 
+class OnlyBeatingMoves
+{
+public:
+    OnlyBeatingMoves(std::vector<ExtendedMove>&& moves)
+            : moves_(std::move(moves))
+            , index(0)
+    {
+        auto firstNotBeatingIt = std::find_if(moves_.begin() + index,
+                                              moves_.end(),
+                                              [](auto&& move) {
+                                                  return !(move.flags & (ExtendedMove::beatingMask | ExtendedMove::promotionMask));
+                                              });
+        nonPromotionNorBeatingIndex = firstNotBeatingIt - moves_.begin();
+        std::sort(moves_.begin() + index, firstNotBeatingIt, MVVLVA_Comparator::compare);
+    }
+
+    unsigned int size() const
+    {
+        return nonPromotionNorBeatingIndex;
+    }
+    ExtendedMove& get()
+    {
+        return moves_[index++];
+    }
+private:
+    std::vector<ExtendedMove> moves_;
+    int index;
+    int nonPromotionNorBeatingIndex = 0;
+};
+
+
 int evaluatePosition(BoardEngine& be, players::common::move_generators::FullCachedEngine& moveGenerator)
 {
     if(be.are3Repeatitions())
@@ -146,6 +177,54 @@ int evaluatePosition(BoardEngine& be, players::common::move_generators::FullCach
     }
 
     return moveGenerator.getEvaluationValue(be) ;
+}
+
+int quiescenceSearch(BoardEngine& be,
+                     players::common::move_generators::FullCachedEngine& cachedEngine,
+                     unsigned char depth,
+                     int alfa,
+                     int beta)
+{
+    if (depth == 0) // terminate quiescence
+    {
+        return cachedEngine.getEvaluationValue(be);
+    }
+
+    auto moves = be.generateMoves();
+
+    auto orderedMoves = OnlyBeatingMoves(std::move(moves));
+    auto stablePosition = orderedMoves.size() == 0;
+    if (stablePosition)
+    {
+        return cachedEngine.getEvaluationValue(be) ;
+    }
+
+    int stand_pat = evaluatePosition(be, cachedEngine);
+    if( stand_pat >= beta )
+        return beta;
+    if( alfa < stand_pat )
+        alfa = stand_pat;
+
+    auto memorial = be.getMemorial();
+    auto nextAlfa = -1000000;
+
+    for (auto i = 0u; i < orderedMoves.size(); ++i)
+    {
+        auto move = orderedMoves.get();
+        be.applyMove(move);
+
+        nextAlfa = -quiescenceSearch(be, cachedEngine, depth - 1, -beta, -alfa);
+        be.undoMove(memorial);
+        if (beta <= nextAlfa)
+        {
+            return beta;
+        }
+        if (nextAlfa > alfa)
+        {
+            alfa = nextAlfa;
+        }
+    }
+    return alfa;
 }
 
 template <bool SaveMove>
@@ -157,7 +236,12 @@ int evaluateMax(BoardEngine& be,
 {
     if (depth == 0)
     {
-        return evaluatePosition(be, cachedEngine);
+        if(be.are3Repeatitions())
+        {
+            return 0;
+        }
+        // return evaluatePosition(be, cachedEngine);
+        return quiescenceSearch(be, cachedEngine, 6/*Quinesence limit*/, alfa, beta);
     }
 
     auto cache = cachedEngine.get(be);
@@ -275,25 +359,27 @@ Move evaluateIterative(BoardEngine be,
     int beta = InitialBeta;
     memset(history, 0, sizeof(history[0][0][0]) * 2 * 64 * 64);
 
-    for (auto depth = 2u; depth <= maxDepth; depth+=2)
+    for (auto depth = 2u; depth <= maxDepth; depth+=1)
     {
         auto val = evaluateMax<true>(be, cachedEngine, depth, alpha, beta);
         if (val <= alpha)
         {
             val = evaluateMax<true>(be, cachedEngine, depth, InitialAlpha, alpha + 1);
-#ifdef ASSERTSON
-            assert(val < alpha + 1);
-#endif
+            if(val >= beta)
+            {
+                std::cout << "Unstable" << std::endl;
+                val = evaluateMax<true>(be, cachedEngine, depth, InitialAlpha, InitialBeta);
+            }
         }
         else if (val >= beta)
         {
             val = evaluateMax<true>(be, cachedEngine, depth, beta - 1, InitialBeta);
-#ifdef ASSERTSON
-            assert(val > beta - 1);
-#endif
+            if (val <= alpha)
+                std::cout << "Unstable" << std::endl;
+            val = evaluateMax<true>(be, cachedEngine, depth, InitialAlpha, InitialBeta);
         }
-        alpha = val - 100;
-        beta = val + 100;
+        alpha = val - 30;
+        beta = val + 30;
     }
     return bestMove;
 }

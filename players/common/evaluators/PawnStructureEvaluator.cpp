@@ -23,6 +23,7 @@ int evaluateForWhite(const Board & board)
         }
     }
 
+    // doubled Pawn
     for (auto col = 0u; col < 8; ++col)
     {
         if (pawnsInColumn[col] > 1)
@@ -46,6 +47,7 @@ int evaluateForBlack(const Board& board)
         }
     }
 
+    // doubled Pawn
     for (auto col = 0u; col < 8; ++col)
     {
         if (pawnsInColumn[col] > 1)

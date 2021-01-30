@@ -35,20 +35,35 @@ TEST(FullSearchTest, PerformanceTest_6_black)
     full_search::evaluate(be, mg, 6);
 }
 
+TEST(FullSearchTest, PerformanceTest_6_iterative)
+{
+    BoardEngine be;
+    players::common::move_generators::FullCachedEngine mg;
+    full_search::evaluateIterative(be, mg, 6);
+}
+
+TEST(FullSearchTest, PerformanceTest_6_black_iterative)
+{
+    BoardEngine be;
+    players::common::move_generators::FullCachedEngine mg;
+    be.applyMove(notations::coordinates::createMove("e2-e4", NOTATION::COLOR::color::white));
+    full_search::evaluateIterative(be, mg, 6);
+}
+/*
 TEST(FullSearchTest, PerformanceTest_8)
 {
     BoardEngine be;
     players::common::move_generators::FullCachedEngine mg;
     full_search::evaluate(be, mg, 8);
-}
+}*/
 
-TEST(FullSearchTest, PerformanceTest_8_killer)
+TEST(FullSearchTest, PerformanceTest_8_iterative)
 {
     BoardEngine be;
     players::common::move_generators::FullCachedEngine mg;
     full_search::evaluateIterative(be, mg, 8);
 }
-
+/*
 TEST(FullSearchTest, PerformanceTest_8_black)
 {
     BoardEngine be;
@@ -56,15 +71,15 @@ TEST(FullSearchTest, PerformanceTest_8_black)
     be.applyMove(notations::coordinates::createMove("e2-e4", NOTATION::COLOR::color::white));
     full_search::evaluate(be, mg, 8);
 }
-
-TEST(FullSearchTest, PerformanceTest_8_black_killer)
+*/
+TEST(FullSearchTest, PerformanceTest_8_black_iterative)
 {
     BoardEngine be;
     players::common::move_generators::FullCachedEngine mg;
     full_search::evaluateIterative(be, mg, 8);
 }
 
-TEST(FullSearchTest, PerformanceTest_10_killer)
+TEST(FullSearchTest, PerformanceTest_10_iterative)
 {
     BoardEngine be;
     players::common::move_generators::FullCachedEngine mg;
