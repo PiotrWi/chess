@@ -1,7 +1,10 @@
 #include "GameHandler.hpp"
 #include <UciApplication/EventsPropagator.hpp>
 #include <notations/uci.hpp>
-#include <common/searchingAlgorithms/AlfaBetaPvs.hpp>
+#include <common/searchingAlgorithms/FullSearchingImplementation.hpp>
+#include <utils/Timer.hpp>
+#include <utils/DebugWrapper.hpp>
+#include <thread>
 
 std::unique_ptr<GameHandler> handler;
 
@@ -15,10 +18,34 @@ void onGoHandler(GO& event)
     handler->onGo(event);
 }
 
-void GameHandler::onGo(GO&)
+void onStopProccessing()
+{
+    handler->interrupt();
+}
+
+void GameHandler::interrupt()
+{
+    full_search::interrupt();
+    debug.logInDebug("Interrupted");
+}
+
+void GameHandler::onGo(GO& goEvent)
 {
     cachedEngine = {};
-    auto move = alfaBetaPvs::evaluateIterative(be, cachedEngine, 8);
+
+    unsigned remainingTime;
+    if (be.board.playerOnMove == NOTATION::COLOR::color::white)
+    {
+        remainingTime = goEvent.timeForWhite;
+    }
+    else
+    {
+        remainingTime = goEvent.timeForBlack;
+    }
+    debug.logInDebug("starting for us:" + std::to_string(70 * remainingTime)); // 8% remaining time
+    createTimer2(70*remainingTime, onStopProccessing);
+
+    auto move = full_search::evaluateIterative(be, cachedEngine, 10);
     emitBestMove(move);
 }
 

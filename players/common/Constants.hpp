@@ -22,6 +22,7 @@ constexpr int mapFigureToValue(unsigned char figure)
         case NOTATION::PIECES::ROCK: return FIGURES_VALUE::ROCK;
         case NOTATION::PIECES::QUEEN: return FIGURES_VALUE::QUEEN;
         case NOTATION::PIECES::KING: return FIGURES_VALUE::KING;
+        case 0: return 0;
     }
 
 #ifdef ASSERTSON

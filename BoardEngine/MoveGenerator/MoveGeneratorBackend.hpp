@@ -41,7 +41,8 @@ void generateStandardPawnMoves(unsigned char i)
             auto row = NotationConversions::getRow(i);
             if (row == LINE_BEFORE_PROMOTION)
             {
-                TMoveAddingStrategy::addAndPromoteWithBeating(i, destination, (*ctx.board)[destination]);            }
+                TMoveAddingStrategy::addAndPromoteWithBeating(i, destination, (*ctx.board)[destination]);
+            }
             else
             {
                 TMoveAddingStrategy::addPawnWithBeating(i, destination, (*ctx.board)[destination]);
@@ -317,22 +318,6 @@ void evaluateForCheckedPosition()
 template <NOTATION::COLOR::color c>
 void evaluateNotCheckedPostions(uint64_t pinnedMask)
 {
-    /*auto noCheckChecks = ~pinnedMask;
-    auto checkChecks = pinnedMask;
-
-    unsigned char index = 0;
-    while ((index = __builtin_ffsll(noCheckChecks)))
-    {
-        generateWithAllMoveAllowance<c>(index - 1);
-        noCheckChecks ^= (1lu << (index - 1));
-    }
-
-    while ((index = __builtin_ffsll(checkChecks)))
-    {
-        dispatchToProperHandler<c>(index -1);
-        checkChecks ^= (1lu << (index -1));
-    }*/
-
     for (unsigned char i = 0u; i < 64u; ++i)
     {
         if (not ((1lu << i) & pinnedMask) )

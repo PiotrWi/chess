@@ -5,7 +5,7 @@
 #include "Events.hpp"
 
 #include <BoardEngine.hpp>
-#include <common/CachedEngines/CachedEngineWithMap.hpp>
+#include <common/CachedEngines/FullCachedEngine.hpp>
 
 class GameHandler
 {
@@ -14,10 +14,11 @@ public:
     void startProcessing();
     void onPositionProc(POSSITION&);
     void onGo(GO&);
-    void emitBestMove(const Move& );
+    void interrupt();
+    void emitBestMove(const Move&);
 private:
     BoardEngine be;
-    players::common::move_generators::CachedEngineWithMap cachedEngine;
+    players::common::move_generators::FullCachedEngine cachedEngine;
 };
 
 extern std::unique_ptr<GameHandler> handler;

@@ -92,7 +92,7 @@ public:
                 (NOTATION::PIECES::PAWN | NOTATION::COLOR::WHITE))
             {
                 TMoveAddingStrategy::addPawnWithBeating(whitePawnLocCandidate, (ctx.board)->validEnPassant,
-                                                        (*ctx.board)[(ctx.board)->validEnPassant]);
+                                                        NOTATION::PIECES::PAWN | NOTATION::COLOR::BLACK);
             }
         }
         if (enPassantCol > 0u)
@@ -102,7 +102,7 @@ public:
                 (NOTATION::PIECES::PAWN | NOTATION::COLOR::WHITE))
             {
                 TMoveAddingStrategy::addPawnWithBeating(whitePawnLocCandidate, (ctx.board)->validEnPassant,
-                                                        (*ctx.board)[(ctx.board)->validEnPassant]);
+                                                        NOTATION::PIECES::PAWN | NOTATION::COLOR::BLACK);
             }
         }
     }
@@ -126,7 +126,7 @@ public:
                 (NOTATION::PIECES::PAWN | NOTATION::COLOR::WHITE))
             {
                 TMoveAddingStrategy::addPawnWithBeating(whitePawnLocCandidate, (ctx.board)->validEnPassant,
-                                                        (*ctx.board)[(ctx.board)->validEnPassant]);
+                                                        NOTATION::PIECES::PAWN | NOTATION::COLOR::WHITE);
             }
         }
         if (enPassantCol > 0u)
@@ -136,7 +136,7 @@ public:
                 (NOTATION::PIECES::PAWN | NOTATION::COLOR::WHITE))
             {
                 TMoveAddingStrategy::addPawnWithBeating(whitePawnLocCandidate, (ctx.board)->validEnPassant,
-                                                        (*ctx.board)[(ctx.board)->validEnPassant]);
+                                                        NOTATION::PIECES::PAWN | NOTATION::COLOR::WHITE);
             }
         }
     }

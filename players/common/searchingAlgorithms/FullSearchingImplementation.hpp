@@ -2,6 +2,8 @@
 
 #include <BoardEngine.hpp>
 
+#include <atomic>
+
 #include <algorithm>
 #include <cstring>
 #include <vector>
@@ -14,6 +16,8 @@ namespace
 {
 
 ExtendedMove bestMove;
+std::atomic_bool interrupt_flag = false;
+
 unsigned history[2][64][64] = {};
 
 class MVVLVA_Comparator // Most valuable victim less valuable aggressor
@@ -234,6 +238,10 @@ int evaluateMax(BoardEngine& be,
                 int alfa,
                 int beta)
 {
+    if (interrupt_flag)
+    {
+        return alfa;
+    }
     if (depth == 0)
     {
         if(be.are3Repeatitions())
@@ -299,7 +307,7 @@ int evaluateMax(BoardEngine& be,
             cachedEngine.setLowerBound(be, nextAlfa, depth);
 
             setHistoryMove(be.board.playerOnMove, move, depth);
-            if (SaveMove) bestMove = move;
+            if (SaveMove and interrupt_flag == false) bestMove = move;
             return beta;
         }
         if (nextAlfa > alfa)
@@ -318,7 +326,7 @@ int evaluateMax(BoardEngine& be,
     {
         cachedEngine.setLowerUpperBound(be, alfa, beta, depth);
     }
-    if (SaveMove) bestMove = greatestMove;
+    if (SaveMove and interrupt_flag == false) bestMove = greatestMove;
     return alfa;
 }
 
@@ -327,10 +335,16 @@ int evaluateMax(BoardEngine& be,
 namespace full_search
 {
 
+void interrupt()
+{
+    interrupt_flag = true;
+}
+
 Move evaluate(BoardEngine be,
               players::common::move_generators::FullCachedEngine& cachedEngine,
               unsigned char depth)
 {
+    interrupt_flag = false;
     int alfa = -10000000;
     int beta = 10000000;
     memset(history, 0, sizeof(history[0][0][0]) * 2 * 64 * 64);
@@ -355,6 +369,7 @@ Move evaluateIterative(BoardEngine be,
                        players::common::move_generators::FullCachedEngine& cachedEngine,
                        unsigned char maxDepth)
 {
+    interrupt_flag = false;
     int alpha = InitialAlpha;
     int beta = InitialBeta;
     memset(history, 0, sizeof(history[0][0][0]) * 2 * 64 * 64);

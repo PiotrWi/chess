@@ -85,14 +85,12 @@ void readCommands()
                 if (word.find("wtime") != std::string::npos)
                 {
                     ss >> word;
-                    std::cout << word << std::endl;
                     go.timeForWhite = std::stoi(word);
                 }
 
                 if (word.find("btime") != std::string::npos)
                 {
                     ss >> word;
-                    std::cout << word << std::endl;
                     go.timeForBlack = std::stoi(word);
                 }
             }

@@ -89,6 +89,8 @@ ExtendedMove::ExtendedMove(unsigned char sourceIn,
 #ifdef ASSERTSON
     assert(source < 64);
     assert(destination < 64);
+    assert(sourcePiece != 0);
+    assert(targetPiece != 0 || (flags & ExtendedMove::beatingMask) == 0);
 #endif
 }
 

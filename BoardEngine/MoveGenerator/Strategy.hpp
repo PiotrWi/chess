@@ -71,9 +71,9 @@ public:
         }
 
         ctx.beatings[ctx.Nbeatings++] = m;
-        ctx.pawnsMoves[ctx.NPawnsMoves++] =  ExtendedMove(source, destination, MASK, NOTATION::PIECES::BISHOP | c_bin, pawn, 0);
-        ctx.pawnsMoves[ctx.NPawnsMoves++] =  ExtendedMove(source, destination, MASK, NOTATION::PIECES::ROCK | c_bin, pawn, 0);
-        ctx.pawnsMoves[ctx.NPawnsMoves++] =  ExtendedMove(source, destination, MASK, NOTATION::PIECES::KNIGHT | c_bin, pawn, 0);
+        ctx.pawnsMoves[ctx.NPawnsMoves++] =  ExtendedMove(source, destination, MASK, NOTATION::PIECES::BISHOP | c_bin, pawn, targetField);
+        ctx.pawnsMoves[ctx.NPawnsMoves++] =  ExtendedMove(source, destination, MASK, NOTATION::PIECES::ROCK | c_bin, pawn, targetField);
+        ctx.pawnsMoves[ctx.NPawnsMoves++] =  ExtendedMove(source, destination, MASK, NOTATION::PIECES::KNIGHT | c_bin, pawn, targetField);
     }
 
     static void addPawn(unsigned char source, unsigned char destination)
