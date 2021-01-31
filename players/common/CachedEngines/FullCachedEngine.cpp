@@ -9,16 +9,12 @@ namespace common
 namespace move_generators
 {
 
-CacheFullEntity FullCachedEngine::get(const BoardEngine &be)
+CacheFullEntity& FullCachedEngine::get(const BoardEngine &be)
 {
     auto hash = be.getHash();
 
     CacheFullEntity* elem;
-    auto created = cache_.getOrCreate(hash, hash, elem);
-    if (created)
-    {
-        elem->precalculatedMoves = be.generateMoves();
-    }
+    cache_.getOrCreate(hash, hash, elem);
     return *elem;
 }
 

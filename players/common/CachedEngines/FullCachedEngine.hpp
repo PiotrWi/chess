@@ -31,7 +31,7 @@ struct CacheFullEntity
         int higherValue = 10000001;
     };
 
-    std::vector<ExtendedMove> precalculatedMoves = {};
+    // std::vector<ExtendedMove> precalculatedMoves = {};
 
     PreviousBestMove previousBestMoves[12] = {};
     PreviousEvaluations previousEvaluations[12] = {};
@@ -40,7 +40,7 @@ struct CacheFullEntity
 class FullCachedEngine
 {
 public:
-    CacheFullEntity get(const BoardEngine& be);
+    CacheFullEntity& get(const BoardEngine& be);
 
     int getEvaluationValue(const BoardEngine& be);
     void setBestMove(const BoardEngine& be,

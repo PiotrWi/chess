@@ -56,39 +56,47 @@ class PreorderedMoves
 public:
     PreorderedMoves(decltype(history[0])& historyMovesPerSinglePlayer,
                     players::common::move_generators::CacheFullEntity& ce,
-                    unsigned char depth)
+                    unsigned char depth,
+                    std::vector<ExtendedMove>&& moves)
                     : historyMoves_(historyMovesPerSinglePlayer)
                     , ce_(ce)
                     , depth_(depth)
                     , index(0)
+                    , moves_(std::move(moves))
     {}
+
+    unsigned size()
+    {
+        return moves_.size();
+    }
+
     ExtendedMove& get()
     {
-        if (bestMoveAnalyzed== false)
+        if (bestMoveAnalyzed == false)
         {
             bestMoveAnalyzed = true;
             for (auto candidateDepth = depth_; candidateDepth > 0; --candidateDepth)
             {
                 if (ce_.previousBestMoves[candidateDepth].isSet)
                 {
-                    auto moveIt = std::find(ce_.precalculatedMoves.begin(),
-                                            ce_.precalculatedMoves.end(),
+                    auto moveIt = std::find(moves_.begin(),
+                                            moves_.end(),
                                             ce_.previousBestMoves[candidateDepth].move);
-                    if (moveIt != ce_.precalculatedMoves.end()) // It could be cache miss.
+                    if (moveIt != moves_.end()) // It could be cache miss.
                                                                 // Then no move like this exist in valid moves vec.
                     {
-                        std::swap(*moveIt, ce_.precalculatedMoves.front());
+                        std::swap(*moveIt, moves_.front());
                         ++index;
-                        if (moveIt != ce_.precalculatedMoves.begin()
+                        if (moveIt != moves_.begin()
                             && (moveIt->flags & (ExtendedMove::beatingMask | ExtendedMove::promotionMask)) != 0
                             && ((moveIt-1)->flags & (ExtendedMove::beatingMask | ExtendedMove::promotionMask)) != 0)
                         {
-                            auto firstNotBeating = std::find_if(ce_.precalculatedMoves.begin(),
-                                                             ce_.precalculatedMoves.end(),
+                            auto firstNotBeating = std::find_if(moves_.begin(),
+                                                                moves_.end(),
                                                              [](auto&& move){
                                 return !(move.flags & (ExtendedMove::beatingMask | ExtendedMove::promotionMask));
                             });
-                            if (firstNotBeating != ce_.precalculatedMoves.end())
+                            if (firstNotBeating != moves_.end())
                             {
                                 std::swap(*moveIt, *firstNotBeating);
                             }
@@ -102,13 +110,13 @@ public:
         if (beatingAndPromotionsAnalyzed == false)
         {
             beatingAndPromotionsAnalyzed = true;
-            auto firstNotBeatingIt = std::find_if(ce_.precalculatedMoves.begin() + index,
-                ce_.precalculatedMoves.end(),
+            auto firstNotBeatingIt = std::find_if(moves_.begin() + index,
+                                                  moves_.end(),
                 [](auto&& move) {
                     return !(move.flags & (ExtendedMove::beatingMask | ExtendedMove::promotionMask));
             });
-            nonPromotionNorBeatingIndex = firstNotBeatingIt - ce_.precalculatedMoves.begin();
-            std::sort(ce_.precalculatedMoves.begin() + index, firstNotBeatingIt, MVVLVA_Comparator::compare);
+            nonPromotionNorBeatingIndex = firstNotBeatingIt - moves_.begin();
+            std::sort(moves_.begin() + index, firstNotBeatingIt, MVVLVA_Comparator::compare);
         }
 
         if (index < nonPromotionNorBeatingIndex)
@@ -117,19 +125,19 @@ public:
             {
                 beatingAndPromotionsAnalyzed = true;
             }
-            return ce_.precalculatedMoves[index++];
+            return moves_[index++];
         }
 
         if (movesSortedByHistory == false)
         {
             movesSortedByHistory = true;
-            std::sort(ce_.precalculatedMoves.begin() + index,
-                      ce_.precalculatedMoves.end(),
+            std::sort(moves_.begin() + index,
+                      moves_.end(),
                       [&](auto& lhs, auto& rhs) {
                 return historyMoves_[lhs.source][lhs.destination] > historyMoves_[rhs.source][rhs.destination];
             });
         }
-        return ce_.precalculatedMoves[index++];
+        return moves_[index++];
     }
 private:
     decltype(history[0])& historyMoves_;
@@ -140,6 +148,7 @@ private:
     bool movesSortedByHistory = false;
     int index;
     int nonPromotionNorBeatingIndex = 0;
+    std::vector<ExtendedMove> moves_;
 };
 
 class OnlyBeatingMoves
@@ -253,8 +262,9 @@ int evaluateMax(BoardEngine& be,
     }
 
     auto cache = cachedEngine.get(be);
+    auto moves = be.generateMoves();
 
-    auto gameResult = be.getResult(not cache.precalculatedMoves.empty());
+    auto gameResult = be.getResult(not moves.empty());
     if(gameResult == Result::draw)
     {
         return 0;
@@ -282,14 +292,15 @@ int evaluateMax(BoardEngine& be,
     auto orderedMoves = PreorderedMoves(
             history[((be.board.playerOnMove == NOTATION::COLOR::color::white) ? 0 : 1)],
             cache,
-            depth);
-    for (auto i = 0u; i < cache.precalculatedMoves.size(); ++i)
+            depth,
+            std::move(moves));
+    for (auto i = 0u; i < orderedMoves.size(); ++i)
     {
         auto move = orderedMoves.get();
         be.applyMove(move);
         if (pvFound)
         {
-            nextAlfa = - evaluateMax<false>(be, cachedEngine, depth - 1, -alfa - 1, -alfa);
+            nextAlfa = -evaluateMax<false>(be, cachedEngine, depth - 1, -alfa - 1, -alfa);
             if (nextAlfa > alfa && nextAlfa < beta)
             {
                 nextAlfa = -evaluateMax<false>(be, cachedEngine, depth - 1, -beta, -alfa);
