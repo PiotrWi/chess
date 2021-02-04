@@ -5,20 +5,35 @@
 
 struct Board
 {
-    NOTATION::COLOR::color playerOnMove = NOTATION::COLOR::color::white;
-    signed char validEnPassant = NOTATION::NO_ENPASANT;
-    unsigned char castlingRights = NOTATION::CASTLING_RIGHTS::CASTLING_MASK;
-    unsigned char fields[64] = {}; // "0 belongs to A1, 1 belongs to B1, 8 belongs to A2
+    struct PlayerBitMasksSet
+    {
+        uint64_t pawnsMask = 0ull;
+        uint64_t rocksMask = 0ull;
+        uint64_t knightsMask = 0ull;
+        uint64_t bishopsMask = 0ull;
+        uint64_t queensMask = 0ull;
+        uint64_t kingsMask = 0ull;
+        bool operator==(const PlayerBitMasksSet&) const;
+    };
 
-    unsigned char& operator[](const char*) noexcept;
-    unsigned char& operator[](const unsigned char) noexcept;
-    const unsigned char& operator[](const char*) const noexcept;
-    const unsigned char& operator[](const unsigned char) const noexcept;
+    PlayerBitMasksSet piecesBitSets[2];
+    uint8_t castlingRights = NOTATION::CASTLING_RIGHTS::CASTLING_MASK;
+    signed char validEnPassant = -1;
+    NOTATION::COLOR::color playerOnMove = NOTATION::COLOR::color::white;
+
+    unsigned char getField(const unsigned char field) const noexcept;
+    unsigned char getField(const char* field) const noexcept;
+    void setField(const unsigned char field, unsigned char val);
+    void setField(const char* field, unsigned char val);
+
+private:
+    constexpr static unsigned char WHITE_INDEX = 0;
+    constexpr static unsigned char BLACK_INDEX = 1;
 };
 
 bool operator==(const Board& lhs, const Board& rhs) noexcept;
-
 void initDefault(Board& board) noexcept;
+
 struct Move
 {
 	Move() noexcept;

@@ -17,22 +17,22 @@ void generateCasles();
 template<>
 void generateCasles<NOTATION::COLOR::color::white>()
 {
-    if ((*ctx.board)[4] == (NOTATION::PIECES::KING | NOTATION::COLOR::WHITE))
+    if (ctx.board->getField(4) == (NOTATION::PIECES::KING | NOTATION::COLOR::WHITE))
     {
         using namespace NOTATION::CASTLING_RIGHTS;
         if (ctx.board->castlingRights & WHITE_LONG_BIT
             and not CheckChecker::isAttackedOn(*ctx.board, ctx.pieceColor, 3)
-            and (*ctx.board)[3] == 0
-            and (*ctx.board)[2] == 0
-            and (*ctx.board)[1] == 0)
+            and ctx.board->getField(3) == 0
+            and ctx.board->getField(2) == 0
+            and ctx.board->getField(1) == 0)
         {
             StrategyWithAlwaysCheckChecking<NOTATION::COLOR::color::white>::addKing(4, 2);
         }
 
         if (ctx.board->castlingRights & WHITE_SHORT_BIT
             and not CheckChecker::isAttackedOn(*ctx.board, ctx.pieceColor, 5)
-            and (*ctx.board)[5] == 0
-            and (*ctx.board)[6] == 0)
+            and ctx.board->getField(5) == 0
+            and ctx.board->getField(6) == 0)
         {
             StrategyWithAlwaysCheckChecking<NOTATION::COLOR::color::white>::addKing(4, 6);
         }
@@ -42,22 +42,22 @@ void generateCasles<NOTATION::COLOR::color::white>()
 template<>
 void generateCasles<NOTATION::COLOR::color::black>()
 {
-    if ((*ctx.board)[60] == (NOTATION::PIECES::KING | NOTATION::COLOR::BLACK))
+    if (ctx.board->getField(60) == (NOTATION::PIECES::KING | NOTATION::COLOR::BLACK))
     {
         using namespace NOTATION::CASTLING_RIGHTS;
         if (ctx.board->castlingRights & BLACK_LONG_BIT
             and not CheckChecker::isAttackedOn(*ctx.board, ctx.pieceColor, 59)
-            and (*ctx.board)[59] == 0
-            and (*ctx.board)[58] == 0
-            and (*ctx.board)[57] == 0)
+            and ctx.board->getField(59) == 0
+            and ctx.board->getField(58) == 0
+            and ctx.board->getField(57) == 0)
         {
             StrategyWithAlwaysCheckChecking<NOTATION::COLOR::color::black>::addKing(60, 58);
         }
 
         if (ctx.board->castlingRights & BLACK_SHORT_BIT
             and not CheckChecker::isAttackedOn(*ctx.board, ctx.pieceColor, 61)
-            and (*ctx.board)[61] == 0
-            and (*ctx.board)[62] == 0)
+            and ctx.board->getField(61) == 0
+            and ctx.board->getField(62) == 0)
         {
             StrategyWithAlwaysCheckChecking<NOTATION::COLOR::color::black>::addKing(60, 62);
         }
@@ -86,7 +86,7 @@ public:
         if (enPassantCol < 7u)
         {
             auto whitePawnLocCandidate = (ctx.board)->validEnPassant - NOTATION::COORDINATES::ROW_DIFF + 1;
-            if ((*ctx.board)[whitePawnLocCandidate] ==
+            if (ctx.board->getField(whitePawnLocCandidate) ==
                 (NOTATION::PIECES::PAWN | NOTATION::COLOR::WHITE))
             {
                 TMoveAddingStrategy::addPawnWithBeating(whitePawnLocCandidate, (ctx.board)->validEnPassant,
@@ -96,7 +96,7 @@ public:
         if (enPassantCol > 0u)
         {
             auto whitePawnLocCandidate = (ctx.board)->validEnPassant - NOTATION::COORDINATES::ROW_DIFF - 1;
-            if ((*ctx.board)[whitePawnLocCandidate] ==
+            if (ctx.board->getField(whitePawnLocCandidate) ==
                 (NOTATION::PIECES::PAWN | NOTATION::COLOR::WHITE))
             {
                 TMoveAddingStrategy::addPawnWithBeating(whitePawnLocCandidate, (ctx.board)->validEnPassant,
@@ -120,7 +120,7 @@ public:
         if (enPassantCol < 7u)
         {
             auto whitePawnLocCandidate = (ctx.board)->validEnPassant + NOTATION::COORDINATES::ROW_DIFF + 1;
-            if ((*ctx.board)[whitePawnLocCandidate] ==
+            if (ctx.board->getField(whitePawnLocCandidate) ==
                 (NOTATION::PIECES::PAWN | NOTATION::COLOR::WHITE))
             {
                 TMoveAddingStrategy::addPawnWithBeating(whitePawnLocCandidate, (ctx.board)->validEnPassant,
@@ -130,7 +130,7 @@ public:
         if (enPassantCol > 0u)
         {
             auto whitePawnLocCandidate = (ctx.board)->validEnPassant + NOTATION::COORDINATES::ROW_DIFF - 1;
-            if ((*ctx.board)[whitePawnLocCandidate] ==
+            if (ctx.board->getField(whitePawnLocCandidate) ==
                 (NOTATION::PIECES::PAWN | NOTATION::COLOR::WHITE))
             {
                 TMoveAddingStrategy::addPawnWithBeating(whitePawnLocCandidate, (ctx.board)->validEnPassant,

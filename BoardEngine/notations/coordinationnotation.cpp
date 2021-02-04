@@ -100,19 +100,19 @@ ExtendedMove createExtendedMoveFromSimpleStr (const std::string& moveStr,
         flags |= ExtendedMove::promotionMask;
         promotedTo = createPiece(moveStr[6], playerOnMove);
     }
-    if ((board[sourcePosition] & NOTATION::PIECES::PIECES_MASK) == NOTATION::PIECES::PAWN)
+    if ((board.getField(sourcePosition) & NOTATION::PIECES::PIECES_MASK) == NOTATION::PIECES::PAWN)
     {
         flags |= ExtendedMove::pawnMoveMask;
     }
-    if ((board[sourcePosition] & NOTATION::PIECES::PIECES_MASK) == NOTATION::PIECES::KING)
+    if ((board.getField(sourcePosition) & NOTATION::PIECES::PIECES_MASK) == NOTATION::PIECES::KING)
     {
         flags |= ExtendedMove::kingMoveMask;
     }
-    if (board[targetPosition] != 0)
+    if (board.getField(targetPosition) != 0)
     {
         flags |= ExtendedMove::beatingMask;
     }
-    return ExtendedMove{sourcePosition, targetPosition, flags, promotedTo, board[sourcePosition], board[targetPosition]};
+    return ExtendedMove{sourcePosition, targetPosition, flags, promotedTo, board.getField(sourcePosition), board.getField(targetPosition)};
 }
 }  // namespace coordinates
 }  // namespace notations

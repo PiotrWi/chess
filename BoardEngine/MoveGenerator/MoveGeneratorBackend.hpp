@@ -16,7 +16,7 @@ template <typename TMoveAddingStrategy
         , unsigned char OPOSITE_COLOR>
 void generateStandardPawnMoves(unsigned char i)
 {
-    if ((*ctx.board)[i + ROW_DIFF] == 0)
+    if (ctx.board->getField(i + ROW_DIFF) == 0)
     {
         auto row = NotationConversions::getRow(i);
         if (row == LINE_BEFORE_PROMOTION)
@@ -27,7 +27,7 @@ void generateStandardPawnMoves(unsigned char i)
         {
             TMoveAddingStrategy::addPawn(i, i + ROW_DIFF);
         }
-        if (row == FIRST_LINE and (*ctx.board)[i + 2 * ROW_DIFF] == 0)
+        if (row == FIRST_LINE and ctx.board->getField(i + 2 * ROW_DIFF) == 0)
         {
             TMoveAddingStrategy::addPawn(i, i + 2 * ROW_DIFF);
         }
@@ -36,31 +36,31 @@ void generateStandardPawnMoves(unsigned char i)
     if (col<7)
     {
         auto destination = i + ROW_DIFF + 1;
-        if (((*ctx.board)[destination] & NOTATION::COLOR::COLOR_MASK) == OPOSITE_COLOR)
+        if ((ctx.board->getField(destination) & NOTATION::COLOR::COLOR_MASK) == OPOSITE_COLOR)
         {
             auto row = NotationConversions::getRow(i);
             if (row == LINE_BEFORE_PROMOTION)
             {
-                TMoveAddingStrategy::addAndPromoteWithBeating(i, destination, (*ctx.board)[destination]);
+                TMoveAddingStrategy::addAndPromoteWithBeating(i, destination, ctx.board->getField(destination));
             }
             else
             {
-                TMoveAddingStrategy::addPawnWithBeating(i, destination, (*ctx.board)[destination]);
+                TMoveAddingStrategy::addPawnWithBeating(i, destination, ctx.board->getField(destination));
             }
         }
     }
     if (col > 0)
     {
         auto destination = i + ROW_DIFF - 1;
-        if (((*ctx.board)[destination] & NOTATION::COLOR::COLOR_MASK) == OPOSITE_COLOR)
+        if ((ctx.board->getField(destination) & NOTATION::COLOR::COLOR_MASK) == OPOSITE_COLOR)
         {
             auto row = NotationConversions::getRow(i);
             if (row == LINE_BEFORE_PROMOTION)
             {
-                TMoveAddingStrategy::addAndPromoteWithBeating(i, destination, (*ctx.board)[destination]);            }
+                TMoveAddingStrategy::addAndPromoteWithBeating(i, destination, ctx.board->getField(destination));            }
             else
             {
-                TMoveAddingStrategy::addPawnWithBeating(i, destination, (*ctx.board)[destination]);
+                TMoveAddingStrategy::addPawnWithBeating(i, destination, ctx.board->getField(destination));
             }
         }
     }
@@ -89,7 +89,7 @@ public:
                 && NotationConversions::isRowInBoard(targerRow))
             {
                 unsigned char destination = NotationConversions::getFieldNum(targerRow, targerCol);
-                const auto& field = (*ctx.board)[destination];
+                const auto& field = ctx.board->getField(destination);
 
                 if (field == 0)
                 {
@@ -154,12 +154,12 @@ public:
                  r += diff->first, c+= diff->second)
             {
                 auto destination = NotationConversions::getFieldNum(r, c);
-                if ((*ctx.board)[destination] != 0)
+                if (ctx.board->getField(destination) != 0)
                 {
                     if (static_cast<unsigned char>(ctx.pieceColor+1) ==
-                        ((*ctx.board)[destination] & NOTATION::COLOR::COLOR_MASK))
+                        (ctx.board->getField(destination) & NOTATION::COLOR::COLOR_MASK))
                     {
-                        TVerifyAndAddBeating(i, destination, (*ctx.board)[destination]);
+                        TVerifyAndAddBeating(i, destination, ctx.board->getField(destination));
                     }
                     break;
                 }
@@ -255,7 +255,7 @@ generateStandardPawnMoves<StrategyWithNoChecking<NOTATION::COLOR::color::black>,
 template <NOTATION::COLOR::color c>
 void dispatchToProperHandler(unsigned char i)
 {
-    switch ((*ctx.board)[i] ^ static_cast<unsigned char>(c))
+    switch (ctx.board->getField(i) ^ static_cast<unsigned char>(c))
     {
         case (NOTATION::PIECES::PAWN):
             dispatchToGenerateStandardPawnMoves<StrategyWithAlwaysCheckChecking<c>, c>(i);
@@ -263,10 +263,10 @@ void dispatchToProperHandler(unsigned char i)
         case (NOTATION::PIECES::KNIGHT):
             GenerateKnightMoves<c, StrategyWithAlwaysCheckChecking>::proccess(i);
             return;
-        case (NOTATION::PIECE_FEATURES::CAN_ATTACK_ON_LINES):
+        case (NOTATION::PIECES::ROCK):
             GenerateRockMoves<c, StrategyWithAlwaysCheckChecking>::proccess(i);
             return;
-        case (NOTATION::PIECE_FEATURES::CAN_ATTACK_ON_DIAGONAL):
+        case (NOTATION::PIECES::BISHOP):
             GenerateBishopMoves<c, StrategyWithAlwaysCheckChecking>::proccess(i);
             return;
         case (NOTATION::PIECES::QUEEN):
@@ -281,7 +281,7 @@ void dispatchToProperHandler(unsigned char i)
 template <NOTATION::COLOR::color c>
 void generateWithAllMoveAllowance(unsigned char i)
 {
-    switch ((*ctx.board)[i] ^ static_cast<unsigned char>(c))
+    switch (ctx.board->getField(i) ^ static_cast<unsigned char>(c))
     {
         case (NOTATION::PIECES::PAWN):
             dispatchToGenerateStandardPawnMoves<StrategyWithNoChecking<c>, c>(i);
@@ -289,10 +289,10 @@ void generateWithAllMoveAllowance(unsigned char i)
         case (NOTATION::PIECES::KNIGHT):
             GenerateKnightMoves<c, StrategyWithNoChecking>::proccess(i);
             return;
-        case (NOTATION::PIECE_FEATURES::CAN_ATTACK_ON_LINES):
+        case (NOTATION::PIECES::ROCK):
             GenerateRockMoves<c, StrategyWithNoChecking>::proccess(i);
             return;
-        case (NOTATION::PIECE_FEATURES::CAN_ATTACK_ON_DIAGONAL):
+        case (NOTATION::PIECES::BISHOP):
             GenerateBishopMoves<c, StrategyWithNoChecking>::proccess(i);
             return;
         case (NOTATION::PIECES::QUEEN):

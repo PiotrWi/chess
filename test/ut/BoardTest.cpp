@@ -3,6 +3,8 @@
 #include <publicIf/Board.hpp>
 #include <publicIf/NotationConversions.hpp>
 
+#include <utils/BoardGenerationUtils.hpp>
+
 TEST(BoardShall, performCorrectlyEquality)
 {
     Board a;
@@ -25,6 +27,15 @@ TEST(BoardShall, correctlyIndexFields)
     Board a;
     initDefault(a);
 
-    ASSERT_EQ(a["e1"], NOTATION::PIECES::KING | NOTATION::COLOR::WHITE);
-    ASSERT_EQ(a["h8"], NOTATION::PIECES::ROCK | NOTATION::COLOR::BLACK);
+    ASSERT_EQ(a.getField("e1"), NOTATION::PIECES::KING | NOTATION::COLOR::WHITE);
+    ASSERT_EQ(a.getField("h8"), NOTATION::PIECES::ROCK | NOTATION::COLOR::BLACK);
+}
+
+TEST(BoardShall, beEqualToOneCreatedFromString)
+{
+    Board a;
+    initDefault(a);
+
+    auto b = utils::createBoard(utils::InitialBoardString);
+    ASSERT_EQ(a, b);
 }

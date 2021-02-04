@@ -1,31 +1,25 @@
 #pragma once
 
+#include <stdint.h>
+
 namespace NOTATION
 {
 
-namespace PIECE_FEATURES
-{
-
-constexpr unsigned char CAN_ATTACK_ON_DIAGONAL = (1u << 2);
-constexpr unsigned char CAN_ATTACK_ON_LINES = (1u << 3);
-
-}
-
 namespace PIECES
 {
-constexpr unsigned char PAWN = (1u << 4);
-constexpr unsigned char ROCK = PIECE_FEATURES::CAN_ATTACK_ON_LINES;
-constexpr unsigned char KNIGHT = (2u << 4);
-constexpr unsigned char BISHOP = PIECE_FEATURES::CAN_ATTACK_ON_DIAGONAL;
-constexpr unsigned char QUEEN = PIECE_FEATURES::CAN_ATTACK_ON_LINES | PIECE_FEATURES::CAN_ATTACK_ON_DIAGONAL;
-constexpr unsigned char KING = (3u << 4);
+constexpr unsigned char PAWN =      0b0010;
+constexpr unsigned char ROCK =      0b0100;
+constexpr unsigned char KNIGHT =    0b0110;
+constexpr unsigned char BISHOP =    0b1000;
+constexpr unsigned char QUEEN =     0b1010;
+constexpr unsigned char KING =      0b1100;
 constexpr unsigned char PIECES_MASK = PAWN | ROCK | KNIGHT | BISHOP | QUEEN | KING;
 }  // namespace PIECES
 
 namespace COLOR
 {
-constexpr unsigned char WHITE = (0b01);
-constexpr unsigned char BLACK = (0b10);
+constexpr unsigned char WHITE = 0b0;
+constexpr unsigned char BLACK = 0b1;
 constexpr unsigned char COLOR_MASK = WHITE | BLACK;
 
 enum class color : unsigned char {
@@ -60,7 +54,5 @@ constexpr unsigned char BLACK_SHORT_BIT = 8;
 
 constexpr unsigned char CASTLING_MASK = WHITE_LONG_BIT | WHITE_SHORT_BIT | BLACK_LONG_BIT | BLACK_SHORT_BIT;
 }
-
-constexpr signed char NO_ENPASANT = -1;
 
 }  // namespace NOTATION

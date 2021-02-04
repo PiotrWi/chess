@@ -64,7 +64,7 @@ ExtendedMove createExtendedMove (const std::string& moveStr,
     }
 
     targetPosition = NotationConversions::getFieldNum(moveStr.substr(position, 2).c_str());
-    targetPiece = board[targetPosition];
+    targetPiece = board.getField(targetPosition);
 
     position += 2;
 

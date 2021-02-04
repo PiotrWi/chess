@@ -21,7 +21,7 @@ bool isAttackedOn(const Board& board)
         pos < FieldLookup<color, kingPosition>::OppositePawnPositions + FieldLookup<color, kingPosition>::OppositePawnPositionsSize;
         ++pos)
     {
-        if (board[*pos] == pawnMask) return true;
+        if (board.getField(*pos) == pawnMask) return true;
     }
 
     constexpr unsigned char kingPattern = oppositeColorBin | NOTATION::PIECES::KING;
@@ -29,7 +29,7 @@ bool isAttackedOn(const Board& board)
          pos < FieldLookup<color, kingPosition>::KingPossibleMoves + FieldLookup<color, kingPosition>::KingPossibleMovesSize;
          ++pos)
     {
-        if (board[*pos] == kingPattern) return true;
+        if (board.getField(*pos) == kingPattern) return true;
     }
 
     constexpr unsigned char knightPattern = oppositeColorBin | NOTATION::PIECES::KNIGHT;
@@ -37,67 +37,67 @@ bool isAttackedOn(const Board& board)
          pos < FieldLookup<color, kingPosition>::KnightPossibleMoves + FieldLookup<color, kingPosition>::KnightPossibleMovesSize;
          ++pos)
     {
-        if (board[*pos] == knightPattern) return true;
+        if (board.getField(*pos) == knightPattern) return true;
     }
 
-    constexpr unsigned char bishopPattern = oppositeColorBin | NOTATION::PIECE_FEATURES::CAN_ATTACK_ON_DIAGONAL;
+    constexpr unsigned char bishopPattern = oppositeColorBin;
     for (const unsigned char* pos = FieldLookup<color, kingPosition>::TopLeftPossibleMoves;
          pos < FieldLookup<color, kingPosition>::TopLeftPossibleMoves + FieldLookup<color, kingPosition>::TopLeftPossibleMovesSize;
          ++pos)
     {
-        if ((board[*pos] & bishopPattern) == bishopPattern) return true;
-        if (board[*pos] != 0) break;
+        if ((board.getField(*pos) & bishopPattern) == bishopPattern) return true;
+        if (board.getField(*pos) != 0) break;
     }
     for (const unsigned char* pos = FieldLookup<color, kingPosition>::TopRightPossibleMoves;
          pos < FieldLookup<color, kingPosition>::TopRightPossibleMoves + FieldLookup<color, kingPosition>::TopRightPossibleMovesSize;
          ++pos)
     {
-        if ((board[*pos] & bishopPattern) == bishopPattern) return true;
-        if (board[*pos] != 0) break;
+        if ((board.getField(*pos) & bishopPattern) == bishopPattern) return true;
+        if (board.getField(*pos) != 0) break;
     }
     for (const unsigned char* pos = FieldLookup<color, kingPosition>::BottomLeftPossibleMoves;
          pos < FieldLookup<color, kingPosition>::BottomLeftPossibleMoves + FieldLookup<color, kingPosition>::BottomLeftPossibleMovesSize;
          ++pos)
     {
-        if ((board[*pos] & bishopPattern) == bishopPattern) return true;
-        if (board[*pos] != 0) break;
+        if ((board.getField(*pos) & bishopPattern) == bishopPattern) return true;
+        if (board.getField(*pos) != 0) break;
     }
     for (const unsigned char* pos = FieldLookup<color, kingPosition>::BottomRightPossibleMoves;
          pos < FieldLookup<color, kingPosition>::BottomRightPossibleMoves + FieldLookup<color, kingPosition>::BottomRightPossibleMovesSize;
          ++pos)
     {
-        if ((board[*pos] & bishopPattern) == bishopPattern) return true;
-        if (board[*pos] != 0) break;
+        if ((board.getField(*pos) & bishopPattern) == bishopPattern) return true;
+        if (board.getField(*pos) != 0) break;
     }
 
-    constexpr unsigned char rockPattern = oppositeColorBin | NOTATION::PIECE_FEATURES::CAN_ATTACK_ON_LINES;
+    constexpr unsigned char rockPattern = oppositeColorBin;
     for (const unsigned char* pos = FieldLookup<color, kingPosition>::TopPossibleMoves;
          pos < FieldLookup<color, kingPosition>::TopPossibleMoves + FieldLookup<color, kingPosition>::TopPossibleMovesSize;
          ++pos)
     {
-        if ((board[*pos] & rockPattern) == rockPattern) return true;
-        if (board[*pos] != 0) break;
+        if ((board.getField(*pos) & rockPattern) == rockPattern) return true;
+        if (board.getField(*pos) != 0) break;
     }
     for (const unsigned char* pos = FieldLookup<color, kingPosition>::BottomPossibleMoves;
          pos < FieldLookup<color, kingPosition>::BottomPossibleMoves + FieldLookup<color, kingPosition>::BottomPossibleMovesSize;
          ++pos)
     {
-        if ((board[*pos] & rockPattern) == rockPattern) return true;
-        if (board[*pos] != 0) break;
+        if ((board.getField(*pos) & rockPattern) == rockPattern) return true;
+        if (board.getField(*pos) != 0) break;
     }
     for (const unsigned char* pos = FieldLookup<color, kingPosition>::LeftPossibleMoves;
          pos < FieldLookup<color, kingPosition>::LeftPossibleMoves + FieldLookup<color, kingPosition>::LeftPossibleMovesSize;
          ++pos)
     {
-        if ((board[*pos] & rockPattern) == rockPattern) return true;
-        if (board[*pos] != 0) break;
+        if ((board.getField(*pos) & rockPattern) == rockPattern) return true;
+        if (board.getField(*pos) != 0) break;
     }
     for (const unsigned char* pos = FieldLookup<color, kingPosition>::RightPossibleMoves;
          pos < FieldLookup<color, kingPosition>::RightPossibleMoves + FieldLookup<color, kingPosition>::RightPossibleMovesSize;
          ++pos)
     {
-        if ((board[*pos] & rockPattern) == rockPattern) return true;
-        if (board[*pos] != 0) break;
+        if ((board.getField(*pos) & rockPattern) == rockPattern) return true;
+        if (board.getField(*pos) != 0) break;
     }
 
     return false;
@@ -256,15 +256,12 @@ bool isAttackedOn(const Board& board,
 
 unsigned char findKing(const Board& board, const NOTATION::COLOR::color c) noexcept
 {
-    unsigned char KING_MASK = static_cast<unsigned char>(c) | NOTATION::PIECES::KING;
-    unsigned char kingPos = std::find(board.fields, board.fields + 64, KING_MASK) - board.fields;
-    return kingPos;
+    return __builtin_clzll(board.piecesBitSets[static_cast<unsigned char>(c)].kingsMask);
 }
 
 bool isCheckOn(const Board& board, const NOTATION::COLOR::color c) noexcept
 {
-    unsigned char KING_MASK = static_cast<unsigned char>(c) | NOTATION::PIECES::KING;
-    unsigned char kingPos = std::find(board.fields, board.fields + 64, KING_MASK) - board.fields;
+    unsigned char kingPos = __builtin_clzll(board.piecesBitSets[static_cast<unsigned char>(c)].kingsMask);
 
     return isAttackedOn(board, c, kingPos);
 }
