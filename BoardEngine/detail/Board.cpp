@@ -1,6 +1,5 @@
 #include "publicIf/Board.hpp"
 
-#include <algorithm>
 #include <ostream>
 #include <publicIf/NotationConversions.hpp>
 
