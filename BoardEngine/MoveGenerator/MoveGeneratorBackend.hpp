@@ -36,7 +36,8 @@ void generateStandardPawnMoves(unsigned char i)
     if (col<7)
     {
         auto destination = i + ROW_DIFF + 1;
-        if ((ctx.board->getField(destination) & NOTATION::COLOR::COLOR_MASK) == OPOSITE_COLOR)
+        auto destinationField = ctx.board->getField(destination);
+        if (destinationField != 0 and (destinationField & NOTATION::COLOR::COLOR_MASK) == OPOSITE_COLOR)
         {
             auto row = NotationConversions::getRow(i);
             if (row == LINE_BEFORE_PROMOTION)
@@ -52,7 +53,8 @@ void generateStandardPawnMoves(unsigned char i)
     if (col > 0)
     {
         auto destination = i + ROW_DIFF - 1;
-        if ((ctx.board->getField(destination) & NOTATION::COLOR::COLOR_MASK) == OPOSITE_COLOR)
+        auto destinationField = ctx.board->getField(destination);
+        if (destinationField != 0 and (destinationField & NOTATION::COLOR::COLOR_MASK) == OPOSITE_COLOR)
         {
             auto row = NotationConversions::getRow(i);
             if (row == LINE_BEFORE_PROMOTION)
@@ -95,7 +97,7 @@ public:
                 {
                     TVerifyAndAdd(i, destination);
                 }
-                if ((field & NOTATION::COLOR::COLOR_MASK) == TOpositeColor)
+                else if ((field & NOTATION::COLOR::COLOR_MASK) == TOpositeColor)
                 {
                     TVerifyAndAddBeating(i, destination, field);
                 }

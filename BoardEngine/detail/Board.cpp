@@ -210,8 +210,8 @@ bool operator ==(const ExtendedMove& lhs, const ExtendedMove& rhs) noexcept
 
 ExtendedMove convertMoveToExtended(const Board& board, const Move& move) noexcept
 {
-    const unsigned char& target = board.getField(move.destination);
-    const unsigned char& source = board.getField(move.source) & NOTATION::PIECES::PIECES_MASK;
+    const unsigned char target = board.getField(move.destination);
+    const unsigned char source = board.getField(move.source) & NOTATION::PIECES::PIECES_MASK;
 
     unsigned char flags = ((move.isPromoted == true) ? ExtendedMove::promotionMask : 0u)
             | ((target != 0u) ? ExtendedMove::beatingMask : 0u)
@@ -237,7 +237,7 @@ ExtendedMove::ExtendedMove(unsigned char sourceIn,
     assert(source < 64);
     assert(destination < 64);
     assert(sourcePiece != 0);
-    assert(targetPiece != 0 || (flags & ExtendedMove::beatingMask) == 0);
+    assert(targetPiece == 0 || (flags & ExtendedMove::beatingMask) != 0);
 #endif
 }
 

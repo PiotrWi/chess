@@ -109,7 +109,8 @@ bool validatePawn()
             if (rowDifference == -1)
             {
                 if (ctx.move->destination == ctx.board->validEnPassant or
-                    (ctx.board->getField(ctx.move->destination) & NOTATION::COLOR::COLOR_MASK) == NOTATION::COLOR::WHITE)
+                    (ctx.board->getField(ctx.move->destination) != 0 and
+                    (ctx.board->getField(ctx.move->destination) & NOTATION::COLOR::COLOR_MASK) == NOTATION::COLOR::WHITE))
                 {
                     return true;
                 }

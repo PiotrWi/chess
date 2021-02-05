@@ -486,12 +486,10 @@ TEST_F(MoveGeneratorTests, shallNotAllowToMovePinned)
             {"Re6e7", "Re6xe8",
              "Re4e3", "Re4xe2",
              "Rd5c5", "Rd5b5", "Rd5xa5", "Rf5xg5"}, WHITE, board);
-            //   Re6e7V,  Re6xe8
-            //   Re4e3V, Re4xe2
-            //   Rd5c5V, Rd5b5V, Rd5xa5
+
     auto kingMoves = map(
             {"Ke5f6", "Ke5d6", "Ke5d4", "Ke5f4"}, WHITE, board);
-//  Actual: { , , Rf5f4V, Rf5f3V, Rf5f2V, Rf5f1V, Rf5f6V, Rf5f7V, Rf5f8V, Rf5xg5, Ke5f6V, Ke5f4V, Ke5d4V, Ke5d6V }, which has 19 elements
+
     ASSERT_THAT(sut.generate(board, WHITE),
                 ::testing::UnorderedElementsAreArray(rockMoves + kingMoves));
 }

@@ -103,8 +103,8 @@ unsigned char abs(signed char num)
 
 void applyEnPassantRules(Board& board, uint64_t& positionHash, const Move& move)
 {
-    if (NotationConversions::getPieceType(board.getField(move.source) == NOTATION::PIECES::PAWN
-        and move.destination == board.validEnPassant))
+    if (NotationConversions::getPieceType(board.getField(move.source)) == NOTATION::PIECES::PAWN
+        and move.destination == board.validEnPassant)
     {
         auto moveDiff = move.source-move.destination;
         if (abs(moveDiff) == NOTATION::COORDINATES::ROW_DIFF + 1)
@@ -123,7 +123,7 @@ void applyEnPassantRules(Board& board, uint64_t& positionHash, const Move& move)
         board.validEnPassant = -1;
         return;
     }
-    if (NotationConversions::getPieceType(board.getField(move.source) == NOTATION::PIECES::PAWN))
+    if (NotationConversions::getPieceType(board.getField(move.source)) == NOTATION::PIECES::PAWN)
     {
         auto moveDiff = move.source-move.destination;
         if (abs(moveDiff) == 2 * NOTATION::COORDINATES::ROW_DIFF)
@@ -132,11 +132,11 @@ void applyEnPassantRules(Board& board, uint64_t& positionHash, const Move& move)
             if (
                 (col < 7
                     && ((board.getField(move.destination + 1))
-                        == (NOTATION::PIECES::PAWN | (~board.getField(move.source) & NOTATION::COLOR::COLOR_MASK))))
+                        == (NOTATION::PIECES::PAWN | static_cast<unsigned char>(board.playerOnMove + 1))))
                 or
                 (col > 0
                     && ((board.getField(move.destination - 1))
-                        == (NOTATION::PIECES::PAWN | (~board.getField(move.source) & NOTATION::COLOR::COLOR_MASK)))))
+                        == (NOTATION::PIECES::PAWN | static_cast<unsigned char>(board.playerOnMove + 1)))))
             {
                 positionHash = hash::switchEnPassant(positionHash, board.validEnPassant);
                 board.validEnPassant = (move.source + move.destination) / 2;

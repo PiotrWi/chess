@@ -113,7 +113,7 @@ TEST_F (ResultEvaluatorShould, findDrawByRepeatitions)
             "♖       ", BLACK);
 
     verifyChainOfMoves(board,
-                       {"a1-h1", "a8-h8", "h1-a1", "a8-h8", "a1-h1", "a8-h8", "h1-a1", "a8-h8"},
+                       {"a1-h1", "a8-h8", "h1-a1", "h8-a8", "a1-h1", "a8-h8", "h1-a1", "h8-a8", "a1-h1"},
                        WHITE,
                        Result::draw);
 }

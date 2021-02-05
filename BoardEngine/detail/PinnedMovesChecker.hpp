@@ -14,18 +14,20 @@ uint64_t evaluateInSingleDiagonal(uint64_t wasChecked, const Board& board)
          pos < begin + TSize;
          ++pos)
     {
-        if ((board.getField(*pos) & NOTATION::COLOR::COLOR_MASK) == TOppositeColor)
+        auto targetPiece = board.getField(*pos);
+        if (targetPiece != 0 and (targetPiece & NOTATION::COLOR::COLOR_MASK) == TOppositeColor)
         {
             break;
         }
-        if ((board.getField(*pos) & NOTATION::COLOR::COLOR_MASK) == c)
+        if (targetPiece != 0 and (targetPiece & NOTATION::COLOR::COLOR_MASK) == c)
         {
             piecePos = *pos;
             for (++pos;
                  pos < begin + TSize;
                  ++pos)
             {
-                if ((board.getField(*pos) & NOTATION::COLOR::COLOR_MASK) == TOppositeColor)
+                targetPiece = board.getField(*pos);
+                if (targetPiece != 0 and (targetPiece & NOTATION::COLOR::COLOR_MASK) == TOppositeColor)
                 {
                     if ((board.getField(*pos) & NOTATION::PIECES::BISHOP) or
                         (board.getField(*pos) & NOTATION::PIECES::QUEEN))
@@ -33,7 +35,7 @@ uint64_t evaluateInSingleDiagonal(uint64_t wasChecked, const Board& board)
                         return wasChecked | (1lu << piecePos);
                     }
                 }
-                if ((board.getField(*pos) & NOTATION::COLOR::COLOR_MASK) == c)
+                if (targetPiece != 0 and (targetPiece & NOTATION::COLOR::COLOR_MASK) == c)
                 {
                     return wasChecked;
                 }
@@ -52,11 +54,12 @@ uint64_t evaluateInSingleLine(uint64_t wasChecked, const Board& board)
          pos < begin + TSize;
          ++pos)
     {
-        if ((board.getField(*pos) & NOTATION::COLOR::COLOR_MASK) == TOppositeColor)
+        auto targetPiece = board.getField(*pos);
+        if (targetPiece != 0 and (board.getField(*pos) & NOTATION::COLOR::COLOR_MASK) == TOppositeColor)
         {
             break;
         }
-        if ((board.getField(*pos) & NOTATION::COLOR::COLOR_MASK) == c)
+        if (targetPiece != 0 and (board.getField(*pos) & NOTATION::COLOR::COLOR_MASK) == c)
         {
             piecePos = *pos;
 
@@ -64,14 +67,15 @@ uint64_t evaluateInSingleLine(uint64_t wasChecked, const Board& board)
                  pos < begin + TSize;
                  ++pos)
             {
-                if ((board.getField(*pos) & NOTATION::COLOR::COLOR_MASK) == TOppositeColor)
+                targetPiece = board.getField(*pos);
+                if (targetPiece != 0 and (board.getField(*pos) & NOTATION::COLOR::COLOR_MASK) == TOppositeColor)
                 {
                     if ((board.getField(*pos) & NOTATION::PIECES::ROCK) or (board.getField(*pos) & NOTATION::PIECES::QUEEN))
                     {
                         return wasChecked | (1lu << piecePos);
                     }
                 }
-                if ((board.getField(*pos) & NOTATION::COLOR::COLOR_MASK) == c)
+                if (targetPiece != 0 and (board.getField(*pos) & NOTATION::COLOR::COLOR_MASK) == c)
                 {
                     return wasChecked;
                 }
