@@ -369,7 +369,6 @@ TEST(CheckCheckershould, workWithRapid)
     ASSERT_TRUE(CheckChecker::isCheckOn(board, NOTATION::COLOR::color::white));
 }
 
-
 TEST(CheckCheckershould, Custom_1)
 {
     auto board = utils::createBoard(
@@ -381,5 +380,18 @@ TEST(CheckCheckershould, Custom_1)
             "      ♙♛"
             " ♟   ♙  "
             "     ♔  ");
+    ASSERT_TRUE(CheckChecker::isCheckOn(board, NOTATION::COLOR::color::white));
+}
+
+TEST(CheckCheckershould, shallFindObviousMateForBlack)
+{
+    auto board = utils::createBoard("    ♚   "
+                                    "        "
+                                    "        "
+                                    "        "
+                                    "        "
+                                    "        "
+                                    "     ♞♙♙"
+                                    "      ♖♔");
     ASSERT_TRUE(CheckChecker::isCheckOn(board, NOTATION::COLOR::color::white));
 }

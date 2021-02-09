@@ -386,31 +386,25 @@ TEST_F(MoveGeneratorTests, shouldCorectlyAnalyzePosForBlack)
 		{"a5a4", "b7b6", "b7b5", "c7c6", "c7c5",
 		"d5d4", "e7e6", "e7e5", "f7f6", "f7f5",
 		"g6g5", "h7h6", "h7h5"}, BLACK, board);
-    //
-    //
-    //   g6g5�U g6g5�U b7b6�U b7b5�U c7c6�U c7c5�U e7e6�U e7e5�U f7f6�U f7f5�U h7h6�U h7h5�U
+
 	auto knightMoves = map(
 		{"Na6b8", "Na6c5", "Na6b4",
 		"Ng4xh2", "Ng4xf2", "Ng4e3", "Ng4e5", "Ng4f6", "Ng4h6"}, BLACK, board);
-	//
-    //
+
 	auto rockMoves = map(
 		{"Ra8a7", "Ra8b8", "Rh8g8"}, BLACK, board);
-    //       Ra8a7    Ra8b8    Rh8g
+
 
     auto bishopMoves = map(
 		{"Bc8d7", "Bc8e6", "Bc8f5",
 		"Bf8g7", "Bf8h6"}, BLACK, board);
-    //       Bc8d7    Bc8e6    Bc8f5
-    //   Bf8g7    Bf8h6
 
 	auto queenMoves = map(
 		{"Qd8d7", "Qd8d6"}, BLACK, board);
-        //   Bd8d7    Bd8d6
+
 	auto kingMoves = map(
 		{"Ke8d7"}, BLACK,  board);
-    //       Ke8d7
-//Ng4e5U Ng4f6U Ng4h6U Ng4xh2 Ng4xf2 Ng4e3U a5a4�U d5d4�U Na6b8U Na6c5U Na6b4U
+
     ASSERT_THAT(printAndReturn(sut.generate(board, BLACK)),
 		::testing::UnorderedElementsAreArray(pawnMoves+knightMoves+rockMoves+bishopMoves+queenMoves+kingMoves));
 }
