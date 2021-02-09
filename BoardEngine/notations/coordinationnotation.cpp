@@ -69,7 +69,7 @@ std::vector<char> createMoveStr(const Move& m)
     return out;
 }
 
-ExtendedMove createExtendedMoveFromSimpleStr (const std::string& moveStr,
+ExtendedMove createExtendedMove (const std::string& moveStr,
     NOTATION::COLOR::color playerOnMove, const Board& board)
 {
     if (moveStr == "O-O")
@@ -86,7 +86,7 @@ ExtendedMove createExtendedMoveFromSimpleStr (const std::string& moveStr,
         {
             return ExtendedMove::whiteLongCaste();
         }
-        return ExtendedMove::whiteLongCaste();
+        return ExtendedMove::blackLongCaste();
     }
     auto sourcePosition = NotationConversions::getFieldNum(moveStr.substr(0, 2).c_str());
     auto targetPosition = NotationConversions::getFieldNum(moveStr.substr(3, 2).c_str());

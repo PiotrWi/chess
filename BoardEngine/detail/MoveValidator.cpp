@@ -46,7 +46,7 @@ bool valiateConcretePiece()
 bool noCheckAfterMove()
 {
 	Board boardCopy = *ctx.board;
-	MoveApplier::applyMove(boardCopy, *ctx.move);
+	MoveApplier::applyMove(boardCopy, convertMoveToExtended(boardCopy, *ctx.move));
     return not CheckChecker::isCheckOn(boardCopy, ctx.board->playerOnMove);
 }
 
@@ -228,7 +228,7 @@ bool validateKing()
 		};
 		auto isCheckInBetween = [&]() -> bool {
 			auto boardCopy = *ctx.board;
-			auto moveCopy = *ctx.move;
+			auto moveCopy = convertMoveToExtended(boardCopy, *ctx.move);
 			moveCopy.destination =
 					moveCopy.source + sign(ctx.targetColumn - ctx.sourceColumn);
 			MoveApplier::applyMove(boardCopy, moveCopy);

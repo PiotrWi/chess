@@ -160,13 +160,13 @@ void applyEnPassantRules(Board& board, uint64_t& positionHash, const Move& move)
 namespace MoveApplier
 {
 
-void applyMove(Board& board, const Move& move)
+void applyMove(Board& board, const ExtendedMove& move)
 {
     uint64_t nop;
     applyMove(board, nop, move);
 }
 
-void applyMove(Board& board, uint64_t& positionHash, const Move& move)
+void applyMove(Board& board, uint64_t& positionHash, const ExtendedMove& move)
 {
     applyCasltingRules(board, positionHash, move);
     conditionallyRevokeCastlingRights(board, positionHash, move);
@@ -184,7 +184,7 @@ void applyMove(Board& board, uint64_t& positionHash, const Move& move)
     ++board.playerOnMove;
 }
 
-SimpleMoveMemorial applyTmpMoveSimple(Board& board, uint64_t& positionHash, const Move& move)
+SimpleMoveMemorial applyTmpMoveSimple(Board& board, uint64_t& positionHash, const ExtendedMove& move)
 {
     SimpleMoveMemorial memorial{board, positionHash};
     applyMove(board, positionHash, move);

@@ -351,7 +351,7 @@ void interrupt()
     interrupt_flag = true;
 }
 
-Move evaluate(BoardEngine be,
+ExtendedMove evaluate(BoardEngine be,
               players::common::move_generators::FullCachedEngine& cachedEngine,
               unsigned char depth)
 {
@@ -376,7 +376,7 @@ constexpr auto InitialBeta = mateValue + 1;
  *
  * NOTE: Iterative searching for the best move.
  */
-Move evaluateIterative(BoardEngine be,
+ExtendedMove evaluateIterative(BoardEngine be,
                        players::common::move_generators::FullCachedEngine& cachedEngine,
                        unsigned char maxDepth)
 {

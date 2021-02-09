@@ -39,3 +39,22 @@ TEST(BoardShall, beEqualToOneCreatedFromString)
     auto b = utils::createBoard(utils::InitialBoardString);
     ASSERT_EQ(a, b);
 }
+
+TEST(BoardShall, correctlyCleanFields)
+{
+    Board a;
+    initDefault(a);
+
+    a.setField("a1", NOTATION::PIECES::QUEEN | NOTATION::COLOR::WHITE);
+    ASSERT_FALSE(a.piecesBitSets[0].rocksMask & 0b1ull);
+}
+
+TEST(BoardShall, correctlyCleanFieldsWhenOldValueGiven)
+{
+    Board a;
+    initDefault(a);
+
+    const auto a1_index = 0;
+    a.setField(a1_index, NOTATION::PIECES::ROCK | NOTATION::COLOR::WHITE, NOTATION::PIECES::QUEEN | NOTATION::COLOR::WHITE);
+    ASSERT_FALSE(a.piecesBitSets[0].rocksMask & 0b1ull);
+}

@@ -9,8 +9,6 @@ add_library(Players
         common/evaluators/MaterialEvaluator.cpp
         common/searchingAlgorithms/MinMax.hpp
         common/searchingAlgorithms/MinMax.cpp
-        ComputerPlayer/SimpleComputerPlayer.cpp
-        ComputerPlayer/SimpleComputerPlayer.hpp
         common/searchingAlgorithms/AlfaBeta.hpp
         common/evaluators/MoveCountEvaluator.cpp
         common/containers/HashTable.hpp

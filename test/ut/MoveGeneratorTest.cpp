@@ -125,10 +125,10 @@ TEST_F(MoveGeneratorTests, shouldCorectlyAnalyzePosWithMoves)
 		"        "
 		"    ♔  ♙"
 		"♖      ♖");
-	auto moveKingToInitialPosition = notations::coordinates::createMove("e2-e1", WHITE);
+	auto moveKingToInitialPosition = notations::coordinates::createExtendedMove("e2-e1", WHITE, board);
 	MoveApplier::applyMove(board, moveKingToInitialPosition);
 
-    auto moveWitePawnToPieces = notations::coordinates::createMove("c7-c5", BLACK);
+    auto moveWitePawnToPieces = notations::coordinates::createExtendedMove("c7-c5", BLACK, board);
     MoveApplier::applyMove(board, moveWitePawnToPieces);
 
 //	"    ♚   "
@@ -224,10 +224,10 @@ TEST_F(MoveGeneratorTests, shouldPreventIllegalCasles_2)
 		"       ♙"
 		" ♖  ♔  ♖");
 
-    auto moveRockToInitialPosition = notations::coordinates::createMove("b1-a1", WHITE);
+    auto moveRockToInitialPosition = notations::coordinates::createExtendedMove("b1-a1", WHITE, board);
     MoveApplier::applyMove(board, moveRockToInitialPosition);
 
-    auto moveWitePawnToPieces = notations::coordinates::createMove("e7-e8", BLACK);
+    auto moveWitePawnToPieces = notations::coordinates::createExtendedMove("e7-e8", BLACK, board);
     MoveApplier::applyMove(board, moveWitePawnToPieces);
 
 	auto pawnMoves = map(
@@ -268,10 +268,10 @@ TEST_F(MoveGeneratorTests, shouldPreventIllegalCasles_3)
 		"       ♙"
 		"♖   ♔ ♖ ");
 
-    auto moveRockToInitialPosition = notations::coordinates::createMove("g1-h1", WHITE);
+    auto moveRockToInitialPosition = notations::coordinates::createExtendedMove("g1-h1", WHITE, board);
     MoveApplier::applyMove(board, moveRockToInitialPosition);
 
-    auto moveWitePawnToPieces = notations::coordinates::createMove("e7-e8", BLACK);
+    auto moveWitePawnToPieces = notations::coordinates::createExtendedMove("e7-e8", BLACK, board);
     MoveApplier::applyMove(board, moveWitePawnToPieces);
 
 	auto pawnMoves = map(

@@ -123,7 +123,7 @@ public:
             if (ctx.board->getField(whitePawnLocCandidate) ==
                 (NOTATION::PIECES::PAWN | NOTATION::COLOR::WHITE))
             {
-                TMoveAddingStrategy::addPawnWithBeating(whitePawnLocCandidate, (ctx.board)->validEnPassant,
+                TMoveAddingStrategy::addEnPasantBeating(whitePawnLocCandidate, (ctx.board)->validEnPassant,
                                                         NOTATION::PIECES::PAWN | NOTATION::COLOR::WHITE);
             }
         }
@@ -133,7 +133,7 @@ public:
             if (ctx.board->getField(whitePawnLocCandidate) ==
                 (NOTATION::PIECES::PAWN | NOTATION::COLOR::WHITE))
             {
-                TMoveAddingStrategy::addPawnWithBeating(whitePawnLocCandidate, (ctx.board)->validEnPassant,
+                TMoveAddingStrategy::addEnPasantBeating(whitePawnLocCandidate, (ctx.board)->validEnPassant,
                                                         NOTATION::PIECES::PAWN | NOTATION::COLOR::WHITE);
             }
         }

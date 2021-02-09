@@ -23,10 +23,14 @@ struct Board
 
     unsigned char getField(const unsigned char field) const noexcept;
     unsigned char getField(const char* field) const noexcept;
-    void setField(const unsigned char field, unsigned char val);
+    void setField(const unsigned char field, unsigned char value);
+    void setField(const unsigned char field, unsigned char oldValue, unsigned char value);
     void setField(const char* field, unsigned char val);
 
 private:
+    void cleanConcrete(const unsigned char field, unsigned char oldValue);
+    void setConcrete(const unsigned char field, unsigned char value);
+
     constexpr static unsigned char WHITE_INDEX = 0;
     constexpr static unsigned char BLACK_INDEX = 1;
 };
@@ -54,6 +58,8 @@ struct ExtendedMove
     constexpr static unsigned char beatingMask   = 0b00000010;
     constexpr static unsigned char pawnMoveMask  = 0b00000100;
     constexpr static unsigned char kingMoveMask  = 0b00001000;
+    constexpr static unsigned char enPasantMask  = 0b00010000;
+    constexpr static unsigned char castlingMask  = 0b00100000;
 
     ExtendedMove() noexcept = default;
     ExtendedMove(unsigned char sourceIn,

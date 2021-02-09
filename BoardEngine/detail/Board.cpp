@@ -59,23 +59,52 @@ unsigned char Board::getField(const char* field) const noexcept
     return getField(NotationConversions::getFieldNum(field));
 }
 
-void Board::setField(const unsigned char field, unsigned char val)
+void Board::cleanConcrete(const unsigned char field, unsigned char oldValue)
 {
-#ifdef ASSERTSON
-    assert(field < 64);
-#endif
-    u_int64_t pieceBitNegation = (~(1lu << field));
-    for (unsigned char i = 0; i < 2; ++i)
+    switch (oldValue)
     {
-        piecesBitSets[i].pawnsMask &= pieceBitNegation;
-        piecesBitSets[i].rocksMask &= pieceBitNegation;
-        piecesBitSets[i].knightsMask &= pieceBitNegation;
-        piecesBitSets[i].bishopsMask &= pieceBitNegation;
-        piecesBitSets[i].queensMask &= pieceBitNegation;
-        piecesBitSets[i].kingsMask &= pieceBitNegation;
+        case(NOTATION::COLOR::WHITE | NOTATION::PIECES::PAWN):
+            piecesBitSets[0].pawnsMask &= ~(1ull << field);
+            return;
+        case(NOTATION::COLOR::WHITE | NOTATION::PIECES::ROCK):
+            piecesBitSets[0].rocksMask &= ~(1ull << field);
+            return;
+        case(NOTATION::COLOR::WHITE | NOTATION::PIECES::KNIGHT):
+            piecesBitSets[0].knightsMask &= ~(1ull << field);
+            return;
+        case(NOTATION::COLOR::WHITE | NOTATION::PIECES::BISHOP):
+            piecesBitSets[0].bishopsMask &= ~(1ull << field);
+            return;
+        case(NOTATION::COLOR::WHITE | NOTATION::PIECES::QUEEN):
+            piecesBitSets[0].queensMask &= ~(1ull << field);
+            return;
+        case(NOTATION::COLOR::WHITE | NOTATION::PIECES::KING):
+            piecesBitSets[0].kingsMask &= ~(1ull << field);
+            return;
+        case(NOTATION::COLOR::BLACK | NOTATION::PIECES::PAWN):
+            piecesBitSets[1].pawnsMask &= ~(1ull << field);
+            return;
+        case(NOTATION::COLOR::BLACK | NOTATION::PIECES::ROCK):
+            piecesBitSets[1].rocksMask &= ~(1ull << field);
+            return;
+        case(NOTATION::COLOR::BLACK | NOTATION::PIECES::KNIGHT):
+            piecesBitSets[1].knightsMask &= ~(1ull << field);
+            return;
+        case(NOTATION::COLOR::BLACK | NOTATION::PIECES::BISHOP):
+            piecesBitSets[1].bishopsMask &= ~(1ull << field);
+            return;
+        case(NOTATION::COLOR::BLACK | NOTATION::PIECES::QUEEN):
+            piecesBitSets[1].queensMask &= ~(1ull << field);
+            return;
+        case(NOTATION::COLOR::BLACK | NOTATION::PIECES::KING):
+            piecesBitSets[1].kingsMask &= ~(1ull << field);
+            return;
     }
+}
 
-    switch (val)
+void Board::setConcrete(const unsigned char field, unsigned char value)
+{
+    switch (value)
     {
         case(NOTATION::COLOR::WHITE | NOTATION::PIECES::PAWN):
             piecesBitSets[0].pawnsMask |= (1ull << field);
@@ -114,6 +143,31 @@ void Board::setField(const unsigned char field, unsigned char val)
             piecesBitSets[1].kingsMask |= (1ull << field);
             return;
     }
+}
+
+void Board::setField(const unsigned char field, unsigned char value)
+{
+#ifdef ASSERTSON
+    assert(field < 64);
+#endif
+    u_int64_t pieceBitNegation = (~(1lu << field));
+    for (unsigned char i = 0; i < 2; ++i)
+    {
+        piecesBitSets[i].pawnsMask &= pieceBitNegation;
+        piecesBitSets[i].rocksMask &= pieceBitNegation;
+        piecesBitSets[i].knightsMask &= pieceBitNegation;
+        piecesBitSets[i].bishopsMask &= pieceBitNegation;
+        piecesBitSets[i].queensMask &= pieceBitNegation;
+        piecesBitSets[i].kingsMask &= pieceBitNegation;
+    }
+
+    setConcrete(field, value);
+}
+
+void Board::setField(const unsigned char field, unsigned char oldValue, unsigned char value)
+{
+    cleanConcrete(field, oldValue);
+    setConcrete(field, value);
 }
 
 void Board::setField(const char* field, unsigned char val)

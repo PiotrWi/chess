@@ -24,7 +24,7 @@ public:
                            const char* moveStr,
                            const NOTATION::COLOR::color c)
     {
-        auto move = notations::coordinates::createMove(moveStr, c);
+        auto move = notations::coordinates::createExtendedMove(moveStr, c, board);
         auto extendMove = convertMoveToExtended(board, move);
         MoveApplier::applyMove(board, move);
         sut.storeBoard(board, extendMove);
