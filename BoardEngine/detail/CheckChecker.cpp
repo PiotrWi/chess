@@ -5,15 +5,7 @@
 #include <publicIf/NotationConversions.hpp>
 
 #include <FieldLookup/FieldLookup.hpp>
-/*
- * [ RUN      ] FullSearchTest.PerformanceTest_8_iterative
-[       OK ] FullSearchTest.PerformanceTest_8_iterative (32350 ms)
-[ RUN      ] FullSearchTest.PerformanceTest_8_black_iterative
-[       OK ] FullSearchTest.PerformanceTest_8_black_iterative (32802 ms)
-[ RUN      ] FullSearchTest.PerformanceTest_10_iterative
-[       OK ] FullSearchTest.PerformanceTest_10_iterative (1312525 ms)
 
- */
 namespace CheckChecker
 {
 
@@ -62,8 +54,7 @@ bool isAttackedOn(const Board& board,
         oppositeAttackingPawnsCandidates =
                 (NOT_A_COL & kingBitMask) << 7
                 | (NOT_H_COL & kingBitMask) << 9;
-    }
-    else
+    } else
     {
         oppositeAttackingPawnsCandidates =
                 (NOT_A_COL & kingBitMask) >> 9
@@ -96,17 +87,17 @@ bool isAttackedOn(const Board& board,
     auto attackingKings = oppositeKing & oppositeAttackingKingCandidates;
 
     auto allPieces = board.piecesBitSets[0].rocksMask
-            | board.piecesBitSets[0].queensMask
-            | board.piecesBitSets[0].kingsMask
-            | board.piecesBitSets[0].knightsMask
-            | board.piecesBitSets[0].pawnsMask
-            | board.piecesBitSets[0].bishopsMask
-            | board.piecesBitSets[1].rocksMask
-            | board.piecesBitSets[1].queensMask
-            | board.piecesBitSets[1].kingsMask
-            | board.piecesBitSets[1].knightsMask
-            | board.piecesBitSets[1].pawnsMask
-            | board.piecesBitSets[1].bishopsMask;
+                     | board.piecesBitSets[0].queensMask
+                     | board.piecesBitSets[0].kingsMask
+                     | board.piecesBitSets[0].knightsMask
+                     | board.piecesBitSets[0].pawnsMask
+                     | board.piecesBitSets[0].bishopsMask
+                     | board.piecesBitSets[1].rocksMask
+                     | board.piecesBitSets[1].queensMask
+                     | board.piecesBitSets[1].kingsMask
+                     | board.piecesBitSets[1].knightsMask
+                     | board.piecesBitSets[1].pawnsMask
+                     | board.piecesBitSets[1].bishopsMask;
 
     auto OppositeQueenAndRock =
             board.piecesBitSets[oppositeColorNum].queensMask
@@ -118,7 +109,10 @@ bool isAttackedOn(const Board& board,
     northMask |= northMask << 16;
     northMask |= northMask << 32;
     auto northPieces = northMask & allPieces;
-    rockOrQueenAttackers |= (1ull << (__builtin_ffsll(northPieces) - 1)) & OppositeQueenAndRock;
+    if (northPieces != 0)
+    {
+        rockOrQueenAttackers |= (1ull << (__builtin_ffsll(northPieces) - 1)) & OppositeQueenAndRock;
+    }
 
     // RIGHT
     uint64_t rightMask = 0ull;
@@ -127,7 +121,10 @@ bool isAttackedOn(const Board& board,
         rightMask |= (rightMask << 1) | (kingBitMask << 1);
     }
     auto rightPieces = rightMask & allPieces;
-    rockOrQueenAttackers |= (1ull << (__builtin_ffsll(rightPieces) - 1)) & OppositeQueenAndRock;
+    if (rightPieces != 0)
+    {
+        rockOrQueenAttackers |= (1ull << (__builtin_ffsll(rightPieces) - 1)) & OppositeQueenAndRock;
+    }
 
     // LEFT
     uint64_t leftMask = 0ull;
@@ -164,7 +161,10 @@ bool isAttackedOn(const Board& board,
     leftUpMask |= leftUpMask << 28;
     leftUpMask &= onlyLeftFrom[fieldPosition % 8];
     auto leftUpPieces = leftUpMask & allPieces;
-    bishopOrQueenAttackers |= (1ull << (__builtin_ffsll(leftUpPieces) - 1)) & OppositeQueenAndBishop;
+    if (leftUpPieces != 0)
+    {
+        bishopOrQueenAttackers |= (1ull << (__builtin_ffsll(leftUpPieces) - 1)) & OppositeQueenAndBishop;
+    }
 
     // RIGHT UP
     auto rightUpMask = kingBitMask << 9;
@@ -173,7 +173,10 @@ bool isAttackedOn(const Board& board,
     rightUpMask |= rightUpMask << 36;
     rightUpMask &= onlyRightFrom[fieldPosition % 8];
     auto rightUpPieces = rightUpMask & allPieces;
-    bishopOrQueenAttackers |= (1ull << (__builtin_ffsll(rightUpPieces) - 1)) & OppositeQueenAndBishop;
+    if (rightUpPieces != 0)
+    {
+        bishopOrQueenAttackers |= (1ull << (__builtin_ffsll(rightUpPieces) - 1)) & OppositeQueenAndBishop;
+    }
 
     // LEFT BOTTOM
     auto leftBottomMask = kingBitMask >> 9;
@@ -182,7 +185,7 @@ bool isAttackedOn(const Board& board,
     leftBottomMask |= leftBottomMask >> 36;
     leftBottomMask &= onlyLeftFrom[fieldPosition % 8];
     auto leftBottomPieces = leftBottomMask & allPieces;
-    if (leftBottomMask != 0)
+    if (leftBottomPieces != 0)
     {
         bishopOrQueenAttackers |= (1ull << (63 - __builtin_clzll(leftBottomPieces))) & OppositeQueenAndBishop;
     }
