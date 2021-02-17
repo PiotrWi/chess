@@ -1,6 +1,7 @@
 #include "CheckChecker.hpp"
 
 #include <algorithm>
+#include <array>
 #include <publicIf/Board.hpp>
 #include <publicIf/NotationConversions.hpp>
 
@@ -37,6 +38,50 @@ constexpr uint64_t onlyRightFrom[8] =
         0x80'80'80'80'80'80'80'80ull,
         0x00'00'00'00'00'00'00'00ull,
 };
+
+struct BitBoardsConstants
+{
+	uint64_t OppositePawnsAttackingFieldForWhite;
+	uint64_t OppositePawnsAttackingFieldForBlack;
+	uint64_t knightsMovePossibilities;
+	uint64_t kingMovePossibilities;
+};
+
+constexpr std::array<BitBoardsConstants, 64> createLookups()
+{
+	std::array<BitBoardsConstants, 64> lookups = {};
+	for (unsigned int field = 0; field < 64; ++field)
+	{
+		uint64_t fieldBitMask = (1ull << field);
+		lookups[field].OppositePawnsAttackingFieldForWhite =
+			(NOT_A_COL & fieldBitMask) << 7
+                	| (NOT_H_COL & fieldBitMask) << 9;
+		lookups[field].OppositePawnsAttackingFieldForBlack = 
+                	(NOT_A_COL & fieldBitMask) >> 9
+                	| (NOT_H_COL & fieldBitMask) >> 7;
+		lookups[field].knightsMovePossibilities =
+			(NOT_HG_COL & fieldBitMask) << 10
+            		| (NOT_HG_COL & fieldBitMask) >> 6
+            		| (NOT_H_COL & fieldBitMask) << 15
+            		| (NOT_H_COL & fieldBitMask) >> 17
+            		| (NOT_AB_COL & fieldBitMask) << 6
+            		| (NOT_AB_COL & fieldBitMask) >> 10
+            		| (NOT_A_COL & fieldBitMask) << 17
+            		| (NOT_A_COL & fieldBitMask) >> 15;
+                lookups[field].kingMovePossibilities =
+			kingBitMask << 8
+            		| kingBitMask >> 8
+            		| (NOT_A_COL & kingBitMask) << 7
+            		| (NOT_A_COL & kingBitMask) >> 1
+            		| (NOT_A_COL & kingBitMask) >> 9
+            		| (NOT_H_COL & kingBitMask) << 9
+            		| (NOT_H_COL & kingBitMask) << 1
+            		| (NOT_H_COL & kingBitMask) >> 7
+	}
+	return lookups;
+}
+
+constexpr std::array<BitBoardsConstants, 64> bitBoardLookup = createLookups();
 
 // TODO: All of these bitmast shall be precalculated once
 bool isAttackedOn(const Board& board,
