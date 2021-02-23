@@ -164,7 +164,7 @@ static void generateImpl(const Board& board,
         }
         else
         {
-            auto pinnedFields = findPinned<NOTATION::COLOR::color::white>(board, ctx.kingPosition);
+            auto pinnedFields = findPinned(board, NOTATION::COLOR::color::white, ctx.kingPosition);
             NoLookup::evaluateNotCheckedPostions<NOTATION::COLOR::color::white>(pinnedFields);
             generateCasles<NOTATION::COLOR::color::white>();
             GenerateEnPasant<NOTATION::COLOR::color::white,
@@ -181,7 +181,7 @@ static void generateImpl(const Board& board,
         }
         else
         {
-            auto pinnedFields = findPinned<NOTATION::COLOR::color::black>(board, ctx.kingPosition);
+            auto pinnedFields = findPinned(board, NOTATION::COLOR::color::black, ctx.kingPosition);
             NoLookup::evaluateNotCheckedPostions<NOTATION::COLOR::color::black>(pinnedFields);
             generateCasles<NOTATION::COLOR::color::black>();
             GenerateEnPasant<NOTATION::COLOR::color::black,
