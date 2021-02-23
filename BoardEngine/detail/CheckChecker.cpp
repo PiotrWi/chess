@@ -5,6 +5,7 @@
 #include <publicIf/Board.hpp>
 #include <publicIf/NotationConversions.hpp>
 
+#include <detail/BitBoarsUtils.h>
 #include <detail/bitboardslookups.hpp>
 
 namespace CheckChecker
@@ -35,18 +36,7 @@ bool isAttackedOn(const Board& board,
     auto oppositeKing = board.piecesBitSets[oppositeColorNum].kingsMask;
     auto attackingKings = oppositeKing & lookup.kingMovePossibilities;
 
-    auto allPieces = board.piecesBitSets[0].rocksMask
-                     | board.piecesBitSets[0].queensMask
-                     | board.piecesBitSets[0].kingsMask
-                     | board.piecesBitSets[0].knightsMask
-                     | board.piecesBitSets[0].pawnsMask
-                     | board.piecesBitSets[0].bishopsMask
-                     | board.piecesBitSets[1].rocksMask
-                     | board.piecesBitSets[1].queensMask
-                     | board.piecesBitSets[1].kingsMask
-                     | board.piecesBitSets[1].knightsMask
-                     | board.piecesBitSets[1].pawnsMask
-                     | board.piecesBitSets[1].bishopsMask;
+    auto allPieces = getAllOccupiedFields(board);
 
     auto OppositeQueenAndRock =
             board.piecesBitSets[oppositeColorNum].queensMask

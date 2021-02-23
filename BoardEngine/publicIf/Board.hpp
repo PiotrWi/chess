@@ -26,7 +26,6 @@ struct Board
     void setField(const unsigned char field, unsigned char value);
     void setField(const unsigned char field, unsigned char oldValue, unsigned char value);
     void setField(const char* field, unsigned char val);
-
 private:
     void cleanConcrete(const unsigned char field, unsigned char oldValue);
     void setConcrete(const unsigned char field, unsigned char value);

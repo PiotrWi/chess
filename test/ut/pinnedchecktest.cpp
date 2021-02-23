@@ -1,19 +1,8 @@
 #include <gtest/gtest.h>
-#include <gmock/gmock.h>
 
 #include <detail/PinnedMovesChecker.hpp>
 #include <utils/BoardGenerationUtils.hpp>
 #include <publicIf/NotationConversions.hpp>
-
-unsigned char operator "" _field(const char* fieldLiteral, size_t)
-{
-    return NotationConversions::getFieldNum(fieldLiteral);
-}
-
-uint64_t operator "" _bit(const char* fieldLiteral, size_t)
-{
-    return (1ull << NotationConversions::getFieldNum(fieldLiteral));
-}
 
 TEST(PinnedCheckShall, doNotFindPinWhileThereIsNo)
 {
