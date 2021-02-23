@@ -4,7 +4,7 @@
 #include <publicIf/NotationConversions.hpp>
 #include <detail/bitboardslookups.hpp>
 
-uint64_t findPinned(const Board& board, NOTATION::COLOR::color c, unsigned char fieldPosition)
+static uint64_t findPinned(const Board& board, NOTATION::COLOR::color c, unsigned char fieldPosition)
 {
     uint64_t pinned = 0ull;
 

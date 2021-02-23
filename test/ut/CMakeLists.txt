@@ -7,15 +7,21 @@ link_directories(${GTEST_INSTALATION_DIR}/lib)
 
 add_executable(ut
 	main.cpp
+        ../utils/BoardGenerationUtils.cpp
+        BoardTest.cpp
+        CachedMoveGeneratorTest.cpp
 	CheckCheckerTest.cpp
+        FullSearchTest.cpp
+        HashMapTest.cpp
+        HashTableTest.cpp
+        MaterialEvaluatorTest.cpp
+        MinMaxAndAlfaBetaTest.cpp
+        MoveApplierTest.cpp
+        MoveGeneratorTest.cpp
 	MoveValidatorTest.cpp
-	MoveGeneratorTest.cpp
-	ResultEvaluatorTest.cpp
-	../utils/BoardGenerationUtils.cpp
-	MoveApplierTest.cpp
-	MaterialEvaluatorTest.cpp
-	MinMaxAndAlfaBetaTest.cpp ZobrishTest.cpp HashTableTest.cpp CachedMoveGeneratorTest.cpp HashMapTest.cpp BoardTest.cpp FullSearchTest.cpp)
-
+        pinnedchecktest.cpp
+        ResultEvaluatorTest.cpp
+        ZobrishTest.cpp)
 
 add_dependencies(ut googletest)
 add_dependencies(ut board)
