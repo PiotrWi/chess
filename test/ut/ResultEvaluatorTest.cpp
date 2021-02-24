@@ -24,7 +24,7 @@ public:
                            const char* moveStr,
                            const NOTATION::COLOR::color c)
     {
-        auto move = notations::coordinates::createMove(moveStr, c);
+        auto move = notations::coordinates::createExtendedMove(moveStr, c, board);
         auto extendMove = convertMoveToExtended(board, move);
         MoveApplier::applyMove(board, move);
         sut.storeBoard(board, extendMove);
@@ -113,7 +113,7 @@ TEST_F (ResultEvaluatorShould, findDrawByRepeatitions)
             "♖       ", BLACK);
 
     verifyChainOfMoves(board,
-                       {"a1-h1", "a8-h8", "h1-a1", "a8-h8", "a1-h1", "a8-h8", "h1-a1", "a8-h8"},
+                       {"a1-h1", "a8-h8", "h1-a1", "h8-a8", "a1-h1", "a8-h8", "h1-a1", "h8-a8", "a1-h1"},
                        WHITE,
                        Result::draw);
 }

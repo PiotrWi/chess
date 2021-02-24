@@ -57,7 +57,7 @@ void ConsoleApplication::start()
     assert(blackPlayer_.operator bool());
 
     const char* lastMoveStr = nullptr;
-    Move lastMove;
+    ExtendedMove lastMove;
 
     while (true)
     {
@@ -75,7 +75,7 @@ void ConsoleApplication::start()
             {
                 lastMoveTmp = player.act(lastMoveStr);
                 std::cout << "player move is: " << lastMoveTmp << std::endl;
-                lastMove = notations::coordinates::createMove(lastMoveTmp, color);
+                lastMove = notations::coordinates::createExtendedMove(lastMoveTmp, color, boardEngine_.board);
             } while(!validateAndReject(lastMove, *whitePlayer_));
             lastMoveStr = lastMoveTmp;
             boardEngine_.applyMove(lastMove);

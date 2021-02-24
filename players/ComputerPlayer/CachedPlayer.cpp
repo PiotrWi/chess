@@ -11,7 +11,7 @@ const char* CachedPlayer::act(const char *string)
 {
     if (string != nullptr)
     {
-        be.applyMove(notations::coordinates::createMove(string, be.board.playerOnMove));
+        be.applyMove(notations::coordinates::createExtendedMove(string, be.board.playerOnMove, be.board));
     }
     auto move = full_search::evaluateIterative(be, cmg_, 8);
     be.applyMove(move);

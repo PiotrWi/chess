@@ -87,7 +87,7 @@ uint64_t hash(Board &board) noexcept
     uint64_t h = 0u;
     for (unsigned char i = 0u; i < 64; ++i)
     {
-        h ^= HASH.getField()[i][board[i]];
+        h ^= HASH.getField()[i][board.getField(i)];
     }
 
     if (board.playerOnMove == NOTATION::COLOR::color::black)

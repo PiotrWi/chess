@@ -10,19 +10,6 @@
 
 players::common::move_generators::MoveGenerator mg;
 
-TEST(MinMaxAndAlfaBeta, shallReturnSameValues)
-{
-    BoardEngine be;
-    ASSERT_EQ(minMax::evaluate(be, 2), alfaBeta::evaluate(be, mg, 2));
-    ASSERT_EQ(minMax::evaluate(be, 3), alfaBeta::evaluate(be, mg, 3));
-    ASSERT_EQ(minMax::evaluate(be, 4), alfaBeta::evaluate(be, mg, 4));
-
-    be.applyMove(notations::coordinates::createMove("e2-e4", NOTATION::COLOR::color::white));
-    ASSERT_EQ(minMax::evaluate(be, 2), alfaBeta::evaluate(be, mg, 2));
-    ASSERT_EQ(minMax::evaluate(be, 3), alfaBeta::evaluate(be, mg, 3));
-    ASSERT_EQ(minMax::evaluate(be, 4), alfaBeta::evaluate(be, mg, 4));
-}
-
 TEST(MinMaxAndAlfaBeta, shallFindObviousMate)
 {
     BoardEngine be;
@@ -38,7 +25,6 @@ TEST(MinMaxAndAlfaBeta, shallFindObviousMate)
     auto expectedMove = notations::coordinates::createMove("f3-f7", NOTATION::COLOR::color::white);
     ASSERT_EQ(expectedMove, minMax::evaluate(be, 2));
     ASSERT_EQ(expectedMove, minMax::evaluate(be, 3));
-    // ASSERT_EQ(expectedMove, minMax::evaluate(be, 4));
 
     ASSERT_EQ(expectedMove, alfaBeta::evaluate(be, mg, 2));
     ASSERT_EQ(expectedMove, alfaBeta::evaluate(be, mg, 3));

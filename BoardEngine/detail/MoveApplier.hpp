@@ -14,29 +14,29 @@ struct SimpleMoveMemorial
     uint64_t positionHash;
 };
 
-void applyMove(Board& board, const Move& move);
+void applyMove(Board& board, const ExtendedMove& move);
+void applyMove(Board&, uint64_t& positionHash, const ExtendedMove&);
 
-void applyMove(Board&, uint64_t& positionHash, const Move&);
-SimpleMoveMemorial applyTmpMoveSimple(Board&, uint64_t& positionHash, const Move&);
+SimpleMoveMemorial applyTmpMoveSimple(Board&, uint64_t& positionHash, const ExtendedMove&);
 
-template <class TResultEvaluator> void applyMove(Board& board,
+template <class TResultEvaluator>
+void applyMove(Board& board,
         uint64_t& positionHash,
-        const Move& move,
+        const ExtendedMove& move,
         TResultEvaluator& resultEvaluator)
 {
-    auto extendedMove = convertMoveToExtended(board, move);
     applyMove(board, positionHash, move);
-    resultEvaluator.storeBoard(board, extendedMove);
+    resultEvaluator.storeBoard(board, move);
 }
 
-template <class TResultEvaluator> SimpleMoveMemorial applyTmpMoveSimple(Board& board,
+template <class TResultEvaluator>
+SimpleMoveMemorial applyTmpMoveSimple(Board& board,
         uint64_t& positionHash,
-        const Move& move,
+        const ExtendedMove& move,
         TResultEvaluator& resultEvaluator)
 {
-    auto extendedMove = convertMoveToExtended(board, move);
     auto memorial = applyTmpMoveSimple(board, positionHash, move);
-    resultEvaluator.storeBoard(board, extendedMove);
+    resultEvaluator.storeBoard(board, move);
     return memorial;
 }
 

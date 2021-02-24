@@ -64,8 +64,12 @@ ExtendedMove createExtendedMove (const std::string& moveStr,
     }
 
     targetPosition = NotationConversions::getFieldNum(moveStr.substr(position, 2).c_str());
-    targetPiece = board[targetPosition];
+    targetPiece = board.getField(targetPosition);
 
+    if ((flags & ExtendedMove::beatingMask) != 0 and targetPiece == 0)
+    {
+        targetPiece = static_cast<unsigned char>(playerOnMove + 1) | NOTATION::PIECES::PAWN;
+    }
     position += 2;
 
     if (moveStr.size() > position)

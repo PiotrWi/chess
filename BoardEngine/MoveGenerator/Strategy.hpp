@@ -103,6 +103,20 @@ public:
         ctx.beatings[ctx.Nbeatings++] = m;
     }
 
+    static void addEnPasantBeating(unsigned char source, unsigned char destination, unsigned char targetField)
+    {
+        constexpr unsigned char MASK = ExtendedMove::pawnMoveMask | ExtendedMove::beatingMask | ExtendedMove::enPasantMask;
+
+        constexpr unsigned char pawn = NOTATION::PIECES::PAWN | static_cast<unsigned char>(c);
+
+        ExtendedMove m = ExtendedMove(source, destination, MASK, 0, pawn, targetField);
+        if (not isValid(m))
+        {
+            return;
+        }
+        ctx.beatings[ctx.Nbeatings++] = m;
+    }
+
     static void addKnight(unsigned char source, unsigned char destination)
     {
         constexpr unsigned char MASK = 0;

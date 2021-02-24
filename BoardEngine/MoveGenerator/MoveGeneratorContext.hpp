@@ -19,6 +19,9 @@ thread_local struct MoveContext{
     ExtendedMove pawnsMoves[60];
     unsigned NKingMoves;
     ExtendedMove kingMoves[11];
+
+    uint64_t allPieces;
+    uint64_t opponentPieces;
 } ctx;
 
 }  // namespace MoveGenerator

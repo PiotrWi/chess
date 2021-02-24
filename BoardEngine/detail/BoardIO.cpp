@@ -30,7 +30,7 @@ std::ostream& operator<<(std::ostream& os, const Board& board) noexcept
 	{
 		for (auto col = 0; col < 8; ++col)
 		{
-			os << symbolToPieceMapping[(board[row+col])] << " ";
+			os << symbolToPieceMapping[board.getField(row+col)] << " ";
 		}
 		os << std::endl;
         os << std::endl;

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstddef>
 #include <publicIf/Notation.hpp>
 
 namespace NotationConversions
@@ -47,3 +48,13 @@ constexpr NOTATION::COLOR::color operator+(NOTATION::COLOR::color c, unsigned ch
 NOTATION::COLOR::color operator++(NOTATION::COLOR::color& c);
 NOTATION::COLOR::color operator++(NOTATION::COLOR::color& c, int);
 bool operator==(const unsigned char, const NOTATION::COLOR::color);
+
+constexpr unsigned char operator "" _field(const char* fieldLiteral, size_t)
+{
+    return NotationConversions::getFieldNum(fieldLiteral);
+}
+
+constexpr uint64_t operator "" _bit(const char* fieldLiteral, size_t)
+{
+    return (1ull << NotationConversions::getFieldNum(fieldLiteral));
+}

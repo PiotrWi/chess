@@ -27,13 +27,7 @@ namespace
 bool are3Repeatitions(std::vector<Node>& nodes)
 {
 	auto compare = [](const Board& lhs, const Board& rhs) {
-		for (auto i = 0; i != 8; ++i)
-		{
-            if((*((u_int64_t*)(lhs.fields) + i)) !=
-                        (*((u_int64_t*)(rhs.fields) + i)))
-				return false;
-		}
-		return true;
+        return lhs.piecesBitSets[0] == rhs.piecesBitSets[0] && lhs.piecesBitSets[1] == rhs.piecesBitSets[1];
 	};
 
 	int significantCounter = nodes.back().noSignificantMoves_ - 1;

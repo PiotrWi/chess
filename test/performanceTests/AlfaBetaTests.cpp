@@ -28,21 +28,6 @@ TEST(AlfaBeta, PerformanceTest_6)
 TEST(AlfaBeta, PerformanceTest_6_black)
 {
     BoardEngine be;
-    be.applyMove(notations::coordinates::createMove("e2-e4", NOTATION::COLOR::color::white));
+    be.applyMove(notations::coordinates::createExtendedMove("e2-e4", NOTATION::COLOR::color::white, be.board));
     alfaBeta::evaluate(be, mg, 6);
 }
-
-/*
-TEST(AlfaBeta, PerformanceTest_8)
-{
-    BoardEngine be;
-    alfaBeta::evaluate(be, mg, 8);
-}
-
-TEST(AlfaBeta, PerformanceTest_8_black)
-{
-    BoardEngine be;
-    be.applyMove(notations::coordinates::createMove("e2-e4", NOTATION::COLOR::color::white));
-    alfaBeta::evaluate(be, mg, 8);
-}
-*/
