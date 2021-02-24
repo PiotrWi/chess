@@ -46,7 +46,7 @@ bool valiateConcretePiece()
 bool noCheckAfterMove()
 {
 	Board boardCopy = *ctx.board;
-	MoveApplier::applyMove(boardCopy, *ctx.move);
+	MoveApplier::applyMove(boardCopy, convertMoveToExtended(boardCopy, *ctx.move));
     return not CheckChecker::isCheckOn(boardCopy, ctx.board->playerOnMove);
 }
 
@@ -63,13 +63,13 @@ bool validatePawn()
 			if (rowDifference == 2)
             {
 				return ctx.sourceRow == 1
-					and ((*ctx.board)[ctx.move->source + singeRow] == 0u)
-					and ((*ctx.board)[ctx.move->source + 2 * singeRow] == 0u);
+					and ((*ctx.board).getField(ctx.move->source + singeRow) == 0u)
+					and ((*ctx.board).getField(ctx.move->source + 2 * singeRow) == 0u);
 			}
 			if (rowDifference == 1
 				and ctx.pieceColor == NOTATION::COLOR::color::white)
 			{
-				return ((*ctx.board)[ctx.move->source + singeRow] == 0u);
+				return ((*ctx.board).getField(ctx.move->source + singeRow) == 0u);
 			}
 		}
 		else
@@ -77,12 +77,12 @@ bool validatePawn()
 			if (rowDifference == -2)
 			{
 				return ctx.sourceRow == 6
-					and ((*ctx.board)[ctx.move->source - singeRow] == 0u)
-					and ((*ctx.board)[ctx.move->source - 2*singeRow] == 0u);
+					and ((*ctx.board).getField(ctx.move->source - singeRow) == 0u)
+					and ((*ctx.board).getField(ctx.move->source - 2*singeRow) == 0u);
 			}
 			if (rowDifference == -1)
 			{
-				return ((*ctx.board)[ctx.move->source - singeRow] == 0u);
+				return ((*ctx.board).getField(ctx.move->source - singeRow) == 0u);
 			}
 		}
 	}
@@ -98,7 +98,7 @@ bool validatePawn()
             if (rowDifference == 1)
             {
                 if (ctx.move->destination == ctx.board->validEnPassant or
-                ((*ctx.board)[ctx.move->destination] & NOTATION::COLOR::COLOR_MASK) == NOTATION::COLOR::BLACK)
+                (ctx.board->getField(ctx.move->destination) & NOTATION::COLOR::COLOR_MASK) == NOTATION::COLOR::BLACK)
                 {
                     return true;
                 }
@@ -109,7 +109,8 @@ bool validatePawn()
             if (rowDifference == -1)
             {
                 if (ctx.move->destination == ctx.board->validEnPassant or
-                    ((*ctx.board)[ctx.move->destination] & NOTATION::COLOR::COLOR_MASK) == NOTATION::COLOR::WHITE)
+                    (ctx.board->getField(ctx.move->destination) != 0 and
+                    (ctx.board->getField(ctx.move->destination) & NOTATION::COLOR::COLOR_MASK) == NOTATION::COLOR::WHITE))
                 {
                     return true;
                 }
@@ -140,7 +141,7 @@ bool validateRock()
 		auto s = sign(ctx.targetColumn - ctx.sourceColumn);
         for (auto c = ctx.sourceColumn + s; c != ctx.targetColumn; c+=s)
 		{
-			if ((*ctx.board)[NotationConversions::getFieldNum(r, c)] != 0)
+			if (ctx.board->getField(NotationConversions::getFieldNum(r, c)) != 0)
 				return false;
 		}
 		return true; /*Target field color check is done in parrent fcn*/
@@ -151,7 +152,7 @@ bool validateRock()
 		auto s = sign(ctx.targetRow - ctx.sourceRow);
         for (auto r = ctx.sourceRow + s; r != ctx.targetRow; r+=s)
 		{
-			if ((*ctx.board)[NotationConversions::getFieldNum(r, c)] != 0)
+			if (ctx.board->getField(NotationConversions::getFieldNum(r, c)) != 0)
 				return false;
 		}
 		return true; /*Target field color check is done in parrent fcn*/
@@ -175,7 +176,7 @@ bool validateBishop()
 			r != ctx.targetRow;
 			r += s_r, c += s_c)
 		{
-			if ((*ctx.board)[NotationConversions::getFieldNum(r, c)] != 0)
+			if (ctx.board->getField(NotationConversions::getFieldNum(r, c)) != 0)
 				return false;
 		}
 		return true;
@@ -227,7 +228,7 @@ bool validateKing()
 		};
 		auto isCheckInBetween = [&]() -> bool {
 			auto boardCopy = *ctx.board;
-			auto moveCopy = *ctx.move;
+			auto moveCopy = convertMoveToExtended(boardCopy, *ctx.move);
 			moveCopy.destination =
 					moveCopy.source + sign(ctx.targetColumn - ctx.sourceColumn);
 			MoveApplier::applyMove(boardCopy, moveCopy);
@@ -248,13 +249,13 @@ bool validateMove(const Board& board, const Move& move)
 {
 	ctx.board = &board;
 	ctx.move = &move;
-	ctx.piece = board[move.source];
+	ctx.piece = board.getField(move.source);
 
 	ctx.pieceColor = NotationConversions::getPieceColor(ctx.piece);
 
 	auto isDifferentPlayerOnMove = ctx.pieceColor != board.playerOnMove;
-	auto isPieceWithSameColorOnTarget = board[move.destination] != 0 and
-			(ctx.pieceColor == NotationConversions::getPieceColor(board[move.destination]));
+	auto isPieceWithSameColorOnTarget = board.getField(move.destination) != 0 and
+			(ctx.pieceColor == NotationConversions::getPieceColor(board.getField(move.destination)));
 	auto isSourceAndTargetSame = move.source == move.destination;
 	if (isDifferentPlayerOnMove or isPieceWithSameColorOnTarget or isSourceAndTargetSame)
 	{

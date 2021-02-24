@@ -369,7 +369,6 @@ TEST(CheckCheckershould, workWithRapid)
     ASSERT_TRUE(CheckChecker::isCheckOn(board, NOTATION::COLOR::color::white));
 }
 
-
 TEST(CheckCheckershould, Custom_1)
 {
     auto board = utils::createBoard(
@@ -382,4 +381,44 @@ TEST(CheckCheckershould, Custom_1)
             " ♟   ♙  "
             "     ♔  ");
     ASSERT_TRUE(CheckChecker::isCheckOn(board, NOTATION::COLOR::color::white));
+}
+
+TEST(CheckCheckershould, Custom_2)
+{
+    auto board = utils::createBoard("    ♚   "
+                                    "        "
+                                    "        "
+                                    "        "
+                                    "        "
+                                    "        "
+                                    "     ♞♙♙"
+                                    "      ♖♔");
+    ASSERT_TRUE(CheckChecker::isCheckOn(board, NOTATION::COLOR::color::white));
+}
+
+TEST(CheckCheckershould, Custom_3)
+{
+    Board board = utils::createBoard(
+            "♜♞♝ ♚♝♞♜"
+            "♟♟♟   ♟♟"
+            "      ♙ "
+            "   ♟♟♟  "
+            "   ♙♙  ♖"
+            "♘    ♘♔ "
+            "♙♙♙  ♙♙ "
+            "♖ ♗♕♗   ");
+    ASSERT_FALSE(CheckChecker::isCheckOn(board, NOTATION::COLOR::color::white));
+}
+
+TEST(CheckCheckershould, Custom_4)
+{
+    auto board = utils::createBoard("      ♚♛"
+                                    "  ♛     "
+                                    "   ♖♔♖  "
+                                    "       "
+                                    "   ♖ ♖  "
+                                    "      ♛ "
+                                    " ♛      "
+                                    "        ");
+    ASSERT_FALSE(CheckChecker::isCheckOn(board, NOTATION::COLOR::color::white));
 }

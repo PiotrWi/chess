@@ -17,7 +17,7 @@ int evaluateForWhite(const Board & board)
 
     for (unsigned char pos = 8u; pos < 48; ++pos)
     {
-        if (board[pos] == (NOTATION::PIECES::PAWN | NOTATION::COLOR::WHITE))
+        if (board.getField(pos) == (NOTATION::PIECES::PAWN | NOTATION::COLOR::WHITE))
         {
             pawnsInColumn[NotationConversions::getColumnNum(pos)] += 1;
         }
@@ -41,7 +41,7 @@ int evaluateForBlack(const Board& board)
 
     for (unsigned char pos = 8u; pos < 48; ++pos)
     {
-        if (board[pos] == (NOTATION::PIECES::PAWN | NOTATION::COLOR::BLACK))
+        if (board.getField(pos) == (NOTATION::PIECES::PAWN | NOTATION::COLOR::BLACK))
         {
             pawnsInColumn[NotationConversions::getColumnNum(pos)] += 1;
         }

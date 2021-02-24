@@ -11,7 +11,6 @@ add_executable(pt
         MinMaxTests.cpp
         AlfaBetaTests.cpp
         AldaBetaWithTransictionMapTest.cpp
-        #FullSimulation.cpp
         AlfaBetaPvs.cpp AlfaBetaMtdPvs.cpp FullSearchTest.cpp)
 
 

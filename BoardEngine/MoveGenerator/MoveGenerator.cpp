@@ -8,6 +8,8 @@
 #include <detail/PinnedMovesChecker.hpp>
 #include "Strategy.hpp"
 
+#include <detail/BitBoarsUtils.h>
+
 namespace MoveGenerator
 {
 
@@ -17,22 +19,20 @@ void generateCasles();
 template<>
 void generateCasles<NOTATION::COLOR::color::white>()
 {
-    if ((*ctx.board)[4] == (NOTATION::PIECES::KING | NOTATION::COLOR::WHITE))
+    constexpr auto index = static_cast<unsigned char>(NOTATION::COLOR::color::white);
+    if (ctx.board->piecesBitSets[index].kingsMask == (1ull << 4))
     {
         using namespace NOTATION::CASTLING_RIGHTS;
         if (ctx.board->castlingRights & WHITE_LONG_BIT
-            and not CheckChecker::isAttackedOn(*ctx.board, ctx.pieceColor, 3)
-            and (*ctx.board)[3] == 0
-            and (*ctx.board)[2] == 0
-            and (*ctx.board)[1] == 0)
+            and (ctx.allPieces & ((1ull << 3) | (1ull << 2) | (1ull << 1))) == 0
+            and not CheckChecker::isAttackedOn(*ctx.board, ctx.pieceColor, 3))
         {
             StrategyWithAlwaysCheckChecking<NOTATION::COLOR::color::white>::addKing(4, 2);
         }
 
         if (ctx.board->castlingRights & WHITE_SHORT_BIT
             and not CheckChecker::isAttackedOn(*ctx.board, ctx.pieceColor, 5)
-            and (*ctx.board)[5] == 0
-            and (*ctx.board)[6] == 0)
+                and (ctx.allPieces & ((1ull << 5) | (1ull << 6))) == 0)
         {
             StrategyWithAlwaysCheckChecking<NOTATION::COLOR::color::white>::addKing(4, 6);
         }
@@ -42,22 +42,20 @@ void generateCasles<NOTATION::COLOR::color::white>()
 template<>
 void generateCasles<NOTATION::COLOR::color::black>()
 {
-    if ((*ctx.board)[60] == (NOTATION::PIECES::KING | NOTATION::COLOR::BLACK))
+    constexpr auto index = static_cast<unsigned char>(NOTATION::COLOR::color::black);
+    if (ctx.board->piecesBitSets[index].kingsMask == (1ull << 60))
     {
         using namespace NOTATION::CASTLING_RIGHTS;
         if (ctx.board->castlingRights & BLACK_LONG_BIT
-            and not CheckChecker::isAttackedOn(*ctx.board, ctx.pieceColor, 59)
-            and (*ctx.board)[59] == 0
-            and (*ctx.board)[58] == 0
-            and (*ctx.board)[57] == 0)
+            and (ctx.allPieces & ((1ull << 59) | (1ull << 58) | (1ull << 57))) == 0
+            and not CheckChecker::isAttackedOn(*ctx.board, ctx.pieceColor, 59))
         {
             StrategyWithAlwaysCheckChecking<NOTATION::COLOR::color::black>::addKing(60, 58);
         }
 
         if (ctx.board->castlingRights & BLACK_SHORT_BIT
-            and not CheckChecker::isAttackedOn(*ctx.board, ctx.pieceColor, 61)
-            and (*ctx.board)[61] == 0
-            and (*ctx.board)[62] == 0)
+            and (ctx.allPieces & ((1ull << 61) | (1ull << 62))) == 0
+            and not CheckChecker::isAttackedOn(*ctx.board, ctx.pieceColor, 61))
         {
             StrategyWithAlwaysCheckChecking<NOTATION::COLOR::color::black>::addKing(60, 62);
         }
@@ -81,27 +79,18 @@ public:
         {
             return;
         }
-        auto enPassantCol = NotationConversions::getColumnNum((ctx.board)->validEnPassant);
 
-        if (enPassantCol < 7u)
+        constexpr auto colorNum = static_cast<unsigned char>(NOTATION::COLOR::color::white);
+        auto enPassantBitBoard = (1ull << (ctx.board)->validEnPassant);
+        if (((enPassantBitBoard & NOT_H_COL) >> 7) & ctx.board->piecesBitSets[colorNum].pawnsMask)
         {
-            auto whitePawnLocCandidate = (ctx.board)->validEnPassant - NOTATION::COORDINATES::ROW_DIFF + 1;
-            if ((*ctx.board)[whitePawnLocCandidate] ==
-                (NOTATION::PIECES::PAWN | NOTATION::COLOR::WHITE))
-            {
-                TMoveAddingStrategy::addPawnWithBeating(whitePawnLocCandidate, (ctx.board)->validEnPassant,
-                                                        NOTATION::PIECES::PAWN | NOTATION::COLOR::BLACK);
-            }
+            TMoveAddingStrategy::addPawnWithBeating((ctx.board)->validEnPassant - 7, (ctx.board)->validEnPassant,
+                                                    NOTATION::PIECES::PAWN | NOTATION::COLOR::BLACK);
         }
-        if (enPassantCol > 0u)
+        if (((enPassantBitBoard & NOT_A_COL) >> 9) & ctx.board->piecesBitSets[colorNum].pawnsMask)
         {
-            auto whitePawnLocCandidate = (ctx.board)->validEnPassant - NOTATION::COORDINATES::ROW_DIFF - 1;
-            if ((*ctx.board)[whitePawnLocCandidate] ==
-                (NOTATION::PIECES::PAWN | NOTATION::COLOR::WHITE))
-            {
-                TMoveAddingStrategy::addPawnWithBeating(whitePawnLocCandidate, (ctx.board)->validEnPassant,
-                                                        NOTATION::PIECES::PAWN | NOTATION::COLOR::BLACK);
-            }
+            TMoveAddingStrategy::addPawnWithBeating((ctx.board)->validEnPassant - 9, (ctx.board)->validEnPassant,
+                                                    NOTATION::PIECES::PAWN | NOTATION::COLOR::BLACK);
         }
     }
 };
@@ -116,26 +105,18 @@ public:
         {
             return;
         }
-        auto enPassantCol = NotationConversions::getColumnNum((ctx.board)->validEnPassant);
-        if (enPassantCol < 7u)
+
+        constexpr auto colorNum = static_cast<unsigned char>(NOTATION::COLOR::color::black);
+        auto enPassantBitBoard = (1ull << (ctx.board)->validEnPassant);
+        if (((enPassantBitBoard & NOT_H_COL) << 9) & ctx.board->piecesBitSets[colorNum].pawnsMask)
         {
-            auto whitePawnLocCandidate = (ctx.board)->validEnPassant + NOTATION::COORDINATES::ROW_DIFF + 1;
-            if ((*ctx.board)[whitePawnLocCandidate] ==
-                (NOTATION::PIECES::PAWN | NOTATION::COLOR::WHITE))
-            {
-                TMoveAddingStrategy::addPawnWithBeating(whitePawnLocCandidate, (ctx.board)->validEnPassant,
-                                                        NOTATION::PIECES::PAWN | NOTATION::COLOR::WHITE);
-            }
+            TMoveAddingStrategy::addPawnWithBeating((ctx.board)->validEnPassant + 9, (ctx.board)->validEnPassant,
+                                                    NOTATION::PIECES::PAWN | NOTATION::COLOR::WHITE);
         }
-        if (enPassantCol > 0u)
+        if (((enPassantBitBoard & NOT_A_COL) << 7) & ctx.board->piecesBitSets[colorNum].pawnsMask)
         {
-            auto whitePawnLocCandidate = (ctx.board)->validEnPassant + NOTATION::COORDINATES::ROW_DIFF - 1;
-            if ((*ctx.board)[whitePawnLocCandidate] ==
-                (NOTATION::PIECES::PAWN | NOTATION::COLOR::WHITE))
-            {
-                TMoveAddingStrategy::addPawnWithBeating(whitePawnLocCandidate, (ctx.board)->validEnPassant,
-                                                        NOTATION::PIECES::PAWN | NOTATION::COLOR::WHITE);
-            }
+            TMoveAddingStrategy::addPawnWithBeating((ctx.board)->validEnPassant + 7, (ctx.board)->validEnPassant,
+                                                    NOTATION::PIECES::PAWN | NOTATION::COLOR::WHITE);
         }
     }
 };
@@ -153,6 +134,9 @@ static void generateImpl(const Board& board,
     ctx.NPawnsMoves = 0;
     ctx.NKingMoves = 0;
 
+    ctx.allPieces = getAllOccupiedFields(board);
+    ctx.opponentPieces = getAllOccupiedPerColor(board, c+1);
+
     auto isChecked = CheckChecker::isAttackedOn(*ctx.board, ctx.pieceColor, ctx.kingPosition);
     if (c == NOTATION::COLOR::color::white)
     {
@@ -164,7 +148,7 @@ static void generateImpl(const Board& board,
         }
         else
         {
-            auto pinnedFields = findPinned<NOTATION::COLOR::color::white>(board, ctx.kingPosition);
+            auto pinnedFields = findPinned(board, NOTATION::COLOR::color::white, ctx.kingPosition);
             NoLookup::evaluateNotCheckedPostions<NOTATION::COLOR::color::white>(pinnedFields);
             generateCasles<NOTATION::COLOR::color::white>();
             GenerateEnPasant<NOTATION::COLOR::color::white,
@@ -181,7 +165,7 @@ static void generateImpl(const Board& board,
         }
         else
         {
-            auto pinnedFields = findPinned<NOTATION::COLOR::color::black>(board, ctx.kingPosition);
+            auto pinnedFields = findPinned(board, NOTATION::COLOR::color::black, ctx.kingPosition);
             NoLookup::evaluateNotCheckedPostions<NOTATION::COLOR::color::black>(pinnedFields);
             generateCasles<NOTATION::COLOR::color::black>();
             GenerateEnPasant<NOTATION::COLOR::color::black,

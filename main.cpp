@@ -4,7 +4,6 @@
 #include <cstring>
 #include <iostream>
 #include <HumanPlayer/HumanPlayer.hpp>
-#include <ComputerPlayer/SimpleComputerPlayer.hpp>
 #include <ComputerPlayer/CachedPlayer.hpp>
 #include "ConsoleApplication.hpp"
 
@@ -13,10 +12,6 @@ std::unique_ptr<IPlayer> createPlayer(const char* playerType)
     if (strcmp(playerType, "humanPlayer") == 0)
     {
         return std::make_unique<HumanPlayer>();
-    }
-    if (strcmp(playerType, "simplePlayer") == 0)
-    {
-        return std::make_unique<SimpleComputerPlayer>();
     }
     if (strcmp(playerType, "cachedPlayer") == 0)
     {

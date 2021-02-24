@@ -31,7 +31,7 @@ TEST(FullSearchTest, PerformanceTest_6_black)
 {
     BoardEngine be;
     players::common::move_generators::FullCachedEngine mg;
-    be.applyMove(notations::coordinates::createMove("e2-e4", NOTATION::COLOR::color::white));
+    be.applyMove(notations::coordinates::createExtendedMove("e2-e4", NOTATION::COLOR::color::white, be.board));
     full_search::evaluate(be, mg, 6);
 }
 
@@ -46,7 +46,7 @@ TEST(FullSearchTest, PerformanceTest_6_black_iterative)
 {
     BoardEngine be;
     players::common::move_generators::FullCachedEngine mg;
-    be.applyMove(notations::coordinates::createMove("e2-e4", NOTATION::COLOR::color::white));
+    be.applyMove(notations::coordinates::createExtendedMove("e2-e4", NOTATION::COLOR::color::white, be.board));
     full_search::evaluateIterative(be, mg, 6);
 }
 /*

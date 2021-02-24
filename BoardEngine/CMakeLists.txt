@@ -1,40 +1,40 @@
 cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
 
 add_library(board
-                publicIf/Notation.hpp
-                publicIf/Result.hpp
-                publicIf/Board.hpp
-                detail/Board.cpp
-                publicIf/BoardIO.hpp
-				detail/BoardIO.cpp
-                detail/CheckChecker.hpp
-				detail/CheckChecker.cpp
-				MoveGenerator/MoveGenerator.hpp
-				MoveGenerator/MoveGenerator.cpp
-                detail/MoveValidator.hpp
-				detail/MoveValidator.cpp
-                publicIf/NotationConversions.hpp
-				detail/NotationConversions.cpp
-                detail/ResultEvaluator.hpp
-				detail/ResultEvaluator.cpp
-                detail/MoveApplier.hpp
-				detail/MoveApplier.cpp
-                BoardEngine.hpp
-				BoardEngine.cpp
-                notations/common.hpp
-                notations/common.cpp
-                notations/coordinationnotation.hpp
-                notations/coordinationnotation.cpp
-                notations/LongAlgebraicNotation.hpp
-                notations/LongAlgebraicNotation.cpp
-                hashing/zobrist.hpp
-                hashing/Zobrish.cpp
-                FieldLookup/FieldLookup.hpp
-				detail/PinnedMovesChecker.hpp
-				MoveGenerator/MoveGeneratorContext.hpp
-				MoveGenerator/Strategy.hpp
-				MoveGenerator/MoveGeneratorLookupBackend.hpp
-				MoveGenerator/MoveGeneratorBackend.hpp
-				notations/uci.hpp
-				notations/uci.cpp MoveGenerator/MoveGeneratorExperimentalBackend.hpp FieldLookup/TableLookup.hpp)
-	
+    BoardEngine.hpp
+    BoardEngine.cpp
+    detail/Board.cpp
+    detail/BoardIO.cpp
+    detail/CheckChecker.hpp
+    detail/CheckChecker.cpp
+    detail/MoveValidator.hpp
+    detail/MoveValidator.cpp
+    detail/NotationConversions.cpp
+    detail/ResultEvaluator.hpp
+    detail/ResultEvaluator.cpp
+    detail/MoveApplier.hpp
+    detail/MoveApplier.cpp
+    detail/PinnedMovesChecker.hpp
+    detail/bitboardslookups.hpp
+    publicIf/Notation.hpp
+    publicIf/Result.hpp
+    publicIf/Board.hpp
+    publicIf/BoardIO.hpp
+    MoveGenerator/MoveGenerator.hpp
+    MoveGenerator/MoveGenerator.cpp
+    publicIf/NotationConversions.hpp
+    notations/common.hpp
+    notations/common.cpp
+    notations/coordinationnotation.hpp
+    notations/coordinationnotation.cpp
+    notations/LongAlgebraicNotation.hpp
+    notations/LongAlgebraicNotation.cpp
+    hashing/zobrist.hpp
+    hashing/Zobrish.cpp
+    FieldLookup/FieldLookup.hpp
+    MoveGenerator/MoveGeneratorContext.hpp
+    MoveGenerator/Strategy.hpp
+        MoveGenerator/MoveGeneratorBackend.hpp
+    notations/uci.hpp
+    notations/uci.cpp
+        FieldLookup/TableLookup.hpp detail/BitBoarsUtils.h)

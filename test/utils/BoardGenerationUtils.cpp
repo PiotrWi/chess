@@ -80,7 +80,7 @@ Board createBoard(const char* position,
 			auto row = 7 - (i / 8);
 			auto col = i & 0b111;
 
-			board.fields[(row << 3) | col] = piece;
+            board.setField((row << 3) | col, piece);
 		}
 		str_i += len;
 	}
@@ -88,32 +88,32 @@ Board createBoard(const char* position,
     board.playerOnMove = playerOnMove;
     board.castlingRights = NOTATION::CASTLING_RIGHTS::CASTLING_MASK;
 
-    if (board["e1"] != (NOTATION::COLOR::WHITE | NOTATION::PIECES::KING))
+    if (board.getField("e1") != (NOTATION::COLOR::WHITE | NOTATION::PIECES::KING))
 	{
     	revokeCastlingRights(board,
 						  NOTATION::CASTLING_RIGHTS::WHITE_LONG_BIT | NOTATION::CASTLING_RIGHTS::WHITE_SHORT_BIT);
 	}
-	if (board["a1"] != (NOTATION::COLOR::WHITE | NOTATION::PIECES::ROCK))
+	if (board.getField("a1") != (NOTATION::COLOR::WHITE | NOTATION::PIECES::ROCK))
 	{
 		revokeCastlingRights(board,
 							 NOTATION::CASTLING_RIGHTS::WHITE_LONG_BIT);
 	}
-	if (board["h1"] != (NOTATION::COLOR::WHITE | NOTATION::PIECES::ROCK))
+	if (board.getField("h1") != (NOTATION::COLOR::WHITE | NOTATION::PIECES::ROCK))
 	{
 		revokeCastlingRights(board,
 							 NOTATION::CASTLING_RIGHTS::WHITE_SHORT_BIT);
 	}
-	if (board["e8"] != (NOTATION::COLOR::BLACK | NOTATION::PIECES::KING))
+	if (board.getField("e8") != (NOTATION::COLOR::BLACK | NOTATION::PIECES::KING))
 	{
 		revokeCastlingRights(board,
 							 NOTATION::CASTLING_RIGHTS::BLACK_LONG_BIT | NOTATION::CASTLING_RIGHTS::BLACK_SHORT_BIT);
 	}
-	if (board["a8"] != (NOTATION::COLOR::BLACK | NOTATION::PIECES::ROCK))
+	if (board.getField("a8") != (NOTATION::COLOR::BLACK | NOTATION::PIECES::ROCK))
 	{
 		revokeCastlingRights(board,
 							 NOTATION::CASTLING_RIGHTS::BLACK_SHORT_BIT);
 	}
-	if (board["h8"] != (NOTATION::COLOR::BLACK | NOTATION::PIECES::ROCK))
+	if (board.getField("h8") != (NOTATION::COLOR::BLACK | NOTATION::PIECES::ROCK))
 	{
 		revokeCastlingRights(board,
 							 NOTATION::CASTLING_RIGHTS::BLACK_LONG_BIT);

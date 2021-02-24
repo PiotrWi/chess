@@ -41,10 +41,10 @@ ExtendedMove createExtendedMove (const std::string& moveStr,
     unsigned char position = 0;
 
     sourcePosition = NotationConversions::getFieldNum(moveStr.substr(position, 2).c_str());
-    sourcePiece = board[sourcePosition];
+    sourcePiece = board.getField(sourcePosition);
     position += 2;
     targetPosition = NotationConversions::getFieldNum(moveStr.substr(position, 2).c_str());
-    targetPiece = board[targetPosition];
+    targetPiece = board.getField(targetPosition);
     position += 2;
 
     if ((sourcePiece & NOTATION::PIECES::PIECES_MASK) == NOTATION::PIECES::KING)

@@ -18,8 +18,8 @@ public:
     bool validateMove(const Move&) const;
 
     MoveApplier::SimpleMoveMemorial getMemorial() const;
-    void applyMove(const Move&);
-    MoveApplier::SimpleMoveMemorial applyUndoableSimpleMove(const Move&);
+    void applyMove(const ExtendedMove&);
+    MoveApplier::SimpleMoveMemorial applyUndoableSimpleMove(const ExtendedMove&);
     void undoMove(MoveApplier::SimpleMoveMemorial);
     uint64_t getHash() const;
     uint64_t getHash(NOTATION::COLOR::color) const;

@@ -30,7 +30,7 @@ TEST(AlfaBetaTrasictionMap, PerformanceTest_6_black)
 {
     BoardEngine be;
     players::common::move_generators::CachedEngineWithMap mg;
-    be.applyMove(notations::coordinates::createMove("e2-e4", NOTATION::COLOR::color::white));
+    be.applyMove(notations::coordinates::createExtendedMove("e2-e4", NOTATION::COLOR::color::white, be.board));
     alfaBeta::evaluate(be, mg, 6);
 }
 

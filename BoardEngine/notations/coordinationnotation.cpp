@@ -69,7 +69,7 @@ std::vector<char> createMoveStr(const Move& m)
     return out;
 }
 
-ExtendedMove createExtendedMoveFromSimpleStr (const std::string& moveStr,
+ExtendedMove createExtendedMove (const std::string& moveStr,
     NOTATION::COLOR::color playerOnMove, const Board& board)
 {
     if (moveStr == "O-O")
@@ -86,7 +86,7 @@ ExtendedMove createExtendedMoveFromSimpleStr (const std::string& moveStr,
         {
             return ExtendedMove::whiteLongCaste();
         }
-        return ExtendedMove::whiteLongCaste();
+        return ExtendedMove::blackLongCaste();
     }
     auto sourcePosition = NotationConversions::getFieldNum(moveStr.substr(0, 2).c_str());
     auto targetPosition = NotationConversions::getFieldNum(moveStr.substr(3, 2).c_str());
@@ -100,19 +100,19 @@ ExtendedMove createExtendedMoveFromSimpleStr (const std::string& moveStr,
         flags |= ExtendedMove::promotionMask;
         promotedTo = createPiece(moveStr[6], playerOnMove);
     }
-    if ((board[sourcePosition] & NOTATION::PIECES::PIECES_MASK) == NOTATION::PIECES::PAWN)
+    if ((board.getField(sourcePosition) & NOTATION::PIECES::PIECES_MASK) == NOTATION::PIECES::PAWN)
     {
         flags |= ExtendedMove::pawnMoveMask;
     }
-    if ((board[sourcePosition] & NOTATION::PIECES::PIECES_MASK) == NOTATION::PIECES::KING)
+    if ((board.getField(sourcePosition) & NOTATION::PIECES::PIECES_MASK) == NOTATION::PIECES::KING)
     {
         flags |= ExtendedMove::kingMoveMask;
     }
-    if (board[targetPosition] != 0)
+    if (board.getField(targetPosition) != 0)
     {
         flags |= ExtendedMove::beatingMask;
     }
-    return ExtendedMove{sourcePosition, targetPosition, flags, promotedTo, board[sourcePosition], board[targetPosition]};
+    return ExtendedMove{sourcePosition, targetPosition, flags, promotedTo, board.getField(sourcePosition), board.getField(targetPosition)};
 }
 }  // namespace coordinates
 }  // namespace notations

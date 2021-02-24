@@ -2,27 +2,12 @@
 
 #include <publicIf/Board.hpp>
 
-static int mapToValue(unsigned char field)
-{
-    using namespace NOTATION::PIECES;
-    using namespace NOTATION::COLOR;
-    switch (field)
-    {
-        case WHITE | PAWN: return 100;
-        case WHITE | KNIGHT: return 300;
-        case WHITE | BISHOP: return 300;
-        case WHITE | ROCK: return 500;
-        case WHITE | QUEEN: return 900;
-        case WHITE | KING: return  300;
-        case BLACK | PAWN: return -100;
-        case BLACK | KNIGHT: return -300;
-        case BLACK | BISHOP: return -300;
-        case BLACK | ROCK: return -500;
-        case BLACK | QUEEN: return -900;
-        case BLACK | KING: return  -300;
-    }
-    return  0;
-}
+constexpr int pawnValue = 100;
+constexpr int knightValue = 300;
+constexpr int bishopValue = 300;
+constexpr int rockValue = 500;
+constexpr int queenValue = 900;
+constexpr int kingValue = 300;
 
 namespace materialEvaluator
 {
@@ -30,10 +15,18 @@ namespace materialEvaluator
 int evaluate(const Board &board, NOTATION::COLOR::color playerOnMove)
 {
     int value = 0;
-    for (const auto field : board.fields)
-    {
-        value += mapToValue(field);
-    }
+    value += (__builtin_popcountll(board.piecesBitSets[0].pawnsMask)
+            - __builtin_popcountll(board.piecesBitSets[1].pawnsMask)) * pawnValue;
+    value += (__builtin_popcountll(board.piecesBitSets[0].knightsMask)
+            - __builtin_popcountll(board.piecesBitSets[1].knightsMask)) * knightValue;
+    value += (__builtin_popcountll(board.piecesBitSets[0].bishopsMask)
+            - __builtin_popcountll(board.piecesBitSets[1].bishopsMask)) * bishopValue;
+    value += (__builtin_popcountll(board.piecesBitSets[0].rocksMask)
+            - __builtin_popcountll(board.piecesBitSets[1].rocksMask)) * rockValue;
+    value += (__builtin_popcountll(board.piecesBitSets[0].queensMask)
+            - __builtin_popcountll(board.piecesBitSets[1].queensMask)) * queenValue;
+    // no need to evaluate kings. It do not change the value of evaluation
+
     if (playerOnMove == NOTATION::COLOR::color::black)
         return -1 * value;
     return value;

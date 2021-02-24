@@ -74,12 +74,12 @@ std::vector<ExtendedMove> BoardEngine::generateMovesFor(NOTATION::COLOR::color c
     return MoveGenerator::MoveGenerator::generate(board, color);
 }
 
-void BoardEngine::applyMove(const Move& move)
+void BoardEngine::applyMove(const ExtendedMove& move)
 {
     MoveApplier::applyMove(board, hash_, move, resultEvaluator);
 }
 
-MoveApplier::SimpleMoveMemorial BoardEngine::applyUndoableSimpleMove(const Move& move)
+MoveApplier::SimpleMoveMemorial BoardEngine::applyUndoableSimpleMove(const ExtendedMove& move)
 {
     return MoveApplier::applyTmpMoveSimple(board, hash_, move, resultEvaluator);
 }
