@@ -20,8 +20,8 @@ public:
     void setKillerMove(const BoardEngine&, unsigned int, unsigned char) {}
     int getEvaluationValue(const BoardEngine& be);
 private:
-    containers::HashTable<std::vector<ExtendedMove>, Board, 24u> cache_;
-    containers::HashTable<int, Board, 24u> cachedEvaluators_;
+    containers::HashTable<std::vector<ExtendedMove>, Board, 18u> cache_;
+    containers::HashTable<int, Board, 18u> cachedEvaluators_;
 };
 
 }  // namespace players

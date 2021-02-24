@@ -135,6 +135,7 @@ static void generateImpl(const Board& board,
     ctx.NKingMoves = 0;
 
     ctx.allPieces = getAllOccupiedFields(board);
+    ctx.opponentPieces = getAllOccupiedPerColor(board, c+1);
 
     auto isChecked = CheckChecker::isAttackedOn(*ctx.board, ctx.pieceColor, ctx.kingPosition);
     if (c == NOTATION::COLOR::color::white)

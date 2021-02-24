@@ -25,8 +25,7 @@ int evaluate(const Board &board, NOTATION::COLOR::color playerOnMove)
             - __builtin_popcountll(board.piecesBitSets[1].rocksMask)) * rockValue;
     value += (__builtin_popcountll(board.piecesBitSets[0].queensMask)
             - __builtin_popcountll(board.piecesBitSets[1].queensMask)) * queenValue;
-    value += (__builtin_popcountll(board.piecesBitSets[0].kingsMask)
-            - __builtin_popcountll(board.piecesBitSets[1].kingsMask)) * kingValue;
+    // no need to evaluate kings. It do not change the value of evaluation
 
     if (playerOnMove == NOTATION::COLOR::color::black)
         return -1 * value;

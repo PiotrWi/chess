@@ -17,3 +17,15 @@ constexpr uint64_t getAllOccupiedFields(const Board& board)
            | board.piecesBitSets[1].pawnsMask
            | board.piecesBitSets[1].bishopsMask;
 }
+
+constexpr uint64_t getAllOccupiedPerColor(const Board& board, NOTATION::COLOR::color c)
+{
+    auto colorNum = static_cast<unsigned char>(c);
+    return board.piecesBitSets[colorNum].rocksMask
+           | board.piecesBitSets[colorNum].queensMask
+           | board.piecesBitSets[colorNum].kingsMask
+           | board.piecesBitSets[colorNum].knightsMask
+           | board.piecesBitSets[colorNum].pawnsMask
+           | board.piecesBitSets[colorNum].bishopsMask;
+}
+

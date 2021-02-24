@@ -20,6 +20,7 @@ thread_local struct MoveContext{
     unsigned NKingMoves;
     ExtendedMove kingMoves[11];
 
+    uint64_t pinnedMask;
     uint64_t allPieces;
     uint64_t opponentPieces;
     uint64_t ownPieces;

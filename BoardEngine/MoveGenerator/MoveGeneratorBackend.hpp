@@ -3,71 +3,11 @@
 
 #include "Strategy.hpp"
 #include <publicIf/NotationConversions.hpp>
-
+#include <detail/bitboardslookups.hpp>
 #include <strings.h>
 
 namespace MoveGenerator
 {
-
-template <typename TMoveAddingStrategy
-        , unsigned char FIRST_LINE
-        , unsigned char LINE_BEFORE_PROMOTION
-        , signed char ROW_DIFF
-        , unsigned char OPOSITE_COLOR>
-void generateStandardPawnMoves(unsigned char i)
-{
-    if (ctx.board->getField(i + ROW_DIFF) == 0)
-    {
-        auto row = NotationConversions::getRow(i);
-        if (row == LINE_BEFORE_PROMOTION)
-        {
-            TMoveAddingStrategy::addAndPromote(i, i + ROW_DIFF);
-        }
-        else
-        {
-            TMoveAddingStrategy::addPawn(i, i + ROW_DIFF);
-        }
-        if (row == FIRST_LINE and ctx.board->getField(i + 2 * ROW_DIFF) == 0)
-        {
-            TMoveAddingStrategy::addPawn(i, i + 2 * ROW_DIFF);
-        }
-    }
-    auto col = NotationConversions::getColumnNum(i);
-    if (col<7)
-    {
-        auto destination = i + ROW_DIFF + 1;
-        auto destinationField = ctx.board->getField(destination);
-        if (destinationField != 0 and (destinationField & NOTATION::COLOR::COLOR_MASK) == OPOSITE_COLOR)
-        {
-            auto row = NotationConversions::getRow(i);
-            if (row == LINE_BEFORE_PROMOTION)
-            {
-                TMoveAddingStrategy::addAndPromoteWithBeating(i, destination, ctx.board->getField(destination));
-            }
-            else
-            {
-                TMoveAddingStrategy::addPawnWithBeating(i, destination, ctx.board->getField(destination));
-            }
-        }
-    }
-    if (col > 0)
-    {
-        auto destination = i + ROW_DIFF - 1;
-        auto destinationField = ctx.board->getField(destination);
-        if (destinationField != 0 and (destinationField & NOTATION::COLOR::COLOR_MASK) == OPOSITE_COLOR)
-        {
-            auto row = NotationConversions::getRow(i);
-            if (row == LINE_BEFORE_PROMOTION)
-            {
-                TMoveAddingStrategy::addAndPromoteWithBeating(i, destination, ctx.board->getField(destination));            }
-            else
-            {
-                TMoveAddingStrategy::addPawnWithBeating(i, destination, ctx.board->getField(destination));
-            }
-        }
-    }
-}
-
 
 template <typename NOTATION::COLOR::color c,
         void (*TVerifyAndAdd)(unsigned char, unsigned char),
@@ -215,56 +155,154 @@ public:
 };
 
 template <typename TMoveAddingStrategy, NOTATION::COLOR::color c>
-void dispatchToGenerateStandardPawnMoves(unsigned char i);
-
-template<>
-void dispatchToGenerateStandardPawnMoves<StrategyWithAlwaysCheckChecking<NOTATION::COLOR::color::white>,
-        NOTATION::COLOR::color::white>(unsigned char i)
+void evaluateForPawns(uint64_t pawnsBitMask)
 {
-generateStandardPawnMoves<StrategyWithAlwaysCheckChecking<NOTATION::COLOR::color::white>,
-1u, 6u,
-NOTATION::COORDINATES::ROW_DIFF,
-NOTATION::COLOR::BLACK>(i);
+    constexpr uint64_t LINE_4 = 0x00'00'00'00'FF'00'00'00ull;
+    constexpr uint64_t LINE_8 = 0xFF'00'00'00'00'00'00'00ull;
+    constexpr uint64_t LINE_5 = 0x00'00'00'FF'00'00'00'00ull;
+    constexpr uint64_t LINE_1 = 0x00'00'00'00'00'00'00'FFull;
+
+    while (pawnsBitMask)
+    {
+        auto pawnIndex = 63 - __builtin_clzll(pawnsBitMask);
+        auto pawnBitMask = 1ull << pawnIndex;
+
+        if (c == NOTATION::COLOR::color::white)
+        {
+            //standard moves
+            auto nextField = pawnBitMask << 8;
+            if (LINE_8 & nextField & ~ctx.allPieces)
+            {
+                TMoveAddingStrategy::addAndPromote(pawnIndex, pawnIndex + 8);
+            } else if (nextField & ~ctx.allPieces)
+            {
+                TMoveAddingStrategy::addPawn(pawnIndex, pawnIndex + 8);
+                nextField <<= 8;
+                if (nextField & LINE_4 & ~ctx.allPieces)
+                {
+                    TMoveAddingStrategy::addPawn(pawnIndex, pawnIndex + 16);
+                }
+            }
+            auto beatingCandidate = ((NOT_H_COL & pawnBitMask) << 9)  & ctx.opponentPieces;
+            if (beatingCandidate)
+            {
+                if (beatingCandidate & LINE_8)
+                {
+                    TMoveAddingStrategy::addAndPromoteWithBeating(pawnIndex,
+                                                  pawnIndex + 9,
+                                                  ctx.board->getFieldForNonEmpty(pawnIndex + 9, c+1));
+                }
+                else
+                {
+                    TMoveAddingStrategy::addPawnWithBeating(pawnIndex,
+                                                pawnIndex + 9,
+                                                ctx.board->getFieldForNonEmpty(pawnIndex + 9, c + 1));
+                }
+            }
+            beatingCandidate = ((NOT_A_COL & pawnBitMask) << 7)  & ctx.opponentPieces;
+            if (beatingCandidate)
+            {
+                if (beatingCandidate & LINE_8)
+                {
+                    TMoveAddingStrategy::addAndPromoteWithBeating(pawnIndex,
+                                                      pawnIndex + 7,
+                                                      ctx.board->getFieldForNonEmpty(pawnIndex + 7, c+1));
+                }
+                else
+                {
+                    TMoveAddingStrategy::addPawnWithBeating(pawnIndex,
+                                                    pawnIndex + 7,
+                                                    ctx.board->getFieldForNonEmpty(pawnIndex + 7, c+1));
+                }
+            }
+        }
+        else
+        {
+            auto nextField = pawnBitMask >> 8;
+            if (LINE_1 & nextField & ~ctx.allPieces)
+            {
+                TMoveAddingStrategy::addAndPromote(pawnIndex, pawnIndex - 8);
+            } else if (nextField & ~ctx.allPieces)
+            {
+                StrategyWithAlwaysCheckChecking<c>::addPawn(pawnIndex, pawnIndex - 8);
+                nextField >>= 8;
+                if (nextField & LINE_5 & ~ctx.allPieces)
+                {
+                    TMoveAddingStrategy::addPawn(pawnIndex, pawnIndex - 16);
+                }
+            }
+            auto beatingCandidate = ((NOT_H_COL & pawnBitMask) >> 7)  & ctx.opponentPieces;
+            if (beatingCandidate)
+            {
+                if (beatingCandidate & LINE_8)
+                {
+                    TMoveAddingStrategy::addAndPromoteWithBeating(pawnIndex,
+                                                          pawnIndex -7,
+                                                          ctx.board->getFieldForNonEmpty(pawnIndex - 7, c+1));
+                }
+                else
+                {
+                    TMoveAddingStrategy::addPawnWithBeating(pawnIndex,
+                                                        pawnIndex -7,
+                                                        ctx.board->getFieldForNonEmpty(pawnIndex - 7, c+1));
+
+
+                }
+            }
+            beatingCandidate = ((NOT_A_COL & pawnBitMask) >> 9) & ctx.opponentPieces;
+            if (beatingCandidate)
+            {
+                if (beatingCandidate & LINE_8)
+                {
+                    TMoveAddingStrategy::addAndPromoteWithBeating(pawnIndex,
+                                                          pawnIndex - 9,
+                                                          ctx.board->getFieldForNonEmpty(pawnIndex - 9, c+1));
+                }
+                else
+                {
+                    TMoveAddingStrategy::addPawnWithBeating(pawnIndex,
+                                                        pawnIndex - 9,
+                                                        ctx.board->getFieldForNonEmpty(pawnIndex - 9, c+1));
+                }
+            }
+        }
+        pawnsBitMask ^= pawnBitMask;
+    }
 }
 
-template<>
-void dispatchToGenerateStandardPawnMoves<StrategyWithAlwaysCheckChecking<NOTATION::COLOR::color::black>, NOTATION::COLOR::color::black>(unsigned char i)
+template <typename TMoveAddingStrategy, NOTATION::COLOR::color c>
+void evaluateKnights(uint64_t knightsBitMask)
 {
-generateStandardPawnMoves<StrategyWithAlwaysCheckChecking<NOTATION::COLOR::color::black>,
-        6u, 1u,
-        -NOTATION::COORDINATES::ROW_DIFF,
-        NOTATION::COLOR::WHITE>(i);
-}
+    while (knightsBitMask)
+    {
+        auto knightIndex = 63 - __builtin_clzll(knightsBitMask);
+        auto knightBitMask = 1ull << knightIndex;
 
-template<>
-void dispatchToGenerateStandardPawnMoves<StrategyWithNoChecking<NOTATION::COLOR::color::white>, NOTATION::COLOR::color::white>(unsigned char i)
-{
-generateStandardPawnMoves<StrategyWithNoChecking<NOTATION::COLOR::color::white>,
-        1u, 6u,
-        NOTATION::COORDINATES::ROW_DIFF,
-        NOTATION::COLOR::BLACK>(i);
-}
-
-template<>
-void dispatchToGenerateStandardPawnMoves<StrategyWithNoChecking<NOTATION::COLOR::color::black>, NOTATION::COLOR::color::black>(unsigned char i)
-{
-generateStandardPawnMoves<StrategyWithNoChecking<NOTATION::COLOR::color::black>,
-        6u, 1u,
-        -NOTATION::COORDINATES::ROW_DIFF,
-        NOTATION::COLOR::WHITE>(i);
-}
+        auto quietMoves = bitBoardLookup[knightIndex].knightsMovePossibilities & ~ctx.allPieces;
+        while (quietMoves)
+        {
+            auto targetSquare = 63 - __builtin_clzll(quietMoves);
+            TMoveAddingStrategy::addKnight(knightIndex, targetSquare);
+            quietMoves ^= (1ull << targetSquare);
+        }
+        auto beatings = bitBoardLookup[knightIndex].knightsMovePossibilities & ctx.opponentPieces;
+        while (beatings)
+        {
+            auto targetSquare = 63 - __builtin_clzll(beatings);
+            TMoveAddingStrategy::addKnightWithBeating(knightIndex,
+                                                      targetSquare,
+                                                      ctx.board->getFieldForNonEmpty(targetSquare, c+1));
+            beatings ^= (1ull << targetSquare);
+        }
+        knightsBitMask ^= knightBitMask;
+    }
+};
 
 template <NOTATION::COLOR::color c>
 void dispatchToProperHandler(unsigned char i)
 {
     switch (ctx.board->getField(i) ^ static_cast<unsigned char>(c))
     {
-        case (NOTATION::PIECES::PAWN):
-            dispatchToGenerateStandardPawnMoves<StrategyWithAlwaysCheckChecking<c>, c>(i);
-            return;
-        case (NOTATION::PIECES::KNIGHT):
-            GenerateKnightMoves<c, StrategyWithAlwaysCheckChecking>::proccess(i);
-            return;
         case (NOTATION::PIECES::ROCK):
             GenerateRockMoves<c, StrategyWithAlwaysCheckChecking>::proccess(i);
             return;
@@ -285,12 +323,6 @@ void generateWithAllMoveAllowance(unsigned char i)
 {
     switch (ctx.board->getField(i) ^ static_cast<unsigned char>(c))
     {
-        case (NOTATION::PIECES::PAWN):
-            dispatchToGenerateStandardPawnMoves<StrategyWithNoChecking<c>, c>(i);
-            return;
-        case (NOTATION::PIECES::KNIGHT):
-            GenerateKnightMoves<c, StrategyWithNoChecking>::proccess(i);
-            return;
         case (NOTATION::PIECES::ROCK):
             GenerateRockMoves<c, StrategyWithNoChecking>::proccess(i);
             return;
@@ -312,14 +344,29 @@ namespace NoLookup
 template <NOTATION::COLOR::color c>
 void evaluateForCheckedPosition()
 {
+    evaluateForPawns<StrategyWithAlwaysCheckChecking<c>, c>(
+            ctx.board->piecesBitSets[static_cast<unsigned char>(c)].pawnsMask);
+    evaluateKnights<StrategyWithAlwaysCheckChecking<c>, c>(
+            ctx.board->piecesBitSets[static_cast<unsigned char>(c)].knightsMask);
     for (unsigned char i = 0u; i < 64u; ++i)
     {
         dispatchToProperHandler<c>(i);
     }
 }
+
 template <NOTATION::COLOR::color c>
 void evaluateNotCheckedPostions(uint64_t pinnedMask)
 {
+    evaluateForPawns<StrategyWithNoChecking<c>, c>(
+            ~pinnedMask & ctx.board->piecesBitSets[static_cast<unsigned char>(c)].pawnsMask);
+    evaluateForPawns<StrategyWithAlwaysCheckChecking<c>, c>(
+            pinnedMask & ctx.board->piecesBitSets[static_cast<unsigned char>(c)].pawnsMask);
+
+    evaluateKnights<StrategyWithNoChecking<c>, c>(
+            ~pinnedMask & ctx.board->piecesBitSets[static_cast<unsigned char>(c)].knightsMask);
+    evaluateKnights<StrategyWithAlwaysCheckChecking<c>, c>(
+            pinnedMask & ctx.board->piecesBitSets[static_cast<unsigned char>(c)].knightsMask);
+
     for (unsigned char i = 0u; i < 64u; ++i)
     {
         if (not ((1lu << i) & pinnedMask) )

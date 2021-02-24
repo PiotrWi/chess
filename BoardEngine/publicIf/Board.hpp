@@ -22,6 +22,7 @@ struct Board
     NOTATION::COLOR::color playerOnMove = NOTATION::COLOR::color::white;
 
     unsigned char getField(const unsigned char field) const noexcept;
+    unsigned char getFieldForNonEmpty(const unsigned char field, NOTATION::COLOR::color c) const noexcept;
     unsigned char getField(const char* field) const noexcept;
     void setField(const unsigned char field, unsigned char value);
     void setField(const unsigned char field, unsigned char oldValue, unsigned char value);

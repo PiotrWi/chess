@@ -54,6 +54,32 @@ unsigned char Board::getField(const unsigned char field) const noexcept
     return pieceMapping[63-__builtin_clzll(pieceBit)];
 }
 
+unsigned char Board::getFieldForNonEmpty(const unsigned char field, NOTATION::COLOR::color c) const noexcept
+{
+#ifdef ASSERTSON
+    assert(field < 64);
+#endif
+    unsigned char colorBit = static_cast<unsigned char>(c);
+    u_int64_t pieceBit = 0;
+    pieceBit |= ((piecesBitSets[colorBit].pawnsMask >> field) & 0b1u) << 0;
+    pieceBit |= ((piecesBitSets[colorBit].rocksMask >> field) & 0b1u) << 1;
+    pieceBit |= ((piecesBitSets[colorBit].knightsMask >> field) & 0b1u) << 2;
+    pieceBit |= ((piecesBitSets[colorBit].bishopsMask >> field) & 0b1u) << 3;
+    pieceBit |= ((piecesBitSets[colorBit].queensMask >> field) & 0b1u) << 4;
+    pieceBit |= ((piecesBitSets[colorBit].kingsMask >> field) & 0b1u) << 5;
+
+    static unsigned char pieceMapping[12] {
+            NOTATION::PIECES::PAWN,
+            NOTATION::PIECES::ROCK,
+            NOTATION::PIECES::KNIGHT,
+            NOTATION::PIECES::BISHOP,
+            NOTATION::PIECES::QUEEN,
+            NOTATION::PIECES::KING,
+    };
+
+    return pieceMapping[63-__builtin_clzll(pieceBit)] | colorBit;
+}
+
 unsigned char Board::getField(const char* field) const noexcept
 {
     return getField(NotationConversions::getFieldNum(field));

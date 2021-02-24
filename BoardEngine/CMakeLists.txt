@@ -34,9 +34,7 @@ add_library(board
     FieldLookup/FieldLookup.hpp
     MoveGenerator/MoveGeneratorContext.hpp
     MoveGenerator/Strategy.hpp
-    MoveGenerator/MoveGeneratorLookupBackend.hpp
-    MoveGenerator/MoveGeneratorBackend.hpp
+        MoveGenerator/MoveGeneratorBackend.hpp
     notations/uci.hpp
     notations/uci.cpp
-    MoveGenerator/MoveGeneratorExperimentalBackend.hpp
-    FieldLookup/TableLookup.hpp detail/BitBoarsUtils.h)
+        FieldLookup/TableLookup.hpp detail/BitBoarsUtils.h)

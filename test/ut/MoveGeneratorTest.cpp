@@ -110,8 +110,8 @@ TEST_F(MoveGeneratorTests, shouldCorectlyAnalyzePos_2)
     auto kingMoves = map(
             {"Ke1d2", "Ke1e2"}, WHITE, board);
 
-	ASSERT_THAT(sut.generate(board, WHITE),
-		::testing::UnorderedElementsAreArray(pawnMoves+knightMoves+rockMoves+bishopMoves+queenMoves+kingMoves));
+	ASSERT_THAT(printAndReturn(sut.generate(board, WHITE)),
+                ::testing::UnorderedElementsAreArray(pawnMoves+knightMoves+rockMoves+bishopMoves+queenMoves+kingMoves));
 }
 
 TEST_F(MoveGeneratorTests, shouldCorectlyAnalyzePosWithMoves)
@@ -318,7 +318,7 @@ TEST_F(MoveGeneratorTests, shouldFindPromotions)
 
 	auto kingMoves = map(
 		{"Kd1c1", "Kd1c2", "Kd1d2"}, WHITE, board);
-	ASSERT_THAT(sut.generate(board, WHITE),
+	ASSERT_THAT(printAndReturn(sut.generate(board, WHITE)),
 		::testing::UnorderedElementsAreArray(pawnMoves+kingMoves));
 }
 
