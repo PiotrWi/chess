@@ -64,12 +64,12 @@ constexpr uint64_t getknightsMovePossibilities(uint64_t fieldBitMask)
 {
     return (NOT_HG_COL & fieldBitMask) << 10
         | (NOT_HG_COL & fieldBitMask) >> 6
-        | (NOT_H_COL & fieldBitMask) << 15
-        | (NOT_H_COL & fieldBitMask) >> 17
+        | (NOT_H_COL & fieldBitMask) >> 15
+        | (NOT_H_COL & fieldBitMask) << 17
         | (NOT_AB_COL & fieldBitMask) << 6
         | (NOT_AB_COL & fieldBitMask) >> 10
-        | (NOT_A_COL & fieldBitMask) << 17
-        | (NOT_A_COL & fieldBitMask) >> 15;
+        | (NOT_A_COL & fieldBitMask) << 15
+        | (NOT_A_COL & fieldBitMask) >> 17;
 }
 
 constexpr uint64_t getKingMovePossibilities(uint64_t fieldBitMask)
