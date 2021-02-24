@@ -21,37 +21,21 @@ unsigned char Board::getField(const unsigned char field) const noexcept
     assert(field < 64);
 #endif
 
-    u_int64_t pieceBit = 0;
-    pieceBit |= ((piecesBitSets[WHITE_INDEX].pawnsMask >> field) & 0b1u) << 0;
-    pieceBit |= ((piecesBitSets[WHITE_INDEX].rocksMask >> field) & 0b1u) << 1;
-    pieceBit |= ((piecesBitSets[WHITE_INDEX].knightsMask >> field) & 0b1u) << 2;
-    pieceBit |= ((piecesBitSets[WHITE_INDEX].bishopsMask >> field) & 0b1u) << 3;
-    pieceBit |= ((piecesBitSets[WHITE_INDEX].queensMask >> field) & 0b1u) << 4;
-    pieceBit |= ((piecesBitSets[WHITE_INDEX].kingsMask >> field) & 0b1u) << 5;
+    auto fieldBit = (1ull <<field);
+    if (piecesBitSets[WHITE_INDEX].pawnsMask & fieldBit) return NOTATION::COLOR::WHITE | NOTATION::PIECES::PAWN;
+    if (piecesBitSets[BLACK_INDEX].pawnsMask & fieldBit) return NOTATION::COLOR::BLACK | NOTATION::PIECES::PAWN;
+    if (piecesBitSets[WHITE_INDEX].rocksMask & fieldBit) return NOTATION::COLOR::WHITE | NOTATION::PIECES::ROCK;
+    if (piecesBitSets[BLACK_INDEX].rocksMask & fieldBit) return NOTATION::COLOR::BLACK | NOTATION::PIECES::ROCK;
+    if (piecesBitSets[WHITE_INDEX].knightsMask & fieldBit) return NOTATION::COLOR::WHITE | NOTATION::PIECES::KNIGHT;
+    if (piecesBitSets[BLACK_INDEX].knightsMask & fieldBit) return NOTATION::COLOR::BLACK | NOTATION::PIECES::KNIGHT;
+    if (piecesBitSets[WHITE_INDEX].bishopsMask & fieldBit) return NOTATION::COLOR::WHITE | NOTATION::PIECES::BISHOP;
+    if (piecesBitSets[BLACK_INDEX].bishopsMask & fieldBit) return NOTATION::COLOR::BLACK | NOTATION::PIECES::BISHOP;
+    if (piecesBitSets[WHITE_INDEX].queensMask & fieldBit) return NOTATION::COLOR::WHITE | NOTATION::PIECES::QUEEN;
+    if (piecesBitSets[BLACK_INDEX].queensMask & fieldBit) return NOTATION::COLOR::BLACK | NOTATION::PIECES::QUEEN;
+    if (piecesBitSets[WHITE_INDEX].kingsMask & fieldBit) return NOTATION::COLOR::WHITE | NOTATION::PIECES::KING;
+    if (piecesBitSets[BLACK_INDEX].kingsMask & fieldBit) return NOTATION::COLOR::BLACK | NOTATION::PIECES::KING;
 
-    pieceBit |= ((piecesBitSets[BLACK_INDEX].pawnsMask >> field) & 0b1u) << 6;
-    pieceBit |= ((piecesBitSets[BLACK_INDEX].rocksMask >> field) & 0b1u) << 7;
-    pieceBit |= ((piecesBitSets[BLACK_INDEX].knightsMask >> field) & 0b1u) << 8;
-    pieceBit |= ((piecesBitSets[BLACK_INDEX].bishopsMask >> field) & 0b1u) << 9;
-    pieceBit |= ((piecesBitSets[BLACK_INDEX].queensMask >> field) & 0b1u) << 10;
-    pieceBit |= ((piecesBitSets[BLACK_INDEX].kingsMask >> field) & 0b1u) << 11;
-
-    if (pieceBit == 0) return 0;
-    static unsigned char pieceMapping[12] {
-        NOTATION::COLOR::WHITE | NOTATION::PIECES::PAWN,
-        NOTATION::COLOR::WHITE | NOTATION::PIECES::ROCK,
-        NOTATION::COLOR::WHITE | NOTATION::PIECES::KNIGHT,
-        NOTATION::COLOR::WHITE | NOTATION::PIECES::BISHOP,
-        NOTATION::COLOR::WHITE | NOTATION::PIECES::QUEEN,
-        NOTATION::COLOR::WHITE | NOTATION::PIECES::KING,
-        NOTATION::COLOR::BLACK | NOTATION::PIECES::PAWN,
-        NOTATION::COLOR::BLACK | NOTATION::PIECES::ROCK,
-        NOTATION::COLOR::BLACK | NOTATION::PIECES::KNIGHT,
-        NOTATION::COLOR::BLACK | NOTATION::PIECES::BISHOP,
-        NOTATION::COLOR::BLACK | NOTATION::PIECES::QUEEN,
-        NOTATION::COLOR::BLACK | NOTATION::PIECES::KING,
-    };
-    return pieceMapping[63-__builtin_clzll(pieceBit)];
+    return 0;
 }
 
 unsigned char Board::getFieldForNonEmpty(const unsigned char field, NOTATION::COLOR::color c) const noexcept
@@ -59,25 +43,16 @@ unsigned char Board::getFieldForNonEmpty(const unsigned char field, NOTATION::CO
 #ifdef ASSERTSON
     assert(field < 64);
 #endif
+
     unsigned char colorBit = static_cast<unsigned char>(c);
-    u_int64_t pieceBit = 0;
-    pieceBit |= ((piecesBitSets[colorBit].pawnsMask >> field) & 0b1u) << 0;
-    pieceBit |= ((piecesBitSets[colorBit].rocksMask >> field) & 0b1u) << 1;
-    pieceBit |= ((piecesBitSets[colorBit].knightsMask >> field) & 0b1u) << 2;
-    pieceBit |= ((piecesBitSets[colorBit].bishopsMask >> field) & 0b1u) << 3;
-    pieceBit |= ((piecesBitSets[colorBit].queensMask >> field) & 0b1u) << 4;
-    pieceBit |= ((piecesBitSets[colorBit].kingsMask >> field) & 0b1u) << 5;
+    auto fieldBit = (1ull <<field);
 
-    static unsigned char pieceMapping[12] {
-            NOTATION::PIECES::PAWN,
-            NOTATION::PIECES::ROCK,
-            NOTATION::PIECES::KNIGHT,
-            NOTATION::PIECES::BISHOP,
-            NOTATION::PIECES::QUEEN,
-            NOTATION::PIECES::KING,
-    };
-
-    return pieceMapping[63-__builtin_clzll(pieceBit)] | colorBit;
+    if (piecesBitSets[colorBit].pawnsMask & fieldBit) return colorBit | NOTATION::PIECES::PAWN;
+    if (piecesBitSets[colorBit].rocksMask & fieldBit) return colorBit | NOTATION::PIECES::ROCK;
+    if (piecesBitSets[colorBit].knightsMask & fieldBit) return colorBit | NOTATION::PIECES::KNIGHT;
+    if (piecesBitSets[colorBit].bishopsMask & fieldBit) return colorBit | NOTATION::PIECES::BISHOP;
+    if (piecesBitSets[colorBit].queensMask & fieldBit) return colorBit | NOTATION::PIECES::QUEEN;
+    return colorBit | NOTATION::PIECES::KING;
 }
 
 unsigned char Board::getField(const char* field) const noexcept

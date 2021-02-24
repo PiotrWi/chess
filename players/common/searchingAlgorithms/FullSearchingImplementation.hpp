@@ -257,7 +257,6 @@ int evaluateMax(BoardEngine& be,
         {
             return 0;
         }
-        // return evaluatePosition(be, cachedEngine);
         return quiescenceSearch(be, cachedEngine, 6/*Quinesence limit*/, alfa, beta);
     }
 
