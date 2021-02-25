@@ -40,7 +40,7 @@ int evaluatePosition(BoardEngine& be,
         return 0;
     }
 
-    return moveGenerator.getEvaluationValue(be) ;
+    return moveGenerator.getEvaluationValue(be, be.generateValidMoveCount()) ;
 }
 
 template <typename TMoveGenerator, bool SaveMove>

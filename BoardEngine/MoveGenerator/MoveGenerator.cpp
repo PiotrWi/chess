@@ -8,7 +8,7 @@
 #include <detail/PinnedMovesChecker.hpp>
 #include "Strategy.hpp"
 
-#include <detail/BitBoarsUtils.h>
+#include <detail/BitBoardsUtils.h>
 
 namespace MoveGenerator
 {
@@ -27,14 +27,14 @@ void generateCasles<NOTATION::COLOR::color::white>()
             and (ctx.allPieces & ((1ull << 3) | (1ull << 2) | (1ull << 1))) == 0
             and not CheckChecker::isAttackedOn(*ctx.board, ctx.pieceColor, 3))
         {
-            StrategyWithAlwaysCheckChecking<NOTATION::COLOR::color::white>::addKing(4, 2);
+            StrategyWithAlwaysCheckChecking<NOTATION::COLOR::color::white>::addCastling(4, 2);
         }
 
         if (ctx.board->castlingRights & WHITE_SHORT_BIT
             and not CheckChecker::isAttackedOn(*ctx.board, ctx.pieceColor, 5)
                 and (ctx.allPieces & ((1ull << 5) | (1ull << 6))) == 0)
         {
-            StrategyWithAlwaysCheckChecking<NOTATION::COLOR::color::white>::addKing(4, 6);
+            StrategyWithAlwaysCheckChecking<NOTATION::COLOR::color::white>::addCastling(4, 6);
         }
     }
 }
@@ -50,14 +50,14 @@ void generateCasles<NOTATION::COLOR::color::black>()
             and (ctx.allPieces & ((1ull << 59) | (1ull << 58) | (1ull << 57))) == 0
             and not CheckChecker::isAttackedOn(*ctx.board, ctx.pieceColor, 59))
         {
-            StrategyWithAlwaysCheckChecking<NOTATION::COLOR::color::black>::addKing(60, 58);
+            StrategyWithAlwaysCheckChecking<NOTATION::COLOR::color::black>::addCastling(60, 58);
         }
 
         if (ctx.board->castlingRights & BLACK_SHORT_BIT
             and (ctx.allPieces & ((1ull << 61) | (1ull << 62))) == 0
             and not CheckChecker::isAttackedOn(*ctx.board, ctx.pieceColor, 61))
         {
-            StrategyWithAlwaysCheckChecking<NOTATION::COLOR::color::black>::addKing(60, 62);
+            StrategyWithAlwaysCheckChecking<NOTATION::COLOR::color::black>::addCastling(60, 62);
         }
     }
 }

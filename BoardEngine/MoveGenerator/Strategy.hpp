@@ -171,7 +171,7 @@ public:
 
     static void addRock(unsigned char source, unsigned char destination)
     {
-        constexpr unsigned char MASK = 0;
+        constexpr unsigned char MASK = ExtendedMove::rockMoveMask;
         constexpr unsigned char rock = NOTATION::PIECES::ROCK | static_cast<unsigned char>(c);
 
         ExtendedMove m = ExtendedMove(source, destination, MASK, 0, rock, 0);
@@ -184,7 +184,7 @@ public:
 
     static void addRockWithBeating(unsigned char source, unsigned char destination, unsigned char targetField)
     {
-        constexpr unsigned char MASK = ExtendedMove::beatingMask;
+        constexpr unsigned char MASK = ExtendedMove::beatingMask | ExtendedMove::rockMoveMask;
         constexpr unsigned char rock = NOTATION::PIECES::ROCK | static_cast<unsigned char>(c);
 
         ExtendedMove m = ExtendedMove(source, destination, MASK, 0, rock, targetField);
@@ -245,6 +245,19 @@ public:
             return;
         }
         ctx.beatings[ctx.Nbeatings++] = m;
+    }
+
+    static void addCastling(unsigned char source, unsigned char destination)
+    {
+        constexpr unsigned char MASK = ExtendedMove::kingMoveMask | ExtendedMove::castlingMask;
+        constexpr unsigned char king = NOTATION::PIECES::KING | static_cast<unsigned char>(c);
+
+        ExtendedMove m = ExtendedMove(source, destination, MASK, 0, king, 0);
+        if (not isValidForKing(m))
+        {
+            return;
+        }
+        ctx.kingMoves[ctx.NKingMoves++] = m;
     }
 };
 

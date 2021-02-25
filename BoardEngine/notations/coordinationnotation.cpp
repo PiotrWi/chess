@@ -95,23 +95,36 @@ ExtendedMove createExtendedMove (const std::string& moveStr,
     unsigned char promotedTo = 0;
     unsigned char flags = 0;
 
+    if (board.getField(targetPosition) != 0)
+    {
+        flags |= ExtendedMove::beatingMask;
+    }
+    if ((board.getField(sourcePosition) & NOTATION::PIECES::PIECES_MASK) == NOTATION::PIECES::PAWN)
+    {
+        flags |= ExtendedMove::pawnMoveMask;
+        if (NotationConversions::getColumnNum(sourcePosition) != NotationConversions::getColumnNum(targetPosition)
+            and board.getField(targetPosition) == 0)
+        {
+            flags |= ExtendedMove::enPasantMask;
+            flags |= ExtendedMove::beatingMask;
+            return ExtendedMove(sourcePosition,
+                                targetPosition,
+                                flags,
+                                promotedTo,
+                                board.getField(sourcePosition),
+                                static_cast<unsigned char>(playerOnMove+1) | NOTATION::PIECES::PAWN);
+        }
+    }
     if (isPromoted)
     {
         flags |= ExtendedMove::promotionMask;
         promotedTo = createPiece(moveStr[6], playerOnMove);
     }
-    if ((board.getField(sourcePosition) & NOTATION::PIECES::PIECES_MASK) == NOTATION::PIECES::PAWN)
-    {
-        flags |= ExtendedMove::pawnMoveMask;
-    }
     if ((board.getField(sourcePosition) & NOTATION::PIECES::PIECES_MASK) == NOTATION::PIECES::KING)
     {
         flags |= ExtendedMove::kingMoveMask;
     }
-    if (board.getField(targetPosition) != 0)
-    {
-        flags |= ExtendedMove::beatingMask;
-    }
+
     return ExtendedMove{sourcePosition, targetPosition, flags, promotedTo, board.getField(sourcePosition), board.getField(targetPosition)};
 }
 }  // namespace coordinates
