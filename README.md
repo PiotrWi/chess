@@ -1,4 +1,9 @@
 # Chess
+#LastMalboxRevision
+Historic brach containig:
+-Mailbox representation
+-Searching algorigms like: MinMax, AlfaBeta, PVS, MTD. Later on all are going to be maintained as "FullSearch".
+
 My own implementation of chess engine. It contains:
 * UCI application capable to work with xboard.
 * Console application to play with.
