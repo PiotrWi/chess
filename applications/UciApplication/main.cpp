@@ -9,7 +9,7 @@
 
 void handleUci(UCI&)
 {
-    debug << "id name PiotorChess";
+    debug << "id name PiotorChess_bitBoard v0.1";
     debug << "id author https://github.com/PiotrWi";
     debug << "uciok";
 }

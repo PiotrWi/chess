@@ -9,19 +9,18 @@ add_executable(ut
 	main.cpp
         ../utils/BoardGenerationUtils.cpp
         BoardTest.cpp
-        CachedMoveGeneratorTest.cpp
-	CheckCheckerTest.cpp
+        CheckCheckerTest.cpp
         FullSearchTest.cpp
         HashMapTest.cpp
         HashTableTest.cpp
         MaterialEvaluatorTest.cpp
-        MinMaxAndAlfaBetaTest.cpp
+        SearchingBasicTests.cpp
         MoveApplierTest.cpp
         MoveGeneratorTest.cpp
 	MoveValidatorTest.cpp
         pinnedchecktest.cpp
         ResultEvaluatorTest.cpp
-        ZobrishTest.cpp)
+        ZobrishTest.cpp mt/WholeGame1.cpp)
 
 add_dependencies(ut googletest)
 add_dependencies(ut board)

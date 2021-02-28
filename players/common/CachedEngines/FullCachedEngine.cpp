@@ -18,13 +18,13 @@ CacheFullEntity& FullCachedEngine::get(const BoardEngine &be)
     return *elem;
 }
 
-int FullCachedEngine::getEvaluationValue(const BoardEngine& be)
+int FullCachedEngine::getEvaluationValue(const BoardEngine& be, unsigned int validMovesCount)
 {
     auto hash = be.getHash();
     auto elem = cachedEvaluators_.get(hash, hash);
     if (!elem)
     {
-        auto val = evaluateFunction(be);
+        auto val = evaluateFunction(be, validMovesCount);
         return *cachedEvaluators_.store(hash, hash, val);
     }
     return *elem;

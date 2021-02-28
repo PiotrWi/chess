@@ -124,6 +124,10 @@ ExtendedMove createExtendedMove (const std::string& moveStr,
     {
         flags |= ExtendedMove::kingMoveMask;
     }
+    if ((board.getField(sourcePosition) & NOTATION::PIECES::PIECES_MASK) == NOTATION::PIECES::ROCK)
+    {
+        flags |= ExtendedMove::rockMoveMask;
+    }
 
     return ExtendedMove{sourcePosition, targetPosition, flags, promotedTo, board.getField(sourcePosition), board.getField(targetPosition)};
 }

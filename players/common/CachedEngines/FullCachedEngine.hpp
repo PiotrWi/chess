@@ -5,6 +5,8 @@
 #include <BoardEngine.hpp>
 #include <common/containers/HashMap.hpp>
 
+static constexpr unsigned MAX_DEPTH = 12;
+
 namespace players
 {
 namespace common
@@ -33,8 +35,8 @@ struct CacheFullEntity
 
     // std::vector<ExtendedMove> precalculatedMoves = {};
 
-    PreviousBestMove previousBestMoves[12] = {};
-    PreviousEvaluations previousEvaluations[12] = {};
+    PreviousBestMove previousBestMoves[MAX_DEPTH] = {};
+    PreviousEvaluations previousEvaluations[MAX_DEPTH] = {};
 };
 
 class FullCachedEngine
@@ -42,7 +44,7 @@ class FullCachedEngine
 public:
     CacheFullEntity& get(const BoardEngine& be);
 
-    int getEvaluationValue(const BoardEngine& be);
+    int getEvaluationValue(const BoardEngine& be, unsigned int validMovesCount);
     void setBestMove(const BoardEngine& be,
                        ExtendedMove& move,
                        unsigned char depth);

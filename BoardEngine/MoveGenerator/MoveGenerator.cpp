@@ -24,15 +24,17 @@ void generateCasles<NOTATION::COLOR::color::white>()
     {
         using namespace NOTATION::CASTLING_RIGHTS;
         if (ctx.board->castlingRights & WHITE_LONG_BIT
-            and (ctx.allPieces & ((1ull << 3) | (1ull << 2) | (1ull << 1))) == 0
-            and not CheckChecker::isAttackedOn(*ctx.board, ctx.pieceColor, 3))
+            && (ctx.board->piecesBitSets[index].rocksMask & (1ull << 7))
+            && (ctx.allPieces & ((1ull << 3) | (1ull << 2) | (1ull << 1))) == 0
+            && ! CheckChecker::isAttackedOn(*ctx.board, ctx.pieceColor, 3))
         {
             StrategyWithAlwaysCheckChecking<NOTATION::COLOR::color::white>::addCastling(4, 2);
         }
 
         if (ctx.board->castlingRights & WHITE_SHORT_BIT
-            and not CheckChecker::isAttackedOn(*ctx.board, ctx.pieceColor, 5)
-                and (ctx.allPieces & ((1ull << 5) | (1ull << 6))) == 0)
+            && (ctx.board->piecesBitSets[index].rocksMask & (1ull << 7))
+            && (ctx.allPieces & ((1ull << 5) | (1ull << 6))) == 0
+            && ! CheckChecker::isAttackedOn(*ctx.board, ctx.pieceColor, 5))
         {
             StrategyWithAlwaysCheckChecking<NOTATION::COLOR::color::white>::addCastling(4, 6);
         }
@@ -47,15 +49,17 @@ void generateCasles<NOTATION::COLOR::color::black>()
     {
         using namespace NOTATION::CASTLING_RIGHTS;
         if (ctx.board->castlingRights & BLACK_LONG_BIT
-            and (ctx.allPieces & ((1ull << 59) | (1ull << 58) | (1ull << 57))) == 0
-            and not CheckChecker::isAttackedOn(*ctx.board, ctx.pieceColor, 59))
+            && (ctx.board->piecesBitSets[index].rocksMask & (1ull << 63))
+            && (ctx.allPieces & ((1ull << 59) | (1ull << 58) | (1ull << 57))) == 0
+            && ! CheckChecker::isAttackedOn(*ctx.board, ctx.pieceColor, 59))
         {
             StrategyWithAlwaysCheckChecking<NOTATION::COLOR::color::black>::addCastling(60, 58);
         }
 
         if (ctx.board->castlingRights & BLACK_SHORT_BIT
-            and (ctx.allPieces & ((1ull << 61) | (1ull << 62))) == 0
-            and not CheckChecker::isAttackedOn(*ctx.board, ctx.pieceColor, 61))
+            && (ctx.board->piecesBitSets[index].rocksMask & (1ull << 56))
+            && (ctx.allPieces & ((1ull << 61) | (1ull << 62))) == 0
+            && ! CheckChecker::isAttackedOn(*ctx.board, ctx.pieceColor, 61))
         {
             StrategyWithAlwaysCheckChecking<NOTATION::COLOR::color::black>::addCastling(60, 62);
         }
@@ -169,7 +173,8 @@ static void generateImpl(const Board& board,
             NoLookup::evaluateNotCheckedPostions<NOTATION::COLOR::color::black>(pinnedFields);
             generateCasles<NOTATION::COLOR::color::black>();
             GenerateEnPasant<NOTATION::COLOR::color::black,
-                    StrategyWithAlwaysCheckChecking<NOTATION::COLOR::color::black>>::proccess();        }
+                    StrategyWithAlwaysCheckChecking<NOTATION::COLOR::color::black>>::proccess();
+        }
     }
 }
 

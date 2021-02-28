@@ -101,6 +101,9 @@ void Board::cleanConcrete(const unsigned char field, unsigned char oldValue)
             piecesBitSets[BLACK_INDEX].kingsMask ^= (1ull << field);
             return;
     }
+#ifdef ASSERTSON
+    assert(field < 64);
+#endif
 }
 
 void Board::setConcrete(const unsigned char field, unsigned char value)

@@ -24,12 +24,24 @@ constexpr uint64_t onlyRightFrom[8] =
 {
         0xfe'fe'fe'fe'fe'fe'fe'feull,
         0xfc'fc'fc'fc'fc'fc'fc'fcull,
-        0xf8'f8'f8'f8'f8'f8'f8'01ull,
+        0xf8'f8'f8'f8'f8'f8'f8'f8ull,
         0xf0'f0'f0'f0'f0'f0'f0'f0ull,
         0xe0'e0'e0'e0'e0'e0'e0'e0ull,
         0xc0'c0'c0'c0'c0'c0'c0'c0ull,
         0x80'80'80'80'80'80'80'80ull,
         0x00'00'00'00'00'00'00'00ull,
+};
+
+constexpr uint64_t ranks[8] =
+{
+        0x01'01'01'01'01'01'01'01ull, // A
+        0x02'02'02'02'02'02'02'02ull, // B
+        0x04'04'04'04'04'04'04'04ull, // C
+        0x08'08'08'08'08'08'08'08ull, // D
+        0x10'10'10'10'10'10'10'10ull, // E
+        0x20'20'20'20'20'20'20'20ull, // F
+        0x40'40'40'40'40'40'40'40ull, // G
+        0x80'80'80'80'80'80'80'80ull, // H
 };
 
 struct BitBoardsConstants

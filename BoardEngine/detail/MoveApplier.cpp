@@ -35,11 +35,10 @@ void applyCasltingRules(Board& board, uint64_t& positionHash, const ExtendedMove
         board.clearField(rockSource, NOTATION::PIECES::ROCK | color);
     }
 
-    board.setField(move.destination, 0, NOTATION::PIECES::KING | color);
+    board.setPreviouslyEmptyField(move.destination, NOTATION::PIECES::KING | color);
     positionHash = hash::switchField(positionHash, move.destination, NOTATION::PIECES::KING | color);
     positionHash = hash::switchField(positionHash, move.source, NOTATION::PIECES::KING | color);
-    board.setField(move.source, NOTATION::PIECES::KING | color, 0);
-
+    board.clearField(move.source, NOTATION::PIECES::KING | color);
 }
 
 void revokeCastlingRights(Board& board, uint64_t& positionHash, const Move& move)
@@ -86,7 +85,7 @@ void applyPromotionRules(Board& board, uint64_t& positionHash, const ExtendedMov
     if (move.flags & ExtendedMove::promotionMask)
     {
         positionHash = hash::switchField(positionHash, move.destination, move.sourcePiece);
-        board.setField(move.destination, move.sourcePiece, static_cast<unsigned char>(board.playerOnMove) |
+        board.setField(move.destination, move.sourcePiece,static_cast<unsigned char>(board.playerOnMove) |
                                   (move.promoting & NOTATION::PIECES::PIECES_MASK));
         positionHash = hash::switchField(positionHash,
                                          move.destination,
@@ -185,7 +184,7 @@ void applyMove(Board& board, uint64_t& positionHash, const ExtendedMove& move)
             positionHash = hash::switchField(positionHash, move.destination, move.targetPiece);
             board.clearField(move.destination, move.targetPiece);
         }
-        board.setField(move.destination, move.sourcePiece);
+        board.setPreviouslyEmptyField(move.destination, move.sourcePiece);
         positionHash = hash::switchField(positionHash, move.destination, move.sourcePiece);
 
         positionHash = hash::switchField(positionHash, move.source, move.sourcePiece);
@@ -207,7 +206,7 @@ void applyMove(Board& board, uint64_t& positionHash, const ExtendedMove& move)
         positionHash = hash::switchField(positionHash, move.destination, move.targetPiece);
         board.clearField(move.destination, move.targetPiece);
     }
-    board.setField(move.destination, move.sourcePiece);
+    board.setPreviouslyEmptyField(move.destination, move.sourcePiece);
     positionHash = hash::switchField(positionHash, move.destination, move.sourcePiece);
 
     positionHash = hash::switchField(positionHash, move.source, move.sourcePiece);
