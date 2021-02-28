@@ -463,16 +463,16 @@ TEST_F(MoveGeneratorTests, shallNotAllowToMovePinned)
                                     "        "
                                     "    ♛   "
                                     "        ", WHITE);
-
     auto rockMoves = map(
             {"Re6e7", "Re6xe8",
              "Re4e3", "Re4xe2",
-             "Rd5c5", "Rd5b5", "Rd5xa5", "Rf5xg5"}, WHITE, board);
+             "Rd5c5", "Rd5b5", "Rd5xa5",
+             "Rf5xg5"}, WHITE, board);
 
     auto kingMoves = map(
             {"Ke5f6", "Ke5d6", "Ke5d4", "Ke5f4"}, WHITE, board);
 
-    ASSERT_THAT(sut.generate(board, WHITE),
+    ASSERT_THAT(printAndReturn(sut.generate(board, WHITE)),
                 ::testing::UnorderedElementsAreArray(rockMoves + kingMoves));
 }
 
