@@ -63,7 +63,7 @@ ExtendedMove createExtendedMove (const std::string& moveStr,
 
     if (moveStr.size() > position)
     {
-        promoteTo = createPiece(std::toupper(moveStr[++position]), playerOnMove);
+        promoteTo = createPiece(std::toupper(moveStr[position++]), playerOnMove);
         flags |= ExtendedMove::promotionMask;
     }
 

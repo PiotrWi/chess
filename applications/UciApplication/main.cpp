@@ -98,6 +98,8 @@ void readCommands()
         }
         if (command == "quit")
         {
+	    QUIT quit;
+	    eventPropagator.enqueue(quit);
             return;
         }
     }
