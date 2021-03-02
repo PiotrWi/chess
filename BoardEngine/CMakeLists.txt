@@ -36,4 +36,4 @@ add_library(board
     MoveGenerator/MoveGeneratorBackend.hpp
     notations/uci.hpp
     notations/uci.cpp
-    detail/BitBoardsUtils.h)
+    detail/BitBoardsUtils.h notations/fen.h notations/fen.cpp)
