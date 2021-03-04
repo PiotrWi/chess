@@ -13,14 +13,18 @@ ADDITIONAL_TIME_PER_MOVE=5.0
 
 
 class Game(object):
-    def __init__(self, white_player, white_command, black_player, black_command):
+    def __init__(self, white_player, white_command, black_player, black_command, fen):
         self.whitePlayer = white_player
         self.whiteCommand = white_command
         self.blackPlayer = black_player
         self.blackCommand = black_command
+        self.fen = fen
         self.result = ""
 
-
+fenList = ["rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+        "r1bqkb1r/1ppp1ppp/p1n2n2/4p3/B3P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 0 1",
+        "rnbqkb1r/ppp2ppp/1n6/4p3/8/2N3P1/PP1PPPBP/R1BQK1NR w KQkq - 2 6"
+        "rnbqkb1r/ppp2ppp/1n6/4p3/8/2N3P1/PP1PPPBP/R1BQK1NR w KQkq - 2 6"]
 enqueuedGames =[]
 playedGames = []
 
@@ -34,7 +38,7 @@ async def playSingleGame():
 
         clocks = [GAME_TIME, GAME_TIME]
 
-        board = chess.Board()
+        board = chess.Board(game.fen)
         while not board.is_game_over():
             a = time.monotonic_ns()
             result = await engines[move % 2].play(board, chess.engine.Limit(white_clock=clocks[0], black_clock=clocks[1]))
@@ -56,68 +60,25 @@ async def main():
         print("""Ex: ./main.py "/home/uciEngine" "/home/uciEngine_2" 1000""")
         exit(1)
 
-    enqueuedGames.append(Game(white_player="tested",
+    for fen in fenList:
+        enqueuedGames.append(Game(white_player="tested",
                               white_command=testedEngineCommand,
                               black_player="referenced",
-                              black_command=referenceEngineCommand))
-    enqueuedGames.append(Game(white_player="referenced",
+                              black_command=referenceEngineCommand,
+                              fen=fen))
+        enqueuedGames.append(Game(white_player="referenced",
                               white_command=referenceEngineCommand,
                               black_player="tested",
-                              black_command=testedEngineCommand))
-    enqueuedGames.append(Game(white_player="tested",
-                              white_command=testedEngineCommand,
-                              black_player="referenced",
-                              black_command=referenceEngineCommand))
-    enqueuedGames.append(Game(white_player="referenced",
-                              white_command=referenceEngineCommand,
-                              black_player="tested",
-                              black_command=testedEngineCommand))
-    enqueuedGames.append(Game(white_player="tested",
-                              white_command=testedEngineCommand,
-                              black_player="referenced",
-                              black_command=referenceEngineCommand))
-    enqueuedGames.append(Game(white_player="referenced",
-                              white_command=referenceEngineCommand,
-                              black_player="tested",
-                              black_command=testedEngineCommand))
-    enqueuedGames.append(Game(white_player="tested",
-                              white_command=testedEngineCommand,
-                              black_player="referenced",
-                              black_command=referenceEngineCommand))
-    enqueuedGames.append(Game(white_player="referenced",
-                              white_command=referenceEngineCommand,
-                              black_player="tested",
-                              black_command=testedEngineCommand))
-    enqueuedGames.append(Game(white_player="tested",
-                              white_command=testedEngineCommand,
-                              black_player="referenced",
-                              black_command=referenceEngineCommand))
-    enqueuedGames.append(Game(white_player="referenced",
-                              white_command=referenceEngineCommand,
-                              black_player="tested",
-                              black_command=testedEngineCommand))
-    enqueuedGames.append(Game(white_player="tested",
-                              white_command=testedEngineCommand,
-                              black_player="referenced",
-                              black_command=referenceEngineCommand))
-    enqueuedGames.append(Game(white_player="referenced",
-                              white_command=referenceEngineCommand,
-                              black_player="tested",
-                              black_command=testedEngineCommand))
+                              black_command=testedEngineCommand,
+                              fen=fen))
 
     task1 = asyncio.create_task(playSingleGame())
     task2 = asyncio.create_task(playSingleGame())
     task3 = asyncio.create_task(playSingleGame())
-    task4 = asyncio.create_task(playSingleGame())
-    task5 = asyncio.create_task(playSingleGame())
-    task6 = asyncio.create_task(playSingleGame())
 
     await task1
     await task2
     await task3
-    await task4
-    await task5
-    await task6
 
     for gameResult in playedGames:
         print (gameResult.whitePlayer + " " + gameResult.blackPlayer + ": " + gameResult.result)

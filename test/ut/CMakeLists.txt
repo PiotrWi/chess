@@ -10,6 +10,7 @@ add_executable(ut
         ../utils/BoardGenerationUtils.cpp
         BoardTest.cpp
         CheckCheckerTest.cpp
+        fentest.cpp
         FullSearchTest.cpp
         HashMapTest.cpp
         HashTableTest.cpp
@@ -20,7 +21,8 @@ add_executable(ut
 	MoveValidatorTest.cpp
         pinnedchecktest.cpp
         ResultEvaluatorTest.cpp
-        ZobrishTest.cpp mt/WholeGame1.cpp)
+        ZobrishTest.cpp
+        mt/WholeGame1.cpp)
 
 add_dependencies(ut googletest)
 add_dependencies(ut board)

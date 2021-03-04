@@ -12,9 +12,9 @@ project(chess LANGUAGES CXX)
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 	add_definitions(-DASSERTSON)
-	SET(CMAKE_CXX_FLAGS  "-Og -g -Wall -Wextra -Werror -std=c++2a -fuse-ld=gold -lrt")
+	SET(CMAKE_CXX_FLAGS  "-Og -g -Wall -Wextra -Werror -std=c++17 -fuse-ld=gold -lrt")
 else()
-	SET(CMAKE_CXX_FLAGS  "-O3 -Wall -Wextra -Werror -std=c++2a -flto -fuse-ld=gold -m64 -lrt")
+	SET(CMAKE_CXX_FLAGS  "-O3 -Wall -Wextra -Werror -std=c++17 -flto -fuse-ld=gold -m64 -lrt")
 endif()
 
 
