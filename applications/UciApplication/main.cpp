@@ -67,7 +67,25 @@ void readCommands()
                         moves.push_back(word);
                     }
                 }
-                auto event = POSSITION{true, moves};
+                auto event = POSSITION{true, {}, moves};
+                eventPropagator.enqueue(event);
+            }
+            else if (word == "fen")
+            {
+                std::string fenString = "";
+                ss >> word;
+                fenString += word;
+                while (ss >> word, !ss.eof() && word != "moves")
+                {
+                    fenString += " ";
+                    fenString += word;
+                }
+                while (!ss.eof())
+                {
+                    ss >> word;
+                    moves.push_back(word);
+                }
+                auto event = POSSITION{false, fenString, moves};
                 eventPropagator.enqueue(event);
             }
         }

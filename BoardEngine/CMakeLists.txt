@@ -36,5 +36,8 @@ add_library(board
 				MoveGenerator/MoveGeneratorLookupBackend.hpp
 				MoveGenerator/MoveGeneratorBackend.hpp
 				notations/uci.hpp
-				notations/uci.cpp MoveGenerator/MoveGeneratorExperimentalBackend.hpp FieldLookup/TableLookup.hpp)
+				notations/uci.cpp
+				MoveGenerator/MoveGeneratorExperimentalBackend.hpp
+				FieldLookup/TableLookup.hpp
+				notations/fen.cpp)
 	
