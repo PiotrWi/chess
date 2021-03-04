@@ -8,7 +8,7 @@
 
 namespace notations
 {
-namespace coordinates
+namespace fen
 {
 
 BoardEngine initByFen(std::string fenStr)
@@ -116,5 +116,5 @@ BoardEngine initByFen(std::string fenStr)
     return be;
 }
 
-}  // namespace coordinates
+}  // namespace fen
 }  // namespace notations
