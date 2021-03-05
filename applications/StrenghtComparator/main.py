@@ -8,7 +8,7 @@ import time
 testedEngineCommand = sys.argv[1]
 referenceEngineCommand = sys.argv[2]
 
-GAME_TIME=300.0
+GAME_TIME=60.0
 ADDITIONAL_TIME_PER_MOVE=1.0
 
 
@@ -38,13 +38,18 @@ async def playSingleGame():
                        (await chess.engine.popen_uci(game.blackCommand))[1]]
 
             clocks = [GAME_TIME, GAME_TIME]
+
+            claimDraw = False
             try:
                 board = chess.Board(game.fen)
-                while not board.is_game_over():
+                while not board.is_game_over() or board.is_repetition(3) or 100 == board.halfmove_clock(): #claim_draw true means that draw rules are: 3 repeatitions, 50 repeatitions. Since 2014 official rules are different.
                     a = time.monotonic_ns()
                     result = await engines[move % 2].play(board, chess.engine.Limit(white_clock=clocks[0], black_clock=clocks[1]))
                     b = time.monotonic_ns()
                     clocks[move % 2] = clocks[move % 2] - (b-a)/1000000000 + ADDITIONAL_TIME_PER_MOVE
+                    if not result.move in board.legal_moves:
+                        print("Invalid move: " + str(presult.move))
+                        raise ValueError
                     board.push(result.move)
                     move = move + 1
 
@@ -52,9 +57,13 @@ async def playSingleGame():
                 await engines[1].quit()
             except:
                 print("Tearing down engines due to exception")
+                print(board)
                 await engines[0].quit()
                 await engines[1].quit()
-            game.result = board.result()
+            if board.is_repetition(3) or 100 == board.halfmove_clock():
+                game.result = "1/2 - 1/2"
+            else:
+                game.result = board.result()
             playedGames.append(game)
     except:
         print("Undefined error")
@@ -77,43 +86,13 @@ async def main():
                               black_player="tested",
                               black_command=testedEngineCommand,
                               fen=fen))
-    for fen in fenList:
-        enqueuedGames.append(Game(white_player="tested",
-                                  white_command=testedEngineCommand,
-                                  black_player="referenced",
-                                  black_command=referenceEngineCommand,
-                                  fen=fen))
-        enqueuedGames.append(Game(white_player="referenced",
-                                  white_command=referenceEngineCommand,
-                                  black_player="tested",
-                                  black_command=testedEngineCommand,
-                                  fen=fen))
-
-    for fen in fenList:
-        enqueuedGames.append(Game(white_player="tested",
-                                  white_command=testedEngineCommand,
-                                  black_player="referenced",
-                                  black_command=referenceEngineCommand,
-                                  fen=fen))
-        enqueuedGames.append(Game(white_player="referenced",
-                                  white_command=referenceEngineCommand,
-                                  black_player="tested",
-                                  black_command=testedEngineCommand,
-                                  fen=fen))
 
     task1 = asyncio.create_task(playSingleGame())
     task2 = asyncio.create_task(playSingleGame())
     task3 = asyncio.create_task(playSingleGame())
-    task4 = asyncio.create_task(playSingleGame())
-    task5 = asyncio.create_task(playSingleGame())
-    task6 = asyncio.create_task(playSingleGame())
     await task1
     await task2
     await task3
-    await task4
-    await task5
-    await task6
-
     for gameResult in playedGames:
         print (gameResult.whitePlayer + " " + gameResult.blackPlayer + ": " + gameResult.result)
 

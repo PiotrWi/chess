@@ -37,7 +37,7 @@ bool are3Repeatitions(std::vector<Node>& nodes)
         if (compare(boardTemplate, it->board))
         {
             nodes.back().repeatedTime = it->repeatedTime + 1;
-            return 2 == nodes.back().repeatedTime;
+            return 4 == nodes.back().repeatedTime;
         }
     }
     return false;
@@ -78,7 +78,7 @@ Result ResultEvaluator::evaluate(bool movesAvailable)
         return Result::draw;
     }
 
-    if (boardsToEvaluate.back().noSignificantMoves_ >= 100)
+    if (boardsToEvaluate.back().noSignificantMoves_ >= 150)
     {
         return Result::draw;
     }
