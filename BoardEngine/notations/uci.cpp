@@ -48,6 +48,15 @@ ExtendedMove createExtendedMove (const std::string& moveStr,
     position += 2;
 
     if ((sourcePiece & NOTATION::PIECES::PIECES_MASK) == NOTATION::PIECES::KING)
+    {
+        flags |= ExtendedMove::kingMoveMask;
+        if (moveStr == "e1g1") return ExtendedMove::whiteShortCaste();
+        if (moveStr == "e1c1") return ExtendedMove::whiteLongCaste();
+        if (moveStr == "e8g8") return ExtendedMove::blackShortCaste();
+        if (moveStr == "e8c8") return ExtendedMove::blackLongCaste();
+    }
+
+    if ((sourcePiece & NOTATION::PIECES::PIECES_MASK) == NOTATION::PIECES::KING)
         flags |= ExtendedMove::kingMoveMask;
 
 
