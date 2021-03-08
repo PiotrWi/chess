@@ -60,6 +60,26 @@ struct BitBoardsConstants
     uint64_t bottomRight;
 };
 
+template<unsigned TSIZE>
+struct MagicBitBoard
+{
+    uint64_t relevantBlockers;
+    uint64_t magicMultiplier;
+    uint64_t ocupancies[TSIZE];
+};
+
+struct BishopMagicBitBoards
+{
+    unsigned char relevantBitsNum;
+    MagicBitBoard<2048u> lookup[64];
+};
+
+struct RockMagicBitBoards
+{
+    unsigned char relevantBitsNum;
+    MagicBitBoard<8192u> lookup[64];
+};
+
 constexpr uint64_t getOppositePawnsAttackingFieldForWhite(uint64_t fieldBitMask)
 {
     return (NOT_A_COL & fieldBitMask) << 7
@@ -95,7 +115,6 @@ constexpr uint64_t getKingMovePossibilities(uint64_t fieldBitMask)
         | (NOT_H_COL & fieldBitMask) << 1
         | (NOT_H_COL & fieldBitMask) >> 7;
 }
-
 
 constexpr uint64_t getTopRay(uint64_t fieldBitMask)
 {
