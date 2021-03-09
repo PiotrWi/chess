@@ -1,6 +1,5 @@
 #pragma once
 
-#include <bit>
 #include <publicIf/Board.hpp>
 #include <publicIf/NotationConversions.hpp>
 #include <detail/bitboardslookups.hpp>

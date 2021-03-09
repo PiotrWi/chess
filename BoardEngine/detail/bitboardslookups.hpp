@@ -74,8 +74,8 @@ struct MagicBitBoard
 
 struct BishopMagicBitBoards
 {
-    unsigned relevantBitsNum = 10;
-    MagicBitBoard<1024> lookup[64];
+    unsigned relevantBitsNum = 9;
+    MagicBitBoard<512> lookup[64];
 public:
     BishopMagicBitBoards();
     uint64_t getAttacksFor(uint8_t fieldNum, uint64_t allpieces) const;

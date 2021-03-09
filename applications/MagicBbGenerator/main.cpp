@@ -13,7 +13,7 @@ uint64_t tryForRock = 12;
 MagicBitBoard<8192> bb_rock;
 bool isUsed_rock[8192] = {};
 
-uint64_t tryForBishop = 10;
+uint64_t tryForBishop = 9;
 MagicBitBoard<8192> bb_bishop;
 bool isUsed_bishop[8192] = {};
 
