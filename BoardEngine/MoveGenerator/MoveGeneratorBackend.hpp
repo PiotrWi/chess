@@ -184,64 +184,10 @@ void evaluateDiagonal(uint64_t diagonalBitMask)
     while (diagonalBitMask)
     {
         auto piecePosition = 63 - __builtin_clzll(diagonalBitMask);
-        const auto& lookup = bitBoardLookup[piecePosition];
 
-        uint64_t quietMoves = 0ull;
-        uint64_t blockers = 0ull;
+        uint64_t allAttacks = bishopMagicBb.getAttacksFor(piecePosition, ctx.allPieces);
 
-        {
-            auto topLeftPieces = lookup.topLeft & ctx.allPieces;
-            if (topLeftPieces)
-            {
-                auto topLeftBlocker = __builtin_ffsll(topLeftPieces) - 1;
-                quietMoves |=(lookup.topLeft ^ (1ull << topLeftBlocker) ^ bitBoardLookup[topLeftBlocker].topLeft);
-                blockers |= (1ull << topLeftBlocker);
-            }
-            else
-            {
-                quietMoves |= lookup.topLeft;
-            }
-        }
-        {
-            auto topRightPieces = lookup.topRight & ctx.allPieces;
-            if (topRightPieces)
-            {
-                auto topRightBlocker = __builtin_ffsll(topRightPieces) - 1;
-                quietMoves |=(lookup.topRight ^ (1ull << topRightBlocker) ^ bitBoardLookup[topRightBlocker].topRight);
-                blockers |= (1ull << topRightBlocker);
-            }
-            else
-            {
-                quietMoves |= lookup.topRight;
-            }
-        }
-        {
-            auto bottomLeftPieces = lookup.bottomLeft & ctx.allPieces;
-            if (bottomLeftPieces)
-            {
-                auto bottomLeftBlocker = 63 - __builtin_clzll(bottomLeftPieces);
-                quietMoves |=(lookup.bottomLeft ^ (1ull << bottomLeftBlocker) ^ bitBoardLookup[bottomLeftBlocker].bottomLeft);
-                blockers |= (1ull << bottomLeftBlocker);
-            }
-            else
-            {
-                quietMoves |= lookup.bottomLeft;
-            }
-        }
-        {
-            auto bottomRightPieces = lookup.bottomRight & ctx.allPieces;
-            if (bottomRightPieces)
-            {
-                auto bottomRightBlocker = 63 - __builtin_clzll(bottomRightPieces);
-                quietMoves |=(lookup.bottomRight ^ (1ull << bottomRightBlocker) ^ bitBoardLookup[bottomRightBlocker].bottomRight);
-                blockers |= (1ull << bottomRightBlocker);
-            }
-            else
-            {
-                quietMoves |= lookup.bottomRight;
-            }
-        }
-
+        uint64_t quietMoves = allAttacks &(~ctx.allPieces);
         while (quietMoves)
         {
             auto targetSquare = 63 - __builtin_clzll(quietMoves);
@@ -249,7 +195,7 @@ void evaluateDiagonal(uint64_t diagonalBitMask)
             quietMoves ^= (1ull << targetSquare);
         }
 
-        auto possibleAttacks = blockers & ctx.opponentPieces;
+        auto possibleAttacks = allAttacks & ctx.opponentPieces;
         while (possibleAttacks)
         {
             auto targetSquare = 63 - __builtin_clzll(possibleAttacks);
@@ -269,64 +215,10 @@ void evaluateLine(uint64_t lineBitMask)
     while (lineBitMask)
     {
         auto piecePosition = 63 - __builtin_clzll(lineBitMask);
-        const auto& lookup = bitBoardLookup[piecePosition];
 
-        uint64_t quietMoves = 0ull;
-        uint64_t blockers = 0ull;
+        uint64_t allAttacks = rockMagicBb.getAttacksFor(piecePosition, ctx.allPieces);
 
-        {
-            auto topPieces = lookup.topRay & ctx.allPieces;
-            if (topPieces)
-            {
-                auto topBlocker = __builtin_ffsll(topPieces) - 1;
-                quietMoves |=(lookup.topRay ^ (1ull << topBlocker) ^ bitBoardLookup[topBlocker].topRay);
-                blockers |= (1ull << topBlocker);
-            }
-            else
-            {
-                quietMoves |= lookup.topRay;
-            }
-        }
-        {
-            auto rightPieces = lookup.rightRay & ctx.allPieces;
-            if (rightPieces)
-            {
-                auto rightBlocker = __builtin_ffsll(rightPieces) - 1;
-                quietMoves |=(lookup.rightRay ^ (1ull << rightBlocker) ^ bitBoardLookup[rightBlocker].rightRay);
-                blockers |= (1ull << rightBlocker);
-            }
-            else
-            {
-                quietMoves |= lookup.rightRay;
-            }
-        }
-        {
-            auto leftPieces = lookup.leftRay & ctx.allPieces;
-            if (leftPieces)
-            {
-                auto leftBlocker = 63 - __builtin_clzll(leftPieces);
-                quietMoves |=(lookup.leftRay ^ (1ull << leftBlocker) ^ bitBoardLookup[leftBlocker].leftRay);
-                blockers |= (1ull << leftBlocker);
-            }
-            else
-            {
-                quietMoves |= lookup.leftRay;
-            }
-        }
-        {
-            auto bottomPieces = lookup.bottomRay & ctx.allPieces;
-            if (bottomPieces)
-            {
-                auto bottomBlocker = 63 - __builtin_clzll(bottomPieces);
-                quietMoves |=(lookup.bottomRay ^ (1ull << bottomBlocker) ^ bitBoardLookup[bottomBlocker].bottomRay);
-                blockers |= (1ull << bottomBlocker);
-            }
-            else
-            {
-                quietMoves |= lookup.bottomRay;
-            }
-        }
-
+        uint64_t quietMoves = allAttacks &(~ctx.allPieces);
         while (quietMoves)
         {
             auto targetSquare = 63 - __builtin_clzll(quietMoves);
@@ -334,7 +226,7 @@ void evaluateLine(uint64_t lineBitMask)
             quietMoves ^= (1ull << targetSquare);
         }
 
-        auto possibleAttacks = blockers & ctx.opponentPieces;
+        auto possibleAttacks = allAttacks & ctx.opponentPieces;
         while (possibleAttacks)
         {
             auto targetSquare = 63 - __builtin_clzll(possibleAttacks);
@@ -354,116 +246,12 @@ void evaluateQueen(uint64_t lineBitMask)
     while (lineBitMask)
     {
         auto piecePosition = 63 - __builtin_clzll(lineBitMask);
-        const auto& lookup = bitBoardLookup[piecePosition];
 
-        uint64_t quietMoves = 0ull;
-        uint64_t blockers = 0ull;
-        {
-            auto topLeftPieces = lookup.topLeft & ctx.allPieces;
-            if (topLeftPieces)
-            {
-                auto topLeftBlocker = __builtin_ffsll(topLeftPieces) - 1;
-                quietMoves |=(lookup.topLeft ^ (1ull << topLeftBlocker) ^ bitBoardLookup[topLeftBlocker].topLeft);
-                blockers |= (1ull << topLeftBlocker);
-            }
-            else
-            {
-                quietMoves |= lookup.topLeft;
-            }
-        }
-        {
-            auto topRightPieces = lookup.topRight & ctx.allPieces;
-            if (topRightPieces)
-            {
-                auto topRightBlocker = __builtin_ffsll(topRightPieces) - 1;
-                quietMoves |=(lookup.topRight ^ (1ull << topRightBlocker) ^ bitBoardLookup[topRightBlocker].topRight);
-                blockers |= (1ull << topRightBlocker);
-            }
-            else
-            {
-                quietMoves |= lookup.topRight;
-            }
-        }
-        {
-            auto bottomLeftPieces = lookup.bottomLeft & ctx.allPieces;
-            if (bottomLeftPieces)
-            {
-                auto bottomLeftBlocker = 63 - __builtin_clzll(bottomLeftPieces);
-                quietMoves |=(lookup.bottomLeft ^ (1ull << bottomLeftBlocker) ^ bitBoardLookup[bottomLeftBlocker].bottomLeft);
-                blockers |= (1ull << bottomLeftBlocker);
-            }
-            else
-            {
-                quietMoves |= lookup.bottomLeft;
-            }
-        }
-        {
-            auto bottomRightPieces = lookup.bottomRight & ctx.allPieces;
-            if (bottomRightPieces)
-            {
-                auto bottomRightBlocker = 63 - __builtin_clzll(bottomRightPieces);
-                quietMoves |=(lookup.bottomRight ^ (1ull << bottomRightBlocker) ^ bitBoardLookup[bottomRightBlocker].bottomRight);
-                blockers |= (1ull << bottomRightBlocker);
-            }
-            else
-            {
-                quietMoves |= lookup.bottomRight;
-            }
-        }
+        uint64_t allAttacks = rockMagicBb.getAttacksFor(piecePosition, ctx.allPieces)
+                | bishopMagicBb.getAttacksFor(piecePosition, ctx.allPieces);
 
-        {
-            auto topPieces = lookup.topRay & ctx.allPieces;
-            if (topPieces)
-            {
-                auto topBlocker = __builtin_ffsll(topPieces) - 1;
-                quietMoves |=(lookup.topRay ^ (1ull << topBlocker) ^ bitBoardLookup[topBlocker].topRay);
-                blockers |= (1ull << topBlocker);
-            }
-            else
-            {
-                quietMoves |= lookup.topRay;
-            }
-        }
-        {
-            auto rightPieces = lookup.rightRay & ctx.allPieces;
-            if (rightPieces)
-            {
-                auto rightBlocker = __builtin_ffsll(rightPieces) - 1;
-                quietMoves |=(lookup.rightRay ^ (1ull << rightBlocker) ^ bitBoardLookup[rightBlocker].rightRay);
-                blockers |= (1ull << rightBlocker);
-            }
-            else
-            {
-                quietMoves |= lookup.rightRay;
-            }
-        }
-        {
-            auto leftPieces = lookup.leftRay & ctx.allPieces;
-            if (leftPieces)
-            {
-                auto leftBlocker = 63 - __builtin_clzll(leftPieces);
-                quietMoves |=(lookup.leftRay ^ (1ull << leftBlocker) ^ bitBoardLookup[leftBlocker].leftRay);
-                blockers |= (1ull << leftBlocker);
-            }
-            else
-            {
-                quietMoves |= lookup.leftRay;
-            }
-        }
-        {
-            auto bottomPieces = lookup.bottomRay & ctx.allPieces;
-            if (bottomPieces)
-            {
-                auto bottomBlocker = 63 - __builtin_clzll(bottomPieces);
-                quietMoves |=(lookup.bottomRay ^ (1ull << bottomBlocker) ^ bitBoardLookup[bottomBlocker].bottomRay);
-                blockers |= (1ull << bottomBlocker);
-            }
-            else
-            {
-                quietMoves |= lookup.bottomRay;
-            }
-        }
 
+        uint64_t quietMoves = allAttacks &(~ctx.allPieces);
         while (quietMoves)
         {
             auto targetSquare = 63 - __builtin_clzll(quietMoves);
@@ -471,7 +259,7 @@ void evaluateQueen(uint64_t lineBitMask)
             quietMoves ^= (1ull << targetSquare);
         }
 
-        auto possibleAttacks = blockers & ctx.opponentPieces;
+        auto possibleAttacks = allAttacks & ctx.opponentPieces;
         while (possibleAttacks)
         {
             auto targetSquare = 63 - __builtin_clzll(possibleAttacks);
@@ -642,65 +430,10 @@ void evaluateDiagonal(uint64_t diagonalBitMask)
     while (diagonalBitMask)
     {
         auto piecePosition = 63 - __builtin_clzll(diagonalBitMask);
-        const auto& lookup = bitBoardLookup[piecePosition];
 
-        uint64_t quietMoves = 0ull;
-        uint64_t blockers = 0ull;
+        uint64_t allAttacks = bishopMagicBb.getAttacksFor(piecePosition, ctx.allPieces);
 
-        {
-            auto topLeftPieces = lookup.topLeft & ctx.allPieces;
-            if (topLeftPieces)
-            {
-                auto topLeftBlocker = __builtin_ffsll(topLeftPieces) - 1;
-                quietMoves |=(lookup.topLeft ^ (1ull << topLeftBlocker) ^ bitBoardLookup[topLeftBlocker].topLeft);
-                blockers |= (1ull << topLeftBlocker);
-            }
-            else
-            {
-                quietMoves |= lookup.topLeft;
-            }
-        }
-        {
-            auto topRightPieces = lookup.topRight & ctx.allPieces;
-            if (topRightPieces)
-            {
-                auto topRightBlocker = __builtin_ffsll(topRightPieces) - 1;
-                quietMoves |=(lookup.topRight ^ (1ull << topRightBlocker) ^ bitBoardLookup[topRightBlocker].topRight);
-                blockers |= (1ull << topRightBlocker);
-            }
-            else
-            {
-                quietMoves |= lookup.topRight;
-            }
-        }
-        {
-            auto bottomLeftPieces = lookup.bottomLeft & ctx.allPieces;
-            if (bottomLeftPieces)
-            {
-                auto bottomLeftBlocker = 63 - __builtin_clzll(bottomLeftPieces);
-                quietMoves |=(lookup.bottomLeft ^ (1ull << bottomLeftBlocker) ^ bitBoardLookup[bottomLeftBlocker].bottomLeft);
-                blockers |= (1ull << bottomLeftBlocker);
-            }
-            else
-            {
-                quietMoves |= lookup.bottomLeft;
-            }
-        }
-        {
-            auto bottomRightPieces = lookup.bottomRight & ctx.allPieces;
-            if (bottomRightPieces)
-            {
-                auto bottomRightBlocker = 63 - __builtin_clzll(bottomRightPieces);
-                quietMoves |=(lookup.bottomRight ^ (1ull << bottomRightBlocker) ^ bitBoardLookup[bottomRightBlocker].bottomRight);
-                blockers |= (1ull << bottomRightBlocker);
-            }
-            else
-            {
-                quietMoves |= lookup.bottomRight;
-            }
-        }
-
-        quietMoves &= PinnedRegister[piecePosition];
+        uint64_t quietMoves = allAttacks &(~ctx.allPieces) & PinnedRegister[piecePosition];;
         while (quietMoves)
         {
             auto targetSquare = 63 - __builtin_clzll(quietMoves);
@@ -708,7 +441,7 @@ void evaluateDiagonal(uint64_t diagonalBitMask)
             quietMoves ^= (1ull << targetSquare);
         }
 
-        auto possibleAttacks = blockers & ctx.opponentPieces & PinnedRegister[piecePosition];
+        auto possibleAttacks = allAttacks & ctx.opponentPieces & PinnedRegister[piecePosition];
         while (possibleAttacks)
         {
             auto targetSquare = 63 - __builtin_clzll(possibleAttacks);
@@ -729,65 +462,10 @@ void evaluateLine(uint64_t lineBitMask)
     while (lineBitMask)
     {
         auto piecePosition = 63 - __builtin_clzll(lineBitMask);
-        const auto& lookup = bitBoardLookup[piecePosition];
 
-        uint64_t quietMoves = 0ull;
-        uint64_t blockers = 0ull;
+        uint64_t allAttacks = rockMagicBb.getAttacksFor(piecePosition, ctx.allPieces);
 
-        {
-            auto topPieces = lookup.topRay & ctx.allPieces;
-            if (topPieces)
-            {
-                auto topBlocker = __builtin_ffsll(topPieces) - 1;
-                quietMoves |=(lookup.topRay ^ (1ull << topBlocker) ^ bitBoardLookup[topBlocker].topRay);
-                blockers |= (1ull << topBlocker);
-            }
-            else
-            {
-                quietMoves |= lookup.topRay;
-            }
-        }
-        {
-            auto rightPieces = lookup.rightRay & ctx.allPieces;
-            if (rightPieces)
-            {
-                auto rightBlocker = __builtin_ffsll(rightPieces) - 1;
-                quietMoves |=(lookup.rightRay ^ (1ull << rightBlocker) ^ bitBoardLookup[rightBlocker].rightRay);
-                blockers |= (1ull << rightBlocker);
-            }
-            else
-            {
-                quietMoves |= lookup.rightRay;
-            }
-        }
-        {
-            auto leftPieces = lookup.leftRay & ctx.allPieces;
-            if (leftPieces)
-            {
-                auto leftBlocker = 63 - __builtin_clzll(leftPieces);
-                quietMoves |=(lookup.leftRay ^ (1ull << leftBlocker) ^ bitBoardLookup[leftBlocker].leftRay);
-                blockers |= (1ull << leftBlocker);
-            }
-            else
-            {
-                quietMoves |= lookup.leftRay;
-            }
-        }
-        {
-            auto bottomPieces = lookup.bottomRay & ctx.allPieces;
-            if (bottomPieces)
-            {
-                auto bottomBlocker = 63 - __builtin_clzll(bottomPieces);
-                quietMoves |=(lookup.bottomRay ^ (1ull << bottomBlocker) ^ bitBoardLookup[bottomBlocker].bottomRay);
-                blockers |= (1ull << bottomBlocker);
-            }
-            else
-            {
-                quietMoves |= lookup.bottomRay;
-            }
-        }
-
-        quietMoves &= PinnedRegister[piecePosition];
+        uint64_t quietMoves = allAttacks &(~ctx.allPieces) & PinnedRegister[piecePosition];
         while (quietMoves)
         {
             auto targetSquare = 63 - __builtin_clzll(quietMoves);
@@ -795,13 +473,13 @@ void evaluateLine(uint64_t lineBitMask)
             quietMoves ^= (1ull << targetSquare);
         }
 
-        auto possibleAttacks = blockers & ctx.opponentPieces & PinnedRegister[piecePosition];
+        auto possibleAttacks = allAttacks & ctx.opponentPieces& PinnedRegister[piecePosition];
         while (possibleAttacks)
         {
             auto targetSquare = 63 - __builtin_clzll(possibleAttacks);
             TMoveAddingStrategy::addRockWithBeating(piecePosition,
-                                                    targetSquare,
-                                                    ctx.board->getFieldForNonEmpty(targetSquare, c+1));
+                                                      targetSquare,
+                                                      ctx.board->getFieldForNonEmpty(targetSquare, c+1));
             possibleAttacks ^= (1ull << targetSquare);
         }
 
@@ -816,117 +494,9 @@ void evaluateLine(uint64_t lineBitMask)
         while (lineBitMask)
         {
             auto piecePosition = 63 - __builtin_clzll(lineBitMask);
-            const auto& lookup = bitBoardLookup[piecePosition];
+            uint64_t allAttacks = rockMagicBb.getAttacksFor(piecePosition, ctx.allPieces) | bishopMagicBb.getAttacksFor(piecePosition, ctx.allPieces);
 
-            uint64_t quietMoves = 0ull;
-            uint64_t blockers = 0ull;
-            {
-                auto topLeftPieces = lookup.topLeft & ctx.allPieces;
-                if (topLeftPieces)
-                {
-                    auto topLeftBlocker = __builtin_ffsll(topLeftPieces) - 1;
-                    quietMoves |=(lookup.topLeft ^ (1ull << topLeftBlocker) ^ bitBoardLookup[topLeftBlocker].topLeft);
-                    blockers |= (1ull << topLeftBlocker);
-                }
-                else
-                {
-                    quietMoves |= lookup.topLeft;
-                }
-            }
-            {
-                auto topRightPieces = lookup.topRight & ctx.allPieces;
-                if (topRightPieces)
-                {
-                    auto topRightBlocker = __builtin_ffsll(topRightPieces) - 1;
-                    quietMoves |=(lookup.topRight ^ (1ull << topRightBlocker) ^ bitBoardLookup[topRightBlocker].topRight);
-                    blockers |= (1ull << topRightBlocker);
-                }
-                else
-                {
-                    quietMoves |= lookup.topRight;
-                }
-            }
-            {
-                auto bottomLeftPieces = lookup.bottomLeft & ctx.allPieces;
-                if (bottomLeftPieces)
-                {
-                    auto bottomLeftBlocker = 63 - __builtin_clzll(bottomLeftPieces);
-                    quietMoves |=(lookup.bottomLeft ^ (1ull << bottomLeftBlocker) ^ bitBoardLookup[bottomLeftBlocker].bottomLeft);
-                    blockers |= (1ull << bottomLeftBlocker);
-                }
-                else
-                {
-                    quietMoves |= lookup.bottomLeft;
-                }
-            }
-            {
-                auto bottomRightPieces = lookup.bottomRight & ctx.allPieces;
-                if (bottomRightPieces)
-                {
-                    auto bottomRightBlocker = 63 - __builtin_clzll(bottomRightPieces);
-                    quietMoves |=(lookup.bottomRight ^ (1ull << bottomRightBlocker) ^ bitBoardLookup[bottomRightBlocker].bottomRight);
-                    blockers |= (1ull << bottomRightBlocker);
-                }
-                else
-                {
-                    quietMoves |= lookup.bottomRight;
-                }
-            }
-
-            {
-                auto topPieces = lookup.topRay & ctx.allPieces;
-                if (topPieces)
-                {
-                    auto topBlocker = __builtin_ffsll(topPieces) - 1;
-                    quietMoves |=(lookup.topRay ^ (1ull << topBlocker) ^ bitBoardLookup[topBlocker].topRay);
-                    blockers |= (1ull << topBlocker);
-                }
-                else
-                {
-                    quietMoves |= lookup.topRay;
-                }
-            }
-            {
-                auto rightPieces = lookup.rightRay & ctx.allPieces;
-                if (rightPieces)
-                {
-                    auto rightBlocker = __builtin_ffsll(rightPieces) - 1;
-                    quietMoves |=(lookup.rightRay ^ (1ull << rightBlocker) ^ bitBoardLookup[rightBlocker].rightRay);
-                    blockers |= (1ull << rightBlocker);
-                }
-                else
-                {
-                    quietMoves |= lookup.rightRay;
-                }
-            }
-            {
-                auto leftPieces = lookup.leftRay & ctx.allPieces;
-                if (leftPieces)
-                {
-                    auto leftBlocker = 63 - __builtin_clzll(leftPieces);
-                    quietMoves |=(lookup.leftRay ^ (1ull << leftBlocker) ^ bitBoardLookup[leftBlocker].leftRay);
-                    blockers |= (1ull << leftBlocker);
-                }
-                else
-                {
-                    quietMoves |= lookup.leftRay;
-                }
-            }
-            {
-                auto bottomPieces = lookup.bottomRay & ctx.allPieces;
-                if (bottomPieces)
-                {
-                    auto bottomBlocker = 63 - __builtin_clzll(bottomPieces);
-                    quietMoves |=(lookup.bottomRay ^ (1ull << bottomBlocker) ^ bitBoardLookup[bottomBlocker].bottomRay);
-                    blockers |= (1ull << bottomBlocker);
-                }
-                else
-                {
-                    quietMoves |= lookup.bottomRay;
-                }
-            }
-
-            quietMoves &= PinnedRegister[piecePosition];
+            uint64_t quietMoves = allAttacks &(~ctx.allPieces) & PinnedRegister[piecePosition];
             while (quietMoves)
             {
                 auto targetSquare = 63 - __builtin_clzll(quietMoves);
@@ -934,7 +504,7 @@ void evaluateLine(uint64_t lineBitMask)
                 quietMoves ^= (1ull << targetSquare);
             }
 
-            auto possibleAttacks = blockers & ctx.opponentPieces & PinnedRegister[piecePosition];
+            auto possibleAttacks = allAttacks & ctx.opponentPieces& PinnedRegister[piecePosition];
             while (possibleAttacks)
             {
                 auto targetSquare = 63 - __builtin_clzll(possibleAttacks);

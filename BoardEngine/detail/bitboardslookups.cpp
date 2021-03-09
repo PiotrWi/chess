@@ -456,14 +456,14 @@ RockMagicBitBoards::RockMagicBitBoards()
 
 uint64_t BishopMagicBitBoards::getAttacksFor(uint8_t fieldNum, uint64_t allpieces) const
 {
-    auto l = lookup[fieldNum];
+    auto& l = lookup[fieldNum];
     unsigned key = ((l.relevantBlockers & allpieces) * l.magicMultiplier) >> (64u - relevantBitsNum);
     return l.attacks[key];
 }
 
 uint64_t RockMagicBitBoards::getAttacksFor(uint8_t fieldNum, uint64_t allpieces) const
 {
-    auto l = lookup[fieldNum];
+    auto& l = lookup[fieldNum];
     unsigned key = ((l.relevantBlockers  & allpieces) * l.magicMultiplier) >> (64u - relevantBitsNum);
     return l.attacks[key];
 }
