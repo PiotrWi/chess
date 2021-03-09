@@ -60,12 +60,15 @@ struct BitBoardsConstants
     uint64_t bottomRight;
 };
 
+inline uint64_t verticalRevelancyMask = 0x7E'7E'7E'7E'7E'7E'7E'7E;
+inline uint64_t horizontalRevelancyMask = 0x00'FF'FF'FF'FF'FF'FF'00;
+
 template<unsigned TSIZE>
 struct MagicBitBoard
 {
     uint64_t relevantBlockers;
     uint64_t magicMultiplier;
-    uint64_t ocupancies[TSIZE];
+    uint64_t attacks[TSIZE];
 };
 
 struct BishopMagicBitBoards
