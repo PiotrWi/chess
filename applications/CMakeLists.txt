@@ -11,3 +11,4 @@ add_dependencies(applications uci_application)
 
 add_executable(magic_bb_generator
     MagicBbGenerator/main.cpp)
+target_link_libraries(magic_bb_generator board)

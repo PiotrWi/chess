@@ -2,6 +2,7 @@
 
 #include <array>
 #include <cstdint>
+#include <vector>
 
 constexpr uint64_t NOT_H_COL = 0x7f'7f'7f'7f'7f'7f'7f'7full;
 constexpr uint64_t NOT_HG_COL = 0x3f'3f'3f'3f'3f'3f'3f'3full;
@@ -73,14 +74,20 @@ struct MagicBitBoard
 
 struct BishopMagicBitBoards
 {
-    unsigned char relevantBitsNum;
-    MagicBitBoard<2048u> lookup[64];
+    unsigned relevantBitsNum = 10;
+    MagicBitBoard<1024> lookup[64];
+public:
+    BishopMagicBitBoards();
+    uint64_t getAttacksFor(uint8_t fieldNum, uint64_t allpieces) const;
 };
 
 struct RockMagicBitBoards
 {
-    unsigned char relevantBitsNum;
-    MagicBitBoard<8192u> lookup[64];
+    unsigned relevantBitsNum = 12;
+    MagicBitBoard<4096u> lookup[64];
+public:
+    uint64_t getAttacksFor(uint8_t fieldNum, uint64_t allpieces) const;
+    RockMagicBitBoards();
 };
 
 constexpr uint64_t getOppositePawnsAttackingFieldForWhite(uint64_t fieldBitMask)
@@ -222,4 +229,12 @@ constexpr std::array<BitBoardsConstants, 64> createLookups()
     return lookups;
 }
 
+std::vector<unsigned> extractSetBitIndexes(uint64_t in);
+
+uint64_t evaluateLineAttacks(uint64_t blockers, uint piecePosition);
+uint64_t evaluateDiagonalAttacks(uint64_t blockers, uint piecePosition);
+
 static constexpr std::array<BitBoardsConstants, 64> bitBoardLookup = createLookups();
+
+extern BishopMagicBitBoards bishopMagicBb;
+extern RockMagicBitBoards rockMagicBb;
