@@ -30,7 +30,6 @@ int main(int argc, char** argv)
         std::cout << "./chess --whitePlayer playerType --blackPlayer playerType" << std::endl;
         std::cout << "where player types are:" << std::endl;
         std::cout << "  humanPlayer" << std::endl;
-        std::cout << "  simplePlayer" << std::endl;
         std::cout << "  cachedPlayer" << std::endl;
 
         return 1;

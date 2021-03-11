@@ -65,42 +65,45 @@ void Board::cleanConcrete(const unsigned char field, unsigned char oldValue)
     switch (oldValue)
     {
         case(NOTATION::COLOR::WHITE | NOTATION::PIECES::PAWN):
-            piecesBitSets[0].pawnsMask &= ~(1ull << field);
+            piecesBitSets[WHITE_INDEX].pawnsMask ^= (1ull << field);
             return;
         case(NOTATION::COLOR::WHITE | NOTATION::PIECES::ROCK):
-            piecesBitSets[0].rocksMask &= ~(1ull << field);
+            piecesBitSets[WHITE_INDEX].rocksMask ^= (1ull << field);
             return;
         case(NOTATION::COLOR::WHITE | NOTATION::PIECES::KNIGHT):
-            piecesBitSets[0].knightsMask &= ~(1ull << field);
+            piecesBitSets[WHITE_INDEX].knightsMask ^= (1ull << field);
             return;
         case(NOTATION::COLOR::WHITE | NOTATION::PIECES::BISHOP):
-            piecesBitSets[0].bishopsMask &= ~(1ull << field);
+            piecesBitSets[WHITE_INDEX].bishopsMask ^= (1ull << field);
             return;
         case(NOTATION::COLOR::WHITE | NOTATION::PIECES::QUEEN):
-            piecesBitSets[0].queensMask &= ~(1ull << field);
+            piecesBitSets[WHITE_INDEX].queensMask ^= (1ull << field);
             return;
         case(NOTATION::COLOR::WHITE | NOTATION::PIECES::KING):
-            piecesBitSets[0].kingsMask &= ~(1ull << field);
+            piecesBitSets[WHITE_INDEX].kingsMask ^= (1ull << field);
             return;
         case(NOTATION::COLOR::BLACK | NOTATION::PIECES::PAWN):
-            piecesBitSets[1].pawnsMask &= ~(1ull << field);
+            piecesBitSets[BLACK_INDEX].pawnsMask ^= (1ull << field);
             return;
         case(NOTATION::COLOR::BLACK | NOTATION::PIECES::ROCK):
-            piecesBitSets[1].rocksMask &= ~(1ull << field);
+            piecesBitSets[BLACK_INDEX].rocksMask ^= (1ull << field);
             return;
         case(NOTATION::COLOR::BLACK | NOTATION::PIECES::KNIGHT):
-            piecesBitSets[1].knightsMask &= ~(1ull << field);
+            piecesBitSets[BLACK_INDEX].knightsMask ^= (1ull << field);
             return;
         case(NOTATION::COLOR::BLACK | NOTATION::PIECES::BISHOP):
-            piecesBitSets[1].bishopsMask &= ~(1ull << field);
+            piecesBitSets[BLACK_INDEX].bishopsMask ^= (1ull << field);
             return;
         case(NOTATION::COLOR::BLACK | NOTATION::PIECES::QUEEN):
-            piecesBitSets[1].queensMask &= ~(1ull << field);
+            piecesBitSets[BLACK_INDEX].queensMask ^= (1ull << field);
             return;
         case(NOTATION::COLOR::BLACK | NOTATION::PIECES::KING):
-            piecesBitSets[1].kingsMask &= ~(1ull << field);
+            piecesBitSets[BLACK_INDEX].kingsMask ^= (1ull << field);
             return;
     }
+#ifdef ASSERTSON
+    assert(field < 64);
+#endif
 }
 
 void Board::setConcrete(const unsigned char field, unsigned char value)
@@ -108,40 +111,40 @@ void Board::setConcrete(const unsigned char field, unsigned char value)
     switch (value)
     {
         case(NOTATION::COLOR::WHITE | NOTATION::PIECES::PAWN):
-            piecesBitSets[0].pawnsMask |= (1ull << field);
+            piecesBitSets[WHITE_INDEX].pawnsMask |= (1ull << field);
             return;
         case(NOTATION::COLOR::WHITE | NOTATION::PIECES::ROCK):
-            piecesBitSets[0].rocksMask |= (1ull << field);
+            piecesBitSets[WHITE_INDEX].rocksMask |= (1ull << field);
             return;
         case(NOTATION::COLOR::WHITE | NOTATION::PIECES::KNIGHT):
-            piecesBitSets[0].knightsMask |= (1ull << field);
+            piecesBitSets[WHITE_INDEX].knightsMask |= (1ull << field);
             return;
         case(NOTATION::COLOR::WHITE | NOTATION::PIECES::BISHOP):
-            piecesBitSets[0].bishopsMask |= (1ull << field);
+            piecesBitSets[WHITE_INDEX].bishopsMask |= (1ull << field);
             return;
         case(NOTATION::COLOR::WHITE | NOTATION::PIECES::QUEEN):
-            piecesBitSets[0].queensMask |= (1ull << field);
+            piecesBitSets[WHITE_INDEX].queensMask |= (1ull << field);
             return;
         case(NOTATION::COLOR::WHITE | NOTATION::PIECES::KING):
-            piecesBitSets[0].kingsMask |= (1ull << field);
+            piecesBitSets[WHITE_INDEX].kingsMask |= (1ull << field);
             return;
         case(NOTATION::COLOR::BLACK | NOTATION::PIECES::PAWN):
-            piecesBitSets[1].pawnsMask |= (1ull << field);
+            piecesBitSets[BLACK_INDEX].pawnsMask |= (1ull << field);
             return;
         case(NOTATION::COLOR::BLACK | NOTATION::PIECES::ROCK):
-            piecesBitSets[1].rocksMask |= (1ull << field);
+            piecesBitSets[BLACK_INDEX].rocksMask |= (1ull << field);
             return;
         case(NOTATION::COLOR::BLACK | NOTATION::PIECES::KNIGHT):
-            piecesBitSets[1].knightsMask |= (1ull << field);
+            piecesBitSets[BLACK_INDEX].knightsMask |= (1ull << field);
             return;
         case(NOTATION::COLOR::BLACK | NOTATION::PIECES::BISHOP):
-            piecesBitSets[1].bishopsMask |= (1ull << field);
+            piecesBitSets[BLACK_INDEX].bishopsMask |= (1ull << field);
             return;
         case(NOTATION::COLOR::BLACK | NOTATION::PIECES::QUEEN):
-            piecesBitSets[1].queensMask |= (1ull << field);
+            piecesBitSets[BLACK_INDEX].queensMask |= (1ull << field);
             return;
         case(NOTATION::COLOR::BLACK | NOTATION::PIECES::KING):
-            piecesBitSets[1].kingsMask |= (1ull << field);
+            piecesBitSets[BLACK_INDEX].kingsMask |= (1ull << field);
             return;
     }
 }
@@ -165,6 +168,13 @@ void Board::setField(const unsigned char field, unsigned char value)
     setConcrete(field, value);
 }
 
+void Board::setPreviouslyEmptyField(const unsigned char field, unsigned char value)
+{
+#ifdef ASSERTSON
+    assert(field < 64);
+#endif
+    setConcrete(field, value);
+}
 void Board::setField(const unsigned char field, unsigned char oldValue, unsigned char value)
 {
     cleanConcrete(field, oldValue);
@@ -174,6 +184,14 @@ void Board::setField(const unsigned char field, unsigned char oldValue, unsigned
 void Board::setField(const char* field, unsigned char val)
 {
     setField(NotationConversions::getFieldNum(field), val);
+}
+
+void Board::clearField(const unsigned char field, unsigned char oldValue)
+{
+#ifdef ASSERTSON
+    assert(field < 64);
+#endif
+    cleanConcrete(field, oldValue);
 }
 
 bool operator==(const Board& lhs, const Board& rhs) noexcept
@@ -266,7 +284,8 @@ bool operator ==(const ExtendedMove& lhs, const ExtendedMove& rhs) noexcept
 ExtendedMove convertMoveToExtended(const Board& board, const Move& move) noexcept
 {
     const unsigned char target = board.getField(move.destination);
-    const unsigned char source = board.getField(move.source) & NOTATION::PIECES::PIECES_MASK;
+    const unsigned char source = board.getField(move.source)
+            & (NOTATION::PIECES::PIECES_MASK | NOTATION::COLOR::COLOR_MASK);
 
     unsigned char flags = ((move.isPromoted == true) ? ExtendedMove::promotionMask : 0u)
             | ((target != 0u) ? ExtendedMove::beatingMask : 0u)
@@ -300,7 +319,7 @@ ExtendedMove ExtendedMove::whiteShortCaste()
 {
     return ExtendedMove{NotationConversions::getFieldNum("e1"),
                         NotationConversions::getFieldNum("g1"),
-                        ExtendedMove::kingMoveMask,
+                        ExtendedMove::kingMoveMask | ExtendedMove::castlingMask,
                         0,
                         NOTATION::PIECES::KING | NOTATION::COLOR::WHITE, 0};
 }
@@ -309,7 +328,7 @@ ExtendedMove ExtendedMove::whiteLongCaste()
 {
     return ExtendedMove{NotationConversions::getFieldNum("e1"),
                         NotationConversions::getFieldNum("c1"),
-                        ExtendedMove::kingMoveMask,
+                        ExtendedMove::kingMoveMask | ExtendedMove::castlingMask,
                         0,
                         NOTATION::PIECES::KING | NOTATION::COLOR::WHITE, 0};
 }
@@ -318,7 +337,7 @@ ExtendedMove ExtendedMove::blackShortCaste()
 {
     return ExtendedMove{NotationConversions::getFieldNum("e8"),
                         NotationConversions::getFieldNum("g8"),
-                        ExtendedMove::kingMoveMask,
+                        ExtendedMove::kingMoveMask | ExtendedMove::castlingMask,
                         0,
                         NOTATION::PIECES::KING | NOTATION::COLOR::BLACK, 0};
 }
@@ -327,7 +346,7 @@ ExtendedMove ExtendedMove::blackLongCaste()
 {
     return ExtendedMove{NotationConversions::getFieldNum("e8"),
                         NotationConversions::getFieldNum("c8"),
-                        ExtendedMove::kingMoveMask,
+                        ExtendedMove::kingMoveMask | ExtendedMove::castlingMask,
                         0,
                         NOTATION::PIECES::KING | NOTATION::COLOR::BLACK, 0};
 }

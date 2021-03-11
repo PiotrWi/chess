@@ -31,10 +31,12 @@ add_library(board
     notations/LongAlgebraicNotation.cpp
     hashing/zobrist.hpp
     hashing/Zobrish.cpp
-    FieldLookup/FieldLookup.hpp
     MoveGenerator/MoveGeneratorContext.hpp
     MoveGenerator/Strategy.hpp
-        MoveGenerator/MoveGeneratorBackend.hpp
+    MoveGenerator/MoveGeneratorBackend.hpp
     notations/uci.hpp
     notations/uci.cpp
-        FieldLookup/TableLookup.hpp detail/BitBoarsUtils.h)
+    detail/BitBoardsUtils.h
+    notations/fen.h
+    notations/fen.cpp
+    detail/bitboardslookups.cpp)

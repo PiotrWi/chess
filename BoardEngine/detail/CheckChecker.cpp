@@ -5,7 +5,7 @@
 #include <publicIf/Board.hpp>
 #include <publicIf/NotationConversions.hpp>
 
-#include <detail/BitBoarsUtils.h>
+#include <detail/BitBoardsUtils.h>
 #include <detail/bitboardslookups.hpp>
 
 namespace CheckChecker
@@ -85,14 +85,12 @@ bool isAttackedOn(const Board& board,
         bishopOrQueenAttackers |= (1ull << (__builtin_ffsll(rightUpPieces) - 1)) & OppositeQueenAndBishop;
     }
 
-    // LEFT BOTTOM
     auto leftBottomPieces = lookup.bottomLeft & allPieces;
     if (leftBottomPieces != 0)
     {
         bishopOrQueenAttackers |= (1ull << (63 - __builtin_clzll(leftBottomPieces))) & OppositeQueenAndBishop;
     }
 
-    // RIGHT BOTTOM
     auto rightBottomPieces = lookup.bottomRight & allPieces;
     if (rightBottomPieces != 0)
     {

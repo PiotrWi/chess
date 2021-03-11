@@ -110,7 +110,7 @@ TEST_F(MoveGeneratorTests, shouldCorectlyAnalyzePos_2)
     auto kingMoves = map(
             {"Ke1d2", "Ke1e2"}, WHITE, board);
 
-	ASSERT_THAT(printAndReturn(sut.generate(board, WHITE)),
+	ASSERT_THAT(sut.generate(board, WHITE),
                 ::testing::UnorderedElementsAreArray(pawnMoves+knightMoves+rockMoves+bishopMoves+queenMoves+kingMoves));
 }
 
@@ -123,22 +123,12 @@ TEST_F(MoveGeneratorTests, shouldCorectlyAnalyzePosWithMoves)
 		" ♙      "
 		"    ♙   "
 		"        "
-		"    ♔  ♙"
-		"♖      ♖");
-	auto moveKingToInitialPosition = notations::coordinates::createExtendedMove("e2-e1", WHITE, board);
-	MoveApplier::applyMove(board, moveKingToInitialPosition);
-
-    auto moveWitePawnToPieces = notations::coordinates::createExtendedMove("c7-c5", BLACK, board);
-    MoveApplier::applyMove(board, moveWitePawnToPieces);
-
-//	"    ♚   "
-//	"        "
-//	"  .     "
-//	" ♙♟     "
-//	"    ♙   "
-//	"        "
-//	"       ♙"
-//	"♖   ♔  ♖");
+		"       ♙"
+		"♖   ♔  ♖");
+    MoveApplier::applyMove(board, notations::coordinates::createExtendedMove("e1-e2", WHITE, board));
+    MoveApplier::applyMove(board, notations::coordinates::createExtendedMove("e8-e7", BLACK, board));
+    MoveApplier::applyMove(board, notations::coordinates::createExtendedMove("e2-e1", WHITE, board));
+    MoveApplier::applyMove(board, notations::coordinates::createExtendedMove("c7-c5", BLACK, board));
 
 	const char* enPassant = "b5xc6";
 	auto pawnMoves = map(
@@ -222,13 +212,12 @@ TEST_F(MoveGeneratorTests, shouldPreventIllegalCasles_2)
 		"    ♙   "
 		"        "
 		"       ♙"
-		" ♖  ♔  ♖");
+		"♖   ♔  ♖");
 
-    auto moveRockToInitialPosition = notations::coordinates::createExtendedMove("b1-a1", WHITE, board);
-    MoveApplier::applyMove(board, moveRockToInitialPosition);
-
-    auto moveWitePawnToPieces = notations::coordinates::createExtendedMove("e7-e8", BLACK, board);
-    MoveApplier::applyMove(board, moveWitePawnToPieces);
+    MoveApplier::applyMove(board, notations::coordinates::createExtendedMove("a1-b1", WHITE, board));
+    MoveApplier::applyMove(board, notations::coordinates::createExtendedMove("e7-e8", BLACK, board));
+    MoveApplier::applyMove(board, notations::coordinates::createExtendedMove("b1-a1", WHITE, board));
+    MoveApplier::applyMove(board, notations::coordinates::createExtendedMove("e8-e7", BLACK, board));
 
 	auto pawnMoves = map(
 		{"b5b6", "e4e5", "h2h3", "h2h4"}, WHITE, board);
@@ -266,13 +255,12 @@ TEST_F(MoveGeneratorTests, shouldPreventIllegalCasles_3)
 		"    ♙   "
 		"        "
 		"       ♙"
-		"♖   ♔ ♖ ");
+		"♖   ♔  ♖");
 
-    auto moveRockToInitialPosition = notations::coordinates::createExtendedMove("g1-h1", WHITE, board);
-    MoveApplier::applyMove(board, moveRockToInitialPosition);
-
-    auto moveWitePawnToPieces = notations::coordinates::createExtendedMove("e7-e8", BLACK, board);
-    MoveApplier::applyMove(board, moveWitePawnToPieces);
+    MoveApplier::applyMove(board, notations::coordinates::createExtendedMove("h1-g1", WHITE, board));
+    MoveApplier::applyMove(board, notations::coordinates::createExtendedMove("e7-e8", BLACK, board));
+    MoveApplier::applyMove(board, notations::coordinates::createExtendedMove("g1-h1", WHITE, board));
+    MoveApplier::applyMove(board, notations::coordinates::createExtendedMove("e8-e7", BLACK, board));
 
 	auto pawnMoves = map(
 		{"b5b6", "e4e5", "h2h3", "h2h4"}, WHITE, board);
@@ -318,7 +306,7 @@ TEST_F(MoveGeneratorTests, shouldFindPromotions)
 
 	auto kingMoves = map(
 		{"Kd1c1", "Kd1c2", "Kd1d2"}, WHITE, board);
-	ASSERT_THAT(printAndReturn(sut.generate(board, WHITE)),
+	ASSERT_THAT(sut.generate(board, WHITE),
 		::testing::UnorderedElementsAreArray(pawnMoves+kingMoves));
 }
 
@@ -405,7 +393,7 @@ TEST_F(MoveGeneratorTests, shouldCorectlyAnalyzePosForBlack)
 	auto kingMoves = map(
 		{"Ke8d7"}, BLACK,  board);
 
-    ASSERT_THAT(printAndReturn(sut.generate(board, BLACK)),
+    ASSERT_THAT(sut.generate(board, BLACK),
 		::testing::UnorderedElementsAreArray(pawnMoves+knightMoves+rockMoves+bishopMoves+queenMoves+kingMoves));
 }
 
@@ -475,16 +463,16 @@ TEST_F(MoveGeneratorTests, shallNotAllowToMovePinned)
                                     "        "
                                     "    ♛   "
                                     "        ", WHITE);
-
     auto rockMoves = map(
             {"Re6e7", "Re6xe8",
              "Re4e3", "Re4xe2",
-             "Rd5c5", "Rd5b5", "Rd5xa5", "Rf5xg5"}, WHITE, board);
+             "Rd5c5", "Rd5b5", "Rd5xa5",
+             "Rf5xg5"}, WHITE, board);
 
     auto kingMoves = map(
             {"Ke5f6", "Ke5d6", "Ke5d4", "Ke5f4"}, WHITE, board);
 
-    ASSERT_THAT(sut.generate(board, WHITE),
+    ASSERT_THAT(printAndReturn(sut.generate(board, WHITE)),
                 ::testing::UnorderedElementsAreArray(rockMoves + kingMoves));
 }
 
@@ -567,8 +555,6 @@ TEST_F(MoveGeneratorTests, shallNotAllowToMovePawnWhenPinned)
                 ::testing::UnorderedElementsAreArray(kingMoves));
 }
 
-
-
 // CUSTOM from BUG fixing
 TEST_F(MoveGeneratorTests, Custom_1)
 {
@@ -591,4 +577,89 @@ TEST_F(MoveGeneratorTests, Custom_1)
             {"Bc1d2"}, WHITE, board);
     ASSERT_THAT(sut.generate(board, WHITE),
                 ::testing::UnorderedElementsAreArray(kingMoves + pawnMoves + queenMoves + bishopMoves));
+}
+
+TEST_F(MoveGeneratorTests, Custom_2)
+{
+    auto board = utils::createBoard("♜♞♝ ♚ ♞♜"
+                                    "♟♟♟  ♟♟♟"
+                                    "    ♟   "
+                                    "   ♛    "
+                                    "   ♙    "
+                                    "♙ ♝     "
+                                    " ♙♙  ♙♙♙"
+                                    "♖ ♗♕♔♗♘♖");
+
+    auto kingMoves = map(
+            {"Ke1e2"}, WHITE, board);
+    auto pawnMoves = map(
+            {"b2xc3"}, WHITE, board);
+    auto queenMoves = map(
+            {"Qd1d2"}, WHITE, board);
+    auto bishopMoves = map(
+            {"Bc1d2"}, WHITE, board);
+    ASSERT_THAT(sut.generate(board, WHITE),
+                ::testing::UnorderedElementsAreArray(kingMoves + pawnMoves + queenMoves + bishopMoves));
+}
+
+TEST_F(MoveGeneratorTests, Custom_3)
+{
+    auto board = utils::createBoard("♜  ♘ ♜♚ "
+                                    "♟ ♟♝ ♟♟ "
+                                    "♕      ♟"
+                                    "  ♟     "
+                                    "   ♟    "
+                                    " ♙  ♙   "
+                                    "♙♗♙♙ ♙ ♙"
+                                    "♖   ♔  ♛");
+
+    auto kingMoves = map(
+            {"Ke1e2"}, WHITE, board);
+    auto queenMoves = map(
+            {"Qa6f1"}, WHITE, board);
+
+    ASSERT_THAT(sut.generate(board, WHITE),
+                ::testing::UnorderedElementsAreArray(kingMoves + queenMoves));
+}
+
+TEST_F(MoveGeneratorTests, Custom_4)
+{
+
+    auto board = utils::createBoard("♜   ♚  ♜"
+                                    "♟ ♟♟ ♟♟♟"
+                                    "♝♟♞ ♟ ♛ "
+                                    "   ♙♙   "
+                                    "  ♙     "
+                                    "♗ ♙  ♘  "
+                                    "♙    ♙♙♙"
+                                    "♖  ♕ ♖♔ ", BLACK);
+    auto rockMoves = map(
+            {"Ra8b8", "Ra8c8", "Ra8d8",
+             "Rh8g8", "Rh8f8"}, BLACK, board);
+
+    auto kingMoves = map(
+            {"O-O-O",
+             "Ke8d8"}, BLACK, board);
+
+    auto pawnMoves = map(
+            {"b6b5", "d7d6", "e6xd5", "f7f6", "f7f5", "h7h6", "h7h5"}, BLACK, board);
+
+    auto bishopMoves = map(
+            {"Ba6b5", "Ba6xc4", "Ba6b7", "Ba6c8"}, BLACK, board);
+
+    auto knightMoves = map(
+            {"Nc6b8", "Nc6d8", "Nc6e7", "Nc6xe5", "Nc6d4", "Nc6b4", "Nc6a5" }, BLACK, board);
+
+    auto queenMoves = map(
+            {"Qg6f6", "Qg6h6",
+             "Qg6g5", "Qg6g4", "Qg6g3", "Qg6xg2",
+             "Qg6f5", "Qg6e4", "Qg6d3", "Qg6c2", "Qg6b1",
+             "Qg6h5"}, BLACK, board);
+
+    auto moves = sut.generate(board, BLACK);
+    std::cout << moves.size() << std::endl;
+    auto expectation = rockMoves + kingMoves + pawnMoves + bishopMoves + knightMoves + queenMoves;
+    std::cout << expectation.size() << std::endl;
+    ASSERT_THAT(printAndReturn(moves),
+                ::testing::UnorderedElementsAreArray(rockMoves+kingMoves+pawnMoves+bishopMoves+knightMoves+queenMoves));
 }

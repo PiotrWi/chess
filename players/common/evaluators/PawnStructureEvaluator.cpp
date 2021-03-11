@@ -1,6 +1,8 @@
 #include "PawnStructureEvaluator.hpp"
 
 #include <publicIf/Board.hpp>
+#include <detail/bitboardslookups.hpp>
+
 #include <publicIf/Notation.hpp>
 #include <publicIf/NotationConversions.hpp>
 
@@ -13,48 +15,34 @@ namespace
 int evaluateForWhite(const Board & board)
 {
     auto eval = 0;
-    unsigned char pawnsInColumn[8] = {};
 
-    for (unsigned char pos = 8u; pos < 48; ++pos)
+    for (auto && rank : ranks)
     {
-        if (board.getField(pos) == (NOTATION::PIECES::PAWN | NOTATION::COLOR::WHITE))
+        auto pawnsInRank = __builtin_popcountll(
+            rank & board.piecesBitSets[NOTATION::COLOR::WHITE].pawnsMask);
+        if (pawnsInRank > 1)
         {
-            pawnsInColumn[NotationConversions::getColumnNum(pos)] += 1;
+            eval += (pawnsInRank - 1) * (-50);
         }
     }
 
-    // doubled Pawn
-    for (auto col = 0u; col < 8; ++col)
-    {
-        if (pawnsInColumn[col] > 1)
-        {
-            eval += (pawnsInColumn[col] - 1) * (-50);
-        }
-    }
     return eval;
 }
 
 int evaluateForBlack(const Board& board)
 {
     auto eval = 0;
-    unsigned char pawnsInColumn[8] = {};
 
-    for (unsigned char pos = 8u; pos < 48; ++pos)
+    for (auto && rank : ranks)
     {
-        if (board.getField(pos) == (NOTATION::PIECES::PAWN | NOTATION::COLOR::BLACK))
+        auto pawnsInRank = __builtin_popcountll(
+                rank & board.piecesBitSets[NOTATION::COLOR::BLACK].pawnsMask);
+        if (pawnsInRank > 1)
         {
-            pawnsInColumn[NotationConversions::getColumnNum(pos)] += 1;
+            eval += (pawnsInRank - 1) * (-50);
         }
     }
 
-    // doubled Pawn
-    for (auto col = 0u; col < 8; ++col)
-    {
-        if (pawnsInColumn[col] > 1)
-        {
-            eval += (pawnsInColumn[col] - 1) * (-50);
-        }
-    }
     return eval;
 }
 

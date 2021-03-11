@@ -182,14 +182,14 @@ private:
 };
 
 
-int evaluatePosition(BoardEngine& be, players::common::move_generators::FullCachedEngine& moveGenerator)
+int evaluatePosition(BoardEngine& be, players::common::move_generators::FullCachedEngine& moveGenerator, unsigned int validMoves)
 {
     if(be.are3Repeatitions())
     {
         return 0;
     }
 
-    return moveGenerator.getEvaluationValue(be) ;
+    return moveGenerator.getEvaluationValue(be, validMoves);
 }
 
 int quiescenceSearch(BoardEngine& be,
@@ -200,19 +200,20 @@ int quiescenceSearch(BoardEngine& be,
 {
     if (depth == 0) // terminate quiescence
     {
-        return cachedEngine.getEvaluationValue(be);
+        return cachedEngine.getEvaluationValue(be, be.generateValidMoveCount());
     }
 
     auto moves = be.generateMoves();
+    auto validMoves = moves.size();
 
     auto orderedMoves = OnlyBeatingMoves(std::move(moves));
     auto stablePosition = orderedMoves.size() == 0;
     if (stablePosition)
     {
-        return cachedEngine.getEvaluationValue(be) ;
+        return cachedEngine.getEvaluationValue(be, validMoves) ;
     }
 
-    int stand_pat = evaluatePosition(be, cachedEngine);
+    int stand_pat = evaluatePosition(be, cachedEngine, validMoves);
     if( stand_pat >= beta )
         return beta;
     if( alfa < stand_pat )
@@ -273,14 +274,17 @@ int evaluateMax(BoardEngine& be,
         return -10000000;
     }
 
-    if (cache.previousEvaluations[depth].visitedBefore)
-    {
-        if (cache.previousEvaluations[depth].lowerValue >= beta)
-            return beta;
-        if (cache.previousEvaluations[depth].higherValue <= alfa)
-            return alfa;
-        alfa = std::max(alfa, cache.previousEvaluations[depth].lowerValue);
-        beta = std::min(beta, cache.previousEvaluations[depth].higherValue);
+    for (auto i = depth; i < MAX_DEPTH; ++i) {
+        if (cache.previousEvaluations[i].visitedBefore)
+        {
+            if (cache.previousEvaluations[i].lowerValue >= beta)
+                return beta;
+            if (cache.previousEvaluations[i].higherValue <= alfa)
+                return alfa;
+            alfa = std::max(alfa, cache.previousEvaluations[i].lowerValue);
+            beta = std::min(beta, cache.previousEvaluations[i].higherValue);
+            break;
+        }
     }
 
     auto memorial = be.getMemorial();
@@ -345,12 +349,12 @@ int evaluateMax(BoardEngine& be,
 namespace full_search
 {
 
-void interrupt()
+inline void interrupt()
 {
     interrupt_flag = true;
 }
 
-ExtendedMove evaluate(BoardEngine be,
+inline ExtendedMove evaluate(BoardEngine be,
               players::common::move_generators::FullCachedEngine& cachedEngine,
               unsigned char depth)
 {
@@ -375,7 +379,7 @@ constexpr auto InitialBeta = mateValue + 1;
  *
  * NOTE: Iterative searching for the best move.
  */
-ExtendedMove evaluateIterative(BoardEngine be,
+    inline ExtendedMove evaluateIterative(BoardEngine be,
                        players::common::move_generators::FullCachedEngine& cachedEngine,
                        unsigned char maxDepth)
 {

@@ -415,10 +415,37 @@ TEST(CheckCheckershould, Custom_4)
     auto board = utils::createBoard("      ♚♛"
                                     "  ♛     "
                                     "   ♖♔♖  "
-                                    "       "
+                                    "        "
                                     "   ♖ ♖  "
                                     "      ♛ "
                                     " ♛      "
                                     "        ");
     ASSERT_FALSE(CheckChecker::isCheckOn(board, NOTATION::COLOR::color::white));
+}
+
+TEST(CheckCheckershould, Custom_5)
+{
+    auto board = utils::createBoard("♜  ♘ ♜♚ "
+                                    "♟ ♟♝ ♟♟ "
+                                    "♕      ♟"
+                                    "  ♟     "
+                                    "   ♟    "
+                                    " ♙  ♙   "
+                                    "♙♗♙♙ ♙ ♙"
+                                    "♖   ♔  ♛");
+    ASSERT_TRUE(CheckChecker::isCheckOn(board, NOTATION::COLOR::color::white));
+}
+
+TEST(CheckCheckershould, Custom_6)
+{
+    auto board = utils::createBoard(
+            "♜  ♛♚♝ ♜"
+            "♟♟♟  ♟♟ "
+            "  ♗ ♝♞ ♟"
+            "   ♟♟   "
+            "       ♕"
+            "  ♘ ♙   "
+            "♙♙♙♙ ♙♙♙"
+            "♖ ♗ ♔ ♘♖", NOTATION::COLOR::color::black);
+    ASSERT_TRUE(CheckChecker::isCheckOn(board, NOTATION::COLOR::color::black));
 }

@@ -2,6 +2,7 @@
 
 #include <array>
 #include <cstdint>
+#include <vector>
 
 constexpr uint64_t NOT_H_COL = 0x7f'7f'7f'7f'7f'7f'7f'7full;
 constexpr uint64_t NOT_HG_COL = 0x3f'3f'3f'3f'3f'3f'3f'3full;
@@ -24,12 +25,24 @@ constexpr uint64_t onlyRightFrom[8] =
 {
         0xfe'fe'fe'fe'fe'fe'fe'feull,
         0xfc'fc'fc'fc'fc'fc'fc'fcull,
-        0xf8'f8'f8'f8'f8'f8'f8'01ull,
+        0xf8'f8'f8'f8'f8'f8'f8'f8ull,
         0xf0'f0'f0'f0'f0'f0'f0'f0ull,
         0xe0'e0'e0'e0'e0'e0'e0'e0ull,
         0xc0'c0'c0'c0'c0'c0'c0'c0ull,
         0x80'80'80'80'80'80'80'80ull,
         0x00'00'00'00'00'00'00'00ull,
+};
+
+constexpr uint64_t ranks[8] =
+{
+        0x01'01'01'01'01'01'01'01ull, // A
+        0x02'02'02'02'02'02'02'02ull, // B
+        0x04'04'04'04'04'04'04'04ull, // C
+        0x08'08'08'08'08'08'08'08ull, // D
+        0x10'10'10'10'10'10'10'10ull, // E
+        0x20'20'20'20'20'20'20'20ull, // F
+        0x40'40'40'40'40'40'40'40ull, // G
+        0x80'80'80'80'80'80'80'80ull, // H
 };
 
 struct BitBoardsConstants
@@ -46,6 +59,35 @@ struct BitBoardsConstants
     uint64_t topRight;
     uint64_t bottomLeft;
     uint64_t bottomRight;
+};
+
+inline uint64_t verticalRevelancyMask = 0x7E'7E'7E'7E'7E'7E'7E'7E;
+inline uint64_t horizontalRevelancyMask = 0x00'FF'FF'FF'FF'FF'FF'00;
+
+template<unsigned TSIZE>
+struct MagicBitBoard
+{
+    uint64_t relevantBlockers;
+    uint64_t magicMultiplier;
+    uint64_t attacks[TSIZE];
+};
+
+struct BishopMagicBitBoards
+{
+    unsigned relevantBitsNum = 9;
+    MagicBitBoard<512> lookup[64];
+public:
+    BishopMagicBitBoards();
+    uint64_t getAttacksFor(uint8_t fieldNum, uint64_t allpieces) const;
+};
+
+struct RockMagicBitBoards
+{
+    unsigned relevantBitsNum = 12;
+    MagicBitBoard<4096u> lookup[64];
+public:
+    uint64_t getAttacksFor(uint8_t fieldNum, uint64_t allpieces) const;
+    RockMagicBitBoards();
 };
 
 constexpr uint64_t getOppositePawnsAttackingFieldForWhite(uint64_t fieldBitMask)
@@ -83,7 +125,6 @@ constexpr uint64_t getKingMovePossibilities(uint64_t fieldBitMask)
         | (NOT_H_COL & fieldBitMask) << 1
         | (NOT_H_COL & fieldBitMask) >> 7;
 }
-
 
 constexpr uint64_t getTopRay(uint64_t fieldBitMask)
 {
@@ -188,4 +229,12 @@ constexpr std::array<BitBoardsConstants, 64> createLookups()
     return lookups;
 }
 
+std::vector<unsigned> extractSetBitIndexes(uint64_t in);
+
+uint64_t evaluateLineAttacks(uint64_t blockers, unsigned piecePosition);
+uint64_t evaluateDiagonalAttacks(uint64_t blockers, unsigned piecePosition);
+
 static constexpr std::array<BitBoardsConstants, 64> bitBoardLookup = createLookups();
+
+extern BishopMagicBitBoards bishopMagicBb;
+extern RockMagicBitBoards rockMagicBb;

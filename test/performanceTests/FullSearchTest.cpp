@@ -35,6 +35,34 @@ TEST(FullSearchTest, PerformanceTest_6_black)
     full_search::evaluate(be, mg, 6);
 }
 
+TEST(FullSearchTest, PerformanceTest_2_iterative)
+{
+    BoardEngine be;
+    players::common::move_generators::FullCachedEngine mg;
+    full_search::evaluateIterative(be, mg, 2);
+}
+
+TEST(FullSearchTest, PerformanceTest_3_iterative)
+{
+    BoardEngine be;
+    players::common::move_generators::FullCachedEngine mg;
+    full_search::evaluateIterative(be, mg, 3);
+}
+
+TEST(FullSearchTest, PerformanceTest_4_iterative)
+{
+    BoardEngine be;
+    players::common::move_generators::FullCachedEngine mg;
+    full_search::evaluateIterative(be, mg, 4);
+}
+
+TEST(FullSearchTest, PerformanceTest_5_iterative)
+{
+    BoardEngine be;
+    players::common::move_generators::FullCachedEngine mg;
+    full_search::evaluateIterative(be, mg, 5);
+}
+
 TEST(FullSearchTest, PerformanceTest_6_iterative)
 {
     BoardEngine be;
@@ -42,20 +70,12 @@ TEST(FullSearchTest, PerformanceTest_6_iterative)
     full_search::evaluateIterative(be, mg, 6);
 }
 
-TEST(FullSearchTest, PerformanceTest_6_black_iterative)
+TEST(FullSearchTest, PerformanceTest_7_iterative)
 {
     BoardEngine be;
     players::common::move_generators::FullCachedEngine mg;
-    be.applyMove(notations::coordinates::createExtendedMove("e2-e4", NOTATION::COLOR::color::white, be.board));
-    full_search::evaluateIterative(be, mg, 6);
+    full_search::evaluateIterative(be, mg, 7);
 }
-/*
-TEST(FullSearchTest, PerformanceTest_8)
-{
-    BoardEngine be;
-    players::common::move_generators::FullCachedEngine mg;
-    full_search::evaluate(be, mg, 8);
-}*/
 
 TEST(FullSearchTest, PerformanceTest_8_iterative)
 {
@@ -63,20 +83,12 @@ TEST(FullSearchTest, PerformanceTest_8_iterative)
     players::common::move_generators::FullCachedEngine mg;
     full_search::evaluateIterative(be, mg, 8);
 }
-/*
-TEST(FullSearchTest, PerformanceTest_8_black)
+
+TEST(FullSearchTest, PerformanceTest_9_iterative)
 {
     BoardEngine be;
     players::common::move_generators::FullCachedEngine mg;
-    be.applyMove(notations::coordinates::createMove("e2-e4", NOTATION::COLOR::color::white));
-    full_search::evaluate(be, mg, 8);
-}
-*/
-TEST(FullSearchTest, PerformanceTest_8_black_iterative)
-{
-    BoardEngine be;
-    players::common::move_generators::FullCachedEngine mg;
-    full_search::evaluateIterative(be, mg, 8);
+    full_search::evaluateIterative(be, mg, 9);
 }
 
 TEST(FullSearchTest, PerformanceTest_10_iterative)

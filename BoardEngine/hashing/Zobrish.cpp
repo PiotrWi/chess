@@ -69,7 +69,7 @@ public:
         return castlingRights;
     }
 private:
-    uint64_t hashes[64][256] = {};
+    uint64_t hashes[64][16] = {};
     uint64_t blackHash = {};
     uint64_t validEnPassant[65] = {};
     uint64_t castlingRights[16] = {};

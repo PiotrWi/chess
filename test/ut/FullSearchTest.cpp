@@ -9,7 +9,7 @@ TEST(MVVLVA_ComparatorShall, placeBestMovesAtFront)
     auto rockBeatRock = ExtendedMove(0, 1, ExtendedMove::beatingMask, 0, NOTATION::PIECES::ROCK, NOTATION::PIECES::ROCK);
 
     std::vector<ExtendedMove> in{
-            pawnBeatQueen, pawnPromoteAndBeatRock ,rockBeatRock
+        pawnBeatQueen, pawnPromoteAndBeatRock ,rockBeatRock
     };
 
     std::vector<ExtendedMove> sorted = {pawnPromoteAndBeatRock, pawnBeatQueen, rockBeatRock};

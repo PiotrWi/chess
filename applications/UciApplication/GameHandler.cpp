@@ -1,6 +1,7 @@
 #include "GameHandler.hpp"
 #include <UciApplication/EventsPropagator.hpp>
 #include <notations/uci.hpp>
+#include <notations/fen.h>
 #include <common/searchingAlgorithms/FullSearchingImplementation.hpp>
 #include <utils/Timer.hpp>
 #include <utils/DebugWrapper.hpp>
@@ -45,7 +46,7 @@ void GameHandler::onGo(GO& goEvent)
     debug.logInDebug("starting for us:" + std::to_string(70 * remainingTime)); // 8% remaining time
     createTimer2(70*remainingTime, onStopProccessing);
 
-    auto move = full_search::evaluateIterative(be, cachedEngine, 10);
+    auto move = full_search::evaluateIterative(be, cachedEngine, 12);
     emitBestMove(move);
 }
 
@@ -70,6 +71,15 @@ void GameHandler::onPositionProc(POSSITION& event)
     if (event.isStarting == true)
     {
         be = {};
+        for (const auto& moveStr : event.moves)
+        {
+            auto move = notations::uci::createExtendedMove(moveStr, be.board.playerOnMove, be.board);
+            be.applyMove(move);
+        }
+    }
+    else
+    {
+        be = notations::fen::initByFen(event.fenString);
         for (const auto& moveStr : event.moves)
         {
             auto move = notations::uci::createExtendedMove(moveStr, be.board.playerOnMove, be.board);

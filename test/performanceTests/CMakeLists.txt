@@ -8,10 +8,7 @@ link_directories(${GTEST_INSTALATION_DIR}/lib)
 add_executable(pt
         main.cpp
         ../utils/BoardGenerationUtils.cpp
-        MinMaxTests.cpp
-        AlfaBetaTests.cpp
-        AldaBetaWithTransictionMapTest.cpp
-        AlfaBetaPvs.cpp AlfaBetaMtdPvs.cpp FullSearchTest.cpp)
+        FullSearchTest.cpp)
 
 
 add_dependencies(pt googletest)

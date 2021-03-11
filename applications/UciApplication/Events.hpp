@@ -49,10 +49,12 @@ struct UCI_NEW_GAME : public EVENT
 struct POSSITION : public EVENT
 {
 public:
-    POSSITION(bool isStartingIn, const std::vector<std::string>& movesIn)
+    POSSITION(bool isStartingIn, const std::string& fenStringIn, const std::vector<std::string>& movesIn)
         : isStarting(isStartingIn)
+        , fenString(fenStringIn)
         , moves(movesIn) {}
     bool isStarting = false;
+    std::string fenString;
     std::vector<std::string> moves;
 
     static constexpr unsigned ID = 4;

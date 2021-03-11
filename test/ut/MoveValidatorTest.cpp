@@ -1,5 +1,7 @@
 #include <gtest/gtest.h>
 
+#include <iostream>
+
 #include <publicIf/Board.hpp>
 #include <detail/MoveValidator.hpp>
 
@@ -49,19 +51,18 @@ class MoveValidatorTests_BlackPawnsInitialMovesTest
 {
 };
 
-TEST_P(MoveValidatorTests_BlackPawnsInitialMovesTest, AAllowToMovePawn)
+TEST_P(MoveValidatorTests_BlackPawnsInitialMovesTest, AllowToMovePawn)
 {
     Board board = createBoard(utils::InitialBoardString);
     auto move = notations::coordinates::createMove(GetParam(), color_);
 
+    std::cout << GetParam() << std::endl;
     ASSERT_TRUE(MoveValidator::validateMove(board, move));
 }
 
 INSTANTIATE_TEST_SUITE_P(MoveValidatorTests_SinglePawnBlackMoves, MoveValidatorTests_BlackPawnsInitialMovesTest, testing::Values(
     "a7-a6", "b7-b6", "c7-c6", "d7-d6", "e7-e6", "f7-f6", "g7-g6", "h7-h6"
     , "a7-a5", "b7-b5", "c7-c5", "d7-d5", "e7-e5", "f7-f5", "g7-g5", "h7-h5"));
-
-
 
 class MoveValidatorTests_WhitePawnsInitialMovesTest
     : public testing::WithParamInterface<const char*>

@@ -15,13 +15,13 @@ struct SimpleMoveMemorial
 };
 
 void applyMove(Board& board, const ExtendedMove& move);
-void applyMove(Board&, uint64_t& positionHash, const ExtendedMove&);
+void applyMove(Board&, uint64_t& /*in_out*/positionHash, const ExtendedMove&);
 
-SimpleMoveMemorial applyTmpMoveSimple(Board&, uint64_t& positionHash, const ExtendedMove&);
+SimpleMoveMemorial applyTmpMoveSimple(Board&, uint64_t& /*in_out*/positionHash, const ExtendedMove&);
 
 template <class TResultEvaluator>
 void applyMove(Board& board,
-        uint64_t& positionHash,
+        uint64_t& /*in_out*/positionHash,
         const ExtendedMove& move,
         TResultEvaluator& resultEvaluator)
 {
@@ -31,7 +31,7 @@ void applyMove(Board& board,
 
 template <class TResultEvaluator>
 SimpleMoveMemorial applyTmpMoveSimple(Board& board,
-        uint64_t& positionHash,
+        uint64_t& /*in_out*/positionHash,
         const ExtendedMove& move,
         TResultEvaluator& resultEvaluator)
 {
@@ -41,7 +41,7 @@ SimpleMoveMemorial applyTmpMoveSimple(Board& board,
 }
 
 void undoMove(Board& board, uint64_t& positionHash, const SimpleMoveMemorial& memorial);
-template <class TResultEvaluator> void undoMove(Board& board, uint64_t& positionHash, const SimpleMoveMemorial& memorial, TResultEvaluator& resultEvaluator)
+template <class TResultEvaluator> void undoMove(Board& board, uint64_t& /*in_out*/positionHash, const SimpleMoveMemorial& memorial, TResultEvaluator& resultEvaluator)
 {
     resultEvaluator.removeSingle();
     undoMove(board, positionHash, memorial);

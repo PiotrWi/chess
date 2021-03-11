@@ -24,9 +24,11 @@ struct Board
     unsigned char getField(const unsigned char field) const noexcept;
     unsigned char getFieldForNonEmpty(const unsigned char field, NOTATION::COLOR::color c) const noexcept;
     unsigned char getField(const char* field) const noexcept;
+    void setPreviouslyEmptyField(const unsigned char field, unsigned char value);
     void setField(const unsigned char field, unsigned char value);
     void setField(const unsigned char field, unsigned char oldValue, unsigned char value);
     void setField(const char* field, unsigned char val);
+    void clearField(const unsigned char field, unsigned char oldValue);
 private:
     void cleanConcrete(const unsigned char field, unsigned char oldValue);
     void setConcrete(const unsigned char field, unsigned char value);
@@ -60,6 +62,7 @@ struct ExtendedMove
     constexpr static unsigned char kingMoveMask  = 0b00001000;
     constexpr static unsigned char enPasantMask  = 0b00010000;
     constexpr static unsigned char castlingMask  = 0b00100000;
+    constexpr static unsigned char rockMoveMask  = 0b01000000;
 
     ExtendedMove() noexcept = default;
     ExtendedMove(unsigned char sourceIn,

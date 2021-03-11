@@ -48,14 +48,29 @@ ExtendedMove createExtendedMove (const std::string& moveStr,
     position += 2;
 
     if ((sourcePiece & NOTATION::PIECES::PIECES_MASK) == NOTATION::PIECES::KING)
+    {
         flags |= ExtendedMove::kingMoveMask;
+        if (moveStr == "e1g1") return ExtendedMove::whiteShortCaste();
+        if (moveStr == "e1c1") return ExtendedMove::whiteLongCaste();
+        if (moveStr == "e8g8") return ExtendedMove::blackShortCaste();
+        if (moveStr == "e8c8") return ExtendedMove::blackLongCaste();
+    }
 
+    if ((sourcePiece & NOTATION::PIECES::PIECES_MASK) == NOTATION::PIECES::ROCK)
+        flags |= ExtendedMove::rockMoveMask;
 
     if ((sourcePiece & NOTATION::PIECES::PIECES_MASK) == NOTATION::PIECES::PAWN)
     {
         flags |= ExtendedMove::pawnMoveMask;
         if (NotationConversions::getColumnNum(sourcePosition) != NotationConversions::getColumnNum(targetPosition))
+        {
             flags |= ExtendedMove::beatingMask;
+            if (targetPiece == 0)
+            {
+                flags |= ExtendedMove::enPasantMask;
+                targetPiece = NOTATION::PIECES::PAWN | static_cast<unsigned char>(playerOnMove + 1);
+            }
+        }
     }
 
     if (targetPiece != 0)
@@ -63,7 +78,7 @@ ExtendedMove createExtendedMove (const std::string& moveStr,
 
     if (moveStr.size() > position)
     {
-        promoteTo = createPiece(std::toupper(moveStr[++position]), playerOnMove);
+        promoteTo = createPiece(std::toupper(moveStr[position++]), playerOnMove);
         flags |= ExtendedMove::promotionMask;
     }
 

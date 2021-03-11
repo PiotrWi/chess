@@ -47,6 +47,10 @@ ExtendedMove createExtendedMove (const std::string& moveStr,
         {
             flags |= ExtendedMove::kingMoveMask;
         }
+        if ((sourcePiece & NOTATION::PIECES::PIECES_MASK) == NOTATION::PIECES::ROCK)
+        {
+            flags |= ExtendedMove::rockMoveMask;
+        }
     }
     else
     {

@@ -78,7 +78,7 @@ Result ResultEvaluator::evaluate(bool movesAvailable)
         return Result::draw;
     }
 
-    if (boardsToEvaluate.back().noSignificantMoves_ >= 100)
+    if (boardsToEvaluate.back().noSignificantMoves_ >= 150)
     {
         return Result::draw;
     }
