@@ -231,8 +231,8 @@ constexpr std::array<BitBoardsConstants, 64> createLookups()
 
 std::vector<unsigned> extractSetBitIndexes(uint64_t in);
 
-uint64_t evaluateLineAttacks(uint64_t blockers, uint piecePosition);
-uint64_t evaluateDiagonalAttacks(uint64_t blockers, uint piecePosition);
+uint64_t evaluateLineAttacks(uint64_t blockers, unsigned piecePosition);
+uint64_t evaluateDiagonalAttacks(uint64_t blockers, unsigned piecePosition);
 
 static constexpr std::array<BitBoardsConstants, 64> bitBoardLookup = createLookups();
 

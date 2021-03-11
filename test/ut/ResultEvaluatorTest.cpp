@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 
 #include <publicIf/Board.hpp>
+#include "publicIf/BoardIO.hpp"
 #include <detail/MoveApplier.hpp>
 #include <publicIf/NotationConversions.hpp>
 #include <detail/ResultEvaluator.hpp>
@@ -40,9 +41,11 @@ public:
         {
             applyMoveAndStore(board, moves[i], c++);
             ASSERT_EQ(sut.evaluate(), Result::ongoing);
+            std::cout << board << std::endl;
         }
         applyMoveAndStore(board, moves[N-1], c);
         ASSERT_EQ(sut.evaluate(), finalResult);
+        std::cout << board << std::endl;
     }
 
     ResultEvaluator sut;

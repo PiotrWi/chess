@@ -37,7 +37,7 @@ bool are3Repeatitions(std::vector<Node>& nodes)
         if (compare(boardTemplate, it->board))
         {
             nodes.back().repeatedTime = it->repeatedTime + 1;
-            return 4 == nodes.back().repeatedTime;
+            return 2 == nodes.back().repeatedTime;
         }
     }
     return false;
