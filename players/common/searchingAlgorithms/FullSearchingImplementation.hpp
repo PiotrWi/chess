@@ -12,6 +12,8 @@
 #include <publicIf/NotationConversions.hpp>
 #include <common/Constants.hpp>
 
+static unsigned int nodesEvaluated;
+
 namespace
 {
 
@@ -198,6 +200,7 @@ int quiescenceSearch(BoardEngine& be,
                      int alfa,
                      int beta)
 {
+    ++nodesEvaluated;
     if (depth == 0) // terminate quiescence
     {
         return cachedEngine.getEvaluationValue(be, be.generateValidMoveCount());
@@ -248,6 +251,7 @@ int evaluateMax(BoardEngine& be,
                 int alfa,
                 int beta)
 {
+    ++nodesEvaluated;
     if (interrupt_flag)
     {
         return alfa;
@@ -383,6 +387,8 @@ constexpr auto InitialBeta = mateValue + 1;
                        players::common::move_generators::FullCachedEngine& cachedEngine,
                        unsigned char maxDepth)
 {
+    nodesEvaluated = 0;
+
     interrupt_flag = false;
     int alpha = InitialAlpha;
     int beta = InitialBeta;

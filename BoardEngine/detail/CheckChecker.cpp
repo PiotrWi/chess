@@ -1,6 +1,5 @@
 #include "CheckChecker.hpp"
 
-#include <algorithm>
 #include <array>
 #include <publicIf/Board.hpp>
 #include <publicIf/NotationConversions.hpp>

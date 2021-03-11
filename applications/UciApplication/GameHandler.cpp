@@ -47,6 +47,8 @@ void GameHandler::onGo(GO& goEvent)
     createTimer2(70*remainingTime, onStopProccessing);
 
     auto move = full_search::evaluateIterative(be, cachedEngine, 12);
+    debug.logInDebug("evaluated nodes:" + std::to_string(nodesEvaluated));
+
     emitBestMove(move);
 }
 

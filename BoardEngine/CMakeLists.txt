@@ -39,4 +39,4 @@ add_library(board
     detail/BitBoardsUtils.h
     notations/fen.h
     notations/fen.cpp
-    detail/bitboardslookups.cpp)
+    detail/bitboardslookups.cpp detail/GetAttackedFields.h)

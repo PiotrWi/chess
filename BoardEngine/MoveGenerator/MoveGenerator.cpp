@@ -141,7 +141,8 @@ static void generateImpl(const Board& board,
     ctx.allPieces = getAllOccupiedFields(board);
     ctx.opponentPieces = getAllOccupiedPerColor(board, c+1);
 
-    auto isChecked = CheckChecker::isAttackedOn(*ctx.board, ctx.pieceColor, ctx.kingPosition);
+    ctx.attackedFields = getAttackedFieldsBy(*ctx.board, c+1, ctx.allPieces);
+    auto isChecked = ctx.attackedFields & ctx.board->piecesBitSets[static_cast<unsigned>(c)].kingsMask;
     if (c == NOTATION::COLOR::color::white)
     {
         if (isChecked)

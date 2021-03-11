@@ -22,6 +22,7 @@ thread_local struct MoveContext{
 
     uint64_t allPieces;
     uint64_t opponentPieces;
+    uint64_t attackedFields;
 } ctx;
 
 }  // namespace MoveGenerator

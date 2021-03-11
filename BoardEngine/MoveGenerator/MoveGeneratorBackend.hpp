@@ -7,6 +7,7 @@
 #include <detail/bitboardslookups.hpp>
 #include <strings.h>
 #include <detail/PinnedMovesChecker.hpp>
+#include <detail/GetAttackedFields.h>
 
 namespace MoveGenerator
 {
@@ -156,24 +157,24 @@ void evaluateKnights(uint64_t knightsBitMask)
 };
 
 template <typename TMoveAddingStrategy, NOTATION::COLOR::color c>
-void evaluateKing(uint64_t kingBitMask)
+void evaluateKing(uint64_t kingBitMask, uint64_t attackedFields)
 {
     auto kingIndex = 63 - __builtin_clzll(kingBitMask);
 
-    auto quietMoves = bitBoardLookup[kingIndex].kingMovePossibilities & ~ctx.allPieces;
+    auto quietMoves = bitBoardLookup[kingIndex].kingMovePossibilities & ~ctx.allPieces & ~attackedFields;
     while (quietMoves)
     {
         auto targetSquare = 63 - __builtin_clzll(quietMoves);
         TMoveAddingStrategy::addKing(kingIndex, targetSquare);
         quietMoves ^= (1ull << targetSquare);
     }
-    auto beatings = bitBoardLookup[kingIndex].kingMovePossibilities & ctx.opponentPieces;
+    auto beatings = bitBoardLookup[kingIndex].kingMovePossibilities & ctx.opponentPieces & ~attackedFields;
     while (beatings)
     {
         auto targetSquare = 63 - __builtin_clzll(beatings);
         TMoveAddingStrategy::addKingWithBeating(kingIndex,
-                                                  targetSquare,
-                                                  ctx.board->getFieldForNonEmpty(targetSquare, c+1));
+                                                targetSquare,
+                                                ctx.board->getFieldForNonEmpty(targetSquare, c+1));
         beatings ^= (1ull << targetSquare);
     }
 };
@@ -537,7 +538,7 @@ void evaluateForCheckedPosition()
     evaluateQueen<StrategyWithAlwaysCheckChecking<c>, c>(
             ctx.board->piecesBitSets[static_cast<unsigned char>(c)].queensMask);
     evaluateKing<StrategyWithAlwaysCheckChecking<c>, c>(
-            ctx.board->piecesBitSets[static_cast<unsigned char>(c)].kingsMask);
+            ctx.board->piecesBitSets[static_cast<unsigned char>(c)].kingsMask, ctx.attackedFields);
 }
 
 template <NOTATION::COLOR::color c>
@@ -568,8 +569,8 @@ void evaluateNotCheckedPostions(uint64_t pinnedMask)
     PinnedNotChecked::evaluateQueen<StrategyWithNoChecking<c>, c>(
             pinnedMask & ctx.board->piecesBitSets[static_cast<unsigned char>(c)].queensMask);
 
-    evaluateKing<StrategyWithAlwaysCheckChecking<c>, c>(
-            ctx.board->piecesBitSets[static_cast<unsigned char>(c)].kingsMask);
+    evaluateKing<StrategyWithNoChecking<c>, c>(
+            ctx.board->piecesBitSets[static_cast<unsigned char>(c)].kingsMask, ctx.attackedFields);
 }
 
 }  // Namespace NoLookup
