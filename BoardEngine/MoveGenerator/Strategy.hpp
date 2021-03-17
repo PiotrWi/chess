@@ -19,9 +19,10 @@ bool isChecked(const ExtendedMove& move)
 
 bool isKingCheckedAfterMove(const ExtendedMove& move)
 {
-    Board boardCopy = *ctx.board;
-    MoveApplier::applyMove(boardCopy, move);
-    return not CheckChecker::isAttackedOn(boardCopy, ctx.board->playerOnMove, move.destination);
+    ctx.board->piecesBitSets[move.sourcePiece & 0b1].kingsMask ^= (1ul << move.source);
+    auto isAttacked = CheckChecker::isAttackedOn(*ctx.board, ctx.board->playerOnMove, move.destination);
+    ctx.board->piecesBitSets[move.sourcePiece & 0b1].kingsMask ^= (1ul << move.source);
+    return not isAttacked;
 }
 
 bool allowAll(const ExtendedMove&)

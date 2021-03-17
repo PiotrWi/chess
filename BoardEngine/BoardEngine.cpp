@@ -54,22 +54,22 @@ Result BoardEngine::getREsultWithoutRepeatitionCheck(bool availableMoves) const
     return resultEvaluator.getResultNoRepeatitions(availableMoves);
 }
 
-unsigned BoardEngine::generateValidMoveCount() const
+unsigned BoardEngine::generateValidMoveCount()
 {
     return MoveGenerator::MoveGenerator::getMoveCount(board);
 }
 
-unsigned BoardEngine::generateValidMoveCount(NOTATION::COLOR::color c) const
+unsigned BoardEngine::generateValidMoveCount(NOTATION::COLOR::color c)
 {
     return MoveGenerator::MoveGenerator::getMoveCount(board, c);
 }
 
-std::vector<ExtendedMove> BoardEngine::generateMoves() const
+std::vector<ExtendedMove> BoardEngine::generateMoves()
 {
     return MoveGenerator::MoveGenerator::generate(board);
 }
 
-std::vector<ExtendedMove> BoardEngine::generateMovesFor(NOTATION::COLOR::color color) const
+std::vector<ExtendedMove> BoardEngine::generateMovesFor(NOTATION::COLOR::color color)
 {
     return MoveGenerator::MoveGenerator::generate(board, color);
 }

@@ -31,10 +31,10 @@ public:
     Result getREsultWithoutRepeatitionCheck(bool availableMoves) const;
 
 // MovesGeneration
-    unsigned generateValidMoveCount() const;
-    unsigned generateValidMoveCount(NOTATION::COLOR::color) const;
-    std::vector<ExtendedMove> generateMoves() const;
-    std::vector<ExtendedMove> generateMovesFor(NOTATION::COLOR::color) const;
+    unsigned generateValidMoveCount();
+    unsigned generateValidMoveCount(NOTATION::COLOR::color);
+    std::vector<ExtendedMove> generateMoves();
+    std::vector<ExtendedMove> generateMovesFor(NOTATION::COLOR::color);
 
     Board board;
     ResultEvaluator resultEvaluator;

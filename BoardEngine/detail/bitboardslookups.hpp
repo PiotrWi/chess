@@ -74,7 +74,7 @@ struct MagicBitBoard
 
 struct BishopMagicBitBoards
 {
-    unsigned relevantBitsNum = 9;
+    constexpr static unsigned relevantBitsNum = 9;
     MagicBitBoard<512> lookup[64];
 public:
     BishopMagicBitBoards();
@@ -83,7 +83,7 @@ public:
 
 struct RockMagicBitBoards
 {
-    unsigned relevantBitsNum = 12;
+    constexpr static unsigned relevantBitsNum = 12;
     MagicBitBoard<4096u> lookup[64];
 public:
     uint64_t getAttacksFor(uint8_t fieldNum, uint64_t allpieces) const;

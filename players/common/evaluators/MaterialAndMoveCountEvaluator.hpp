@@ -6,7 +6,7 @@
 #include <common/evaluators/MaterialEvaluator.hpp>
 #include <common/evaluators/PawnStructureEvaluator.hpp>
 
-static int evaluateFunction(const BoardEngine& be, unsigned int validMovesCount)
+static int evaluateFunction(BoardEngine& be, unsigned int validMovesCount)
 {
     // auto validMoves = be.generateValidMoveCount();
     auto gameResult = be.getREsultWithoutRepeatitionCheck(validMovesCount);

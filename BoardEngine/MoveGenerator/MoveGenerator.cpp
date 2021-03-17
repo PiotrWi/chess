@@ -125,7 +125,7 @@ public:
     }
 };
 
-static void generateImpl(const Board& board,
+static void generateImpl(Board& board,
                          NOTATION::COLOR::color c)
 {
     ctx.board = &board;
@@ -178,7 +178,7 @@ static void generateImpl(const Board& board,
     }
 }
 
-std::vector<ExtendedMove> MoveGenerator::generate(const Board& board,
+std::vector<ExtendedMove> MoveGenerator::generate(Board& board,
 	NOTATION::COLOR::color c)
 {
     generateImpl(board, c);
@@ -194,19 +194,19 @@ std::vector<ExtendedMove> MoveGenerator::generate(const Board& board,
     return allMoves;
 }
 
-std::vector<ExtendedMove> MoveGenerator::generate(const Board& board)
+std::vector<ExtendedMove> MoveGenerator::generate(Board& board)
 {
     return generate(board, board.playerOnMove);
 }
 
-unsigned MoveGenerator::getMoveCount(const Board& board
+unsigned MoveGenerator::getMoveCount(Board& board
         , NOTATION::COLOR::color c)
 {
     generateImpl(board, c);
     return ctx.NKingMoves + ctx.NFiguresMoves + ctx.NPawnsMoves + ctx.Npromotions + ctx.Nbeatings;
 }
 
-unsigned MoveGenerator::getMoveCount(const Board& board)
+unsigned MoveGenerator::getMoveCount(Board& board)
 {
     return getMoveCount(board, board.playerOnMove);
 }

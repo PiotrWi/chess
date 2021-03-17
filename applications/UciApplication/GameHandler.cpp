@@ -46,7 +46,7 @@ void GameHandler::onGo(GO& goEvent)
     debug.logInDebug("starting for us:" + std::to_string(70 * remainingTime)); // 8% remaining time
     createTimer2(70*remainingTime, onStopProccessing);
 
-    auto move = full_search::evaluateIterative(be, cachedEngine, 12);
+    auto move = full_search::evaluateIterative(be, cachedEngine, 20);
     emitBestMove(move);
 }
 

@@ -3,7 +3,6 @@
 #include <BoardEngine.hpp>
 
 #include <atomic>
-
 #include <algorithm>
 #include <cstring>
 #include <vector>
@@ -19,19 +18,43 @@ ExtendedMove bestMove;
 std::atomic_bool interrupt_flag = false;
 
 unsigned history[2][64][64] = {};
+/*
+struct KillerMoves
+{
+    ExtendedMove currentKiller;
+    ExtendedMove previousKiller;
+} killerMoves[MAX_DEPTH];
 
+void setKiller(const ExtendedMove& move, unsigned int depth)
+{
+    if (move.flags & ExtendedMove::beatingMask) return;
+
+    if (move == killerMoves[depth].currentKiller) return;
+
+    killerMoves[depth].previousKiller = move;
+    std::swap(killerMoves[depth].previousKiller, killerMoves[depth].currentKiller);
+}
+*/
 class MVVLVA_Comparator // Most valuable victim less valuable aggressor
 {
+    static constexpr int weights[7][7]{
+        // NOTHING  // PAWN,    ROCK,   KNIGHT,     BISHOP,     QUEEN,  KING
+        {0,         0,          0,      0,          0,          0,      0}, //NOTHING
+        {0,         106,        501,    306,        301,        901,    5000}, //PAWN
+        {0,         104,        504,    304,        304,        904,    5000}, //ROCK
+        {0,         105,        505,    305,        305,        905,    5000}, //KNIGHT
+        {0,         105,        505,    305,        305,        905,    5000}, //BISHOP
+        {0,         100,        500,    300,        300,        900,    5000}, //QUEEN
+        {0,         107,        502,    307,        302,        902,    5000}, //KING
+    };
 public:
     static bool compare(const ExtendedMove& lhs, const ExtendedMove& rhs)
     {
         auto lhsVal = (lhs.flags & ExtendedMove::promotionMask) ? FIGURES_VALUE::QUEEN : 0;
-        lhsVal += mapFigureToValue(lhs.targetPiece & NOTATION::PIECES::PIECES_MASK)
-                - mapFigureToValue(lhs.sourcePiece & NOTATION::PIECES::PIECES_MASK);
+        lhsVal += weights[lhs.sourcePiece >> 1][lhs.targetPiece >> 1];
 
         auto rhsVal = (rhs.flags & ExtendedMove::promotionMask) ? FIGURES_VALUE::QUEEN : 0;
-        rhsVal += mapFigureToValue(rhs.targetPiece & NOTATION::PIECES::PIECES_MASK)
-                  - mapFigureToValue(rhs.sourcePiece & NOTATION::PIECES::PIECES_MASK);
+        rhsVal += weights[rhs.sourcePiece >> 1][rhs.targetPiece >> 1];
 
         return lhsVal > rhsVal;
     }
@@ -39,7 +62,7 @@ public:
 
 void setHistoryMove(const NOTATION::COLOR::color player, ExtendedMove& move, unsigned char depth)
 {
-    if ((move.flags & ExtendedMove::beatingMask) == ExtendedMove::beatingMask)
+    if ((move.flags & ExtendedMove::beatingMask) == 0)
     {
         auto index = 1;
         if (player == NOTATION::COLOR::color::white)
@@ -63,7 +86,8 @@ public:
                     , depth_(depth)
                     , index(0)
                     , moves_(std::move(moves))
-    {}
+    {
+    }
 
     unsigned size()
     {
@@ -121,15 +145,37 @@ public:
 
         if (index < nonPromotionNorBeatingIndex)
         {
-            if (beatingAndPromotionsAnalyzed == false)
-            {
-                beatingAndPromotionsAnalyzed = true;
-            }
             return moves_[index++];
         }
 
+/*        if (firstKillersAnalyzed == false)
+        {
+            firstKillersAnalyzed = true;
+            auto killerIt = std::find(moves_.begin() + index,
+                                 moves_.end(),
+                                 killerMoves[depth_].currentKiller);
+            if (killerIt != moves_.end())
+            {
+                std::swap(*killerIt, *(moves_.begin() + index));
+                return moves_[index++];
+            }
+        }
+
+        if (secondKillersAnalyzed == false)
+        {
+            secondKillersAnalyzed = true;
+            auto killerIt = std::find(moves_.begin() + index,
+                                      moves_.end(),
+                                      killerMoves[depth_].previousKiller);
+            if (killerIt != moves_.end())
+            {
+                std::swap(*killerIt, *(moves_.begin() + index));
+                return moves_[index++];
+            }
+        }*/
         if (movesSortedByHistory == false)
         {
+
             movesSortedByHistory = true;
             std::sort(moves_.begin() + index,
                       moves_.end(),
@@ -146,6 +192,8 @@ private:
     bool bestMoveAnalyzed = false;
     bool beatingAndPromotionsAnalyzed = false;
     bool movesSortedByHistory = false;
+    bool firstKillersAnalyzed = false;
+    bool secondKillersAnalyzed = false;
     int index;
     int nonPromotionNorBeatingIndex = 0;
     std::vector<ExtendedMove> moves_;
@@ -321,6 +369,7 @@ int evaluateMax(BoardEngine& be,
             cachedEngine.setLowerBound(be, nextAlfa, depth);
 
             setHistoryMove(be.board.playerOnMove, move, depth);
+            // setKiller(move, depth);
             if (SaveMove and interrupt_flag == false) bestMove = move;
             return beta;
         }
@@ -388,7 +437,7 @@ constexpr auto InitialBeta = mateValue + 1;
     int beta = InitialBeta;
     memset(history, 0, sizeof(history[0][0][0]) * 2 * 64 * 64);
 
-    for (auto depth = 2u; depth <= maxDepth; depth+=1)
+    for (auto depth = 2u; depth <= maxDepth && depth < MAX_DEPTH; depth+=1)
     {
         auto val = evaluateMax<true>(be, cachedEngine, depth, alpha, beta);
         if (val <= alpha)

@@ -5,7 +5,7 @@ namespace MoveGenerator
 {
 
 thread_local struct MoveContext{
-    const Board* board;
+    Board* board;
     NOTATION::COLOR::color pieceColor;
     unsigned char kingPosition;
 

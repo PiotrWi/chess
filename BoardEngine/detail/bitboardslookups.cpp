@@ -140,7 +140,6 @@ uint64_t evaluateDiagonalAttacks(uint64_t blockers, uint piecePosition)
 }
 
 BishopMagicBitBoards::BishopMagicBitBoards()
-    : relevantBitsNum(10)
 {
 lookup[0].relevantBlockers = 18049651735527936ull;
 lookup[0].magicMultiplier = 9007339386735104ull;
@@ -271,8 +270,6 @@ lookup[62].magicMultiplier = 197914257334304ull;
 lookup[63].relevantBlockers = 18049651735527936ull;
 lookup[63].magicMultiplier = 1134696402530308ull;
 
-this->relevantBitsNum = 9;
-
     for (unsigned char i = 0u; i < 64; ++i)
     {
         auto bitIndexes = extractSetBitIndexes(lookup[i].relevantBlockers);
@@ -298,7 +295,6 @@ this->relevantBitsNum = 9;
 }
 
 RockMagicBitBoards::RockMagicBitBoards()
-    : relevantBitsNum(12)
 {lookup[0].relevantBlockers = 282578800148862ull;
     lookup[0].magicMultiplier = 9979976911964603521ull;
     lookup[1].relevantBlockers = 565157600297596ull;
@@ -428,7 +424,6 @@ RockMagicBitBoards::RockMagicBitBoards()
     lookup[63].relevantBlockers = 9115426935197958144ull;
     lookup[63].magicMultiplier = 2305845534671249794ull;
 
-    this->relevantBitsNum = 12;
 
     for (unsigned char i = 0u; i < 64; ++i)
     {

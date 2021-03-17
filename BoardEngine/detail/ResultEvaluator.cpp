@@ -93,7 +93,7 @@ Result ResultEvaluator::evaluate(bool movesAvailable)
 
 Result ResultEvaluator::evaluate()
 {
-    const auto& board = boardsToEvaluate.back().board;
+    auto& board = boardsToEvaluate.back().board;
     return evaluate(not MoveGenerator::MoveGenerator().generate(board, board.playerOnMove).empty());
 }
 

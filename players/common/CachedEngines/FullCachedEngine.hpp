@@ -1,11 +1,9 @@
 #pragma once
 
 #include <vector>
-
+#include <common/Constants.hpp>
 #include <BoardEngine.hpp>
 #include <common/containers/HashMap.hpp>
-
-static constexpr unsigned MAX_DEPTH = 12;
 
 namespace players
 {
@@ -44,7 +42,7 @@ class FullCachedEngine
 public:
     CacheFullEntity& get(const BoardEngine& be);
 
-    int getEvaluationValue(const BoardEngine& be, unsigned int validMovesCount);
+    int getEvaluationValue(BoardEngine& be, unsigned int validMovesCount);
     void setBestMove(const BoardEngine& be,
                        ExtendedMove& move,
                        unsigned char depth);
