@@ -78,7 +78,12 @@ struct BishopMagicBitBoards
     MagicBitBoard<512> lookup[64];
 public:
     BishopMagicBitBoards();
-    uint64_t getAttacksFor(uint8_t fieldNum, uint64_t allpieces) const;
+    inline uint64_t getAttacksFor(uint8_t fieldNum, uint64_t allpieces) const
+    {
+        auto& l = lookup[fieldNum];
+        unsigned key = ((l.relevantBlockers & allpieces) * l.magicMultiplier) >> (64u - relevantBitsNum);
+        return l.attacks[key];
+    }
 };
 
 struct RockMagicBitBoards
@@ -86,9 +91,51 @@ struct RockMagicBitBoards
     constexpr static unsigned relevantBitsNum = 12;
     MagicBitBoard<4096u> lookup[64];
 public:
-    uint64_t getAttacksFor(uint8_t fieldNum, uint64_t allpieces) const;
+    inline uint64_t getAttacksFor(uint8_t fieldNum, uint64_t allpieces) const
+    {
+        auto& l = lookup[fieldNum];
+        unsigned key = ((l.relevantBlockers  & allpieces) * l.magicMultiplier) >> (64u - relevantBitsNum);
+        return l.attacks[key];
+    }
     RockMagicBitBoards();
 };
+
+struct FlexiMagicBB
+{
+    uint64_t relevantBlockers;
+    uint8_t relevantBitsNum;
+    uint64_t magicMultiplier;
+    uint64_t* attacks;
+};
+
+struct BishopFlexiMagicBB
+{
+    uint64_t attacks[6656];
+    FlexiMagicBB lookup[64];
+public:
+    BishopFlexiMagicBB();
+    inline uint64_t getAttacksFor(uint8_t fieldNum, uint64_t allpieces) const
+    {
+        auto& l = lookup[fieldNum];
+        unsigned key = ((l.relevantBlockers & allpieces) * l.magicMultiplier) >> (64u - lookup[fieldNum].relevantBitsNum);
+        return l.attacks[key];
+    }
+};
+
+struct RockFlexiMagicBB
+{
+    uint64_t attacks[102400];
+    FlexiMagicBB lookup[64];
+public:
+    inline uint64_t getAttacksFor(uint8_t fieldNum, uint64_t allpieces) const
+    {
+        auto& l = lookup[fieldNum];
+        unsigned key = ((l.relevantBlockers  & allpieces) * l.magicMultiplier) >> (64u - lookup[fieldNum].relevantBitsNum);
+        return l.attacks[key];
+    }
+    RockFlexiMagicBB();
+};
+
 
 constexpr uint64_t getOppositePawnsAttackingFieldForWhite(uint64_t fieldBitMask)
 {
@@ -236,5 +283,5 @@ uint64_t evaluateDiagonalAttacks(uint64_t blockers, unsigned piecePosition);
 
 static constexpr std::array<BitBoardsConstants, 64> bitBoardLookup = createLookups();
 
-extern BishopMagicBitBoards bishopMagicBb;
-extern RockMagicBitBoards rockMagicBb;
+extern BishopFlexiMagicBB bishopMagicBb;
+extern RockFlexiMagicBB rockMagicBb;
