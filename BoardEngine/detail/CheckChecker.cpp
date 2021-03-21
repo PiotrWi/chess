@@ -41,61 +41,14 @@ bool isAttackedOn(const Board& board,
     auto OppositeQueenAndRock =
             board.piecesBitSets[oppositeColorNum].queensMask
             | board.piecesBitSets[oppositeColorNum].rocksMask;
-    uint64_t rockOrQueenAttackers = 0;
 
-    auto northPieces = lookup.topRay & allPieces;
-    if (northPieces != 0)
-    {
-        rockOrQueenAttackers |= (1ull << (__builtin_ffsll(northPieces) - 1)) & OppositeQueenAndRock;
-    }
-
-    auto rightPieces = lookup.rightRay & allPieces;
-    if (rightPieces != 0)
-    {
-        rockOrQueenAttackers |= (1ull << (__builtin_ffsll(rightPieces) - 1)) & OppositeQueenAndRock;
-    }
-
-
-    auto leftPieces = lookup.leftRay & allPieces;
-    if (leftPieces != 0)
-    {
-        rockOrQueenAttackers |= (1ull << (63 - __builtin_clzll(leftPieces))) & OppositeQueenAndRock;
-    }
-
-    auto bottomPieces = lookup.bottomRay & allPieces;
-    if (bottomPieces != 0)
-    {
-        rockOrQueenAttackers |= (1ull << (63 - __builtin_clzll(bottomPieces))) & OppositeQueenAndRock;
-    }
+    uint64_t rockOrQueenAttackers = rockMagicBb.getAttacksFor(fieldPosition, allPieces) & OppositeQueenAndRock;
 
     auto OppositeQueenAndBishop =
             board.piecesBitSets[oppositeColorNum].queensMask
             | board.piecesBitSets[oppositeColorNum].bishopsMask;
-    uint64_t bishopOrQueenAttackers = 0;
+    uint64_t bishopOrQueenAttackers = bishopMagicBb.getAttacksFor(fieldPosition, allPieces) & OppositeQueenAndBishop;
 
-    auto leftUpPieces = lookup.topLeft & allPieces;
-    if (leftUpPieces != 0)
-    {
-        bishopOrQueenAttackers |= (1ull << (__builtin_ffsll(leftUpPieces) - 1)) & OppositeQueenAndBishop;
-    }
-
-    auto rightUpPieces = lookup.topRight & allPieces;
-    if (rightUpPieces != 0)
-    {
-        bishopOrQueenAttackers |= (1ull << (__builtin_ffsll(rightUpPieces) - 1)) & OppositeQueenAndBishop;
-    }
-
-    auto leftBottomPieces = lookup.bottomLeft & allPieces;
-    if (leftBottomPieces != 0)
-    {
-        bishopOrQueenAttackers |= (1ull << (63 - __builtin_clzll(leftBottomPieces))) & OppositeQueenAndBishop;
-    }
-
-    auto rightBottomPieces = lookup.bottomRight & allPieces;
-    if (rightBottomPieces != 0)
-    {
-        bishopOrQueenAttackers |= (1ull << (63 - __builtin_clzll(rightBottomPieces))) & OppositeQueenAndBishop;
-    }
     return attackingPawn | attackingKnights | attackingKings | rockOrQueenAttackers | bishopOrQueenAttackers;
 }
 

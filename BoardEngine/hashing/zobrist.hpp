@@ -7,7 +7,7 @@ class Board;
 namespace hash
 {
 
-uint64_t hash(Board &) noexcept;
+uint64_t hash(const Board &) noexcept;
 
 uint64_t switchColor(uint64_t oldHash) noexcept;
 

@@ -97,3 +97,11 @@ TEST(FullSearchTest, PerformanceTest_10_iterative)
     players::common::move_generators::FullCachedEngine mg;
     full_search::evaluateIterative(be, mg, 10);
 }
+/*
+TEST(FullSearchTest, PerformanceTest_11_iterative)
+{
+    BoardEngine be;
+    players::common::move_generators::FullCachedEngine mg;
+    full_search::evaluateIterative(be, mg, 11);
+}
+*/

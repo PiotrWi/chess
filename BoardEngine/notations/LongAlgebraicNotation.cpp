@@ -73,6 +73,7 @@ ExtendedMove createExtendedMove (const std::string& moveStr,
     if ((flags & ExtendedMove::beatingMask) != 0 and targetPiece == 0)
     {
         targetPiece = static_cast<unsigned char>(playerOnMove + 1) | NOTATION::PIECES::PAWN;
+        flags |= ExtendedMove::enPasantMask;
     }
     position += 2;
 
@@ -80,7 +81,6 @@ ExtendedMove createExtendedMove (const std::string& moveStr,
     {
         promoteTo = createPiece(moveStr[++position], playerOnMove);
         flags |= ExtendedMove::promotionMask;
-
     }
 
     return ExtendedMove{sourcePosition, targetPosition, flags, promoteTo, sourcePiece, targetPiece};

@@ -31,8 +31,6 @@ struct CacheFullEntity
         int higherValue = 10000001;
     };
 
-    // std::vector<ExtendedMove> precalculatedMoves = {};
-
     PreviousBestMove previousBestMoves[MAX_DEPTH] = {};
     PreviousEvaluations previousEvaluations[MAX_DEPTH] = {};
 };

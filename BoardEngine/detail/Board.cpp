@@ -225,6 +225,19 @@ void initDefault(Board& board) noexcept
 
 }
 
+bool Board::isCorrect() const
+{
+    uint64_t allOccupied = piecesBitSets[0].pawnsMask | piecesBitSets[0].queensMask | piecesBitSets[0].bishopsMask |
+        piecesBitSets[0].knightsMask | piecesBitSets[0].kingsMask | piecesBitSets[0].rocksMask |
+        piecesBitSets[1].pawnsMask | piecesBitSets[1].queensMask | piecesBitSets[1].bishopsMask |
+        piecesBitSets[1].knightsMask | piecesBitSets[1].kingsMask | piecesBitSets[1].rocksMask;
+    uint64_t sanityCheck = piecesBitSets[0].pawnsMask ^ piecesBitSets[0].queensMask ^ piecesBitSets[0].bishopsMask ^
+                           piecesBitSets[0].knightsMask ^ piecesBitSets[0].kingsMask ^ piecesBitSets[0].rocksMask ^
+                           piecesBitSets[1].pawnsMask ^ piecesBitSets[1].queensMask ^ piecesBitSets[1].bishopsMask ^
+                           piecesBitSets[1].knightsMask ^ piecesBitSets[1].kingsMask ^ piecesBitSets[1].rocksMask;
+    return allOccupied == sanityCheck;
+}
+
 ///////////////////////////////////
 // MOVE
 ///////////////////////////////////
@@ -264,6 +277,8 @@ bool operator==(const Move& lfs, const Move& rhs) noexcept
 	return *reinterpret_cast<const uint32_t*>(&lfs) == *reinterpret_cast<const uint32_t*>(&rhs);
 }
 
+
+
 ///////////////////////////////////
 // Extended Move
 ///////////////////////////////////
@@ -277,6 +292,7 @@ bool operator ==(const ExtendedMove& lhs, const ExtendedMove& rhs) noexcept
 {
     return lhs.source == rhs.source
         and lhs.destination == rhs.destination
+        and lhs.sourcePiece == rhs.sourcePiece
         and lhs.flags == rhs.flags
         and lhs.promoting == rhs.promoting;
 }

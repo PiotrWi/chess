@@ -14,6 +14,13 @@
 namespace
 {
 
+template <bool SaveMove>
+int evaluateMax(BoardEngine& be,
+                players::common::move_generators::FullCachedEngine& cachedEngine,
+                unsigned char depth,
+                int alfa,
+                int beta);
+
 ExtendedMove bestMove;
 std::atomic_bool interrupt_flag = false;
 
@@ -33,8 +40,8 @@ void setKiller(const ExtendedMove& move, unsigned int depth)
 
     killerMoves[depth].previousKiller = move;
     std::swap(killerMoves[depth].previousKiller, killerMoves[depth].currentKiller);
-}
-*/
+}*/
+
 class MVVLVA_Comparator // Most valuable victim less valuable aggressor
 {
     static constexpr int weights[7][7]{
@@ -89,6 +96,7 @@ public:
     {
     }
 
+
     unsigned size()
     {
         return moves_.size();
@@ -112,10 +120,11 @@ public:
                         std::swap(*moveIt, moves_.front());
                         ++index;
                         if (moveIt != moves_.begin()
-                            && (moveIt->flags & (ExtendedMove::beatingMask | ExtendedMove::promotionMask)) != 0
-                            && ((moveIt-1)->flags & (ExtendedMove::beatingMask | ExtendedMove::promotionMask)) != 0)
+                            and not (
+                                ce_.previousBestMoves[candidateDepth].move.flags &
+                                (ExtendedMove::beatingMask | ExtendedMove::promotionMask)))
                         {
-                            auto firstNotBeating = std::find_if(moves_.begin(),
+                            auto firstNotBeating = std::find_if(moves_.begin() + 1,
                                                                 moves_.end(),
                                                              [](auto&& move){
                                 return !(move.flags & (ExtendedMove::beatingMask | ExtendedMove::promotionMask));
@@ -127,6 +136,7 @@ public:
                         }
                         return ce_.previousBestMoves[candidateDepth].move;
                     }
+
                 }
             }
         }
@@ -148,35 +158,28 @@ public:
             return moves_[index++];
         }
 
-/*        if (firstKillersAnalyzed == false)
+        if (movesSortedByHistory == false)
         {
-            firstKillersAnalyzed = true;
+            movesSortedByHistory = true;
+            /*auto killers = 0;
+
             auto killerIt = std::find(moves_.begin() + index,
-                                 moves_.end(),
-                                 killerMoves[depth_].currentKiller);
+                                      moves_.end(),
+                                      killerMoves[depth_].currentKiller);
             if (killerIt != moves_.end())
             {
-                std::swap(*killerIt, *(moves_.begin() + index));
-                return moves_[index++];
+                std::swap(*killerIt, moves_[index]);
+                ++killers;
             }
-        }
 
-        if (secondKillersAnalyzed == false)
-        {
-            secondKillersAnalyzed = true;
-            auto killerIt = std::find(moves_.begin() + index,
+            killerIt = std::find(moves_.begin() + index + killers,
                                       moves_.end(),
                                       killerMoves[depth_].previousKiller);
             if (killerIt != moves_.end())
             {
-                std::swap(*killerIt, *(moves_.begin() + index));
-                return moves_[index++];
-            }
-        }*/
-        if (movesSortedByHistory == false)
-        {
-
-            movesSortedByHistory = true;
+                std::swap(*killerIt, moves_[index+1]);
+                ++killers;
+            }*/
             std::sort(moves_.begin() + index,
                       moves_.end(),
                       [&](auto& lhs, auto& rhs) {
@@ -192,8 +195,6 @@ private:
     bool bestMoveAnalyzed = false;
     bool beatingAndPromotionsAnalyzed = false;
     bool movesSortedByHistory = false;
-    bool firstKillersAnalyzed = false;
-    bool secondKillersAnalyzed = false;
     int index;
     int nonPromotionNorBeatingIndex = 0;
     std::vector<ExtendedMove> moves_;
@@ -206,13 +207,13 @@ public:
             : moves_(std::move(moves))
             , index(0)
     {
-        auto firstNotBeatingIt = std::find_if(moves_.begin() + index,
+        auto firstNotBeatingIt = std::find_if(moves_.begin(),
                                               moves_.end(),
                                               [](auto&& move) {
                                                   return !(move.flags & (ExtendedMove::beatingMask | ExtendedMove::promotionMask));
                                               });
         nonPromotionNorBeatingIndex = firstNotBeatingIt - moves_.begin();
-        std::sort(moves_.begin() + index, firstNotBeatingIt, MVVLVA_Comparator::compare);
+        std::sort(moves_.begin(), firstNotBeatingIt, MVVLVA_Comparator::compare);
     }
 
     unsigned int size() const
@@ -246,6 +247,11 @@ int quiescenceSearch(BoardEngine& be,
                      int alfa,
                      int beta)
 {
+    if (be.isChecked())
+    {
+        return evaluateMax<false>(be, cachedEngine, 1, alfa, beta);
+    }
+
     if (depth == 0) // terminate quiescence
     {
         return cachedEngine.getEvaluationValue(be, be.generateValidMoveCount());
@@ -274,7 +280,7 @@ int quiescenceSearch(BoardEngine& be,
     {
         auto move = orderedMoves.get();
         be.applyMove(move);
-
+        // std::cout << "QS:" << (unsigned)depth << " " << move <<std::endl;
         nextAlfa = -quiescenceSearch(be, cachedEngine, depth - 1, -beta, -alfa);
         be.undoMove(memorial);
         if (beta <= nextAlfa)
@@ -410,6 +416,7 @@ inline ExtendedMove evaluate(BoardEngine be,
     interrupt_flag = false;
     int alfa = -10000000;
     int beta = 10000000;
+    // memset(killerMoves, 0, MAX_DEPTH * sizeof(killerMoves[0]));
     memset(history, 0, sizeof(history[0][0][0]) * 2 * 64 * 64);
 
     evaluateMax<true>(be, cachedEngine, depth, alfa, beta);
@@ -435,10 +442,11 @@ constexpr auto InitialBeta = mateValue + 1;
     interrupt_flag = false;
     int alpha = InitialAlpha;
     int beta = InitialBeta;
-    memset(history, 0, sizeof(history[0][0][0]) * 2 * 64 * 64);
 
+    // memset(history, 0, sizeof(history[0][0][0]) * 2 * 64 * 64);
     for (auto depth = 2u; depth <= maxDepth && depth < MAX_DEPTH; depth+=1)
     {
+        // memset(killerMoves, 0, MAX_DEPTH * sizeof(killerMoves[0]));
         auto val = evaluateMax<true>(be, cachedEngine, depth, alpha, beta);
         if (val <= alpha)
         {

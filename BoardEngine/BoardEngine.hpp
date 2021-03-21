@@ -14,8 +14,10 @@ public:
     BoardEngine();
     BoardEngine(const BoardEngine&);
     BoardEngine& operator=(const BoardEngine&);
+    explicit BoardEngine(const Board& board);
 
     bool validateMove(const Move&) const;
+    bool isChecked() const;
 
     MoveApplier::SimpleMoveMemorial getMemorial() const;
     void applyMove(const ExtendedMove&);

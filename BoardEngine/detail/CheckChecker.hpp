@@ -6,6 +6,7 @@ struct Board;
 
 namespace CheckChecker
 {
+
 unsigned char findKing(const Board& board, const NOTATION::COLOR::color c) noexcept;
 
 bool isAttackedOn(const Board& board,

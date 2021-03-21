@@ -82,7 +82,7 @@ Hash HASH;
 namespace hash
 {
 
-uint64_t hash(Board &board) noexcept
+uint64_t hash(const Board &board) noexcept
 {
     uint64_t h = 0u;
     for (unsigned char i = 0u; i < 64; ++i)

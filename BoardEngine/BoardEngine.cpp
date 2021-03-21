@@ -1,6 +1,12 @@
 #include "BoardEngine.hpp"
+#include <cassert>
+#include <map>
+#include <set>
+#include <iostream>
 #include <detail/MoveValidator.hpp>
+#include <publicIf/BoardIO.hpp>
 #include <MoveGenerator/MoveGenerator.hpp>
+#include <detail/CheckChecker.hpp>
 #include <hashing/zobrist.hpp>
 
 BoardEngine::BoardEngine()
@@ -12,6 +18,20 @@ BoardEngine::BoardEngine()
 BoardEngine::BoardEngine(const BoardEngine& other)
     : board(other.board)
     , resultEvaluator(other.resultEvaluator)
+    , hash_(other.hash_)
+{
+#ifdef ASSERTSON
+    if (hash::hash(board) != hash_)
+    {
+        std::cout << hash::hash(board) << " " << hash_ << std::endl;
+    }
+    assert(hash::hash(board) == hash_);
+#endif
+}
+
+BoardEngine::BoardEngine(const Board& b)
+        : board(b)
+        , hash_(hash::hash(b))
 {
 }
 
@@ -27,12 +47,15 @@ BoardEngine& BoardEngine::operator=(const BoardEngine& be)
     return *this;
 }
 
-
 bool BoardEngine::validateMove(const Move& move) const
 {
     return MoveValidator::validateMove(board, move);
 }
 
+bool BoardEngine::isChecked() const
+{
+    return CheckChecker::isCheckOn(board, board.playerOnMove);
+}
 
 Result BoardEngine::getResult()
 {
@@ -76,7 +99,39 @@ std::vector<ExtendedMove> BoardEngine::generateMovesFor(NOTATION::COLOR::color c
 
 void BoardEngine::applyMove(const ExtendedMove& move)
 {
+#ifdef ASSERTSON
+    assert(board.isCorrect());
+auto oldBoard = board;
+#endif
+
     MoveApplier::applyMove(board, hash_, move, resultEvaluator);
+
+#ifdef ASSERTSON
+    if (hash::hash(board) != hash_)
+    {
+        std::cout << hash::hash(board) << " " << hash_ << std::endl;
+        std::cout << oldBoard << std::endl;
+    }
+    assert(board.isCorrect());
+    assert(hash::hash(board) == hash_);
+#endif
+#ifdef ASSERTSON
+    static unsigned counter = 0;
+    static std::map<decltype(hash_), std::vector<Board>> hashConflictsMap;
+
+    if (hashConflictsMap[hash_].end() == std::find(
+            hashConflictsMap[hash_].begin(),
+            hashConflictsMap[hash_].end(),
+            board))
+    {
+        hashConflictsMap[hash_].push_back(board);
+        if (hashConflictsMap[hash_].size() > 1)
+        {
+            ++counter;
+            std::cout << "Num of hash conflicts: " << counter << "/" << hashConflictsMap.size() << std::endl;
+        }
+    }
+#endif
 }
 
 MoveApplier::SimpleMoveMemorial BoardEngine::applyUndoableSimpleMove(const ExtendedMove& move)

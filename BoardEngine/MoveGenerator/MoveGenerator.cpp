@@ -24,7 +24,7 @@ void generateCasles<NOTATION::COLOR::color::white>()
     {
         using namespace NOTATION::CASTLING_RIGHTS;
         if (ctx.board->castlingRights & WHITE_LONG_BIT
-            && (ctx.board->piecesBitSets[index].rocksMask & (1ull << 7))
+            && (ctx.board->piecesBitSets[index].rocksMask & (1ull))
             && (ctx.allPieces & ((1ull << 3) | (1ull << 2) | (1ull << 1))) == 0
             && ! CheckChecker::isAttackedOn(*ctx.board, ctx.pieceColor, 3))
         {
@@ -49,7 +49,7 @@ void generateCasles<NOTATION::COLOR::color::black>()
     {
         using namespace NOTATION::CASTLING_RIGHTS;
         if (ctx.board->castlingRights & BLACK_LONG_BIT
-            && (ctx.board->piecesBitSets[index].rocksMask & (1ull << 63))
+            && (ctx.board->piecesBitSets[index].rocksMask & (1ull << 56))
             && (ctx.allPieces & ((1ull << 59) | (1ull << 58) | (1ull << 57))) == 0
             && ! CheckChecker::isAttackedOn(*ctx.board, ctx.pieceColor, 59))
         {
@@ -57,7 +57,7 @@ void generateCasles<NOTATION::COLOR::color::black>()
         }
 
         if (ctx.board->castlingRights & BLACK_SHORT_BIT
-            && (ctx.board->piecesBitSets[index].rocksMask & (1ull << 56))
+            && (ctx.board->piecesBitSets[index].rocksMask & (1ull << 63))
             && (ctx.allPieces & ((1ull << 61) | (1ull << 62))) == 0
             && ! CheckChecker::isAttackedOn(*ctx.board, ctx.pieceColor, 61))
         {
@@ -88,12 +88,12 @@ public:
         auto enPassantBitBoard = (1ull << (ctx.board)->validEnPassant);
         if (((enPassantBitBoard & NOT_H_COL) >> 7) & ctx.board->piecesBitSets[colorNum].pawnsMask)
         {
-            TMoveAddingStrategy::addPawnWithBeating((ctx.board)->validEnPassant - 7, (ctx.board)->validEnPassant,
+            TMoveAddingStrategy::addEnPasantBeating((ctx.board)->validEnPassant - 7, (ctx.board)->validEnPassant,
                                                     NOTATION::PIECES::PAWN | NOTATION::COLOR::BLACK);
         }
         if (((enPassantBitBoard & NOT_A_COL) >> 9) & ctx.board->piecesBitSets[colorNum].pawnsMask)
         {
-            TMoveAddingStrategy::addPawnWithBeating((ctx.board)->validEnPassant - 9, (ctx.board)->validEnPassant,
+            TMoveAddingStrategy::addEnPasantBeating((ctx.board)->validEnPassant - 9, (ctx.board)->validEnPassant,
                                                     NOTATION::PIECES::PAWN | NOTATION::COLOR::BLACK);
         }
     }
@@ -114,12 +114,12 @@ public:
         auto enPassantBitBoard = (1ull << (ctx.board)->validEnPassant);
         if (((enPassantBitBoard & NOT_H_COL) << 9) & ctx.board->piecesBitSets[colorNum].pawnsMask)
         {
-            TMoveAddingStrategy::addPawnWithBeating((ctx.board)->validEnPassant + 9, (ctx.board)->validEnPassant,
+            TMoveAddingStrategy::addEnPasantBeating((ctx.board)->validEnPassant + 9, (ctx.board)->validEnPassant,
                                                     NOTATION::PIECES::PAWN | NOTATION::COLOR::WHITE);
         }
         if (((enPassantBitBoard & NOT_A_COL) << 7) & ctx.board->piecesBitSets[colorNum].pawnsMask)
         {
-            TMoveAddingStrategy::addPawnWithBeating((ctx.board)->validEnPassant + 7, (ctx.board)->validEnPassant,
+            TMoveAddingStrategy::addEnPasantBeating((ctx.board)->validEnPassant + 7, (ctx.board)->validEnPassant,
                                                     NOTATION::PIECES::PAWN | NOTATION::COLOR::WHITE);
         }
     }

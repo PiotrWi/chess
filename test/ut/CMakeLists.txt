@@ -22,7 +22,7 @@ add_executable(ut
         pinnedchecktest.cpp
         ResultEvaluatorTest.cpp
         ZobrishTest.cpp
-        mt/WholeGame1.cpp mt/WholeGame2.cpp)
+        mt/WholeGame1.cpp mt/WholeGame2.cpp mt/WholeGame3.cpp)
 
 add_dependencies(ut googletest)
 add_dependencies(ut board)

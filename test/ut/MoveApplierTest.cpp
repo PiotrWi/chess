@@ -59,6 +59,28 @@ TEST_F(MoveApplierShould, storeMoveToResultEvaluator)
     ASSERT_EQ(hash, getHastForBoard(expectedBoard));
 }
 
+TEST_F(MoveApplierShould, storeMoveToResultEvaluator2)
+{
+    Board board = utils::createBoard(utils::InitialBoardString);
+    uint64_t hash = getHastForBoard(board);
+
+    Board expectedBoard = utils::createBoard(
+            "♜♞♝♛♚♝♞♜"
+            "♟♟♟♟♟♟♟♟"
+            "        "
+            "        "
+            "        "
+            "    ♙   "
+            "♙♙♙♙ ♙♙♙"
+            "♖♘♗♕♔♗♘♖", BLACK);
+
+    EXPECT_CALL(resultEvaluatorMock, storeBoard(_, _));
+    MoveApplier::applyMove(board, hash, notations::long_algebraic::createExtendedMove("e2e3", WHITE, board), resultEvaluatorMock);
+
+    ASSERT_EQ(expectedBoard, board);
+    ASSERT_EQ(hash, getHastForBoard(expectedBoard));
+}
+
 TEST_F(MoveApplierShould, doCastlesForWhite)
 {
 // expectations
@@ -311,3 +333,40 @@ TEST_F(MoveApplierShould, allowEnPassantForBlack)
     ASSERT_EQ(expectedBoard, board);
 }
 
+// Problematic positions
+TEST_F(MoveApplierShould, problematic_1)
+{
+    Board board = utils::createBoard(
+        "♜♞♝.♚♝♞♜"
+        "♟♟♟..♟♟♟"
+        "....♟..."
+        "...♟♙..."
+        ".......♛"
+        "........"
+        "♙♙♙♙.♙♙♙"
+        "♖♘♗♕♔♗♘♖");
+    board.validEnPassant = 43;
+    auto hash = hash::hash(board);
+
+    auto move = notations::coordinates::createExtendedMove("e5-d6", WHITE, board);
+    MoveApplier::applyMove(board, hash, move, resultEvaluatorMock);
+    ASSERT_EQ(hash, hash::hash(board));
+}
+
+TEST_F(MoveApplierShould, problematic_2)
+{
+    Board board = utils::createBoard("♜♞♝♛♚.♞♜"
+        "♟♟♟♟♝♟♕♟"
+        "....♟..."
+        "........"
+        "........"
+        "....♙..."
+        "♙♙♙♙.♙♙♙"
+        "♖♘♗.♔♗♘♖", BLACK);
+
+    auto hash = hash::hash(board);
+    auto move = notations::coordinates::createExtendedMove("e7-b4", BLACK, board);
+    MoveApplier::applyMove(board, hash, move, resultEvaluatorMock);
+
+    ASSERT_EQ(hash, hash::hash(board));
+}
