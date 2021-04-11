@@ -12,12 +12,12 @@ add_library(Players
         common/containers/HashMap.hpp
         ComputerPlayer/CachedPlayer.cpp
         ComputerPlayer/CachedPlayer.hpp
-        common/evaluators/MaterialAndMoveCountEvaluator.hpp
+        common/evaluators/PositionEvaluator.hpp
         common/evaluators/PawnStructureEvaluator.hpp
         common/evaluators/PawnStructureEvaluator.cpp
         common/searchingAlgorithms/FullSearchingImplementation.hpp
         common/CachedEngines/FullCachedEngine.hpp
         common/CachedEngines/FullCachedEngine.cpp
-        common/Constants.hpp)
+        common/Constants.hpp common/evaluators/PositionEvaluator.cpp)
 
 target_link_libraries(Players board)

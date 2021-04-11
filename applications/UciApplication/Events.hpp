@@ -87,9 +87,54 @@ public:
         return ID;
     }
 
-    BEST_MOVE(std::string bestMoveIn)
+    BEST_MOVE(const std::string& bestMoveIn)
         : bestMove(bestMoveIn) {}
     std::string bestMove;
 };
 
-constexpr unsigned ID_COUNT = 7;
+struct SET_OPTION : public EVENT
+{
+public:
+    static constexpr unsigned ID = 7;
+    virtual unsigned getId() override
+    {
+        return ID;
+    }
+
+    SET_OPTION(const std::string& keyIn, const std::string& valueIn)
+        : key(keyIn)
+        , value(valueIn)
+        {}
+    std::string key;
+    std::string value;
+};
+
+struct IS_QUIET : public EVENT
+{
+public:
+    static constexpr unsigned ID = 8;
+    virtual unsigned getId() override
+    {
+        return ID;
+    }
+    IS_QUIET(std::string fenStringIn)
+        : fenString(fenStringIn)
+        {}
+    std::string fenString;
+};
+
+struct QUIET_RESP : public EVENT
+{
+public:
+    static constexpr unsigned ID = 9;
+    virtual unsigned getId() override
+    {
+        return ID;
+    }
+    QUIET_RESP(bool isQuietIn)
+        : isQuiet(isQuietIn)
+    {}
+    bool isQuiet;
+};
+
+constexpr unsigned ID_COUNT = 10;

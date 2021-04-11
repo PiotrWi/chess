@@ -1,6 +1,6 @@
 #include "FullCachedEngine.hpp"
 
-#include <common/evaluators/MaterialAndMoveCountEvaluator.hpp>
+#include <common/evaluators/PositionEvaluator.hpp>
 
 namespace players
 {

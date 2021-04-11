@@ -113,6 +113,7 @@ BoardEngine initByFen(std::string fenStr)
     }
     be.hash_ = hash::hash(b);
     be.board = b;
+
     return be;
 }
 

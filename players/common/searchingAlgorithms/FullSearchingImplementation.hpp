@@ -280,7 +280,6 @@ int quiescenceSearch(BoardEngine& be,
     {
         auto move = orderedMoves.get();
         be.applyMove(move);
-        // std::cout << "QS:" << (unsigned)depth << " " << move <<std::endl;
         nextAlfa = -quiescenceSearch(be, cachedEngine, depth - 1, -beta, -alfa);
         be.undoMove(memorial);
         if (beta <= nextAlfa)
@@ -404,6 +403,12 @@ int evaluateMax(BoardEngine& be,
 namespace full_search
 {
 
+inline int quiescenceEvaluation(BoardEngine& be,
+                     players::common::move_generators::FullCachedEngine& cachedEngine)
+{
+    return  quiescenceSearch(be, cachedEngine, 6/*Quinesence limit*/, -10000000, 10000000);
+}
+
 inline void interrupt()
 {
     interrupt_flag = true;
@@ -435,9 +440,9 @@ constexpr auto InitialBeta = mateValue + 1;
  *
  * NOTE: Iterative searching for the best move.
  */
-    inline ExtendedMove evaluateIterative(BoardEngine be,
-                       players::common::move_generators::FullCachedEngine& cachedEngine,
-                       unsigned char maxDepth)
+inline ExtendedMove evaluateIterative(BoardEngine be,
+                   players::common::move_generators::FullCachedEngine& cachedEngine,
+                   unsigned char maxDepth)
 {
     interrupt_flag = false;
     int alpha = InitialAlpha;

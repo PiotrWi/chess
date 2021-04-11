@@ -6,7 +6,12 @@
 #include <utils/Timer.hpp>
 #include <utils/DebugWrapper.hpp>
 #include <thread>
-
+/*
+/home/pioter/proj/chess/cmake-build-debug/applications/uci_application
+option resetEvaluators
+option materialEvaluation on
+is_quiet rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
+ */
 std::unique_ptr<GameHandler> handler;
 
 void onPositionProcHandler(POSSITION& event)
