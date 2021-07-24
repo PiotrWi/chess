@@ -1,7 +1,7 @@
 #pragma once
 
-class Board;
-class Move;
+struct Board;
+struct Move;
 
 namespace MoveValidator
 {

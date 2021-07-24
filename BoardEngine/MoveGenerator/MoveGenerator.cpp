@@ -1,6 +1,8 @@
 #include "MoveGenerator.hpp"
 #include "MoveGeneratorContext.hpp"
 
+#include <stdint.h>
+
 #include "MoveGeneratorBackend.hpp"
 
 #include <publicIf/NotationConversions.hpp>

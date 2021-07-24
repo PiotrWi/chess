@@ -1,5 +1,8 @@
 #include "FullCachedEngine.hpp"
 
+#include "BoardEngine.hpp"
+#include "common/containers/HashMap.hpp"
+
 #include <common/evaluators/PositionEvaluator.hpp>
 
 namespace players

@@ -1,7 +1,6 @@
 #include <string>
 #include <thread>
 #include <sstream>
-
 #include "Events.hpp"
 #include <utils/DebugWrapper.hpp>
 #include <UciApplication/EventsPropagator.hpp>
@@ -11,7 +10,7 @@
 
 void handleUci(UCI&)
 {
-    debug << "id name PiotorChess_bitBoard v0.1";
+    debug << "id name PiotorChess_bitBoard v0.2";
     debug << "id author https://github.com/PiotrWi";
     debug << "uciok";
 }

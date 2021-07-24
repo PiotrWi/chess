@@ -1,7 +1,11 @@
 #include "publicIf/BoardIO.hpp"
 
-#include <map>
-#include <ostream>
+#include <map>                    // for map
+#include <ostream>                // for operator<<, endl, basic_ostream
+#include <utility>                // for make_pair
+
+#include "publicIf/Board.hpp"     // for Board
+#include "publicIf/Notation.hpp"  // for BLACK, WHITE, BISHOP, KING, KNIGHT
 
 namespace
 {

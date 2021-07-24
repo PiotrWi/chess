@@ -18,6 +18,6 @@ add_library(Players
         common/searchingAlgorithms/FullSearchingImplementation.hpp
         common/CachedEngines/FullCachedEngine.hpp
         common/CachedEngines/FullCachedEngine.cpp
-        common/Constants.hpp common/evaluators/PositionEvaluator.cpp)
+        common/Constants.hpp common/evaluators/PositionEvaluator.cpp common/evaluators/evaluationConstants.h common/evaluators/CastleEvaluators.h)
 
 target_link_libraries(Players board)

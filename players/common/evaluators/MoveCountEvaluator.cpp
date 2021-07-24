@@ -2,10 +2,8 @@
 
 namespace moveCountEvaluator
 {
+constexpr int moveValue = 8;
 
-int evaluate(int playerOnMoveMovesCount, int oponentMovesCount)
-{
-    return (playerOnMoveMovesCount - oponentMovesCount) * 10;
-}
+
 
 }

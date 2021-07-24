@@ -1,6 +1,5 @@
 #include "coordinationnotation.hpp"
 
-#include <algorithm>
 #include <ostream>
 
 #include "common.hpp"

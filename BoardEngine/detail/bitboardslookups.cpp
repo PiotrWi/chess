@@ -1,7 +1,5 @@
 #include "bitboardslookups.hpp"
 
-#include <iostream>
-
 BishopFlexiMagicBB bishopMagicBb = {};
 RockFlexiMagicBB rockMagicBb = {};
 

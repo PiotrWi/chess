@@ -1,7 +1,4 @@
-#include "LongAlgebraicNotation.hpp"
-
-#include <algorithm>
-#include <ostream>
+#include "uci.hpp"
 
 #include "common.hpp"
 #include <publicIf/NotationConversions.hpp>

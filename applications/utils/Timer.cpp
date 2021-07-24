@@ -1,6 +1,4 @@
 #include "Timer.hpp"
-#include <UciApplication/Events.hpp>
-#include <UciApplication/EventsPropagator.hpp>
 
 #include <signal.h>
 #include <cassert>

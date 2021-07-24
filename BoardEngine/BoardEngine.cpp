@@ -1,13 +1,15 @@
 #include "BoardEngine.hpp"
-#include <cassert>
-#include <map>
-#include <set>
-#include <iostream>
 #include <detail/MoveValidator.hpp>
-#include <publicIf/BoardIO.hpp>
 #include <MoveGenerator/MoveGenerator.hpp>
 #include <detail/CheckChecker.hpp>
 #include <hashing/zobrist.hpp>
+
+#ifdef ASSERTSON
+#include <cassert>
+#include <map>
+#include <iostream>
+#include <publicIf/BoardIO.hpp>
+#endif
 
 BoardEngine::BoardEngine()
 {

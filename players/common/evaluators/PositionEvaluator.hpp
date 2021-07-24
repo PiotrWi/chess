@@ -1,6 +1,6 @@
 #pragma once
 
-#include <BoardEngine.hpp>
+class BoardEngine;
 
 struct EvaluationSettings
 {

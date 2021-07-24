@@ -1,8 +1,10 @@
 #pragma once
 
 #include <vector>
+#include "publicIf/Notation.hpp"
 
-#include <publicIf/Board.hpp>
+struct Board;
+struct ExtendedMove;
 
 namespace MoveGenerator
 {

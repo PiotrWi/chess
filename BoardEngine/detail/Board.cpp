@@ -1,9 +1,12 @@
 #include "publicIf/Board.hpp"
 
-#include <ostream>
 #include <publicIf/NotationConversions.hpp>
+#include <stdint.h>
 
+#ifdef ASSERTSON
 #include <cassert>
+#include <ostream>
+#endif
 
 bool Board::PlayerBitMasksSet::operator==(const PlayerBitMasksSet& rhs) const
 {
@@ -154,7 +157,7 @@ void Board::setField(const unsigned char field, unsigned char value)
 #ifdef ASSERTSON
     assert(field < 64);
 #endif
-    u_int64_t pieceBitNegation = (~(1lu << field));
+    uint64_t pieceBitNegation = (~(1lu << field));
     for (unsigned char i = 0; i < 2; ++i)
     {
         piecesBitSets[i].pawnsMask &= pieceBitNegation;

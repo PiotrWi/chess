@@ -1,7 +1,5 @@
 #include "ResultEvaluator.hpp"
 
-#include <algorithm>
-#include <stdint.h>
 #include <vector>
 
 #include <detail/CheckChecker.hpp>

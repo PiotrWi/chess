@@ -6,8 +6,6 @@
 #include <common/searchingAlgorithms/FullSearchingImplementation.hpp>
 #include <utils/DebugWrapper.hpp>
 
-#include <iostream>
-
 IsQuietHandler isQuietHandler;
 
 void handleIsQuiet(IS_QUIET& event)

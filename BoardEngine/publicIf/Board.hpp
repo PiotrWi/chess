@@ -1,6 +1,5 @@
 #pragma once
 
-#include <iosfwd>
 #include <publicIf/Notation.hpp>
 
 struct Board

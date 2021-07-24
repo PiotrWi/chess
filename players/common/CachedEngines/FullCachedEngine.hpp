@@ -1,9 +1,12 @@
 #pragma once
 
 #include <vector>
+
+#include <publicIf/Board.hpp>
 #include <common/Constants.hpp>
-#include <BoardEngine.hpp>
 #include <common/containers/HashMap.hpp>
+
+class BoardEngine;
 
 namespace players
 {

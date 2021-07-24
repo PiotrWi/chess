@@ -10,6 +10,8 @@ endif()
 
 project(chess LANGUAGES CXX)
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 	add_definitions(-DASSERTSON)
 	SET(CMAKE_CXX_FLAGS  "-Og -g -Wall -Wextra -Werror -std=c++20 -fuse-ld=gold -lrt")

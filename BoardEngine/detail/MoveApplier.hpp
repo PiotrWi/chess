@@ -3,8 +3,6 @@
 #include "publicIf/Board.hpp"
 #include <cstdint>
 
-class ResultEvaluator;
-
 namespace MoveApplier
 {
 

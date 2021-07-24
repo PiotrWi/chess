@@ -1,10 +1,10 @@
 #pragma once
 
-#include <BoardEngine.hpp>
-
 namespace moveCountEvaluator
 {
-
-int evaluate(int playerOnMoveMovesCount, int oponentMovesCount);
-
+template <typename COEF>
+int evaluate(int playerOnMoveMovesCount, int oponentMovesCount)
+{
+    return (playerOnMoveMovesCount - oponentMovesCount) * COEF::moveValue;
+}
 }

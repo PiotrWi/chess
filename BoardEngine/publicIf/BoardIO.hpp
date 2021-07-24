@@ -1,7 +1,7 @@
 #pragma once
 
 #include <iosfwd>
-#include <publicIf/Board.hpp>
+struct Board;
 
 std::ostream& operator<<(std::ostream&, const Board&) noexcept;
 
