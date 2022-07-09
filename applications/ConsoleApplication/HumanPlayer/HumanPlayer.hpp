@@ -1,6 +1,6 @@
 #pragma once
 
-#include <common/IPLayer.hpp>
+#include <IPLayer.hpp>
 
 class HumanPlayer : public IPlayer
 {

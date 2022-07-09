@@ -30,9 +30,3 @@ add_subdirectory(players)
 add_subdirectory(externals/gtest)
 add_subdirectory(test)
 add_subdirectory(applications)
-
-add_executable(chess main.cpp)
-
-target_link_libraries(chess
-	board
-	Players)

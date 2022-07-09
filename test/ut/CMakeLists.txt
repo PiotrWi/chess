@@ -29,3 +29,5 @@ add_dependencies(ut board)
 
 target_link_libraries(ut gtest gmock gtest_main pthread board Players)
 add_dependencies(ut-run ut)
+
+set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin/)

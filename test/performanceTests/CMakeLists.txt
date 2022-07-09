@@ -16,3 +16,5 @@ add_dependencies(pt board)
 
 target_link_libraries(pt gtest gmock gtest_main pthread board Players)
 add_dependencies(pt-run pt)
+
+set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin/)

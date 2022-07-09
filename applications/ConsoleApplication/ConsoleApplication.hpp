@@ -1,7 +1,7 @@
 #pragma once
 
 #include <memory>
-#include <common/IPLayer.hpp>
+#include <IPLayer.hpp>
 #include <BoardEngine.hpp>
 
 class ConsoleApplication

@@ -5,7 +5,7 @@
 #include <iostream>
 #include <HumanPlayer/HumanPlayer.hpp>
 #include <ComputerPlayer/CachedPlayer.hpp>
-#include "ConsoleApplication.hpp"
+#include <ConsoleApplication.hpp>
 
 std::unique_ptr<IPlayer> createPlayer(const char* playerType)
 {
