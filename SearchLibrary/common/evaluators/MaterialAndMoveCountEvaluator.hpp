@@ -8,7 +8,6 @@
 
 static int evaluateFunction(BoardEngine& be, unsigned int validMovesCount)
 {
-    // auto validMoves = be.generateValidMoveCount();
     auto gameResult = be.getREsultWithoutRepeatitionCheck(validMovesCount);
     if ((gameResult == Result::whiteWon) | (gameResult == Result::blackWon))
     {

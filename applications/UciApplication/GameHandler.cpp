@@ -32,7 +32,7 @@ void GameHandler::interrupt()
 
 void GameHandler::onGo(GO& goEvent)
 {
-    cachedEngine = {};
+    cachedEngine.clear();
 
     unsigned remainingTime;
     if (be.board.playerOnMove == NOTATION::COLOR::color::white)
@@ -57,6 +57,11 @@ void GameHandler::emitBestMove(const Move& move)
 }
 
 GameHandler::GameHandler()
+{
+}
+
+GameHandler::GameHandler(const char* evaluatorLocation, const char* evaluatorConfigurationLocation)
+    : cachedEngine(evaluatorLocation, evaluatorConfigurationLocation)
 {
 }
 
@@ -88,8 +93,20 @@ void GameHandler::onPositionProc(POSSITION& event)
     }
 }
 
-void handleUciNewGame(UCI_NEW_GAME&)
+void handleUciNewGame(UCI_NEW_GAME& newGameEvent)
 {
+    if (newGameEvent.options.find("customEvaluator") != newGameEvent.options.end())
+    {
+        const char* evaluatorLocation = newGameEvent.options.at("customEvaluator").c_str();
+        const char* evaluatorConfigurationLocation = nullptr;
+        if (newGameEvent.options.find("evaluatorConfig")!= newGameEvent.options.end())
+        {
+            evaluatorConfigurationLocation = newGameEvent.options.at("evaluatorConfig").c_str();
+        }
+        handler = std::make_unique<GameHandler>(evaluatorLocation, evaluatorConfigurationLocation);
+        handler->startProcessing();
+        return;
+    }
     handler = std::make_unique<GameHandler>();
     handler->startProcessing();
 }

@@ -16,11 +16,11 @@ add_executable(UciApplication
     UciApplication/Events.hpp
     utils/DebugWrapper.cpp utils/Timer.hpp
     utils/Timer.cpp)
-target_link_libraries(UciApplication board Players pthread)
+target_link_libraries(UciApplication BoardLibrary SearchLibrary StandardEvaluator pthread)
 
 add_executable(MagicBbGenerator
     MagicBbGenerator/main.cpp)
-target_link_libraries(MagicBbGenerator board)
+target_link_libraries(MagicBbGenerator BoardLibrary)
 
 add_dependencies(applications UciApplication)
 add_dependencies(applications MagicBbGenerator)

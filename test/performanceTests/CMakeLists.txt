@@ -12,9 +12,8 @@ add_executable(pt
 
 
 add_dependencies(pt googletest)
-add_dependencies(pt board)
 
-target_link_libraries(pt gtest gmock gtest_main pthread board Players)
+target_link_libraries(pt gtest gmock gtest_main pthread BoardLibrary SearchLibrary StandardEvaluator)
 add_dependencies(pt-run pt)
 
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin/)

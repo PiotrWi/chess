@@ -26,6 +26,7 @@ void handleBestMove(BEST_MOVE& bestMove)
 
 void readCommands()
 {
+    std::map <std::string, std::string> options;
     eventPropagator.registerToEvent(handleUci);
     eventPropagator.registerToEvent(handleIsReady);
     eventPropagator.registerToEvent(handleUciNewGame);
@@ -47,7 +48,7 @@ void readCommands()
         }
         if (command == "ucinewgame")
         {
-            eventPropagator.enqueue(UCI_NEW_GAME{});
+            eventPropagator.enqueue(UCI_NEW_GAME{options});
         }
         if (command.find("position") != std::string::npos)
         {
@@ -119,6 +120,18 @@ void readCommands()
             QUIT quit;
             eventPropagator.enqueue(quit);
             return;
+        }
+        if (command.find("setoption") != std::string::npos)
+        {
+            std::string word;
+            std::stringstream ss(command);
+            ss >> word; // consume "option" string
+            ss >> word; // consume "name" string
+            ss >> word;
+            auto key = word;
+            ss >> word; // consume "value" string
+            ss >> word;
+            options [key] = word;
         }
     }
 }

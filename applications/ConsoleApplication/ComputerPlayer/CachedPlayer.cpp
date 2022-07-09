@@ -3,6 +3,12 @@
 #include <notations/coordinationnotation.hpp>
 #include <common/searchingAlgorithms/FullSearchingImplementation.hpp>
 
+CachedPlayer::CachedPlayer() {}
+CachedPlayer::CachedPlayer(const char* customEvaluatorLocation, const char* customEvaluatorConfigurationLocation)
+    : cmg_(customEvaluatorLocation, customEvaluatorConfigurationLocation)
+{
+}
+
 void CachedPlayer::init(Color)
 {
 }
@@ -16,7 +22,7 @@ const char* CachedPlayer::act(const char *string)
     auto move = full_search::evaluateIterative(be, cmg_, 6);
     be.applyMove(move);
 
-    cmg_ = {};
+    cmg_.clear();
 
     strcpy(lastMove_, notations::coordinates::createMoveStr(move).data());
     return lastMove_;

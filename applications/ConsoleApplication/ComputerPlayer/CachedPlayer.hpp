@@ -8,6 +8,8 @@ class CachedPlayer
     : public IPlayer
 {
 public:
+    CachedPlayer();
+    CachedPlayer(const char* customEvaluatorLocation, const char* customEvaluatorConfigurationLocation);
     const char *act(const char *string) override;
     void rejectLast() override;
     void init(Color c) override;

@@ -11,6 +11,7 @@ class GameHandler
 {
 public:
     GameHandler();
+    GameHandler(const char* evaluatorLocation, const char* evaluatorConfigurationLocation);
     void startProcessing();
     void onPositionProc(POSSITION&);
     void onGo(GO&);

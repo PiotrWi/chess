@@ -14,6 +14,8 @@
 namespace
 {
 
+
+
 template <bool SaveMove>
 int evaluateMax(BoardEngine& be,
                 players::common::move_generators::FullCachedEngine& cachedEngine,
@@ -25,22 +27,6 @@ ExtendedMove bestMove;
 std::atomic_bool interrupt_flag = false;
 
 unsigned history[2][64][64] = {};
-/*
-struct KillerMoves
-{
-    ExtendedMove currentKiller;
-    ExtendedMove previousKiller;
-} killerMoves[MAX_DEPTH];
-
-void setKiller(const ExtendedMove& move, unsigned int depth)
-{
-    if (move.flags & ExtendedMove::beatingMask) return;
-
-    if (move == killerMoves[depth].currentKiller) return;
-
-    killerMoves[depth].previousKiller = move;
-    std::swap(killerMoves[depth].previousKiller, killerMoves[depth].currentKiller);
-}*/
 
 class MVVLVA_Comparator // Most valuable victim less valuable aggressor
 {
@@ -161,25 +147,6 @@ public:
         if (movesSortedByHistory == false)
         {
             movesSortedByHistory = true;
-            /*auto killers = 0;
-
-            auto killerIt = std::find(moves_.begin() + index,
-                                      moves_.end(),
-                                      killerMoves[depth_].currentKiller);
-            if (killerIt != moves_.end())
-            {
-                std::swap(*killerIt, moves_[index]);
-                ++killers;
-            }
-
-            killerIt = std::find(moves_.begin() + index + killers,
-                                      moves_.end(),
-                                      killerMoves[depth_].previousKiller);
-            if (killerIt != moves_.end())
-            {
-                std::swap(*killerIt, moves_[index+1]);
-                ++killers;
-            }*/
             std::sort(moves_.begin() + index,
                       moves_.end(),
                       [&](auto& lhs, auto& rhs) {
@@ -280,7 +247,6 @@ int quiescenceSearch(BoardEngine& be,
     {
         auto move = orderedMoves.get();
         be.applyMove(move);
-        // std::cout << "QS:" << (unsigned)depth << " " << move <<std::endl;
         nextAlfa = -quiescenceSearch(be, cachedEngine, depth - 1, -beta, -alfa);
         be.undoMove(memorial);
         if (beta <= nextAlfa)
@@ -416,7 +382,6 @@ inline ExtendedMove evaluate(BoardEngine be,
     interrupt_flag = false;
     int alfa = -10000000;
     int beta = 10000000;
-    // memset(killerMoves, 0, MAX_DEPTH * sizeof(killerMoves[0]));
     memset(history, 0, sizeof(history[0][0][0]) * 2 * 64 * 64);
 
     evaluateMax<true>(be, cachedEngine, depth, alfa, beta);
@@ -443,10 +408,8 @@ constexpr auto InitialBeta = mateValue + 1;
     int alpha = InitialAlpha;
     int beta = InitialBeta;
 
-    // memset(history, 0, sizeof(history[0][0][0]) * 2 * 64 * 64);
     for (auto depth = 2u; depth <= maxDepth && depth < MAX_DEPTH; depth+=1)
     {
-        // memset(killerMoves, 0, MAX_DEPTH * sizeof(killerMoves[0]));
         auto val = evaluateMax<true>(be, cachedEngine, depth, alpha, beta);
         if (val <= alpha)
         {

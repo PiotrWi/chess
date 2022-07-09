@@ -15,7 +15,8 @@ add_executable(ConsolleApplication
 )
 
 target_link_libraries(ConsolleApplication
-    board
-    Players)
+    BoardLibrary
+    SearchLibrary
+    StandardEvaluator)
 
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin/)

@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
 
-add_library(board
+add_library(BoardLibrary
     BoardEngine.hpp
     BoardEngine.cpp
     detail/Board.cpp

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <map>
 #include <string>
 #include <vector>
 
@@ -39,6 +40,9 @@ struct IS_READY : public EVENT
 
 struct UCI_NEW_GAME : public EVENT
 {
+    UCI_NEW_GAME(const std::map<std::string, std::string>& optionsIn)
+        : options(optionsIn) {}
+    std::map<std::string, std::string> options;
     static constexpr unsigned ID = 3;
     virtual unsigned getId() override
     {

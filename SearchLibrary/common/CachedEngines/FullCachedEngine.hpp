@@ -11,6 +11,8 @@ namespace common
 {
 namespace move_generators
 {
+using TEvaluatePositionHandler = int (*)(BoardEngine& be, unsigned int validMovesCount);
+using TInitHandler = void (*)(const char*);
 
 struct CacheFullEntity
 {
@@ -38,6 +40,15 @@ struct CacheFullEntity
 class FullCachedEngine
 {
 public:
+    FullCachedEngine();
+    FullCachedEngine(const char* evaluatorLibLocation, const char* evaluatorConfig);
+    ~FullCachedEngine();
+
+    FullCachedEngine(const FullCachedEngine&) = delete;
+    FullCachedEngine operator=(const FullCachedEngine&) = delete;
+    FullCachedEngine(FullCachedEngine&&) = delete;
+    FullCachedEngine operator=(FullCachedEngine&&) = delete;
+
     CacheFullEntity& get(const BoardEngine& be);
 
     int getEvaluationValue(BoardEngine& be, unsigned int validMovesCount);
@@ -56,6 +67,10 @@ public:
 private:
     containers::HashMap<CacheFullEntity, uint64_t , 22u> cache_;
     containers::HashMap<int, uint64_t, 22u> cachedEvaluators_;
+
+    TEvaluatePositionHandler evaluatePositionHandler;
+    TInitHandler initHandler;
+    void *libHandle = nullptr;
 };
 
 }  // namespace players

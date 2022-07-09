@@ -14,7 +14,7 @@ add_executable(ut
         FullSearchTest.cpp
         HashMapTest.cpp
         HashTableTest.cpp
-        MaterialEvaluatorTest.cpp
+        #MaterialEvaluatorTest.cpp
         SearchingBasicTests.cpp
         MoveApplierTest.cpp
         MoveGeneratorTest.cpp
@@ -22,12 +22,13 @@ add_executable(ut
         pinnedchecktest.cpp
         ResultEvaluatorTest.cpp
         ZobrishTest.cpp
-        mt/WholeGame1.cpp mt/WholeGame2.cpp mt/WholeGame3.cpp)
+        mt/WholeGame1.cpp
+        mt/WholeGame2.cpp
+        mt/WholeGame3.cpp)
 
 add_dependencies(ut googletest)
-add_dependencies(ut board)
 
-target_link_libraries(ut gtest gmock gtest_main pthread board Players)
+target_link_libraries(ut gtest gmock gtest_main pthread BoardLibrary SearchLibrary StandardEvaluator)
 add_dependencies(ut-run ut)
 
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin/)

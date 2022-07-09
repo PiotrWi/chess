@@ -1,6 +1,8 @@
 #include "FullCachedEngine.hpp"
 
-#include <common/evaluators/MaterialAndMoveCountEvaluator.hpp>
+#include <evaluatorIf.hpp>
+
+#include <dlfcn.h>
 
 namespace players
 {
@@ -8,6 +10,34 @@ namespace common
 {
 namespace move_generators
 {
+
+FullCachedEngine::FullCachedEngine()
+{
+    evaluatePositionHandler = evaluatePosition;
+    initHandler = init;
+}
+
+FullCachedEngine::FullCachedEngine(const char* evaluatorLibLocation, const char* evaluatorConfig)
+{
+    libHandle = dlopen(evaluatorLibLocation, RTLD_LAZY);
+
+    if (!libHandle)
+    {
+        throw std::runtime_error("provider library not exist");
+        return;
+    }
+    evaluatePositionHandler = (TEvaluatePositionHandler)dlsym(libHandle, "evaluatePosition");
+    initHandler = (TInitHandler)dlsym(libHandle, "init");
+    initHandler(evaluatorConfig);
+}
+
+FullCachedEngine::~FullCachedEngine()
+{
+    if (libHandle)
+    {
+        dlclose(libHandle);
+    }
+}
 
 CacheFullEntity& FullCachedEngine::get(const BoardEngine &be)
 {
@@ -24,7 +54,7 @@ int FullCachedEngine::getEvaluationValue(BoardEngine& be, unsigned int validMove
     auto elem = cachedEvaluators_.get(hash, hash);
     if (!elem)
     {
-        auto val = evaluateFunction(be, validMovesCount);
+        auto val = evaluatePositionHandler(be, validMovesCount);
         return *cachedEvaluators_.store(hash, hash, val);
     }
     return *elem;
@@ -76,6 +106,12 @@ void FullCachedEngine::clearOlderThan(unsigned char age)
 {
     cache_.removeOlderThan(age);
     cachedEvaluators_.removeOlderThan(age);
+}
+
+void FullCachedEngine::clear()
+{
+    cache_ = {};
+    cachedEvaluators_ = {};
 }
 
 }  // namespace players
