@@ -291,10 +291,11 @@ ExtendedMove::operator Move() const
 bool operator ==(const ExtendedMove& lhs, const ExtendedMove& rhs) noexcept
 {
     return lhs.source == rhs.source
-        and lhs.destination == rhs.destination
-        and lhs.sourcePiece == rhs.sourcePiece
-        and lhs.flags == rhs.flags
-        and lhs.promoting == rhs.promoting;
+        && lhs.destination == rhs.destination
+        && lhs.sourcePiece == rhs.sourcePiece
+        && lhs.targetPiece == rhs.targetPiece
+        && lhs.flags == rhs.flags
+        && lhs.promoting == rhs.promoting;
 }
 
 ExtendedMove convertMoveToExtended(const Board& board, const Move& move) noexcept

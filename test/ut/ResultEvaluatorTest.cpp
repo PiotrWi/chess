@@ -26,9 +26,8 @@ public:
                            const NOTATION::COLOR::color c)
     {
         auto move = notations::coordinates::createExtendedMove(moveStr, c, board);
-        auto extendMove = convertMoveToExtended(board, move);
         MoveApplier::applyMove(board, move);
-        sut.storeBoard(board, extendMove);
+        sut.storeBoard(board, move);
     }
 
     template<size_t N>
@@ -41,11 +40,9 @@ public:
         {
             applyMoveAndStore(board, moves[i], c++);
             ASSERT_EQ(sut.evaluate(), Result::ongoing);
-            std::cout << board << std::endl;
         }
         applyMoveAndStore(board, moves[N-1], c);
         ASSERT_EQ(sut.evaluate(), finalResult);
-        std::cout << board << std::endl;
     }
 
     ResultEvaluator sut;

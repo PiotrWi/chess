@@ -112,6 +112,12 @@ void readCommands()
                     ss >> word;
                     go.timeForBlack = std::stoi(word);
                 }
+
+                if (word.find("movetime") != std::string::npos)
+                {
+                    ss >> word;
+                    go.movetime = std::stoi(word);
+                }
             }
             eventPropagator.enqueue(go);
         }

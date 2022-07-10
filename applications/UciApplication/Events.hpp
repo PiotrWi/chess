@@ -1,6 +1,7 @@
 #pragma once
 
 #include <map>
+#include <optional>
 #include <string>
 #include <vector>
 
@@ -77,8 +78,9 @@ public:
         return ID;
     }
 
-    int timeForWhite = 0;
-    int timeForBlack = 0;
+    std::optional<int> timeForWhite = 0;
+    std::optional<int> timeForBlack = 0;
+    std::optional<int> movetime = 0;
     int movesToGo = 0; /*Not sure what it is*/
 };
 

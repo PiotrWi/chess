@@ -54,8 +54,6 @@ struct Move
 	unsigned char promoteTo;
 };
 
-bool operator==(const Move& lfs, const Move& rhs) noexcept;
-
 struct ExtendedMove
 {
     constexpr static unsigned char promotionMask = 0b00000001;
@@ -81,14 +79,15 @@ struct ExtendedMove
     unsigned char sourcePiece;
     unsigned char targetPiece;
 
-    operator Move() const;
+    explicit operator Move() const;
     static ExtendedMove whiteShortCaste();
     static ExtendedMove whiteLongCaste();
     static ExtendedMove blackShortCaste();
     static ExtendedMove blackLongCaste();
 };
 
-bool operator ==(const ExtendedMove& lfs, const ExtendedMove& rhs) noexcept;
+bool operator==(const ExtendedMove& lfs, const ExtendedMove& rhs) noexcept;
+bool operator==(const Move& lfs, const Move& rhs) noexcept;
 
 // For non time relevant usages
 ExtendedMove convertMoveToExtended(const Board&, const Move&) noexcept;

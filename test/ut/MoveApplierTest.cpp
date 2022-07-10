@@ -349,6 +349,8 @@ TEST_F(MoveApplierShould, problematic_1)
     auto hash = hash::hash(board);
 
     auto move = notations::coordinates::createExtendedMove("e5-d6", WHITE, board);
+    EXPECT_CALL(resultEvaluatorMock, storeBoard(_, _));
+
     MoveApplier::applyMove(board, hash, move, resultEvaluatorMock);
     ASSERT_EQ(hash, hash::hash(board));
 }
@@ -366,7 +368,41 @@ TEST_F(MoveApplierShould, problematic_2)
 
     auto hash = hash::hash(board);
     auto move = notations::coordinates::createExtendedMove("e7-b4", BLACK, board);
+    EXPECT_CALL(resultEvaluatorMock, storeBoard(_, _));
+
     MoveApplier::applyMove(board, hash, move, resultEvaluatorMock);
 
     ASSERT_EQ(hash, hash::hash(board));
+}
+
+TEST_F(MoveApplierShould, problematic_3)
+{
+    Board board = utils::createBoard(
+                "♜♞..♚♝.."
+                "♟♟...♟♟."
+                "..♟..♞.♜"
+                "...♟♟.♘♟"
+                ".♗♗....."
+                ".♙♘.♙..."
+                "♙.♝♙.♙♙♙"
+                "♖...♔..♖"
+                , WHITE);
+
+    auto hash = hash::hash(board);
+    auto move = notations::coordinates::createExtendedMove("c3-d5", WHITE, board);
+    EXPECT_CALL(resultEvaluatorMock, storeBoard(_, _));
+
+    MoveApplier::applyMove(board, hash, move, resultEvaluatorMock);
+
+    Board expectedBoard = utils::createBoard(
+                "♜♞..♚♝.."
+                "♟♟...♟♟."
+                "..♟..♞.♜"
+                "...♘♟.♘♟"
+                ".♗♗....."
+                ".♙..♙..."
+                "♙.♝♙.♙♙♙"
+                "♖...♔..♖", BLACK);
+
+    ASSERT_EQ(expectedBoard, board);
 }

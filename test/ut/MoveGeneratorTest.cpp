@@ -48,17 +48,6 @@ std::vector<ExtendedMove> map(const char* (&&in)[N], NOTATION::COLOR::color c, c
     return moves;
 }
 
-std::ostream& operator<<(std::ostream& os, const std::vector<ExtendedMove>& moves)
-{
-    std::copy(moves.begin(), moves.end(), std::ostream_iterator<ExtendedMove>(os, " "));
-    return os;
-}
-
-std::vector<ExtendedMove> printAndReturn(const std::vector<ExtendedMove>& moves)
-{
-    std::cout << moves << std::endl;
-    return moves;
-}
 }  // namespace
 
 TEST_F(MoveGeneratorTests, shouldReturnInitialMoves)
@@ -472,7 +461,7 @@ TEST_F(MoveGeneratorTests, shallNotAllowToMovePinned)
     auto kingMoves = map(
             {"Ke5f6", "Ke5d6", "Ke5d4", "Ke5f4"}, WHITE, board);
 
-    ASSERT_THAT(printAndReturn(sut.generate(board, WHITE)),
+    ASSERT_THAT(sut.generate(board, WHITE),
                 ::testing::UnorderedElementsAreArray(rockMoves + kingMoves));
 }
 
@@ -657,9 +646,59 @@ TEST_F(MoveGeneratorTests, Custom_4)
              "Qg6h5"}, BLACK, board);
 
     auto moves = sut.generate(board, BLACK);
-    std::cout << moves.size() << std::endl;
     auto expectation = rockMoves + kingMoves + pawnMoves + bishopMoves + knightMoves + queenMoves;
-    std::cout << expectation.size() << std::endl;
-    ASSERT_THAT(printAndReturn(moves),
-                ::testing::UnorderedElementsAreArray(rockMoves+kingMoves+pawnMoves+bishopMoves+knightMoves+queenMoves));
+    ASSERT_THAT(moves, ::testing::UnorderedElementsAreArray(expectation));
 }
+
+TEST_F(MoveGeneratorTests, Custom_5)
+{
+    Board board = utils::createBoard(
+                "♜♞..♚♝.."
+                "♟♟...♟♟."
+                "..♟..♞.♜"
+                "...♟♟.♘♟"
+                ".♗♗....."
+                ".♙♘.♙..."
+                "♙.♝♙.♙♙♙"
+                "♖...♔..♖"
+                , WHITE);
+
+    auto moves = sut.generate(board, WHITE);
+}
+
+TEST_F(MoveGeneratorTests, Custom_6)
+{
+    Board board = utils::createBoard(
+                "♜♞..♚♝♞♜"
+                "♟♟...♟♙."
+                "..♟.♝..."
+                ".......♟"
+                "........"
+                "..♘.♙♟.."
+                "♙♙♙..♙♙♙"
+                "♖.♗.♔♗.♖"
+                , WHITE);
+
+    auto moves = sut.generate(board, WHITE);
+
+    auto rockMoves = map(
+            {"Ra1b1", "Rh1g1"}, WHITE, board);
+
+    auto kingMoves = map(
+            {"Ke1d1", "Ke1d2"}, WHITE, board);
+
+    auto pawnMoves = map(
+            {"a2a3", "a2a4", "b2b3", "b2b4", "e3e4", "g2g3", "g2g4", "h2h3", "h2h4",
+                "g2xf3", "g7xf8=Q", "g7xf8=N", "g7xf8=B", "g7xf8=R",
+                "g7xh8=Q", "g7xh8=N", "g7xh8=B", "g7xh8=R"}, WHITE, board);
+
+    auto bishopMoves = map(
+            {"Bc1d2", "Bf1e2", "Bf1d3", "Bf1c4", "Bf1b5", "Bf1a6"}, WHITE, board);
+
+    auto knightMoves = map(
+            {"Nc3a4", "Nc3b5", "Nc3d5", "Nc3e4", "Nc3e2", "Nc3b1", "Nc3d1" }, WHITE, board);
+
+    auto expectation = rockMoves + kingMoves + pawnMoves + bishopMoves + knightMoves;
+    ASSERT_THAT(moves, ::testing::UnorderedElementsAreArray(expectation));
+}
+

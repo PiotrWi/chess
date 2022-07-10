@@ -88,7 +88,16 @@ ExtendedMove createExtendedMove (const std::string& moveStr,
         }
         return ExtendedMove::blackLongCaste();
     }
+
     auto sourcePosition = NotationConversions::getFieldNum(moveStr.substr(0, 2).c_str());
+    if ((board.getField(sourcePosition) & NOTATION::PIECES::PIECES_MASK) == NOTATION::PIECES::KING)
+    {
+        if (moveStr == "e1-g1") return ExtendedMove::whiteShortCaste();
+        if (moveStr == "e1-c1") return ExtendedMove::whiteLongCaste();
+        if (moveStr == "e8-g8") return ExtendedMove::blackShortCaste();
+        if (moveStr == "e8-c8") return ExtendedMove::blackLongCaste();
+    }
+
     auto targetPosition = NotationConversions::getFieldNum(moveStr.substr(3, 2).c_str());
 
     auto isPromoted = (moveStr.size() > 6);

@@ -1,4 +1,5 @@
 #include "publicIf/BoardIO.hpp"
+#include <publicIf/NotationConversions.hpp>
 
 #include <map>
 #include <ostream>
@@ -37,4 +38,3 @@ std::ostream& operator<<(std::ostream& os, const Board& board) noexcept
 	}
 	return os;
 }
-

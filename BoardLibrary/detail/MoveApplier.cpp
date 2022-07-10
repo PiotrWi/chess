@@ -170,7 +170,7 @@ void applyMove(Board& board, uint64_t& positionHash, const ExtendedMove& move)
     if (move.flags & ExtendedMove::castlingMask)
     {
         applyCasltingRules(board, positionHash, move);
-        revokeCastlingRights(board, positionHash, move);
+        revokeCastlingRights(board, positionHash, move.operator Move());
         switchOffEnPassant(board, positionHash);
         ++board.playerOnMove;
         positionHash = hash::switchColor(positionHash);
@@ -199,7 +199,7 @@ void applyMove(Board& board, uint64_t& positionHash, const ExtendedMove& move)
 
     if (move.flags & (ExtendedMove::rockMoveMask | ExtendedMove::kingMoveMask))
     {
-        revokeCastlingRights(board, positionHash, move);
+        revokeCastlingRights(board, positionHash, move.operator Move());
     }
     if (move.flags & ExtendedMove::beatingMask)
     {

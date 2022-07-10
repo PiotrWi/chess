@@ -71,7 +71,7 @@ class PreorderedMoves
 {
 public:
     PreorderedMoves(decltype(history[0])& historyMovesPerSinglePlayer,
-                    players::common::move_generators::CacheFullEntity& ce,
+                    players::common::move_generators::CacheFullEntity* ce,
                     unsigned char depth,
                     std::vector<ExtendedMove>&& moves)
                     : historyMoves_(historyMovesPerSinglePlayer)
@@ -95,11 +95,11 @@ public:
             bestMoveAnalyzed = true;
             for (auto candidateDepth = depth_; candidateDepth > 0; --candidateDepth)
             {
-                if (ce_.previousBestMoves[candidateDepth].isSet)
+                if (ce_->previousBestMoves[candidateDepth].isSet)
                 {
                     auto moveIt = std::find(moves_.begin(),
                                             moves_.end(),
-                                            ce_.previousBestMoves[candidateDepth].move);
+                                            ce_->previousBestMoves[candidateDepth].move);
                     if (moveIt != moves_.end()) // It could be cache miss.
                                                                 // Then no move like this exist in valid moves vec.
                     {
@@ -107,7 +107,7 @@ public:
                         ++index;
                         if (moveIt != moves_.begin()
                             and not (
-                                ce_.previousBestMoves[candidateDepth].move.flags &
+                                ce_->previousBestMoves[candidateDepth].move.flags &
                                 (ExtendedMove::beatingMask | ExtendedMove::promotionMask)))
                         {
                             auto firstNotBeating = std::find_if(moves_.begin() + 1,
@@ -120,7 +120,7 @@ public:
                                 std::swap(*moveIt, *firstNotBeating);
                             }
                         }
-                        return ce_.previousBestMoves[candidateDepth].move;
+                        return ce_->previousBestMoves[candidateDepth].move;
                     }
 
                 }
@@ -157,7 +157,7 @@ public:
     }
 private:
     decltype(history[0])& historyMoves_;
-    players::common::move_generators::CacheFullEntity& ce_;
+    players::common::move_generators::CacheFullEntity* ce_;
     unsigned char depth_;
     bool bestMoveAnalyzed = false;
     bool beatingAndPromotionsAnalyzed = false;
@@ -295,14 +295,14 @@ int evaluateMax(BoardEngine& be,
     }
 
     for (auto i = depth; i < MAX_DEPTH; ++i) {
-        if (cache.previousEvaluations[i].visitedBefore)
+        if (cache->previousEvaluations[i].visitedBefore)
         {
-            if (cache.previousEvaluations[i].lowerValue >= beta)
+            if (cache->previousEvaluations[i].lowerValue >= beta)
                 return beta;
-            if (cache.previousEvaluations[i].higherValue <= alfa)
+            if (cache->previousEvaluations[i].higherValue <= alfa)
                 return alfa;
-            alfa = std::max(alfa, cache.previousEvaluations[i].lowerValue);
-            beta = std::min(beta, cache.previousEvaluations[i].higherValue);
+            alfa = std::max(alfa, cache->previousEvaluations[i].lowerValue);
+            beta = std::min(beta, cache->previousEvaluations[i].higherValue);
             break;
         }
     }
@@ -341,7 +341,7 @@ int evaluateMax(BoardEngine& be,
             cachedEngine.setLowerBound(be, nextAlfa, depth);
 
             setHistoryMove(be.board.playerOnMove, move, depth);
-            // setKiller(move, depth);
+
             if (SaveMove and interrupt_flag == false) bestMove = move;
             return beta;
         }

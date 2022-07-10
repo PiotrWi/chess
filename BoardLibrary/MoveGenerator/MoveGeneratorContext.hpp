@@ -12,11 +12,11 @@ thread_local struct MoveContext{
     unsigned Nbeatings;
     ExtendedMove beatings[100];
     unsigned Npromotions;
-    ExtendedMove promotions[100];
+    ExtendedMove promotions[120];
     unsigned NFiguresMoves;
     ExtendedMove figuresMoves[100];
     unsigned NPawnsMoves;
-    ExtendedMove pawnsMoves[60];
+    ExtendedMove pawnsMoves[40];
     unsigned NKingMoves;
     ExtendedMove kingMoves[11];
 

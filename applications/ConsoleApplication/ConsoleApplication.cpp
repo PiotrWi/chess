@@ -76,7 +76,7 @@ void ConsoleApplication::start()
                 lastMoveTmp = player.act(lastMoveStr);
                 std::cout << "player move is: " << lastMoveTmp << std::endl;
                 lastMove = notations::coordinates::createExtendedMove(lastMoveTmp, color, boardEngine_.board);
-            } while(!validateAndReject(lastMove, *whitePlayer_));
+            } while(!validateAndReject(lastMove.operator Move(), *whitePlayer_));
             lastMoveStr = lastMoveTmp;
             boardEngine_.applyMove(lastMove);
             auto result = boardEngine_.getResult();

@@ -8,6 +8,7 @@
 #include <MoveGenerator/MoveGenerator.hpp>
 #include <detail/CheckChecker.hpp>
 #include <hashing/zobrist.hpp>
+#include <notations/coordinationnotation.hpp>
 
 BoardEngine::BoardEngine()
 {
@@ -109,8 +110,16 @@ auto oldBoard = board;
 #ifdef ASSERTSON
     if (hash::hash(board) != hash_)
     {
+        std::cout << "Internal consistency error!";
         std::cout << hash::hash(board) << " " << hash_ << std::endl;
+
+        std::cout << "Old board was:" << std::endl;
         std::cout << oldBoard << std::endl;
+
+        std::cout << "Move is: " << move.operator Move();
+
+        std::cout << "After move board is:" << std::endl;
+        std::cout << board << std::endl;
     }
     assert(board.isCorrect());
     assert(hash::hash(board) == hash_);

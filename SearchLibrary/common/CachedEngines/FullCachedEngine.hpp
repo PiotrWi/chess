@@ -20,6 +20,9 @@ struct CacheFullEntity
     {
         bool isSet = false;
         ExtendedMove move;
+        PreviousBestMove()
+            : isSet(false)
+            , move() {}
     };
 
     struct PreviousEvaluations
@@ -49,7 +52,7 @@ public:
     FullCachedEngine(FullCachedEngine&&) = delete;
     FullCachedEngine operator=(FullCachedEngine&&) = delete;
 
-    CacheFullEntity& get(const BoardEngine& be);
+    CacheFullEntity* get(const BoardEngine& be);
 
     int getEvaluationValue(BoardEngine& be, unsigned int validMovesCount);
     void setBestMove(const BoardEngine& be,

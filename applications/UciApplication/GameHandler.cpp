@@ -30,24 +30,34 @@ void GameHandler::interrupt()
     debug.logInDebug("Interrupted");
 }
 
+int getTimeForMoveFromEvent(const GO& event, NOTATION::COLOR::color playerOnMove)
+{
+    if (event.movetime)
+    {
+        return *event.movetime;
+    }
+    if (playerOnMove == NOTATION::COLOR::color::white && event.timeForWhite)
+    {
+        return *event.timeForWhite;
+    }
+    if (playerOnMove == NOTATION::COLOR::color::black && event.timeForBlack)
+    {
+        return *event.timeForBlack;
+    }
+    return 0;
+}
+
 void GameHandler::onGo(GO& goEvent)
 {
     cachedEngine.clear();
 
-    unsigned remainingTime;
-    if (be.board.playerOnMove == NOTATION::COLOR::color::white)
-    {
-        remainingTime = goEvent.timeForWhite;
-    }
-    else
-    {
-        remainingTime = goEvent.timeForBlack;
-    }
+    unsigned remainingTime = getTimeForMoveFromEvent(goEvent, be.board.playerOnMove);
+
     debug.logInDebug("starting for us:" + std::to_string(70 * remainingTime)); // 8% remaining time
     createTimer2(70*remainingTime, onStopProccessing);
 
     auto move = full_search::evaluateIterative(be, cachedEngine, 20);
-    emitBestMove(move);
+    emitBestMove(move.operator Move());
 }
 
 void GameHandler::emitBestMove(const Move& move)

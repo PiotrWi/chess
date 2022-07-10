@@ -39,13 +39,13 @@ FullCachedEngine::~FullCachedEngine()
     }
 }
 
-CacheFullEntity& FullCachedEngine::get(const BoardEngine &be)
+CacheFullEntity* FullCachedEngine::get(const BoardEngine &be)
 {
     auto hash = be.getHash();
 
     CacheFullEntity* elem;
     cache_.getOrCreate(hash, hash, elem);
-    return *elem;
+    return elem;
 }
 
 int FullCachedEngine::getEvaluationValue(BoardEngine& be, unsigned int validMovesCount)

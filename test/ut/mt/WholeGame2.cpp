@@ -11,6 +11,6 @@ TEST(WholeGame2, shallProperlyGenerateValidMoves)
     BoardEngine be = notations::fen::initByFen(fenString);
     players::common::move_generators::FullCachedEngine ce;
 
-    full_search::evaluateIterative(be, ce, 13);
+    full_search::evaluateIterative(be, ce, 6);
 }
 
