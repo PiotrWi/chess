@@ -34,15 +34,15 @@ int getTimeForMoveFromEvent(const GO& event, NOTATION::COLOR::color playerOnMove
 {
     if (event.movetime)
     {
-        return *event.movetime;
+        return *event.movetime * 1000;
     }
     if (playerOnMove == NOTATION::COLOR::color::white && event.timeForWhite)
     {
-        return *event.timeForWhite;
+        return *event.timeForWhite * 70;
     }
     if (playerOnMove == NOTATION::COLOR::color::black && event.timeForBlack)
     {
-        return *event.timeForBlack;
+        return *event.timeForBlack * 70;
     }
     return 0;
 }
@@ -53,8 +53,8 @@ void GameHandler::onGo(GO& goEvent)
 
     unsigned remainingTime = getTimeForMoveFromEvent(goEvent, be.board.playerOnMove);
 
-    debug.logInDebug("starting for us:" + std::to_string(70 * remainingTime)); // 8% remaining time
-    createTimer2(70*remainingTime, onStopProccessing);
+    debug.logInDebug("starting for us:" + std::to_string(remainingTime));
+    createTimer2(remainingTime, onStopProccessing);
 
     auto move = full_search::evaluateIterative(be, cachedEngine, 20);
     emitBestMove(move.operator Move());

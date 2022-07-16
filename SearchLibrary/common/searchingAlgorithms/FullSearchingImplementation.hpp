@@ -404,6 +404,7 @@ constexpr auto InitialBeta = mateValue + 1;
                        players::common::move_generators::FullCachedEngine& cachedEngine,
                        unsigned char maxDepth)
 {
+    bestMove = {};
     interrupt_flag = false;
     int alpha = InitialAlpha;
     int beta = InitialBeta;

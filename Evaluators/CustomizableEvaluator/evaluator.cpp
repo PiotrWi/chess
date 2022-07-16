@@ -1,3 +1,6 @@
+/*
+ * TODO: There is a bug which causes in case of interrupt default move can be return. It can happen if short time is given.
+ * */
 #include <evaluatorIf.hpp>
 
 #include <detail/bitboardslookups.hpp>
@@ -5,8 +8,6 @@
 
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
-
-#include <iostream>
 
 namespace
 {
@@ -107,8 +108,6 @@ void init(const char* configurationFileLocation)
 
     multiplePawnInRankValue = tree.get("COEFFICIENTS.PAWN_STRUCTURE.DOUBLED_PAWN_PENALITY", 0);
     singleMoveValue = tree.get("COEFFICIENTS.MOBILITY.MOVE_COUNT", 0);
-
-    std::cout << "Customizable config in" << std::endl;
 }
 
 int evaluatePosition(BoardEngine& be, unsigned int validMovesCount)
