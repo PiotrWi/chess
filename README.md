@@ -7,13 +7,19 @@ My own implementation of chess engine. It contains:
 Project is not in stable version. Work on it is still ongoing and it acts as my personal playgound, so it may be possible that some functionalities are brokes since time to time.
 
 # Building
-Engine is developed in Linux gcc environment. There are no objection to build it elsewhere other than it was never been tested outside and it would require to some CMAKE's adaptations.
+Engine is developed in Linux gcc environment. Whole build can be done via makefile wrapper or by cmake.
 
-git clone
-mkdir build
-cd build
-cmake ../chess
-make -j 4
+## Applications build
+make applications
+
+## running uts
+make ut-run
+
+## running mts
+make mt-run
+
+## debug targets
+make ${TARGET_NAME} CMAKE_ARGS='-DCMAKE_BUILD_TYPE=Debug'
 
 Then, there shall appear:
  * chess console application to play with
