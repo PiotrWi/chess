@@ -14,9 +14,8 @@ ut:
 	cmake --build build/ --target ut
 
 .PHONY: ut-run
-ut-run:
-	cmake -H. -Bbuild $(CMAKE_ARGS)
-	cmake --build build/ --target ut-run
+ut-run: ut
+	ctest -R ut-run --test-dir build
 
 .PHONY: pt 
 pt:
@@ -24,11 +23,11 @@ pt:
 	cmake --build build/ --target pt
 
 .PHONY: pt-run
-pt:
-	cmake -H. -Bbuild $(CMAKE_ARGS)
-	cmake --build build/ --target pt
+pt-run: pt
+	ctest -R pt-run --test-dir build
 
 .PHONY: clean
 clean:
 	rm -rf build
 	rm -rf bin
+

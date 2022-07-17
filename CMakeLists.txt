@@ -38,7 +38,9 @@ link_directories(
 add_subdirectory(BoardLibrary)
 add_subdirectory(SearchLibrary)
 add_subdirectory(Evaluators)
+add_subdirectory(applications)
 
+enable_testing()
 add_subdirectory(externals/gtest)
 add_subdirectory(test)
-add_subdirectory(applications)
+
