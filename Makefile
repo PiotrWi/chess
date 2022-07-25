@@ -15,7 +15,7 @@ ut:
 
 .PHONY: ut-run
 ut-run: ut
-	ctest -R ut-run --test-dir build
+	ctest -R ut-run --test-dir build --output-on-failure
 
 .PHONY: pt 
 pt:
@@ -24,7 +24,7 @@ pt:
 
 .PHONY: pt-run
 pt-run: pt
-	ctest -R pt-run --test-dir build
+	ctest -R pt-run --test-dir build --output-on-failure
 
 .PHONY: clean
 clean:

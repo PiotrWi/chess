@@ -6,8 +6,10 @@
 #include <utils/Timer.hpp>
 #include <utils/DebugWrapper.hpp>
 #include <thread>
+#include <map>
 
 std::unique_ptr<GameHandler> handler;
+std::map <std::string, std::string> options;
 
 void onPositionProcHandler(POSSITION& event)
 {
@@ -103,15 +105,20 @@ void GameHandler::onPositionProc(POSSITION& event)
     }
 }
 
-void handleUciNewGame(UCI_NEW_GAME& newGameEvent)
+void handleSetOption(SET_OPTION& option)
 {
-    if (newGameEvent.options.find("customEvaluator") != newGameEvent.options.end())
+    options[option.key] = option.value;
+}
+
+void handleUciNewGame(UCI_NEW_GAME&)
+{
+    if (options.find("customEvaluator") != options.end())
     {
-        const char* evaluatorLocation = newGameEvent.options.at("customEvaluator").c_str();
+        const char* evaluatorLocation = options.at("customEvaluator").c_str();
         const char* evaluatorConfigurationLocation = nullptr;
-        if (newGameEvent.options.find("evaluatorConfig")!= newGameEvent.options.end())
+        if (options.find("evaluatorConfig")!= options.end())
         {
-            evaluatorConfigurationLocation = newGameEvent.options.at("evaluatorConfig").c_str();
+            evaluatorConfigurationLocation = options.at("evaluatorConfig").c_str();
         }
         handler = std::make_unique<GameHandler>(evaluatorLocation, evaluatorConfigurationLocation);
         handler->startProcessing();

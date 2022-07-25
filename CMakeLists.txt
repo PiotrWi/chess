@@ -33,8 +33,8 @@ include_directories(
 link_directories(
     ${PROJECT_SOURCE_DIR}/BoardLibrary/
     ${PROJECT_SOURCE_DIR}/SearchLibrary
-    ${PROJECT_SOURCE_DIR}/Evaluators
-    )
+    ${PROJECT_SOURCE_DIR}/Evaluators)
+
 add_subdirectory(BoardLibrary)
 add_subdirectory(SearchLibrary)
 add_subdirectory(Evaluators)

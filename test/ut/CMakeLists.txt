@@ -12,7 +12,7 @@ add_executable(ut
         FullSearchTest.cpp
         HashMapTest.cpp
         HashTableTest.cpp
-        #MaterialEvaluatorTest.cpp
+        MaterialEvaluatorTest.cpp
         SearchingBasicTests.cpp
         MoveApplierTest.cpp
         MoveGeneratorTest.cpp

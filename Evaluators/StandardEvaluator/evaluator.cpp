@@ -1,4 +1,5 @@
 #include <evaluatorIf.hpp>
+#include <Common/MatherialEvaluator.hpp>
 
 #include <detail/bitboardslookups.hpp>
 #include <publicIf/NotationConversions.hpp>
@@ -6,36 +7,16 @@
 namespace
 {
 
-constexpr int pawnValue = 100;
-constexpr int knightValue = 300;
-constexpr int bishopValue = 300;
-constexpr int rockValue = 500;
-constexpr int queenValue = 900;
-constexpr int kingValue = 300;
+matherial_evaluator::VALUES_TYPE piecesValues(
+        TPawnValue(100),
+        TKnightValue(300),
+        TBishopValue(300),
+        TRockValue(500),
+        TQueenValue(900));
 
 int evaluateMoveCount(int playerOnMoveMovesCount, int oponentMovesCount)
 {
     return (playerOnMoveMovesCount - oponentMovesCount) * 10;
-}
-
-int evaluateMaterial(const Board &board, NOTATION::COLOR::color playerOnMove)
-{
-    int value = 0;
-    value += (__builtin_popcountll(board.piecesBitSets[0].pawnsMask)
-            - __builtin_popcountll(board.piecesBitSets[1].pawnsMask)) * pawnValue;
-    value += (__builtin_popcountll(board.piecesBitSets[0].knightsMask)
-            - __builtin_popcountll(board.piecesBitSets[1].knightsMask)) * knightValue;
-    value += (__builtin_popcountll(board.piecesBitSets[0].bishopsMask)
-            - __builtin_popcountll(board.piecesBitSets[1].bishopsMask)) * bishopValue;
-    value += (__builtin_popcountll(board.piecesBitSets[0].rocksMask)
-            - __builtin_popcountll(board.piecesBitSets[1].rocksMask)) * rockValue;
-    value += (__builtin_popcountll(board.piecesBitSets[0].queensMask)
-            - __builtin_popcountll(board.piecesBitSets[1].queensMask)) * queenValue;
-    // no need to evaluate kings. It do not change the value of evaluation
-
-    if (playerOnMove == NOTATION::COLOR::color::black)
-        return -1 * value;
-    return value;
 }
 
 int evaluatePawnStructureForWhite(const Board & board)
@@ -93,7 +74,7 @@ int evaluatePosition(BoardEngine& be, unsigned int validMovesCount)
     }
 
     auto oponentValidMoves = be .generateValidMoveCount(be.board.playerOnMove + 1);
-    return evaluateMaterial(be.board, be.board.playerOnMove)
+    return matherial_evaluator::evaluate(be.board, be.board.playerOnMove, piecesValues)
         + evaluateMoveCount(validMovesCount, oponentValidMoves)
         + evaluatePawnStructure(be.board, be.board.playerOnMove);
 }

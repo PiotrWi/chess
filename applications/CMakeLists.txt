@@ -6,17 +6,27 @@ include_directories(
 add_subdirectory(ConsoleApplication)
 
 add_custom_target(applications)
-add_executable(UciApplication
-    UciApplication/main.cpp
+
+add_library(UciApplication-lib
     utils/DebugWrapper.hpp
     UciApplication/EventsPropagator.hpp
     UciApplication/GameHandler.cpp
     UciApplication/GameHandler.hpp
     UciApplication/EventsPropagator.cpp
     UciApplication/Events.hpp
-    utils/DebugWrapper.cpp utils/Timer.hpp
+    utils/DebugWrapper.cpp
+    utils/Timer.hpp
     utils/Timer.cpp)
-target_link_libraries(UciApplication BoardLibrary SearchLibrary StandardEvaluator pthread)
+
+add_executable(UciApplication
+    UciApplication/main.cpp)
+
+target_link_libraries(UciApplication
+    pthread
+    UciApplication-lib
+    BoardLibrary
+    SearchLibrary
+    StandardEvaluator)
 
 add_executable(MagicBbGenerator
     MagicBbGenerator/main.cpp)

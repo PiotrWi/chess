@@ -25,3 +25,4 @@ private:
 extern std::unique_ptr<GameHandler> handler;
 
 void handleUciNewGame(UCI_NEW_GAME&);
+void handleSetOption(SET_OPTION& option);

@@ -14,8 +14,6 @@
 namespace
 {
 
-
-
 template <bool SaveMove>
 int evaluateMax(BoardEngine& be,
                 players::common::move_generators::FullCachedEngine& cachedEngine,
