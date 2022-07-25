@@ -25,7 +25,7 @@ add_executable(ut
         mt/WholeGame3.cpp)
 
 add_dependencies(ut googletest)
-target_link_libraries(ut gtest gmock gtest_main pthread BoardLibrary SearchLibrary StandardEvaluator)
+target_link_libraries(ut gtest gmock gtest_main pthread BoardLibrary SearchLibrary StandardEvaluator dl)
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin/)
 
 add_test(

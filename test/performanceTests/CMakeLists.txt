@@ -9,7 +9,7 @@ add_executable(pt
         FullSearchTest.cpp)
 
 add_dependencies(pt googletest)
-target_link_libraries(pt gtest gmock gtest_main pthread BoardLibrary SearchLibrary StandardEvaluator)
+target_link_libraries(pt gtest gmock gtest_main pthread BoardLibrary SearchLibrary StandardEvaluator dl)
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin/)
 
 add_test(

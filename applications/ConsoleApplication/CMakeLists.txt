@@ -17,6 +17,7 @@ add_executable(ConsolleApplication
 target_link_libraries(ConsolleApplication
     BoardLibrary
     SearchLibrary
-    StandardEvaluator)
+    StandardEvaluator
+    dl)
 
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin/)

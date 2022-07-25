@@ -26,7 +26,8 @@ target_link_libraries(UciApplication
     UciApplication-lib
     BoardLibrary
     SearchLibrary
-    StandardEvaluator)
+    StandardEvaluator
+    dl)
 
 add_executable(MagicBbGenerator
     MagicBbGenerator/main.cpp)
