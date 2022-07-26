@@ -3,10 +3,21 @@ import chess
 import chess.engine
 import time
 
-command_white = "./UciApplication"
-options_white = {"customEvaluator": "libCustomizableEvaluator.so", "evaluatorConfig": "CustomizableEvaluatorConfig.xml"}
-command_black = "./UciApplication"
-options_black = {"customEvaluator": "libCustomizableEvaluator.so", "evaluatorConfig": "CustomizableEvaluatorConfig.xml"}
+
+class CommandAndOptions:
+    command = ""
+    options = {}
+
+    def __init__(self, command, options):
+        self.command = command
+        self.options = options
+
+
+avaiableEngines = {
+        "UciWithCustomEvaluator": CommandAndOptions("./UciApplication", {"customEvaluator": "libCustomizableEvaluator.so", "evaluatorConfig": "CustomizableEvaluatorConfig.xml"}),
+        "Stockfish1400": CommandAndOptions("/home/pioter/app/stockfish/src/stockfish", {"UCI_LimitStrength": "true", "UCI_Elo": 1400}),
+        "Stockfish1700": CommandAndOptions("/home/pioter/app/stockfish/src/stockfish", {"UCI_LimitStrength": "true", "UCI_Elo": 1700})
+        }
 
 
 def ns_to_s(nanoseconds):
@@ -26,7 +37,7 @@ class Clock:
         timepoint_end = time.monotonic_ns()
         self.remaining_time = self.remaining_time - ns_to_s(timepoint_end - self.timepoint_start)
         if not self.is_expired():
-            self.remaining_time = self.time_per_move
+            self.remaining_time = self.remaining_time + self.time_per_move
 
     def is_expired(self):
         return self.remaining_time <= 0.0
@@ -66,9 +77,9 @@ class SingleGameHandler:
                                                       black_clock=self.black_clock.get()))
         clock.stop_ticking()
 
-        print(result.move)
+        #print(result.move)
         self.board.push(result.move)
-        print("{}\n".format(self.board))
+        #print("{}\n".format(self.board))
 
     def _is_game_over(self):
         return self.white_clock.is_expired() or self.black_clock.is_expired() or self.board.is_game_over()
@@ -78,11 +89,11 @@ class SingleGameHandler:
             return "0-1"
         if self.black_clock.is_expired():
             return "1-0"
-        return self.board.outcome()
+        return self.board.outcome().result()
 
     async def play_single_game(self):
         self.board = chess.Board()
-        print("{}\n".format(self.board))
+        #print("{}\n".format(self.board))
 
         try:
             await self._open_engines()
@@ -101,10 +112,17 @@ class SingleGameHandler:
         return self.get_result()
 
 
-async def play_single_game():
-    game = SingleGameHandler(command_white, options_white, command_black, options_black)
-    await game.play_single_game()
+async def play_single_game(white_config, black_config):
+    game = SingleGameHandler(white_config.command, white_config.options, black_config.command, black_config.options)
+    result = await game.play_single_game()
+    return result
+
+
+class StrengthComarator:
+    def __init__():
+        print ("To be written")
 
 
 asyncio.set_event_loop_policy(chess.engine.EventLoopPolicy())
-asyncio.run(play_single_game())
+while True:
+    asyncio.run(play_single_game(avaiableEngines["UciWithCustomEvaluator"], avaiableEngines["Stockfish1700"]))

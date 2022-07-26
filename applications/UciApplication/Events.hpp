@@ -76,9 +76,9 @@ public:
         return ID;
     }
 
-    std::optional<int> timeForWhite = 0;
-    std::optional<int> timeForBlack = 0;
-    std::optional<int> movetime = 0;
+    std::optional<int> timeForWhite = std::nullopt;
+    std::optional<int> timeForBlack = std::nullopt;
+    std::optional<int> movetime = std::nullopt;
     int movesToGo = 0; /*Not sure what it is*/
 };
 

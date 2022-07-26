@@ -1,6 +1,11 @@
 cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
 
-include_directories(${GTEST_INSTALATION_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR})
+get_target_property(UCI_APP_INCLUDES UciApplication-lib INCLUDE_DIRECTORIES)
+
+include_directories(${GTEST_INSTALATION_DIR}/include
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${UCI_APP_INCLUDES}
+    )
 link_directories(${GTEST_INSTALATION_DIR}/lib)
 
 add_executable(ut
@@ -22,10 +27,11 @@ add_executable(ut
         ZobrishTest.cpp
         mt/WholeGame1.cpp
         mt/WholeGame2.cpp
-        mt/WholeGame3.cpp)
+        mt/WholeGame3.cpp
+        CommandParserTest.cpp)
 
 add_dependencies(ut googletest)
-target_link_libraries(ut gtest gmock gtest_main pthread BoardLibrary SearchLibrary StandardEvaluator dl)
+target_link_libraries(ut gtest gmock gtest_main pthread BoardLibrary SearchLibrary StandardEvaluator dl UciApplication-lib)
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin/)
 
 add_test(

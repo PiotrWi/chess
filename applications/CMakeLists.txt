@@ -14,6 +14,8 @@ add_library(UciApplication-lib
     UciApplication/GameHandler.hpp
     UciApplication/EventsPropagator.cpp
     UciApplication/Events.hpp
+    UciApplication/CommandParser.cpp
+    UciApplication/CommandParser.hpp
     utils/DebugWrapper.cpp
     utils/Timer.hpp
     utils/Timer.cpp)

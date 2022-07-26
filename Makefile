@@ -1,17 +1,17 @@
 .PHONY: all
 all:
 	cmake -H. -Bbuild $(CMAKE_ARGS)
-	cmake --build build/
+	cmake --build build/ --parallel
 
 .PHONY: applications
 applications:
 	cmake -H. -Bbuild $(CMAKE_ARGS)
-	cmake --build build/ --target applications
+	cmake --build build/ --target applications --parallel
 
 .PHONY: ut
 ut:
 	cmake -H. -Bbuild $(CMAKE_ARGS)
-	cmake --build build/ --target ut
+	cmake --build build/ --target ut --parallel
 
 .PHONY: ut-run
 ut-run: ut
@@ -20,7 +20,7 @@ ut-run: ut
 .PHONY: pt 
 pt:
 	cmake -H. -Bbuild $(CMAKE_ARGS)
-	cmake --build build/ --target pt
+	cmake --build build/ --target pt --parallel
 
 .PHONY: pt-run
 pt-run: pt

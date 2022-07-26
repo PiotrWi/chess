@@ -1,12 +1,11 @@
 #include <string>
 #include <thread>
-#include <sstream>
 
 #include "Events.hpp"
 #include <utils/DebugWrapper.hpp>
 #include <UciApplication/EventsPropagator.hpp>
+#include <UciApplication/CommandParser.hpp>
 #include "GameHandler.hpp"
-#include <variant>
 
 void handleUci(UCI&)
 {
@@ -27,113 +26,25 @@ void handleBestMove(BEST_MOVE& bestMove)
     debug << "bestmove " + bestMove.bestMove;
 }
 
-using TCommandLineOptionsVariant = std::variant<UCI, IS_READY, UCI_NEW_GAME, POSSITION, GO, SET_OPTION, QUIT>;
-class CommandParser
+struct CommandVisitor
 {
-public:
-    TCommandLineOptionsVariant parseCommand(const std::string& command) const;
+    template <typename T>
+    void operator()(T&& event)
+    {
+        eventPropagator.enqueue(event);
+    }
+    void operator()(QUIT&& q)
+    {
+        eventPropagator.enqueue(q);
+        isDone_ = true;
+    }
+    bool isDone()
+    {
+        return isDone_;
+    }
+private:
+    bool isDone_ = false;
 };
-
-TCommandLineOptionsVariant CommandParser::parseCommand(const std::string& command) const
-{
-    if (command == "uci")
-    {
-        return UCI{};
-    }
-    if (command == "isready")
-    {
-        return IS_READY{};
-    }
-    if (command == "ucinewgame")
-    {
-        return UCI_NEW_GAME{};
-    }
-    if (command.find("position") != std::string::npos)
-    {
-        std::string word;
-        std::stringstream ss(command);
-        ss >> word;
-        ss >> word;
-        std::vector<std::string> moves;
-        if (word == "startpos")
-        {
-            ss >> word;
-            if (word == "moves")
-            {
-                while (!ss.eof())
-                {
-                    ss >> word;
-                    moves.push_back(word);
-                }
-            }
-            return POSSITION{true, {}, moves};
-        }
-        else if (word == "fen")
-        {
-            std::string fenString = "";
-            ss >> word;
-            fenString += word;
-            while (ss >> word, !ss.eof() && word != "moves")
-            {
-                fenString += " ";
-                fenString += word;
-            }
-            while (!ss.eof())
-            {
-                ss >> word;
-                moves.push_back(word);
-            }
-            return POSSITION{false, fenString, moves};
-        }
-    }
-    if (command.find("go") != std::string::npos)
-    {
-        std::string word;
-        std::stringstream ss(command);
-        ss >> word;
-
-        GO go;
-        while (not ss.eof())
-        {
-            ss >> word;
-            if (word.find("wtime") != std::string::npos)
-            {
-                ss >> word;
-                go.timeForWhite = std::stoi(word);
-            }
-
-            if (word.find("btime") != std::string::npos)
-            {
-                ss >> word;
-                go.timeForBlack = std::stoi(word);
-            }
-
-            if (word.find("movetime") != std::string::npos)
-            {
-                ss >> word;
-                go.movetime = std::stoi(word);
-            }
-        }
-        return go;
-    }
-    if (command == "quit")
-    {
-        return QUIT{};
-    }
-    if (command.find("setoption") != std::string::npos)
-    {
-        std::string word;
-        std::stringstream ss(command);
-        ss >> word; // consume "option" string
-        ss >> word; // consume "name" string
-        ss >> word;
-        auto key = word;
-        ss >> word; // consume "value" string
-        ss >> word;
-        return SET_OPTION(key, word);
-    }
-    return {};
-}
 
 void registerLocalCommands()
 {
@@ -151,13 +62,14 @@ void registerGameHandlerCommands()
 void readCommands()
 {
     CommandParser parser;
-    while (true)
+    CommandVisitor visitor;
+
+    while ( not visitor.isDone() )
     {
         std::string command;
         std::getline(std::cin, command);
-        debug.logCommand(command);
-
-        std::visit([&](auto&& arg) {eventPropagator.enqueue(arg);}, parser.parseCommand(command));
+        debug.logCommand(command);   
+        std::visit(visitor, parser.parseCommand(command));
     }
 }
 
