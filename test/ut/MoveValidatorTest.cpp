@@ -1,7 +1,5 @@
 #include <gtest/gtest.h>
 
-#include <iostream>
-
 #include <publicIf/Board.hpp>
 #include <detail/MoveValidator.hpp>
 
@@ -56,7 +54,6 @@ TEST_P(MoveValidatorTests_BlackPawnsInitialMovesTest, AllowToMovePawn)
     Board board = createBoard(utils::InitialBoardString);
     auto move = notations::coordinates::createMove(GetParam(), color_);
 
-    std::cout << GetParam() << std::endl;
     ASSERT_TRUE(MoveValidator::validateMove(board, move));
 }
 

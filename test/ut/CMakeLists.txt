@@ -9,26 +9,27 @@ include_directories(${GTEST_INSTALATION_DIR}/include
 link_directories(${GTEST_INSTALATION_DIR}/lib)
 
 add_executable(ut
-	main.cpp
-        ../utils/BoardGenerationUtils.cpp
-        BoardTest.cpp
-        CheckCheckerTest.cpp
-        fentest.cpp
-        FullSearchTest.cpp
-        HashMapTest.cpp
-        HashTableTest.cpp
-        MaterialEvaluatorTest.cpp
-        SearchingBasicTests.cpp
-        MoveApplierTest.cpp
-        MoveGeneratorTest.cpp
-	MoveValidatorTest.cpp
-        pinnedchecktest.cpp
-        ResultEvaluatorTest.cpp
-        ZobrishTest.cpp
-        mt/WholeGame1.cpp
-        mt/WholeGame2.cpp
-        mt/WholeGame3.cpp
-        CommandParserTest.cpp)
+    main.cpp
+    ../utils/BoardGenerationUtils.cpp
+    BoardTest.cpp
+    CheckCheckerTest.cpp
+    fentest.cpp
+    FullSearchTest.cpp
+    HashMapTest.cpp
+    HashTableTest.cpp
+    MaterialEvaluatorTest.cpp
+    SearchingBasicTests.cpp
+    MoveApplierTest.cpp
+    MoveGeneratorTest.cpp
+    MoveValidatorTest.cpp
+    pinnedchecktest.cpp
+    ResultEvaluatorTest.cpp
+    ZobrishTest.cpp
+    mt/WholeGame1.cpp
+    mt/WholeGame2.cpp
+    mt/WholeGame3.cpp
+    CommandParserTest.cpp
+    uciNotationTest.cpp)
 
 add_dependencies(ut googletest)
 target_link_libraries(ut gtest gmock gtest_main pthread BoardLibrary SearchLibrary StandardEvaluator dl UciApplication-lib)

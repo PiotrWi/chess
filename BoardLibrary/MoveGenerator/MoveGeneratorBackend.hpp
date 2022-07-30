@@ -91,7 +91,7 @@ void evaluateForPawns(uint64_t pawnsBitMask)
             auto beatingCandidate = ((NOT_H_COL & pawnBitMask) >> 7)  & ctx.opponentPieces;
             if (beatingCandidate)
             {
-                if (beatingCandidate & LINE_8)
+                if (beatingCandidate & LINE_1)
                 {
                     TMoveAddingStrategy::addAndPromoteWithBeating(pawnIndex,
                                                           pawnIndex -7,
@@ -109,7 +109,7 @@ void evaluateForPawns(uint64_t pawnsBitMask)
             beatingCandidate = ((NOT_A_COL & pawnBitMask) >> 9) & ctx.opponentPieces;
             if (beatingCandidate)
             {
-                if (beatingCandidate & LINE_8)
+                if (beatingCandidate & LINE_1)
                 {
                     TMoveAddingStrategy::addAndPromoteWithBeating(pawnIndex,
                                                           pawnIndex - 9,

@@ -19,6 +19,7 @@ matherial_evaluator::VALUES_TYPE piecesValues;
 
 int multiplePawnInRankValue = -50;
 int singleMoveValue = 10;
+int dualBishopPremium = 50;
 
 int evaluateMoveCount(int playerOnMoveMovesCount, int oponentMovesCount)
 {
@@ -67,6 +68,15 @@ int evaluatePawnStructure(const Board& board, NOTATION::COLOR::color playerOnMov
         : -1 * val;
 }
 
+int evaluateDualBishop(const Board& board, NOTATION::COLOR::color playerOnMove)
+{
+    auto whiteDualBishipPremium =  50 * (2 == __builtin_popcountll(board.piecesBitSets[NOTATION::COLOR::WHITE].bishopsMask));
+    auto blackDualBishipPremium =  50 * (2 == __builtin_popcountll(board.piecesBitSets[NOTATION::COLOR::WHITE].bishopsMask));
+    if (playerOnMove == NOTATION::COLOR::color::black)
+        return blackDualBishipPremium - whiteDualBishipPremium;
+    return whiteDualBishipPremium - blackDualBishipPremium;
+}
+
 }  // namespace
 
 void init(const char* configurationFileLocation)
@@ -83,6 +93,7 @@ void init(const char* configurationFileLocation)
 
     multiplePawnInRankValue = tree.get("COEFFICIENTS.PAWN_STRUCTURE.DOUBLED_PAWN_PENALITY", 0);
     singleMoveValue = tree.get("COEFFICIENTS.MOBILITY.MOVE_COUNT", 0);
+    dualBishopPremium = tree.get("COEFFICIENTS.DUAL_BISHOP_PREMIUM", 0);
 }
 
 int evaluatePosition(BoardEngine& be, unsigned int validMovesCount)
@@ -93,8 +104,9 @@ int evaluatePosition(BoardEngine& be, unsigned int validMovesCount)
         return -10000000;
     }
 
-    auto oponentValidMoves = be .generateValidMoveCount(be.board.playerOnMove + 1);
+    auto oponentValidMoves = be.generateValidMoveCount(be.board.playerOnMove + 1);
     return matherial_evaluator::evaluate(be.board, be.board.playerOnMove, piecesValues)
         + evaluateMoveCount(validMovesCount, oponentValidMoves)
-        + evaluatePawnStructure(be.board, be.board.playerOnMove);
+        + evaluatePawnStructure(be.board, be.board.playerOnMove)
+        + evaluateDualBishop(be.board, be.board.playerOnMove);
 }

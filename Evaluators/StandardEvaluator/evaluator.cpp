@@ -61,6 +61,15 @@ int evaluatePawnStructure(const Board& board, NOTATION::COLOR::color playerOnMov
         : -1 * val;
 }
 
+int evaluateDualBishop(const Board& board, NOTATION::COLOR::color playerOnMove)
+{
+    auto whiteDualBishipPremium =  50 * (2 == __builtin_popcountll(board.piecesBitSets[NOTATION::COLOR::WHITE].bishopsMask));
+    auto blackDualBishipPremium =  50 * (2 == __builtin_popcountll(board.piecesBitSets[NOTATION::COLOR::WHITE].bishopsMask));
+    if (playerOnMove == NOTATION::COLOR::color::black)
+        return blackDualBishipPremium - whiteDualBishipPremium;
+    return whiteDualBishipPremium - blackDualBishipPremium;
+}
+
 }  // namespace
 
 void init(const char*) { /* Do nothing */}
@@ -76,5 +85,6 @@ int evaluatePosition(BoardEngine& be, unsigned int validMovesCount)
     auto oponentValidMoves = be .generateValidMoveCount(be.board.playerOnMove + 1);
     return matherial_evaluator::evaluate(be.board, be.board.playerOnMove, piecesValues)
         + evaluateMoveCount(validMovesCount, oponentValidMoves)
-        + evaluatePawnStructure(be.board, be.board.playerOnMove);
+        + evaluatePawnStructure(be.board, be.board.playerOnMove)
+        + evaluateDualBishop(be.board, be.board.playerOnMove);
 }

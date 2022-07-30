@@ -35,3 +35,19 @@ TEST(FenShall, CorrectlyReadInitialPosition_RuiLopes)
 
     ASSERT_EQ(expectedBoard, be.board);
 }
+
+TEST(FenShall, COrrectlyReadPosition_1)
+{
+    Board expectedBoard = utils::createBoard("        "
+                                             "        "
+                                             "     ♚  "
+                                             "  ♟ ♟   "
+                                             "    ♟♝  "
+                                             " ♙      "
+                                             "       ♟"
+                                             "     ♔♖ ", NOTATION::COLOR::color::black);
+
+
+    auto be = notations::fen::initByFen(std::string("8/8/5k2/2p1p3/4pb2/1P6/7p/5KR1 b - - 1 77"));
+    ASSERT_EQ(expectedBoard, be.board);
+}

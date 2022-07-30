@@ -1,8 +1,10 @@
+# 30.07 15:06 UciWithCustomEvaluator 55.5-44.5 Stockfish1700
+
 import asyncio
 import chess
 import chess.engine
 import time
-
+from enum import Enum
 
 class CommandAndOptions:
     command = ""
@@ -108,7 +110,7 @@ class SingleGameHandler:
             print('Exception occurred:', err)
 
         await self._close_engines()
-        print(self.get_result())
+        #print(self.get_result())
         return self.get_result()
 
 
@@ -119,10 +121,57 @@ async def play_single_game(white_config, black_config):
 
 
 class StrengthComarator:
-    def __init__():
-        print ("To be written")
+    def __init__(self, n_task, first_engine_key, second_engine_key):
+        self.n_task = n_task
+        self.first_engine_key = first_engine_key
+        self.second_engine_key = second_engine_key
+        self.n_first_engine_as_white = 0
+        self.n_first_engine_as_black = 0
+        self.n_first_engine_score = 0.0
+        self.n_second_engine_score = 0.0
+
+    def _init_new_run(self, n_games_per_color):
+        self.n_first_engine_as_white = n_games_per_color
+        self.n_first_engine_as_black = n_games_per_color
+        self.n_first_engine_score = 0.0
+        self.n_second_engine_score = 0.0     
+
+    async def _worker(self):
+        while self.n_first_engine_as_white > 0:
+            self.n_first_engine_as_white = self.n_first_engine_as_white - 1
+            result = await play_single_game(avaiableEngines[self.first_engine_key], avaiableEngines[self.second_engine_key])
+            print ("{} {} {}".format(self.first_engine_key, result, self.second_engine_key))
+            if result == "1-0":
+                self.n_first_engine_score = self.n_first_engine_score + 1
+            if result == "1/2-1/2":
+                self.n_first_engine_score = self.n_first_engine_score + 0.5
+                self.n_second_engine_score = self.n_second_engine_score + 0.5
+            if result == "0-1":
+                self.n_second_engine_score = self.n_second_engine_score + 1
+        while self.n_first_engine_as_black > 0:
+            self.n_first_engine_as_black = self.n_first_engine_as_black - 1
+            result = await play_single_game(avaiableEngines[self.second_engine_key], avaiableEngines[self.first_engine_key])
+            print ("{} {} {}".format(self.second_engine_key, result, self.first_engine_key))
+            if result == "0-1":
+                self.n_first_engine_score = self.n_first_engine_score + 1
+            if result == "1/2-1/2":
+                self.n_first_engine_score = self.n_first_engine_score + 0.5
+                self.n_second_engine_score = self.n_second_engine_score + 0.5
+            if result == "1-0":
+                self.n_second_engine_score = self.n_second_engine_score + 1
+
+    async def start_play(self, n_games_per_color):
+        self._init_new_run(n_games_per_color)
+        tasks = []
+
+        for i in range(self.n_task):
+            tasks.append(asyncio.create_task(self._worker()))
+
+        for task in tasks:
+            await task
+        print ("{} {}-{} {}".format(self.first_engine_key, self.n_first_engine_score, self.n_second_engine_score, self.second_engine_key))
 
 
 asyncio.set_event_loop_policy(chess.engine.EventLoopPolicy())
-while True:
-    asyncio.run(play_single_game(avaiableEngines["UciWithCustomEvaluator"], avaiableEngines["Stockfish1700"]))
+s = StrengthComarator(12, "UciWithCustomEvaluator", "Stockfish1700")
+asyncio.run(s.start_play(50))
