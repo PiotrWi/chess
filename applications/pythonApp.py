@@ -5,20 +5,24 @@ import chess
 import chess.engine
 import time
 from enum import Enum
+import xml.etree.ElementTree as ET
 
 class CommandAndOptions:
+    name = ""
     command = ""
     options = {}
 
-    def __init__(self, command, options):
+    def __init__(self, name, command, options):
+        self.name = name
         self.command = command
         self.options = options
 
 
 avaiableEngines = {
-        "UciWithCustomEvaluator": CommandAndOptions("./UciApplication", {"customEvaluator": "libCustomizableEvaluator.so", "evaluatorConfig": "CustomizableEvaluatorConfig.xml"}),
-        "Stockfish1400": CommandAndOptions("/home/pioter/app/stockfish/src/stockfish", {"UCI_LimitStrength": "true", "UCI_Elo": 1400}),
-        "Stockfish1700": CommandAndOptions("/home/pioter/app/stockfish/src/stockfish", {"UCI_LimitStrength": "true", "UCI_Elo": 1700})
+        "UciWithCustomEvaluator": CommandAndOptions("CustomUciApplication", "./UciApplication", {"customEvaluator": "libCustomizableEvaluator.so", "evaluatorConfig": "CustomizableEvaluatorConfig.xml"}),
+        "UciApplication": CommandAndOptions("UciApplication", "./UciApplication", {}),
+        "Stockfish1400": CommandAndOptions("Stockfish1400", "/home/pioter/app/stockfish/src/stockfish", {"UCI_LimitStrength": "true", "UCI_Elo": 1400}),
+        "Stockfish1700": CommandAndOptions("Stockfish1700", "/home/pioter/app/stockfish/src/stockfish", {"UCI_LimitStrength": "true", "UCI_Elo": 1700})
         }
 
 
@@ -79,9 +83,7 @@ class SingleGameHandler:
                                                       black_clock=self.black_clock.get()))
         clock.stop_ticking()
 
-        #print(result.move)
         self.board.push(result.move)
-        #print("{}\n".format(self.board))
 
     def _is_game_over(self):
         return self.white_clock.is_expired() or self.black_clock.is_expired() or self.board.is_game_over()
@@ -95,7 +97,6 @@ class SingleGameHandler:
 
     async def play_single_game(self):
         self.board = chess.Board()
-        #print("{}\n".format(self.board))
 
         try:
             await self._open_engines()
@@ -110,7 +111,6 @@ class SingleGameHandler:
             print('Exception occurred:', err)
 
         await self._close_engines()
-        #print(self.get_result())
         return self.get_result()
 
 
@@ -121,10 +121,10 @@ async def play_single_game(white_config, black_config):
 
 
 class StrengthComarator:
-    def __init__(self, n_task, first_engine_key, second_engine_key):
+    def __init__(self, n_task, first_engine, second_engine):
         self.n_task = n_task
-        self.first_engine_key = first_engine_key
-        self.second_engine_key = second_engine_key
+        self.first_engine = first_engine
+        self.second_engine = second_engine
         self.n_first_engine_as_white = 0
         self.n_first_engine_as_black = 0
         self.n_first_engine_score = 0.0
@@ -136,11 +136,14 @@ class StrengthComarator:
         self.n_first_engine_score = 0.0
         self.n_second_engine_score = 0.0     
 
+    def get_first_engine_points(self):
+        return self.n_first_engine_score
+
     async def _worker(self):
         while self.n_first_engine_as_white > 0:
             self.n_first_engine_as_white = self.n_first_engine_as_white - 1
-            result = await play_single_game(avaiableEngines[self.first_engine_key], avaiableEngines[self.second_engine_key])
-            print ("{} {} {}".format(self.first_engine_key, result, self.second_engine_key))
+            result = await play_single_game(self.first_engine, self.second_engine)
+            print ("{} {} {}".format(self.first_engine.name, result, self.second_engine.name))
             if result == "1-0":
                 self.n_first_engine_score = self.n_first_engine_score + 1
             if result == "1/2-1/2":
@@ -148,10 +151,12 @@ class StrengthComarator:
                 self.n_second_engine_score = self.n_second_engine_score + 0.5
             if result == "0-1":
                 self.n_second_engine_score = self.n_second_engine_score + 1
+            print ("{} {}-{} {}".format(self.first_engine.name, self.n_first_engine_score, self.n_second_engine_score, self.second_engine.name))
+
         while self.n_first_engine_as_black > 0:
             self.n_first_engine_as_black = self.n_first_engine_as_black - 1
-            result = await play_single_game(avaiableEngines[self.second_engine_key], avaiableEngines[self.first_engine_key])
-            print ("{} {} {}".format(self.second_engine_key, result, self.first_engine_key))
+            result = await play_single_game(self.second_engine, self.first_engine)
+            print ("{} {} {}".format(second_engine.name, result, self.first_engine.name))
             if result == "0-1":
                 self.n_first_engine_score = self.n_first_engine_score + 1
             if result == "1/2-1/2":
@@ -159,6 +164,7 @@ class StrengthComarator:
                 self.n_second_engine_score = self.n_second_engine_score + 0.5
             if result == "1-0":
                 self.n_second_engine_score = self.n_second_engine_score + 1
+            print ("{} {}-{} {}".format(self.first_engine.name, self.n_first_engine_score, self.n_second_engine_score, self.second_engine.name))
 
     async def start_play(self, n_games_per_color):
         self._init_new_run(n_games_per_color)
@@ -169,9 +175,49 @@ class StrengthComarator:
 
         for task in tasks:
             await task
-        print ("{} {}-{} {}".format(self.first_engine_key, self.n_first_engine_score, self.n_second_engine_score, self.second_engine_key))
+        print ("{} {}-{} {}".format(self.first_engine.name, self.n_first_engine_score, self.n_second_engine_score, self.second_engine.name))
+
+
+class XmlModifier:
+    def modify(self, node):
+        print (node.tag)
+        print (node.attrib)
+        for child in node:
+            self.modify(child)
+
+
+class AdjustCoefficients:
+    def __init__(self, first_engine, second_engine):
+        self.first_engine = first_engine
+        self.second_engine = second_engine
+        self.current_best_score = 0
+        self.checked_config_location = []
+        self.best_config_location = first_engine.options["evaluatorConfig"]
+
+    def _play_reference_game(self):
+        s = StrengthComarator(12, first_engine, second_engine)
+        asyncio.run(s.start_play(50))
+        self.set_current_best(s.get_first_engine_points())
+
+    def _modify_current_best_config(self):
+        tree = ET.parse(self.best_config_location)
+        XmlModifier().modify(tree.getroot())
+
+
+    def adjust(self):
+        #_play_reference_game()
+        self._modify_current_best_config()
+
+        #while (True):
+        #    _modify_current_best_config()
+        #    result = _play_test_game()
+        #    if result > self._get_current_best():
+        #        _save_best_config()
+        #        _set_current_best(result)
 
 
 asyncio.set_event_loop_policy(chess.engine.EventLoopPolicy())
-s = StrengthComarator(12, "UciWithCustomEvaluator", "Stockfish1700")
+s = StrengthComarator(12, avaiableEngines["UciWithCustomEvaluator"], avaiableEngines["Stockfish1700"],)
 asyncio.run(s.start_play(50))
+#ac = AdjustCoefficients(avaiableEngines["UciWithCustomEvaluator"], avaiableEngines["Stockfish1700"])
+#ac.adjust()

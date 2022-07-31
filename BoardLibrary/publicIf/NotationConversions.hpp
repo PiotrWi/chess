@@ -36,7 +36,6 @@ NOTATION::COLOR::color getPieceColor(unsigned char piece);
 
 bool isRowInBoard(unsigned char row);
 bool isColumnInBoard(unsigned char col);
-
 }
 
 constexpr NOTATION::COLOR::color operator+(NOTATION::COLOR::color c, unsigned char)

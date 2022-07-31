@@ -83,7 +83,7 @@ TEST(FullSearchTest, PerformanceTest_8_iterative)
     players::common::move_generators::FullCachedEngine mg;
     full_search::evaluateIterative(be, mg, 8);
 }
-/* To slow
+
 TEST(FullSearchTest, PerformanceTest_9_iterative)
 {
     BoardEngine be;
@@ -97,7 +97,7 @@ TEST(FullSearchTest, PerformanceTest_10_iterative)
     players::common::move_generators::FullCachedEngine mg;
     full_search::evaluateIterative(be, mg, 10);
 }
-
+/* To slow
 TEST(FullSearchTest, PerformanceTest_11_iterative)
 {
     BoardEngine be;

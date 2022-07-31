@@ -3,6 +3,8 @@
  * */
 #include <evaluatorIf.hpp>
 #include <Common/MatherialEvaluator.hpp>
+#include <Common/PawnStructureEvaluator.hpp>
+#include <Common/SquareTablesEvaluator.hpp>
 
 #include <detail/bitboardslookups.hpp>
 #include <publicIf/NotationConversions.hpp>
@@ -10,14 +12,14 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 
-#include <Common/MatherialEvaluator.hpp>
 
 namespace
 {
 
 matherial_evaluator::VALUES_TYPE piecesValues;
+PawnStructureCoefficients pawnStructureCoeffincients = {-50,-50};
+SuareTableCoeffictients squareTables;
 
-int multiplePawnInRankValue = -50;
 int singleMoveValue = 10;
 int dualBishopPremium = 50;
 
@@ -26,52 +28,10 @@ int evaluateMoveCount(int playerOnMoveMovesCount, int oponentMovesCount)
     return (playerOnMoveMovesCount - oponentMovesCount) * singleMoveValue;
 }
 
-int evaluatePawnStructureForWhite(const Board & board)
-{
-    auto eval = 0;
-
-    for (auto && rank : ranks)
-    {
-        auto pawnsInRank = __builtin_popcountll(
-            rank & board.piecesBitSets[NOTATION::COLOR::WHITE].pawnsMask);
-        if (pawnsInRank > 1)
-        {
-            eval += (pawnsInRank - 1) * multiplePawnInRankValue;
-        }
-    }
-
-    return eval;
-}
-
-int evaluatePawnStructureForBlack(const Board& board)
-{
-    auto eval = 0;
-
-    for (auto && rank : ranks)
-    {
-        auto pawnsInRank = __builtin_popcountll(
-                rank & board.piecesBitSets[NOTATION::COLOR::BLACK].pawnsMask);
-        if (pawnsInRank > 1)
-        {
-            eval += (pawnsInRank - 1) * multiplePawnInRankValue;
-        }
-    }
-
-    return eval;
-}
-
-int evaluatePawnStructure(const Board& board, NOTATION::COLOR::color playerOnMove)
-{
-    auto val = evaluatePawnStructureForWhite(board) - evaluatePawnStructureForBlack(board);
-    return (playerOnMove == NOTATION::COLOR::color::white)
-        ? val
-        : -1 * val;
-}
-
 int evaluateDualBishop(const Board& board, NOTATION::COLOR::color playerOnMove)
 {
     auto whiteDualBishipPremium =  50 * (2 == __builtin_popcountll(board.piecesBitSets[NOTATION::COLOR::WHITE].bishopsMask));
-    auto blackDualBishipPremium =  50 * (2 == __builtin_popcountll(board.piecesBitSets[NOTATION::COLOR::WHITE].bishopsMask));
+    auto blackDualBishipPremium =  50 * (2 == __builtin_popcountll(board.piecesBitSets[NOTATION::COLOR::BLACK].bishopsMask));
     if (playerOnMove == NOTATION::COLOR::color::black)
         return blackDualBishipPremium - whiteDualBishipPremium;
     return whiteDualBishipPremium - blackDualBishipPremium;
@@ -91,9 +51,42 @@ void init(const char* configurationFileLocation)
                 TRockValue(tree.get("COEFFICIENTS.MATERIAL.ROCK", 0)),
                 TQueenValue(tree.get("COEFFICIENTS.MATERIAL.QUEEN", 0)));
 
-    multiplePawnInRankValue = tree.get("COEFFICIENTS.PAWN_STRUCTURE.DOUBLED_PAWN_PENALITY", 0);
+    pawnStructureCoeffincients.multiplePawnInRank =  tree.get("COEFFICIENTS.PAWN_STRUCTURE.DOUBLED_PAWN_PENALITY", 0);
+    pawnStructureCoeffincients.isolatedPawn =  tree.get("COEFFICIENTS.PAWN_STRUCTURE.ISOLATED_PAWN_PENALITY", 0);
+
     singleMoveValue = tree.get("COEFFICIENTS.MOBILITY.MOVE_COUNT", 0);
     dualBishopPremium = tree.get("COEFFICIENTS.DUAL_BISHOP_PREMIUM", 0);
+
+    for (char c: "abcdefgh")
+    {
+        for (char l: "12345678")
+        {
+            auto fieldStr = std::to_string(c) + std::to_string(l);
+            auto xmlKey = std::string("PIECE_SQUARE_TABLES.PAWN.") + fieldStr;
+            squareTables.white_pawn[NotationConversions::getFieldNum(fieldStr.c_str())] = tree.get(xmlKey.c_str(), 0);
+
+            xmlKey = std::string("PIECE_SQUARE_TABLES.KNIGHT.") + fieldStr;
+            squareTables.white_knight[NotationConversions::getFieldNum(fieldStr.c_str())] = tree.get(xmlKey.c_str(), 0);
+
+            xmlKey = std::string("PIECE_SQUARE_TABLES.KING.") + fieldStr;
+            squareTables.white_king[NotationConversions::getFieldNum(fieldStr.c_str())] = tree.get(xmlKey.c_str(), 0);
+
+            xmlKey = std::string("PIECE_SQUARE_TABLES.BISHOP.") + fieldStr;
+            squareTables.white_bishop[NotationConversions::getFieldNum(fieldStr.c_str())] = tree.get(xmlKey.c_str(), 0);
+
+            xmlKey = std::string("PIECE_SQUARE_TABLES.ROCK.") + fieldStr;
+            squareTables.white_rock[NotationConversions::getFieldNum(fieldStr.c_str())] = tree.get(xmlKey.c_str(), 0);
+
+            xmlKey = std::string("PIECE_SQUARE_TABLES.QUEEN.") + fieldStr;
+            squareTables.white_queen[NotationConversions::getFieldNum(fieldStr.c_str())] = tree.get(xmlKey.c_str(), 0);
+        }
+    }
+    reverseTable(squareTables.white_pawn, squareTables.black_pawn);
+    reverseTable(squareTables.white_knight, squareTables.black_knight);
+    reverseTable(squareTables.white_king, squareTables.black_king);
+    reverseTable(squareTables.white_bishop, squareTables.black_bishop);
+    reverseTable(squareTables.white_rock, squareTables.black_rock);
+    reverseTable(squareTables.white_queen, squareTables.black_queen);
 }
 
 int evaluatePosition(BoardEngine& be, unsigned int validMovesCount)
@@ -107,6 +100,7 @@ int evaluatePosition(BoardEngine& be, unsigned int validMovesCount)
     auto oponentValidMoves = be.generateValidMoveCount(be.board.playerOnMove + 1);
     return matherial_evaluator::evaluate(be.board, be.board.playerOnMove, piecesValues)
         + evaluateMoveCount(validMovesCount, oponentValidMoves)
-        + evaluatePawnStructure(be.board, be.board.playerOnMove)
-        + evaluateDualBishop(be.board, be.board.playerOnMove);
+        + pawn_structure_evaluator::evaluatePawnStructure(be.board, be.board.playerOnMove, pawnStructureCoeffincients)
+        + evaluateDualBishop(be.board, be.board.playerOnMove)
+        + square_tables_evaluator::evaluate(be.board, be.board.playerOnMove, squareTables);
 }

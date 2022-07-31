@@ -1,5 +1,7 @@
 #include <evaluatorIf.hpp>
 #include <Common/MatherialEvaluator.hpp>
+#include <Common/PawnStructureEvaluator.hpp>
+#include <Common/SquareTablesEvaluator.hpp>
 
 #include <detail/bitboardslookups.hpp>
 #include <publicIf/NotationConversions.hpp>
@@ -14,57 +16,31 @@ matherial_evaluator::VALUES_TYPE piecesValues(
         TRockValue(500),
         TQueenValue(900));
 
+PawnStructureCoefficients pawnStructureCoeffincients = {-50,-50};
+SuareTableCoeffictients squareTables{
+    {0, 0, 0, 0, 0, 0, 0, 0, 10, 10, 10, 0, 0, 10, 10, 10, 0, 0, 0, 5, 5, 0, 0, 0, 0, 0, 0, 20, 20, 0, 0, 0, 0, 0, 0, 5, 5, 0, 0, 0, 10, 10, 10, 10, 10, 10, 10, 10, 50, 50, 50, 50, 50, 50, 50, 50, 50, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0, 10, 10, 10, 0, 0, 10, 10, 10, 0, 0, 0, 5, 5, 0, 0, 0, 0, 0, 0, 20, 20, 0, 0, 0, 0, 0, 0, 5, 5, 0, 0, 0, 10, 10, 10, 10, 10, 10, 10, 10, 50, 50, 50, 50, 50, 50, 50, 50, 50, 0, 0, 0, 0, 0, 0, 0},
+    {-50, -40, -30, -30, -30, -30, -40, -50, -40, -20, 0, 5, 5, 0, -20, -40, -30, 5, 10, 15, 15, 10, 5, -30, -30, 0, 15, 20, 20, 15, 0, -30, 30, 5, 15, 20, 20, 15, 5, -30, -30, 0, 10, 15, 15, 10, 0, -30, -40, -20, 0, 0, 0, 0, -20, -40, -50, -40, -30, -30, -30, -30, -40, -50},
+    {-50, -40, -30, -30, -30, -30, -40, -50, -40, -20, 0, 5, 5, 0, -20, -40, -30, 5, 10, 15, 15, 10, 5, -30, -30, 0, 15, 20, 20, 15, 0, -30, 30, 5, 15, 20, 20, 15, 5, -30, -30, 0, 10, 15, 15, 10, 0, -30, -40, -20, 0, 0, 0, 0, -20, -40, -50, -40, -30, -30, -30, -30, -40, -50},
+    {20, 30, 10,  0,  0, 10, 30, 20,  20, 20,  0,  0,  0,  0, 20, 20, -10,-20,-20,-20,-20,-20,-20,-10, -20,-30,-30,-40,-40,-30,-30,-20, -30,-40,-40,-50,-50,-40,-40,-30, -30,-40,-40,-50,-50,-40,-40,-30, -30,-40,-40,-50,-50,-40,-40,-30, -30,-40,-40,-50,-50,-40,-40,-30},
+    {20, 30, 10,  0,  0, 10, 30, 20,  20, 20,  0,  0,  0,  0, 20, 20, -10,-20,-20,-20,-20,-20,-20,-10, -20,-30,-30,-40,-40,-30,-30,-20, -30,-40,-40,-50,-50,-40,-40,-30, -30,-40,-40,-50,-50,-40,-40,-30, -30,-40,-40,-50,-50,-40,-40,-30, -30,-40,-40,-50,-50,-40,-40,-30},
+    {-20,-10,-10,-10,-10,-10,-10,-20, -10,  5,  0,  0,  0,  0,  5,-10, -10, 10, 10, 10, 10, 10, 10,-10, -10,  0, 10, 10, 10, 10,  0,-10, -10,  5,  5, 10, 10,  5,  5,-10,-10,  0,  5, 10, 10,  5,  0,-10,-10,  0,  0,  0,  0,  0,  0,-10,-20,-10,-10,-10,-10,-10,-10,-20},
+    {-20,-10,-10,-10,-10,-10,-10,-20, -10,  5,  0,  0,  0,  0,  5,-10, -10, 10, 10, 10, 10, 10, 10,-10, -10,  0, 10, 10, 10, 10,  0,-10, -10,  5,  5, 10, 10,  5,  5,-10,-10,  0,  5, 10, 10,  5,  0,-10,-10,  0,  0,  0,  0,  0,  0,-10,-20,-10,-10,-10,-10,-10,-10,-20},
+    {0,  0,  0,  5,  5,  0,  0,  0,  -5,  0,  0,  0,  0,  0,  0, -5,  -5,  0,  0,  0,  0,  0,  0, -5,  -5,  0,  0,  0,  0,  0,  0, -5,  -5,  0,  0,  0,  0,  0,  0, -5,  -5,  0,  0,  0,  0,  0,  0, -5,   5, 10, 10, 10, 10, 10, 10,  5,   0,  0,  0,  0,  0,  0,  0,  0},
+    {0,  0,  0,  5,  5,  0,  0,  0,  -5,  0,  0,  0,  0,  0,  0, -5,  -5,  0,  0,  0,  0,  0,  0, -5,  -5,  0,  0,  0,  0,  0,  0, -5,  -5,  0,  0,  0,  0,  0,  0, -5,  -5,  0,  0,  0,  0,  0,  0, -5,   5, 10, 10, 10, 10, 10, 10,  5,   0,  0,  0,  0,  0,  0,  0,  0},
+    {-20,-10,-10, -5, -5,-10,-10,-20, -10,  0,  5,  0,  0,  0,  0,-10, -10,  5,  5,  5,  5,  5,  0,-10,   0,  0,  5,  5,  5,  5,  0, -5,  -5,  0,  5,  5,  5,  5,  0, -5, -10,  0,  5,  5,  5,  5,  0,-10,-10,  0,  0,  0,  0,  0,  0,-10,-20,-10,-10, -5, -5,-10,-10,-20},
+    {-20,-10,-10, -5, -5,-10,-10,-20, -10,  0,  5,  0,  0,  0,  0,-10, -10,  5,  5,  5,  5,  5,  0,-10,   0,  0,  5,  5,  5,  5,  0, -5,  -5,  0,  5,  5,  5,  5,  0, -5, -10,  0,  5,  5,  5,  5,  0,-10,-10,  0,  0,  0,  0,  0,  0,-10,-20,-10,-10, -5, -5,-10,-10,-20}
+};
+
 int evaluateMoveCount(int playerOnMoveMovesCount, int oponentMovesCount)
 {
     return (playerOnMoveMovesCount - oponentMovesCount) * 10;
 }
 
-int evaluatePawnStructureForWhite(const Board & board)
-{
-    auto eval = 0;
-
-    for (auto && rank : ranks)
-    {
-        auto pawnsInRank = __builtin_popcountll(
-            rank & board.piecesBitSets[NOTATION::COLOR::WHITE].pawnsMask);
-        if (pawnsInRank > 1)
-        {
-            eval += (pawnsInRank - 1) * (-50);
-        }
-    }
-
-    return eval;
-}
-
-int evaluatePawnStructureForBlack(const Board& board)
-{
-    auto eval = 0;
-
-    for (auto && rank : ranks)
-    {
-        auto pawnsInRank = __builtin_popcountll(
-                rank & board.piecesBitSets[NOTATION::COLOR::BLACK].pawnsMask);
-        if (pawnsInRank > 1)
-        {
-            eval += (pawnsInRank - 1) * (-50);
-        }
-    }
-
-    return eval;
-}
-
-int evaluatePawnStructure(const Board& board, NOTATION::COLOR::color playerOnMove)
-{
-    auto val = evaluatePawnStructureForWhite(board) - evaluatePawnStructureForBlack(board);
-    return (playerOnMove == NOTATION::COLOR::color::white)
-        ? val
-        : -1 * val;
-}
-
 int evaluateDualBishop(const Board& board, NOTATION::COLOR::color playerOnMove)
 {
     auto whiteDualBishipPremium =  50 * (2 == __builtin_popcountll(board.piecesBitSets[NOTATION::COLOR::WHITE].bishopsMask));
-    auto blackDualBishipPremium =  50 * (2 == __builtin_popcountll(board.piecesBitSets[NOTATION::COLOR::WHITE].bishopsMask));
+    auto blackDualBishipPremium =  50 * (2 == __builtin_popcountll(board.piecesBitSets[NOTATION::COLOR::BLACK].bishopsMask));
     if (playerOnMove == NOTATION::COLOR::color::black)
         return blackDualBishipPremium - whiteDualBishipPremium;
     return whiteDualBishipPremium - blackDualBishipPremium;
@@ -72,7 +48,16 @@ int evaluateDualBishop(const Board& board, NOTATION::COLOR::color playerOnMove)
 
 }  // namespace
 
-void init(const char*) { /* Do nothing */}
+void init(const char*)
+{
+    reverseTable(squareTables.white_pawn, squareTables.black_pawn);
+    reverseTable(squareTables.white_knight, squareTables.black_knight);
+    reverseTable(squareTables.white_king, squareTables.black_king);
+    reverseTable(squareTables.white_bishop, squareTables.black_bishop);
+    reverseTable(squareTables.white_rock, squareTables.black_rock);
+    reverseTable(squareTables.white_queen, squareTables.black_queen);
+
+}
 
 int evaluatePosition(BoardEngine& be, unsigned int validMovesCount)
 {
@@ -85,6 +70,7 @@ int evaluatePosition(BoardEngine& be, unsigned int validMovesCount)
     auto oponentValidMoves = be .generateValidMoveCount(be.board.playerOnMove + 1);
     return matherial_evaluator::evaluate(be.board, be.board.playerOnMove, piecesValues)
         + evaluateMoveCount(validMovesCount, oponentValidMoves)
-        + evaluatePawnStructure(be.board, be.board.playerOnMove)
-        + evaluateDualBishop(be.board, be.board.playerOnMove);
+        + pawn_structure_evaluator::evaluatePawnStructure(be.board, be.board.playerOnMove, pawnStructureCoeffincients)
+        + evaluateDualBishop(be.board, be.board.playerOnMove)
+        + square_tables_evaluator::evaluate(be.board, be.board.playerOnMove, squareTables);
 }

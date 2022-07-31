@@ -15,6 +15,7 @@ FullCachedEngine::FullCachedEngine()
 {
     evaluatePositionHandler = evaluatePosition;
     initHandler = init;
+    initHandler("");
 }
 
 FullCachedEngine::FullCachedEngine(const char* evaluatorLibLocation, const char* evaluatorConfig)
