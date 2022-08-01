@@ -4,8 +4,12 @@ import asyncio
 import chess
 import chess.engine
 import time
+import random
 from enum import Enum
 import xml.etree.ElementTree as ET
+from datetime import datetime
+random.seed(datetime.now())
+import shutil
 
 class CommandAndOptions:
     name = ""
@@ -156,7 +160,7 @@ class StrengthComarator:
         while self.n_first_engine_as_black > 0:
             self.n_first_engine_as_black = self.n_first_engine_as_black - 1
             result = await play_single_game(self.second_engine, self.first_engine)
-            print ("{} {} {}".format(second_engine.name, result, self.first_engine.name))
+            print ("{} {} {}".format(self.second_engine.name, result, self.first_engine.name))
             if result == "0-1":
                 self.n_first_engine_score = self.n_first_engine_score + 1
             if result == "1/2-1/2":
@@ -179,9 +183,20 @@ class StrengthComarator:
 
 
 class XmlModifier:
+    def _shallBeChanged(self):
+        i = random.randint(0, 100)
+        return i < 8 # 8% values to be changed
+
+    def modify_single_node(self, node):
+        change = max(1, (abs(int(node.text)) * random.randint(0, 100)) / 1000)
+        if random.randint(0, 1) > 0:
+            node.text = str(int(node.text) + int(change))
+        else:
+            node.text = str(int(node.text) - int(change))
+
     def modify(self, node):
-        print (node.tag)
-        print (node.attrib)
+        if node.text != None and node.text.lstrip("-").isdigit() and self._shallBeChanged():
+            self.modify_single_node(node)
         for child in node:
             self.modify(child)
 
@@ -193,31 +208,50 @@ class AdjustCoefficients:
         self.current_best_score = 0
         self.checked_config_location = []
         self.best_config_location = first_engine.options["evaluatorConfig"]
+        self.tmp_id = 1
+        self.out_id = 1
+
+    def _set_current_best(self, new_best):
+        self.current_best_score = new_best
 
     def _play_reference_game(self):
-        s = StrengthComarator(12, first_engine, second_engine)
-        asyncio.run(s.start_play(50))
-        self.set_current_best(s.get_first_engine_points())
+        s = StrengthComarator(12, self.first_engine, self.second_engine)
+        asyncio.run(s.start_play(150))
+        self._set_current_best(s.get_first_engine_points())
 
     def _modify_current_best_config(self):
         tree = ET.parse(self.best_config_location)
         XmlModifier().modify(tree.getroot())
+        self.checked_config_location = "tmp_" + str(self.tmp_id) + ".xml"
+        self.tmp_id = self.tmp_id + 1
+        tree.write(self.checked_config_location)
 
+    def _play_test_game(self):
+        self.first_engine.options["evaluatorConfig"] = self.checked_config_location
+        s = StrengthComarator(12, self.first_engine, self.second_engine)
+        asyncio.run(s.start_play(150))
+        return s.get_first_engine_points()
+
+    def _save_best_config(self):
+        self.best_config_location = "best.xml"
+        shutil.copyfile(self.checked_config_location, self.best_config_location)
+
+    def _get_current_best(self):
+        return self.current_best_score
 
     def adjust(self):
-        #_play_reference_game()
-        self._modify_current_best_config()
+        self._play_reference_game()
 
-        #while (True):
-        #    _modify_current_best_config()
-        #    result = _play_test_game()
-        #    if result > self._get_current_best():
-        #        _save_best_config()
-        #        _set_current_best(result)
+        while (True):
+            self._modify_current_best_config()
+            result = self._play_test_game()
+            if result > self._get_current_best():
+                self._save_best_config()
+                self._set_current_best(result)
 
 
 asyncio.set_event_loop_policy(chess.engine.EventLoopPolicy())
-s = StrengthComarator(12, avaiableEngines["UciWithCustomEvaluator"], avaiableEngines["Stockfish1700"],)
-asyncio.run(s.start_play(50))
-#ac = AdjustCoefficients(avaiableEngines["UciWithCustomEvaluator"], avaiableEngines["Stockfish1700"])
-#ac.adjust()
+#s = StrengthComarator(12, avaiableEngines["UciApplication"], avaiableEngines["Stockfish1700"],)
+#asyncio.run(s.start_play(200))
+ac = AdjustCoefficients(avaiableEngines["UciWithCustomEvaluator"], avaiableEngines["Stockfish1700"])
+ac.adjust()
