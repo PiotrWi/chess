@@ -29,7 +29,8 @@ add_executable(ut
     mt/WholeGame2.cpp
     mt/WholeGame3.cpp
     CommandParserTest.cpp
-    uciNotationTest.cpp)
+    uciNotationTest.cpp
+    seeTest.cpp)
 
 add_dependencies(ut googletest)
 target_link_libraries(ut gtest gmock gtest_main pthread BoardLibrary SearchLibrary StandardEvaluator dl UciApplication-lib)

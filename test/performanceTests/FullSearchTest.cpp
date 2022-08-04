@@ -5,6 +5,15 @@
 #include <common/CachedEngines/FullCachedEngine.hpp>
 
 #include <common/searchingAlgorithms/FullSearchingImplementation.hpp>
+#include <utils/BoardGenerationUtils.hpp>
+
+namespace
+{
+
+constexpr NOTATION::COLOR::color WHITE = NOTATION::COLOR::color::white;
+constexpr NOTATION::COLOR::color BLACK = NOTATION::COLOR::color::black;
+
+}
 
 TEST(FullSearchTest, PerformanceTest_2)
 {
@@ -91,13 +100,51 @@ TEST(FullSearchTest, PerformanceTest_9_iterative)
     full_search::evaluateIterative(be, mg, 9);
 }
 
+TEST(FullSearchTest, PerformanceTest_8_custom)
+
+{
+    Board board = utils::createBoard(
+                "♜♞..♚♝.."
+                "♟♟...♟♟."
+                "..♟..♞.♜"
+                "...♟♟.♘♟"
+                ".♗♗....."
+                ".♙♘.♙..."
+                "♙.♝♙.♙♙♙"
+                "♖...♔..♖"
+                , WHITE);
+    BoardEngine be;
+    be.board = board;
+    players::common::move_generators::FullCachedEngine mg;
+    full_search::evaluateIterative(be, mg, 8);
+}
+
+TEST(FullSearchTest, PerformanceTest_9_custom)
+
+{
+    Board board = utils::createBoard(
+                "♜♞..♚♝.."
+                "♟♟...♟♟."
+                "..♟..♞.♜"
+                "...♟♟.♘♟"
+                ".♗♗....."
+                ".♙♘.♙..."
+                "♙.♝♙.♙♙♙"
+                "♖...♔..♖"
+                , WHITE);
+    BoardEngine be;
+    be.board = board;
+    players::common::move_generators::FullCachedEngine mg;
+    full_search::evaluateIterative(be, mg, 9);
+}
+/* To slow
 TEST(FullSearchTest, PerformanceTest_10_iterative)
 {
     BoardEngine be;
     players::common::move_generators::FullCachedEngine mg;
     full_search::evaluateIterative(be, mg, 10);
 }
-/* To slow
+
 TEST(FullSearchTest, PerformanceTest_11_iterative)
 {
     BoardEngine be;

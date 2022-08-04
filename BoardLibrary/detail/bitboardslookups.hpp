@@ -136,7 +136,6 @@ public:
     RockFlexiMagicBB();
 };
 
-
 constexpr uint64_t getOppositePawnsAttackingFieldForWhite(uint64_t fieldBitMask)
 {
     return (NOT_A_COL & fieldBitMask) << 7

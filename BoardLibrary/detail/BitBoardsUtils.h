@@ -2,6 +2,12 @@
 
 #include <publicIf/Board.hpp>
 
+
+constexpr int getOccupiedBitIndex(uint64_t& bitMask)
+{
+    return 63 - __builtin_clzll(bitMask);
+}
+
 constexpr uint64_t getAllOccupiedFields(const Board& board)
 {
     return board.piecesBitSets[0].rocksMask

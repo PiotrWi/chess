@@ -185,7 +185,7 @@ class StrengthComarator:
 class XmlModifier:
     def _shallBeChanged(self):
         i = random.randint(0, 100)
-        return i < 8 # 8% values to be changed
+        return i < 3 # 3% values to be changed
 
     def modify_single_node(self, node):
         change = max(1, (abs(int(node.text)) * random.randint(0, 100)) / 1000)

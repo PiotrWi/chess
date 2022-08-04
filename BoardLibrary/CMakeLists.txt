@@ -16,6 +16,7 @@ add_library(BoardLibrary
     detail/MoveApplier.cpp
     detail/PinnedMovesChecker.hpp
     detail/bitboardslookups.hpp
+    detail/see.cpp
     publicIf/Notation.hpp
     publicIf/Result.hpp
     publicIf/Board.hpp

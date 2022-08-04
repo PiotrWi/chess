@@ -1,6 +1,4 @@
-/*
- * TODO: There is a bug which causes in case of interrupt default move can be return. It can happen if short time is given.
- * */
+#include <iostream>
 #include <evaluatorIf.hpp>
 #include <Common/MatherialEvaluator.hpp>
 #include <Common/PawnStructureEvaluator.hpp>
@@ -41,52 +39,62 @@ int evaluateDualBishop(const Board& board, NOTATION::COLOR::color playerOnMove)
 
 void init(const char* configurationFileLocation)
 {
-    boost::property_tree::ptree tree;
-    boost::property_tree::read_xml(configurationFileLocation, tree);
-
-    piecesValues = matherial_evaluator::VALUES_TYPE(
-                TPawnValue(tree.get("COEFFICIENTS.MATERIAL.PAWN", 0)),
-                TBishopValue(tree.get("COEFFICIENTS.MATERIAL.BISHOP", 0)),
-                TKnightValue(tree.get("COEFFICIENTS.MATERIAL.KNIGHT", 0)),
-                TRockValue(tree.get("COEFFICIENTS.MATERIAL.ROCK", 0)),
-                TQueenValue(tree.get("COEFFICIENTS.MATERIAL.QUEEN", 0)));
-
-    pawnStructureCoeffincients.multiplePawnInRank =  tree.get("COEFFICIENTS.PAWN_STRUCTURE.DOUBLED_PAWN_PENALITY", 0);
-    pawnStructureCoeffincients.isolatedPawn =  tree.get("COEFFICIENTS.PAWN_STRUCTURE.ISOLATED_PAWN_PENALITY", 0);
-
-    singleMoveValue = tree.get("COEFFICIENTS.MOBILITY.MOVE_COUNT", 0);
-    dualBishopPremium = tree.get("COEFFICIENTS.DUAL_BISHOP_PREMIUM", 0);
-
-    for (char c: "abcdefgh")
+    try
     {
-        for (char l: "12345678")
+        boost::property_tree::ptree tree;
+        boost::property_tree::read_xml(configurationFileLocation, tree);
+
+        piecesValues = matherial_evaluator::VALUES_TYPE(
+                    TPawnValue(tree.get<int>("COEFFICIENTS.MATERIAL.PAWN")),
+                    TBishopValue(tree.get<int>("COEFFICIENTS.MATERIAL.BISHOP")),
+                    TKnightValue(tree.get<int>("COEFFICIENTS.MATERIAL.KNIGHT")),
+                    TRockValue(tree.get<int>("COEFFICIENTS.MATERIAL.ROCK")),
+                    TQueenValue(tree.get<int>("COEFFICIENTS.MATERIAL.QUEEN")));
+
+        pawnStructureCoeffincients.multiplePawnInRank =  tree.get<int>("COEFFICIENTS.PAWN_STRUCTURE.DOUBLED_PAWN_PENALITY");
+        pawnStructureCoeffincients.isolatedPawn =  tree.get<int>("COEFFICIENTS.PAWN_STRUCTURE.ISOLATED_PAWN_PENALITY");
+
+        singleMoveValue = tree.get<int>("COEFFICIENTS.MOBILITY.MOVE_COUNT");
+        dualBishopPremium = tree.get<int>("COEFFICIENTS.DUAL_BISHOP_PREMIUM");
+
+        for (char c: {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'})
         {
-            auto fieldStr = std::to_string(c) + std::to_string(l);
-            auto xmlKey = std::string("PIECE_SQUARE_TABLES.PAWN.") + fieldStr;
-            squareTables.white_pawn[NotationConversions::getFieldNum(fieldStr.c_str())] = tree.get(xmlKey.c_str(), 0);
+            for (char l: {'1', '2', '3', '4', '5', '6', '7', '8'})
+            {
+                auto fieldStr = std::string("") + c + l;
+                auto xmlKey = std::string("COEFFICIENTS.PIECE_SQUARE_TABLES.PAWN.") + fieldStr;
+                squareTables.white_pawn[NotationConversions::getFieldNum(fieldStr.c_str())] = tree.get<int>(xmlKey.c_str());
 
-            xmlKey = std::string("PIECE_SQUARE_TABLES.KNIGHT.") + fieldStr;
-            squareTables.white_knight[NotationConversions::getFieldNum(fieldStr.c_str())] = tree.get(xmlKey.c_str(), 0);
+                xmlKey = std::string("COEFFICIENTS.PIECE_SQUARE_TABLES.KNIGHT.") + fieldStr;
+                squareTables.white_knight[NotationConversions::getFieldNum(fieldStr.c_str())] = tree.get<int>(xmlKey.c_str());
 
-            xmlKey = std::string("PIECE_SQUARE_TABLES.KING.") + fieldStr;
-            squareTables.white_king[NotationConversions::getFieldNum(fieldStr.c_str())] = tree.get(xmlKey.c_str(), 0);
+                xmlKey = std::string("COEFFICIENTS.PIECE_SQUARE_TABLES.KING.") + fieldStr;
+                squareTables.white_king[NotationConversions::getFieldNum(fieldStr.c_str())] = tree.get<int>(xmlKey.c_str());
 
-            xmlKey = std::string("PIECE_SQUARE_TABLES.BISHOP.") + fieldStr;
-            squareTables.white_bishop[NotationConversions::getFieldNum(fieldStr.c_str())] = tree.get(xmlKey.c_str(), 0);
+                xmlKey = std::string("COEFFICIENTS.PIECE_SQUARE_TABLES.BISHOP.") + fieldStr;
+                squareTables.white_bishop[NotationConversions::getFieldNum(fieldStr.c_str())] = tree.get<int>(xmlKey.c_str());
 
-            xmlKey = std::string("PIECE_SQUARE_TABLES.ROCK.") + fieldStr;
-            squareTables.white_rock[NotationConversions::getFieldNum(fieldStr.c_str())] = tree.get(xmlKey.c_str(), 0);
+                xmlKey = std::string("COEFFICIENTS.PIECE_SQUARE_TABLES.ROCK.") + fieldStr;
+                squareTables.white_rock[NotationConversions::getFieldNum(fieldStr.c_str())] = tree.get<int>(xmlKey.c_str());
 
-            xmlKey = std::string("PIECE_SQUARE_TABLES.QUEEN.") + fieldStr;
-            squareTables.white_queen[NotationConversions::getFieldNum(fieldStr.c_str())] = tree.get(xmlKey.c_str(), 0);
+                xmlKey = std::string("COEFFICIENTS.PIECE_SQUARE_TABLES.QUEEN.") + fieldStr;
+                squareTables.white_queen[NotationConversions::getFieldNum(fieldStr.c_str())] = tree.get<int>(xmlKey.c_str());
+            }
         }
+        reverseTable(squareTables.white_pawn, squareTables.black_pawn);
+        reverseTable(squareTables.white_knight, squareTables.black_knight);
+        reverseTable(squareTables.white_king, squareTables.black_king);
+        reverseTable(squareTables.white_bishop, squareTables.black_bishop);
+        reverseTable(squareTables.white_rock, squareTables.black_rock);
+        reverseTable(squareTables.white_queen, squareTables.black_queen);
     }
-    reverseTable(squareTables.white_pawn, squareTables.black_pawn);
-    reverseTable(squareTables.white_knight, squareTables.black_knight);
-    reverseTable(squareTables.white_king, squareTables.black_king);
-    reverseTable(squareTables.white_bishop, squareTables.black_bishop);
-    reverseTable(squareTables.white_rock, squareTables.black_rock);
-    reverseTable(squareTables.white_queen, squareTables.black_queen);
+    catch(std::exception& ex)
+    {
+        std::cerr << "exception throw while reading xml with coefficient configuration: " << configurationFileLocation << std::endl;
+        std::cerr << "ex: " << ex.what() << std::endl;
+        std::cerr << "no recovery has sense here."<< std::endl;
+        throw;
+    }
 }
 
 int evaluatePosition(BoardEngine& be, unsigned int validMovesCount)
