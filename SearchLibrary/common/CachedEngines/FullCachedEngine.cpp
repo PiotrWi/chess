@@ -13,7 +13,7 @@ namespace move_generators
 
 FullCachedEngine::FullCachedEngine()
 {
-    evaluatePositionHandler = evaluatePosition;
+    evaluatePositionHandler = evaluatePositionAvx;
     initHandler = init;
     initHandler("");
 }

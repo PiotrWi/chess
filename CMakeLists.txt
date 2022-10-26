@@ -13,6 +13,7 @@ if(Boost_FOUND)
 endif()
 
 project(chess LANGUAGES CXX)
+add_definitions(-DUSE_AVX)
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     add_definitions(-DASSERTSON)
