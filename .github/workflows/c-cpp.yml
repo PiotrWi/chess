@@ -10,13 +10,17 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
+    
     env:
       CC:   gcc-10
       CXX:  g++-10
     steps:
+
     - uses: actions/checkout@v3
     - name: build 
-      run: make all
+      run: |
+        echo "::set-env name=BOOST_ROOT::$BOOST_ROOT_1_72_0"
+        make all
     - name: make ut
       run: make ut-run
     - name: make pt
