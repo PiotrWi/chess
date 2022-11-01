@@ -1,4 +1,4 @@
-#include <gtest/gtest.h>
+#include <benchmark/benchmark.h>
 
 #include <BoardEngine.hpp>
 #include <notations/coordinationnotation.hpp>
@@ -15,140 +15,77 @@ constexpr NOTATION::COLOR::color BLACK = NOTATION::COLOR::color::black;
 
 }
 
-TEST(FullSearchTest, PerformanceTest_2)
-{
-    BoardEngine be;
-    players::common::move_generators::FullCachedEngine mg;
-    full_search::evaluate(be, mg, 2);
-}
+#define RUN_BENCHMARK_FOR_DEPTH_N(Depth)  static void PerformanceTest_##Depth (benchmark::State& state) \
+{                                                                   \
+    BoardEngine be;                                                 \
+    players::common::move_generators::FullCachedEngine mg;          \
+    for (auto _ : state) {                                          \
+        full_search::evaluate(be, mg, Depth );                      \
+    }                                                               \
+}                                                                   \
+BENCHMARK(PerformanceTest_##Depth );                                \
 
-TEST(FullSearchTest, PerformanceTest_4)
-{
-    BoardEngine be;
-    players::common::move_generators::FullCachedEngine mg;
-    full_search::evaluate(be, mg, 4);
-}
+#define RUN_BENCHMARK_FOR_BLACK_DEPTH_N(Depth)  static void PerformanceTest_##Depth##ForBlack (benchmark::State& state) \
+{                                                                   \
+    BoardEngine be;                                                 \
+    players::common::move_generators::FullCachedEngine mg;          \
+    be.applyMove(notations::coordinates::createExtendedMove("e2-e4", NOTATION::COLOR::color::white, be.board)); \
+    for (auto _ : state) {                                          \
+        full_search::evaluate(be, mg, Depth );                      \
+    }                                                               \
+}                                                                   \
+BENCHMARK(PerformanceTest_##Depth##ForBlack );                                \
 
-TEST(FullSearchTest, PerformanceTest_6)
-{
-    BoardEngine be;
-    players::common::move_generators::FullCachedEngine mg;
-    full_search::evaluate(be, mg, 6);
-}
+#define RUN_BENCHMARK_FOR_DEPTH_N_ITERATIVE_SEARCH(Depth)  static void PerformanceTest_##Depth##IterativeSearch (benchmark::State& state) \
+{                                                                   \
+    BoardEngine be;                                                 \
+    players::common::move_generators::FullCachedEngine mg;          \
+    for (auto _ : state) {                                          \
+        full_search::evaluateIterative(be, mg, Depth );                      \
+    }                                                               \
+}                                                                   \
+BENCHMARK(PerformanceTest_##Depth##IterativeSearch );  
 
-TEST(FullSearchTest, PerformanceTest_6_black)
-{
-    BoardEngine be;
-    players::common::move_generators::FullCachedEngine mg;
-    be.applyMove(notations::coordinates::createExtendedMove("e2-e4", NOTATION::COLOR::color::white, be.board));
-    full_search::evaluate(be, mg, 6);
-}
+RUN_BENCHMARK_FOR_DEPTH_N(2)
+RUN_BENCHMARK_FOR_DEPTH_N(4)
+RUN_BENCHMARK_FOR_DEPTH_N(6)
+RUN_BENCHMARK_FOR_DEPTH_N(8)
+RUN_BENCHMARK_FOR_DEPTH_N(9)
+RUN_BENCHMARK_FOR_BLACK_DEPTH_N(6)
+RUN_BENCHMARK_FOR_DEPTH_N_ITERATIVE_SEARCH(2)
+RUN_BENCHMARK_FOR_DEPTH_N_ITERATIVE_SEARCH(3)
+RUN_BENCHMARK_FOR_DEPTH_N_ITERATIVE_SEARCH(4)
+RUN_BENCHMARK_FOR_DEPTH_N_ITERATIVE_SEARCH(5)
+RUN_BENCHMARK_FOR_DEPTH_N_ITERATIVE_SEARCH(6)
+RUN_BENCHMARK_FOR_DEPTH_N_ITERATIVE_SEARCH(7)
+RUN_BENCHMARK_FOR_DEPTH_N_ITERATIVE_SEARCH(8)
+RUN_BENCHMARK_FOR_DEPTH_N_ITERATIVE_SEARCH(9)
 
-TEST(FullSearchTest, PerformanceTest_2_iterative)
-{
-    BoardEngine be;
-    players::common::move_generators::FullCachedEngine mg;
-    full_search::evaluateIterative(be, mg, 2);
-}
+#define RUN_BENCHMARK_FOR_BLACK_DEPTH_N_CUSTOM(Depth) static void PerformanceTest_##Depth##_custom (benchmark::State& state) \
+{                                       \
+    Board board = utils::createBoard(   \
+                "♜♞..♚♝.."              \
+                "♟♟...♟♟."              \
+                "..♟..♞.♜"              \
+                "...♟♟.♘♟"              \
+                ".♗♗....."              \
+                ".♙♘.♙..."              \
+                "♙.♝♙.♙♙♙"              \
+                "♖...♔..♖"              \
+                , WHITE);               \
+    BoardEngine be;                     \
+    be.board = board;                   \
+    players::common::move_generators::FullCachedEngine mg;  \
+    for (auto _ : state)                                    \
+    {                                                       \
+        full_search::evaluateIterative(be, mg, Depth );         \
+    }                                                       \
+}                                                           \
+BENCHMARK(PerformanceTest_##Depth##_custom );               \
 
-TEST(FullSearchTest, PerformanceTest_3_iterative)
-{
-    BoardEngine be;
-    players::common::move_generators::FullCachedEngine mg;
-    full_search::evaluateIterative(be, mg, 3);
-}
-
-TEST(FullSearchTest, PerformanceTest_4_iterative)
-{
-    BoardEngine be;
-    players::common::move_generators::FullCachedEngine mg;
-    full_search::evaluateIterative(be, mg, 4);
-}
-
-TEST(FullSearchTest, PerformanceTest_5_iterative)
-{
-    BoardEngine be;
-    players::common::move_generators::FullCachedEngine mg;
-    full_search::evaluateIterative(be, mg, 5);
-}
-
-TEST(FullSearchTest, PerformanceTest_6_iterative)
-{
-    BoardEngine be;
-    players::common::move_generators::FullCachedEngine mg;
-    full_search::evaluateIterative(be, mg, 6);
-}
-
-TEST(FullSearchTest, PerformanceTest_7_iterative)
-{
-    BoardEngine be;
-    players::common::move_generators::FullCachedEngine mg;
-    full_search::evaluateIterative(be, mg, 7);
-}
-
-TEST(FullSearchTest, PerformanceTest_8_iterative)
-{
-    BoardEngine be;
-    players::common::move_generators::FullCachedEngine mg;
-    full_search::evaluateIterative(be, mg, 8);
-}
-
-TEST(FullSearchTest, PerformanceTest_9_iterative)
-{
-    BoardEngine be;
-    players::common::move_generators::FullCachedEngine mg;
-    full_search::evaluateIterative(be, mg, 9);
-}
-
-TEST(FullSearchTest, PerformanceTest_8_custom)
-
-{
-    Board board = utils::createBoard(
-                "♜♞..♚♝.."
-                "♟♟...♟♟."
-                "..♟..♞.♜"
-                "...♟♟.♘♟"
-                ".♗♗....."
-                ".♙♘.♙..."
-                "♙.♝♙.♙♙♙"
-                "♖...♔..♖"
-                , WHITE);
-    BoardEngine be;
-    be.board = board;
-    players::common::move_generators::FullCachedEngine mg;
-    full_search::evaluateIterative(be, mg, 8);
-}
-
-TEST(FullSearchTest, PerformanceTest_9_custom)
-
-{
-    Board board = utils::createBoard(
-                "♜♞..♚♝.."
-                "♟♟...♟♟."
-                "..♟..♞.♜"
-                "...♟♟.♘♟"
-                ".♗♗....."
-                ".♙♘.♙..."
-                "♙.♝♙.♙♙♙"
-                "♖...♔..♖"
-                , WHITE);
-    BoardEngine be;
-    be.board = board;
-    players::common::move_generators::FullCachedEngine mg;
-    full_search::evaluateIterative(be, mg, 9);
-}
+RUN_BENCHMARK_FOR_BLACK_DEPTH_N_CUSTOM(8)
+RUN_BENCHMARK_FOR_BLACK_DEPTH_N_CUSTOM(9)
 /* To slow
-TEST(FullSearchTest, PerformanceTest_10_iterative)
-{
-    BoardEngine be;
-    players::common::move_generators::FullCachedEngine mg;
-    full_search::evaluateIterative(be, mg, 10);
-}
-
-TEST(FullSearchTest, PerformanceTest_11_iterative)
-{
-    BoardEngine be;
-    players::common::move_generators::FullCachedEngine mg;
-    full_search::evaluateIterative(be, mg, 11);
-}
+RUN_BENCHMARK_FOR_DEPTH_N_ITERATIVE_SEARCH(10)
+RUN_BENCHMARK_FOR_DEPTH_N_ITERATIVE_SEARCH(11)
 */

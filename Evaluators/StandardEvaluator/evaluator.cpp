@@ -137,6 +137,9 @@ void fill(const Board &board, unsigned int validMovesCount, unsigned int oponent
     dualbishop_evaluator::fill<C>(features, board);
 }
 
+/*
+Something is not working well here.
+*/
 int evaluatePositionAvx(BoardEngine& be, unsigned int validMovesCount)
 {
     auto gameResult = be.getREsultWithoutRepeatitionCheck(validMovesCount);

@@ -13,7 +13,7 @@ if(Boost_FOUND)
 endif()
 
 project(chess LANGUAGES CXX)
-add_definitions(-DUSE_AVX)
+#add_definitions(-DUSE_AVX)
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     add_definitions(-DASSERTSON)
@@ -22,10 +22,10 @@ else()
     SET(CMAKE_CXX_FLAGS  "-Ofast -Wall -Wextra -Werror -std=c++20 -flto -fuse-ld=gold -m64 -lrt")
 endif()
 
-
 # end of section flags
 
 set(GTEST_INSTALATION_DIR ${CMAKE_CURRENT_SOURCE_DIR}/externals/gtest/googltest )
+set(BENCHMARK_INSTALATION_DIR ${CMAKE_CURRENT_SOURCE_DIR}/externals/benchmark/benchmark)
 include_directories(
     ${PROJECT_SOURCE_DIR}/BoardLibrary/
     ${PROJECT_SOURCE_DIR}/SearchLibrary
@@ -43,5 +43,6 @@ add_subdirectory(applications)
 
 enable_testing()
 add_subdirectory(externals/gtest)
+add_subdirectory(externals/benchmark)
 add_subdirectory(test)
 
