@@ -40,3 +40,5 @@ add_dependencies(applications MagicBbGenerator)
 add_dependencies(applications ConsolleApplication)
 
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin/)
+
+file(COPY python DESTINATION ${PROJECT_SOURCE_DIR}/bin/)

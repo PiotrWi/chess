@@ -10,6 +10,7 @@ import xml.etree.ElementTree as ET
 from datetime import datetime
 random.seed(datetime.now())
 import shutil
+import os
 
 class CommandAndOptions:
     name = ""
@@ -22,11 +23,23 @@ class CommandAndOptions:
         self.options = options
 
 
+def getAppCommand():
+    return os.environ["CHESS_BIN_DIR"] + "/UciApplication"
+
+
+def getLibLocation():
+    return os.environ["CHESS_BIN_DIR"] + "/libCustomizableEvaluator.so"
+
+
+def getConfigLocation():
+    return os.environ["CHESS_BIN_DIR"] + "/CustomizableEvaluatorConfig.xml"
+
+
 avaiableEngines = {
-        "UciWithCustomEvaluator": CommandAndOptions("CustomUciApplication", "./UciApplication", {"customEvaluator": "libCustomizableEvaluator.so", "evaluatorConfig": "CustomizableEvaluatorConfig.xml"}),
-        "UciApplication": CommandAndOptions("UciApplication", "./UciApplication", {}),
-        "Stockfish1400": CommandAndOptions("Stockfish1400", "/home/pioter/app/stockfish/src/stockfish", {"UCI_LimitStrength": "true", "UCI_Elo": 1400}),
-        "Stockfish1700": CommandAndOptions("Stockfish1700", "/home/pioter/app/stockfish/src/stockfish", {"UCI_LimitStrength": "true", "UCI_Elo": 1700})
+        "UciWithCustomEvaluator": CommandAndOptions("CustomUciApplication", getAppCommand(), {"customEvaluator": getLibLocation(), "evaluatorConfig": getConfigLocation()}),
+        "UciApplication": CommandAndOptions("UciApplication", getAppCommand(), {}),
+        "Stockfish1400": CommandAndOptions("Stockfish1400", "stockfish", {"UCI_LimitStrength": "true", "UCI_Elo": 1400}),
+        "Stockfish1700": CommandAndOptions("Stockfish1700", "stockfish", {"UCI_LimitStrength": "true", "UCI_Elo": 1700})
         }
 
 
@@ -250,9 +263,9 @@ class AdjustCoefficients:
                 self._set_current_best(result)
 
 
-#asyncio.set_event_loop_policy(chess.engine.EventLoopPolicy())
-#ac = AdjustCoefficients(avaiableEngines["UciWithCustomEvaluator"], avaiableEngines["Stockfish1700"])
-#ac.adjust()
+asyncio.set_event_loop_policy(chess.engine.EventLoopPolicy())
+ac = AdjustCoefficients(avaiableEngines["UciWithCustomEvaluator"], avaiableEngines["Stockfish1700"])
+ac.adjust()
 
-s = StrengthComarator(12, avaiableEngines["UciApplication"], avaiableEngines["Stockfish1700"])
-asyncio.run(s.start_play(150))
+#s = StrengthComarator(12, avaiableEngines["UciApplication"], avaiableEngines["Stockfish1700"])
+#asyncio.run(s.start_play(150))
