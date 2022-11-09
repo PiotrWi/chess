@@ -175,7 +175,7 @@ inline ExtendedMove& PreorderedMoves::getBeating()
 
 inline ExtendedMove& PreorderedMoves::getHistoryPrepare()
 {
-    std::stable_sort(moves_.begin() + index,
+    std::sort(moves_.begin() + index,
               end,
               [&](auto& lhs, auto& rhs) {
         return historyMoves_[lhs.source][lhs.destination] > historyMoves_[rhs.source][rhs.destination];

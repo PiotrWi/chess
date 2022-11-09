@@ -12,6 +12,10 @@
 #include <common/Constants.hpp>
 
 #include "MoveOrdering.hpp"
+#include "Statisctic.hpp"
+
+static unsigned long long nodes;
+static Statistic statistics;
 
 namespace
 {
@@ -43,6 +47,7 @@ int quiescenceSearch(BoardEngine& be,
                      int alfa,
                      int beta)
 {
+    ++nodes;
     if (be.isChecked())
     {
         return evaluateMax<false>(be, cachedEngine, 1, alfa, beta);
@@ -97,7 +102,8 @@ int evaluateMax(BoardEngine& be,
                 int alfa,
                 int beta)
 {
-    if (interrupt_flag)
+    ++nodes;
+    if (interrupt_flag.load(std::memory_order_relaxed))
     {
         return alfa;
     }
@@ -171,7 +177,7 @@ int evaluateMax(BoardEngine& be,
 
             setHistoryMove(be.board.playerOnMove, move, depth);
 
-            if (SaveMove and interrupt_flag == false) bestMove = move;
+            if (SaveMove and interrupt_flag.load(std::memory_order_relaxed) == false) bestMove = move;
             return beta;
         }
         if (nextAlfa > alfa)
@@ -190,7 +196,7 @@ int evaluateMax(BoardEngine& be,
     {
         cachedEngine.setLowerUpperBound(be, alfa, beta, depth);
     }
-    if (SaveMove and interrupt_flag == false) bestMove = greatestMove;
+    if (SaveMove and interrupt_flag.load(std::memory_order_relaxed) == false) bestMove = greatestMove;
     return alfa;
 }
 
@@ -212,6 +218,7 @@ inline ExtendedMove evaluate(BoardEngine be,
     int alfa = -10000000;
     int beta = 10000000;
     clearHistoryMove();
+    auto calculateStatistics = SinglePerrioadRaiiWrapper(statistics, nodes);
 
     evaluateMax<true>(be, cachedEngine, depth, alfa, beta);
     return bestMove;
@@ -237,6 +244,8 @@ constexpr auto InitialBeta = mateValue + 1;
     interrupt_flag = false;
     int alpha = InitialAlpha;
     int beta = InitialBeta;
+    clearHistoryMove();
+    auto calculateStatistics = SinglePerrioadRaiiWrapper(statistics, nodes);
 
     for (auto depth = 2u; depth <= maxDepth && depth < MAX_DEPTH; depth+=1)
     {
