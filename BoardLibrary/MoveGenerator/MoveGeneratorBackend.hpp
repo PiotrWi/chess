@@ -24,7 +24,7 @@ void evaluateForPawns(uint64_t pawnsBitMask)
         auto pawnIndex = 63 - __builtin_clzll(pawnsBitMask);
         auto pawnBitMask = 1ull << pawnIndex;
 
-        if (c == NOTATION::COLOR::color::white)
+        if constexpr (c == NOTATION::COLOR::color::white)
         {
             //standard moves
             auto nextField = pawnBitMask << 8;
@@ -391,39 +391,6 @@ void evaluateForPawns(uint64_t pawnsBitMask)
     }
 }
 
-
-template <typename TMoveAddingStrategy, NOTATION::COLOR::color c>
-void evaluateKnights(uint64_t knightsBitMask)
-{
-    while (knightsBitMask)
-    {
-        auto knightIndex = 63 - __builtin_clzll(knightsBitMask);
-        auto knightBitMask = 1ull << knightIndex;
-
-        auto quietMoves = bitBoardLookup[knightIndex].knightsMovePossibilities
-            & ~ctx.allPieces
-            & PinnedRegister[knightIndex];
-        while (quietMoves)
-        {
-            auto targetSquare = 63 - __builtin_clzll(quietMoves);
-            TMoveAddingStrategy::addKnight(knightIndex, targetSquare);
-            quietMoves ^= (1ull << targetSquare);
-        }
-        auto beatings = bitBoardLookup[knightIndex].knightsMovePossibilities
-            & ctx.opponentPieces
-            & PinnedRegister[knightIndex];
-        while (beatings)
-        {
-            auto targetSquare = 63 - __builtin_clzll(beatings);
-            TMoveAddingStrategy::addKnightWithBeating(knightIndex,
-                                                      targetSquare,
-                                                      ctx.board->getFieldForNonEmpty(targetSquare, c+1));
-            beatings ^= (1ull << targetSquare);
-        }
-        knightsBitMask ^= knightBitMask;
-    }
-}
-
 template <typename TMoveAddingStrategy, NOTATION::COLOR::color c>
 void evaluateDiagonal(uint64_t diagonalBitMask)
 {
@@ -488,37 +455,37 @@ void evaluateLine(uint64_t lineBitMask)
 }
 
 
-    template <typename TMoveAddingStrategy, NOTATION::COLOR::color c>
-    void evaluateQueen(uint64_t lineBitMask)
+template <typename TMoveAddingStrategy, NOTATION::COLOR::color c>
+void evaluateQueen(uint64_t lineBitMask)
+{
+    while (lineBitMask)
     {
-        while (lineBitMask)
+        auto piecePosition = 63 - __builtin_clzll(lineBitMask);
+        uint64_t allAttacks = rockMagicBb.getAttacksFor(piecePosition, ctx.allPieces) | bishopMagicBb.getAttacksFor(piecePosition, ctx.allPieces);
+
+        uint64_t quietMoves = allAttacks &(~ctx.allPieces) & PinnedRegister[piecePosition];
+        while (quietMoves)
         {
-            auto piecePosition = 63 - __builtin_clzll(lineBitMask);
-            uint64_t allAttacks = rockMagicBb.getAttacksFor(piecePosition, ctx.allPieces) | bishopMagicBb.getAttacksFor(piecePosition, ctx.allPieces);
-
-            uint64_t quietMoves = allAttacks &(~ctx.allPieces) & PinnedRegister[piecePosition];
-            while (quietMoves)
-            {
-                auto targetSquare = 63 - __builtin_clzll(quietMoves);
-                TMoveAddingStrategy::addQueen(piecePosition, targetSquare);
-                quietMoves ^= (1ull << targetSquare);
-            }
-
-            auto possibleAttacks = allAttacks & ctx.opponentPieces& PinnedRegister[piecePosition];
-            while (possibleAttacks)
-            {
-                auto targetSquare = 63 - __builtin_clzll(possibleAttacks);
-                TMoveAddingStrategy::addQueenWithBeating(piecePosition,
-                                                         targetSquare,
-                                                         ctx.board->getFieldForNonEmpty(targetSquare, c+1));
-                possibleAttacks ^= (1ull << targetSquare);
-            }
-
-            lineBitMask ^= (1ull << piecePosition);
+            auto targetSquare = 63 - __builtin_clzll(quietMoves);
+            TMoveAddingStrategy::addQueen(piecePosition, targetSquare);
+            quietMoves ^= (1ull << targetSquare);
         }
-    }
 
+        auto possibleAttacks = allAttacks & ctx.opponentPieces& PinnedRegister[piecePosition];
+        while (possibleAttacks)
+        {
+            auto targetSquare = 63 - __builtin_clzll(possibleAttacks);
+            TMoveAddingStrategy::addQueenWithBeating(piecePosition,
+                                                     targetSquare,
+                                                     ctx.board->getFieldForNonEmpty(targetSquare, c+1));
+            possibleAttacks ^= (1ull << targetSquare);
+        }
+
+        lineBitMask ^= (1ull << piecePosition);
+    }
 }
+
+} // namespace PinnedNotChecked
 
 namespace NoLookup
 {
@@ -550,8 +517,6 @@ void evaluateNotCheckedPostions(uint64_t pinnedMask)
 
     evaluateKnights<StrategyWithNoChecking<c>, c>(
             ~pinnedMask & ctx.board->piecesBitSets[static_cast<unsigned char>(c)].knightsMask);
-    PinnedNotChecked::evaluateKnights<StrategyWithNoChecking<c>, c>(
-            pinnedMask & ctx.board->piecesBitSets[static_cast<unsigned char>(c)].knightsMask);
 
     evaluateDiagonal<StrategyWithNoChecking<c>, c>(
             ~pinnedMask & ctx.board->piecesBitSets[static_cast<unsigned char>(c)].bishopsMask);

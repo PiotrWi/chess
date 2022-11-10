@@ -21,6 +21,7 @@ add_executable(ut
     SearchingBasicTests.cpp
     MoveApplierTest.cpp
     MoveGeneratorTest.cpp
+    MoveGeneratorV2Test.cpp
     MoveValidatorTest.cpp
     pinnedchecktest.cpp
     ResultEvaluatorTest.cpp

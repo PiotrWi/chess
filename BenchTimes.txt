@@ -1,0 +1,120 @@
+
+
+PerformanceTest_MoveGenerator          2953 ns         2953 ns       219874
+PerformanceTest_2                      1414 ns         1414 ns       477136
+PerformanceTest_4                      1394 ns         1394 ns       471846
+PerformanceTest_6                      1524 ns         1524 ns       404371
+PerformanceTest_8                1301957611 ns   1301876472 ns            1
+PerformanceTest_9                8969000330 ns   8968506332 ns            1
+PerformanceTest_6ForBlack              1841 ns         1841 ns       332034
+PerformanceTest_2IterativeSearch        647 ns          647 ns      1076620
+PerformanceTest_3IterativeSearch       2066 ns         2066 ns       337704
+PerformanceTest_4IterativeSearch       2892 ns         2892 ns       240645
+PerformanceTest_5IterativeSearch       3523 ns         3523 ns       195547
+PerformanceTest_6IterativeSearch       4401 ns         4401 ns       153737
+PerformanceTest_7IterativeSearch       8183 ns         8183 ns        70090
+PerformanceTest_8IterativeSearch 1291487299 ns   1291441123 ns            1
+PerformanceTest_9IterativeSearch 6419045540 ns   6418926804 ns            1
+PerformanceTest_8_custom         2883361189 ns   2883226187 ns            1
+PerformanceTest_9_custom         1.0147e+10 ns   1.0146e+10 ns            1
+
+
+PerformanceTest_MoveGenerator          2937 ns         2937 ns       220590
+PerformanceTest_2                      1449 ns         1449 ns       449807
+PerformanceTest_4                      1455 ns         1455 ns       459647
+PerformanceTest_6                      1565 ns         1565 ns       407892
+PerformanceTest_8                1304283091 ns   1304223758 ns            1
+PerformanceTest_9                8998814003 ns   8998460216 ns            1
+PerformanceTest_6ForBlack              1892 ns         1892 ns       330860
+PerformanceTest_2IterativeSearch        650 ns          650 ns      1073914
+PerformanceTest_3IterativeSearch       2075 ns         2075 ns       336043
+PerformanceTest_4IterativeSearch       2903 ns         2902 ns       238762
+PerformanceTest_5IterativeSearch       3541 ns         3541 ns       194153
+PerformanceTest_6IterativeSearch       4414 ns         4414 ns       153228
+PerformanceTest_7IterativeSearch       8362 ns         8361 ns        67983
+PerformanceTest_8IterativeSearch 1314119334 ns   1314072291 ns            1
+PerformanceTest_9IterativeSearch 6422079528 ns   6421784835 ns            1
+PerformanceTest_8_custom         2854414449 ns   2854329432 ns            1
+PerformanceTest_9_custom         9685349163 ns   9684876157 ns            1
+
+
+PerformanceTest_MoveGenerator          2863 ns         2863 ns       244202
+PerformanceTest_2                      1432 ns         1432 ns       471670
+PerformanceTest_4                      1472 ns         1469 ns       461327
+PerformanceTest_6                      1582 ns         1577 ns       410275
+PerformanceTest_8                1261274332 ns   1257611849 ns            1
+PerformanceTest_9                8871155304 ns   8866672963 ns            1
+PerformanceTest_6ForBlack              1880 ns         1875 ns       325234
+PerformanceTest_2IterativeSearch        653 ns          651 ns      1070250
+PerformanceTest_3IterativeSearch       2079 ns         2075 ns       336775
+PerformanceTest_4IterativeSearch       2903 ns         2895 ns       239337
+PerformanceTest_5IterativeSearch       3543 ns         3532 ns       194949
+PerformanceTest_6IterativeSearch       4519 ns         4508 ns       115972
+PerformanceTest_7IterativeSearch       8036 ns         8018 ns        72913
+PerformanceTest_8IterativeSearch 1286342595 ns   1282765101 ns            1
+PerformanceTest_9IterativeSearch 6359210722 ns   6343327152 ns            1
+PerformanceTest_8_custom         2837826172 ns   2837777536 ns            1
+PerformanceTest_9_custom         9955709952 ns   9955270633 ns            1
+
+PerformanceTest_MoveOrdering           2.83 ns         2.83 ns    229518413
+PerformanceTest_MoveGenerator          2871 ns         2871 ns       244363
+PerformanceTest_2                      1484 ns         1484 ns       445717
+PerformanceTest_4                      1483 ns         1483 ns       446165
+PerformanceTest_6                      1816 ns         1816 ns       323669
+PerformanceTest_8                2859555097 ns   2859460367 ns            1
+PerformanceTest_9                1.1337e+10 ns   1.1337e+10 ns            1
+PerformanceTest_6ForBlack              2665 ns         2665 ns       192039
+PerformanceTest_2IterativeSearch       1517 ns         1517 ns       447490
+PerformanceTest_3IterativeSearch       2937 ns         2937 ns       234580
+PerformanceTest_4IterativeSearch       3795 ns         3795 ns       182526
+PerformanceTest_5IterativeSearch       4488 ns         4488 ns       119885
+PerformanceTest_6IterativeSearch       5501 ns         5501 ns        96607
+PerformanceTest_7IterativeSearch       9563 ns         9563 ns        58056
+PerformanceTest_8IterativeSearch 1229074050 ns   1229031802 ns            1
+PerformanceTest_9IterativeSearch 6384575014 ns   6384456641 ns            1
+PerformanceTest_8_custom         2820112629 ns   2820045021 ns            1
+PerformanceTest_9_custom         9197575868 ns   9197257734 ns            1
+
+PerformanceTest_MoveOrdering                        2.83 ns         2.83 ns    229833360
+PerformanceTest_MoveGenerator                       2902 ns         2902 ns       241215
+PerformanceTest_2                                   1518 ns         1518 ns       451634
+PerformanceTest_4                                   1511 ns         1511 ns       443276
+PerformanceTest_6                                   1905 ns         1904 ns       313767
+PerformanceTest_8                             2873957163 ns   2873763784 ns            1
+PerformanceTest_9                             1.1538e+10 ns   1.1537e+10 ns            1
+PerformanceTest_6ForBlack                           2756 ns         2756 ns       183599
+PerformanceTest_2IterativeSearch                    1538 ns         1537 ns       427192
+PerformanceTest_3IterativeSearch                    2979 ns         2979 ns       230945
+PerformanceTest_4IterativeSearch                    3860 ns         3860 ns       180351
+PerformanceTest_5IterativeSearch                    4564 ns         4564 ns       118684
+PerformanceTest_6IterativeSearch                    5601 ns         5601 ns        95485
+PerformanceTest_7IterativeSearch                    9781 ns         9781 ns        56352
+PerformanceTest_8IterativeSearch              1234696605 ns   1234653630 ns            1
+PerformanceTest_9IterativeSearch              6408187956 ns   6407961732 ns            1
+PerformanceTest_6_custom                           10124 ns        10123 ns        57370 nodesPerSecond=12.3546T
+PerformanceTest_7_custom                      1044755538 ns   1044694175 ns            1 nodesPerSecond=70.0457M
+PerformanceTest_8_custom                      2841651878 ns   2841511865 ns            1 nodesPerSecond=27.6147M
+PerformanceTest_9_custom                      9280837873 ns   9280382725 ns            1 nodesPerSecond=10.3272M
+PerformanceTest_9_custom_with_time_constraint 2000192932 ns        94355 ns           10 nodesPerSecond=2.67784T
+
+PerformanceTest_MoveOrdering                        2.79 ns         2.79 ns    239607043
+PerformanceTest_MoveGenerator                       2856 ns         2856 ns       244895
+PerformanceTest_2                                   1521 ns         1521 ns       439273
+PerformanceTest_4                                   1493 ns         1493 ns       440633
+PerformanceTest_6                                   1612 ns         1612 ns       401558
+PerformanceTest_8                             1299565272 ns   1299465209 ns            1
+PerformanceTest_9                             8076014275 ns   8075293878 ns            1
+PerformanceTest_6ForBlack                           2059 ns         2059 ns       264953
+PerformanceTest_2IterativeSearch                    1565 ns         1565 ns       446503
+PerformanceTest_3IterativeSearch                    2986 ns         2986 ns       233077
+PerformanceTest_4IterativeSearch                    3812 ns         3812 ns       176656
+PerformanceTest_5IterativeSearch                    4533 ns         4532 ns       120380
+PerformanceTest_6IterativeSearch                    5479 ns         5479 ns       124148
+PerformanceTest_7IterativeSearch                    9559 ns         9558 ns        58288
+PerformanceTest_8IterativeSearch              1160816963 ns   1160749411 ns            1
+PerformanceTest_9IterativeSearch              7692550092 ns   7692225040 ns            1
+PerformanceTest_6_custom                            9980 ns         9980 ns        61673 nodesPerSecond=11.176T
+PerformanceTest_7_custom                      1048296609 ns   1048241328 ns            1 nodesPerSecond=61.8637M
+PerformanceTest_8_custom                      2833626104 ns   2833470143 ns            1 nodesPerSecond=24.7538M
+PerformanceTest_9_custom                      9316455814 ns   9315719452 ns            1 nodesPerSecond=9.39138M
+PerformanceTest_9_custom_with_time_constraint 2000171745 ns        96198 ns           10 nodesPerSecond=2.3073T

@@ -23,6 +23,7 @@ add_library(BoardLibrary
     publicIf/BoardIO.hpp
     MoveGenerator/MoveGenerator.hpp
     MoveGenerator/MoveGenerator.cpp
+    MoveGeneratorV2/MoveGeneratorV2.cpp
     publicIf/NotationConversions.hpp
     notations/common.hpp
     notations/common.cpp
