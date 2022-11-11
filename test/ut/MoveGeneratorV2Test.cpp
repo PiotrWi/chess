@@ -337,7 +337,6 @@ TEST(MoveGeneratorTestsV2, shouldEvaluateSinglePawnMoves)
 		MoveGenerator::MoveGeneratorV2 sut(board, WHITE);
 		ASSERT_EQ(sut.getValidMoveCount(), 8u);
 	}
-
 	{
 	Board board = utils::createBoard(
 		"   ♚    "
@@ -366,6 +365,91 @@ TEST(MoveGeneratorTestsV2, shouldEvaluateSinglePawnMoves)
 	}
 }
 
+TEST(MoveGeneratorTestsV2, shouldEvaluateDoublePawnMoves)
+{
+	{
+		Board board = utils::createBoard(
+			"        "
+			"        "
+			"        "
+			"        "
+			"   ♙    "
+			"♙      ♙"
+			"♙  ♙ ♙  "
+			"    ♔   ");
+		MoveGenerator::MoveGeneratorV2 sut(board, WHITE);
+		ASSERT_EQ(sut.getValidMoveCount(), 9u);
+	}
+	{
+		Board board = utils::createBoard(
+			"    ♚   "
+			"♟  ♟ ♟  "
+			"♟      ♟"
+			"   ♟    "
+			"        "
+			"        "
+			"        "
+			"        ");
+		MoveGenerator::MoveGeneratorV2 sut(board, BLACK);
+		ASSERT_EQ(sut.getValidMoveCount(), 9u);
+	}
+}
+
+TEST(MoveGeneratorTestsV2, shouldNotDoNotLegalMovesForPinnedPawns)
+{
+	{
+		Board board = utils::createBoard(
+			"        "
+			"        "
+			"        "
+			"       ♝"
+			"        "
+			"     ♙  "
+			"♜  ♙♔   "
+			"        ");
+		MoveGenerator::MoveGeneratorV2 sut(board, WHITE);
+		ASSERT_EQ(sut.getValidMoveCount(), 6u);
+	}
+	{
+		Board board = utils::createBoard(
+			"    ♜   "
+			"        "
+			"        "
+			"        "
+			"       ♝"
+			"        "
+			"    ♙♙  "
+			"    ♔   ");
+		MoveGenerator::MoveGeneratorV2 sut(board, WHITE);
+		ASSERT_EQ(sut.getValidMoveCount(), 5u);
+	}
+	{
+		Board board = utils::createBoard(
+			"        "
+			"♖  ♟♚♟♖ "
+			"     ♟  "
+			"        "
+			"       ♗"
+			"        "
+			"        "
+			"        ");
+		MoveGenerator::MoveGeneratorV2 sut(board, BLACK);
+		ASSERT_EQ(sut.getValidMoveCount(), 5u);
+	}
+	{
+		Board board = utils::createBoard(
+			"    ♚   "
+			"    ♟   "
+			"        "
+			"        "
+			"        "
+			"    ♖   "
+			"        "
+			"        ");
+		MoveGenerator::MoveGeneratorV2 sut(board, BLACK);
+		ASSERT_EQ(sut.getValidMoveCount(), 6u);
+	}
+}
 /*
 
 TEST_F(MoveGeneratorTests, shouldReturnInitialMoves)

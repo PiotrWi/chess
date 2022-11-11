@@ -508,30 +508,30 @@ void evaluateForCheckedPosition()
 }
 
 template <NOTATION::COLOR::color c>
-void evaluateNotCheckedPostions(uint64_t pinnedMask)
+void evaluateNotCheckedPostions(Pinnes pinnes)
 {
     evaluateForPawns<StrategyWithNoChecking<c>, c>(
-            ~pinnedMask & ctx.board->piecesBitSets[static_cast<unsigned char>(c)].pawnsMask);
+            ~pinnes.allPinned & ctx.board->piecesBitSets[static_cast<unsigned char>(c)].pawnsMask);
     PinnedNotChecked::evaluateForPawns<StrategyWithNoChecking<c>, c>(
-            pinnedMask & ctx.board->piecesBitSets[static_cast<unsigned char>(c)].pawnsMask);
+            (pinnes.allPinned ^ pinnes.horizontallyPinned) & ctx.board->piecesBitSets[static_cast<unsigned char>(c)].pawnsMask);
 
     evaluateKnights<StrategyWithNoChecking<c>, c>(
-            ~pinnedMask & ctx.board->piecesBitSets[static_cast<unsigned char>(c)].knightsMask);
+            ~pinnes.allPinned & ctx.board->piecesBitSets[static_cast<unsigned char>(c)].knightsMask);
 
     evaluateDiagonal<StrategyWithNoChecking<c>, c>(
-            ~pinnedMask & ctx.board->piecesBitSets[static_cast<unsigned char>(c)].bishopsMask);
+            ~pinnes.allPinned & ctx.board->piecesBitSets[static_cast<unsigned char>(c)].bishopsMask);
     PinnedNotChecked::evaluateDiagonal<StrategyWithNoChecking<c>, c>(
-            pinnedMask & ctx.board->piecesBitSets[static_cast<unsigned char>(c)].bishopsMask);
+            (pinnes.diagonallyPinnedFromLeftBottom | pinnes.diagonallyPinnedFromLeftTop) & ctx.board->piecesBitSets[static_cast<unsigned char>(c)].bishopsMask);
 
     evaluateLine<StrategyWithNoChecking<c>, c>(
-            ~pinnedMask & ctx.board->piecesBitSets[static_cast<unsigned char>(c)].rocksMask);
+            ~pinnes.allPinned & ctx.board->piecesBitSets[static_cast<unsigned char>(c)].rocksMask);
     PinnedNotChecked::evaluateLine<StrategyWithNoChecking<c>, c>(
-            pinnedMask & ctx.board->piecesBitSets[static_cast<unsigned char>(c)].rocksMask);
+            (pinnes.verticallyPinned | pinnes.horizontallyPinned) & ctx.board->piecesBitSets[static_cast<unsigned char>(c)].rocksMask);
 
     evaluateQueen<StrategyWithNoChecking<c>, c>(
-            ~pinnedMask & ctx.board->piecesBitSets[static_cast<unsigned char>(c)].queensMask);
+            ~pinnes.allPinned & ctx.board->piecesBitSets[static_cast<unsigned char>(c)].queensMask);
     PinnedNotChecked::evaluateQueen<StrategyWithNoChecking<c>, c>(
-            pinnedMask & ctx.board->piecesBitSets[static_cast<unsigned char>(c)].queensMask);
+            pinnes.allPinned & ctx.board->piecesBitSets[static_cast<unsigned char>(c)].queensMask);
 
     evaluateKing<StrategyWithAlwaysCheckChecking<c>, c>(
             ctx.board->piecesBitSets[static_cast<unsigned char>(c)].kingsMask);

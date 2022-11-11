@@ -7,9 +7,20 @@
 
 static uint64_t PinnedRegister[64];
 
-static uint64_t findPinned(const Board& board, NOTATION::COLOR::color c, unsigned char fieldPosition)
+struct Pinnes
 {
-    uint64_t pinned = 0ull;
+    uint64_t verticallyPinned = 0ull;
+    uint64_t horizontallyPinned = 0ull;
+    uint64_t diagonallyPinnedFromLeftBottom = 0ull;
+    uint64_t diagonallyPinnedFromLeftTop = 0ull;
+    uint64_t allPinned = 0ull;
+    // spliting it slows donw a little.
+    // Maybe it is not worth to check if Move gen 2 is faster (it shall be because all pawns are evaluated toghether.).
+};
+
+static Pinnes findPinned(const Board& board, NOTATION::COLOR::color c, unsigned char fieldPosition)
+{
+    Pinnes pinnes;
 
     auto allPieces = getAllOccupiedFields(board);
     auto ownPieces = getAllOccupiedPerColor(board, c);
@@ -29,7 +40,7 @@ static uint64_t findPinned(const Board& board, NOTATION::COLOR::color c, unsigne
             auto rockRay = bitBoardLookup[rockPosition].bottomRay;
             auto allPinedPieces = northRay & rockRay;
             if (__builtin_popcountll(allPinedPieces) == 1) {
-                pinned |= allPinedPieces;
+                pinnes.verticallyPinned |= (allPinedPieces & ownPieces);
                 auto pinnedPiecePosition = __builtin_ffsll(allPinedPieces) - 1;
                 PinnedRegister[pinnedPiecePosition] =
                         (lookup.topRay & bitBoardLookup[rockPosition].bottomRay) | (1ull << rockPosition);
@@ -46,7 +57,7 @@ static uint64_t findPinned(const Board& board, NOTATION::COLOR::color c, unsigne
             auto rockRay = bitBoardLookup[rockPosition].leftRay;
             auto allPinedPieces = rightRay & rockRay;
             if (__builtin_popcountll(allPinedPieces) == 1) {
-                pinned |= allPinedPieces;
+                pinnes.horizontallyPinned |= (allPinedPieces & ownPieces);
                 auto pinnedPiecePosition = __builtin_ffsll(allPinedPieces) - 1;
                 PinnedRegister[pinnedPiecePosition] =
                         (lookup.rightRay & bitBoardLookup[rockPosition].leftRay) | (1ull << rockPosition);
@@ -63,7 +74,7 @@ static uint64_t findPinned(const Board& board, NOTATION::COLOR::color c, unsigne
             auto rockRay = bitBoardLookup[rockPosition].rightRay;
             auto allPinedPieces = leftRay & rockRay;
             if (__builtin_popcountll(allPinedPieces) == 1) {
-                pinned |= allPinedPieces;
+                pinnes.horizontallyPinned |= (allPinedPieces & ownPieces);
                 auto pinnedPiecePosition = __builtin_ffsll(allPinedPieces) - 1;
                 PinnedRegister[pinnedPiecePosition] =
                         (lookup.leftRay & bitBoardLookup[rockPosition].rightRay) | (1ull << rockPosition);
@@ -80,7 +91,7 @@ static uint64_t findPinned(const Board& board, NOTATION::COLOR::color c, unsigne
             auto rockRay = bitBoardLookup[rockPosition].topRay;
             auto allPinedPieces = bottomRay & rockRay;
             if (__builtin_popcountll(allPinedPieces) == 1) {
-                pinned |= allPinedPieces;
+                pinnes.verticallyPinned |= (allPinedPieces & ownPieces);;
                 auto pinnedPiecePosition = __builtin_ffsll(allPinedPieces) - 1;
                 PinnedRegister[pinnedPiecePosition] =
                         (lookup.bottomRay & bitBoardLookup[rockPosition].topRay) | (1ull << rockPosition);
@@ -100,7 +111,7 @@ static uint64_t findPinned(const Board& board, NOTATION::COLOR::color c, unsigne
             auto bishopRay = bitBoardLookup[bishopPosition].bottomRight;
             auto allPinedPieces = topLeftRay & bishopRay;
             if (__builtin_popcountll(allPinedPieces) == 1) {
-                pinned |= allPinedPieces;
+                pinnes.diagonallyPinnedFromLeftTop |= (allPinedPieces & ownPieces);
                 auto pinnedPiecePosition = __builtin_ffsll(allPinedPieces) - 1;
                 PinnedRegister[pinnedPiecePosition] =
                         (lookup.topLeft & bitBoardLookup[bishopPosition].bottomRight) | (1ull << bishopPosition);
@@ -117,7 +128,7 @@ static uint64_t findPinned(const Board& board, NOTATION::COLOR::color c, unsigne
             auto bishopRay = bitBoardLookup[bishopPosition].bottomLeft;
             auto allPinedPieces = topRightRay & bishopRay;
             if (__builtin_popcountll(allPinedPieces) == 1) {
-                pinned |= allPinedPieces;
+                pinnes.diagonallyPinnedFromLeftBottom |= (allPinedPieces & ownPieces);
                 auto pinnedPiecePosition = __builtin_ffsll(allPinedPieces) - 1;
                 PinnedRegister[pinnedPiecePosition] =
                         (lookup.topRight & bitBoardLookup[bishopPosition].bottomLeft) | (1ull << bishopPosition);
@@ -134,7 +145,7 @@ static uint64_t findPinned(const Board& board, NOTATION::COLOR::color c, unsigne
             auto bishopRay = bitBoardLookup[bishopPosition].topRight;
             auto allPinedPieces = bottomLeftRay & bishopRay;
             if (__builtin_popcountll(allPinedPieces) == 1) {
-                pinned |= allPinedPieces;
+                pinnes.diagonallyPinnedFromLeftBottom |= (allPinedPieces & ownPieces);
                 auto pinnedPiecePosition = __builtin_ffsll(allPinedPieces) - 1;
                 PinnedRegister[pinnedPiecePosition] =
                         (lookup.bottomLeft & bitBoardLookup[bishopPosition].topRight) | (1ull << bishopPosition);
@@ -151,7 +162,7 @@ static uint64_t findPinned(const Board& board, NOTATION::COLOR::color c, unsigne
             auto bishopRay = bitBoardLookup[bishopPosition].topLeft;
             auto allPinedPieces = bottomRightRay & bishopRay;
             if (__builtin_popcountll(allPinedPieces) == 1) {
-                pinned |= allPinedPieces;
+                pinnes.diagonallyPinnedFromLeftTop |= (allPinedPieces & ownPieces);
                 auto pinnedPiecePosition = __builtin_ffsll(allPinedPieces) - 1;
                 PinnedRegister[pinnedPiecePosition] =
                         (lookup.bottomRight & bitBoardLookup[bishopPosition].topRight) | (1ull << bishopPosition);
@@ -159,5 +170,6 @@ static uint64_t findPinned(const Board& board, NOTATION::COLOR::color c, unsigne
         }
     }
 
-    return pinned & ownPieces;
+    pinnes.allPinned = pinnes.verticallyPinned | pinnes.horizontallyPinned | pinnes.diagonallyPinnedFromLeftBottom | pinnes.diagonallyPinnedFromLeftTop;
+    return pinnes;
 }

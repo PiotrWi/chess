@@ -152,7 +152,7 @@ static void generateImpl(Board& board,
         }
         else
         {
-            auto pinnedFields = findPinned(board, NOTATION::COLOR::color::white, ctx.kingPosition);
+            auto pinnedFields = findPinned(board, NOTATION::COLOR::color::white, ctx.kingPosition); // TODO optimizations
             NoLookup::evaluateNotCheckedPostions<NOTATION::COLOR::color::white>(pinnedFields);
             generateCasles<NOTATION::COLOR::color::white>();
             GenerateEnPasant<NOTATION::COLOR::color::white,
@@ -169,7 +169,7 @@ static void generateImpl(Board& board,
         }
         else
         {
-            auto pinnedFields = findPinned(board, NOTATION::COLOR::color::black, ctx.kingPosition);
+            auto pinnedFields = findPinned(board, NOTATION::COLOR::color::black, ctx.kingPosition); // TODO optimizations
             NoLookup::evaluateNotCheckedPostions<NOTATION::COLOR::color::black>(pinnedFields);
             generateCasles<NOTATION::COLOR::color::black>();
             GenerateEnPasant<NOTATION::COLOR::color::black,
