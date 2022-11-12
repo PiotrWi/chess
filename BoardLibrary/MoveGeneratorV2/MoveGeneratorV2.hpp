@@ -28,7 +28,9 @@ private:
     void calculateMoveCount();
     void evaluateKnights(uint64_t knightsBitMask, uint64_t forbidenFields);
     void evaluateKing(uint64_t forbidenFields);
-    void evaluatePawns(uint64_t pawnsBitMask, uint64_t forbidenFields);
+    void evaluatePawns(uint64_t pawnsBitMask, uint64_t opponentPieces);
+    void evaluatePawns(uint64_t pawnsBitMask, uint64_t opponentPieces, uint64_t checkBlockers);
+    void evaluatePawnsBeatings(uint64_t pawnsToMoveToRightTop, uint64_t pawnsToMoveToLeftTop, uint64_t opponentPieces);
 private:
     Board board;
 

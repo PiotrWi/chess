@@ -86,14 +86,11 @@ void MoveGeneratorV2::evaluateKing(uint64_t forbidenFields)
 /*
 	In UTs it shall be checked:
 		- non beating
-			- whether we can move pawns on sigle fields
-			- we can move pawns two fields
 			- we move pined pawns only if no check is caused then.
 			- in the situation king is checked by one attacker, we can move pawn to block it.
 		- beating (To be analyzed yet)
-
 */
-void MoveGeneratorV2::evaluatePawns(uint64_t pawnsBitMask, uint64_t forbidenFields)
+void MoveGeneratorV2::evaluatePawns(uint64_t pawnsBitMask, uint64_t opponentPieces)
 {
 	constexpr uint64_t LINE_4 = 0x00'00'00'00'FF'00'00'00ull;
     constexpr uint64_t LINE_5 = 0x00'00'00'FF'00'00'00'00ull;
@@ -102,22 +99,83 @@ void MoveGeneratorV2::evaluatePawns(uint64_t pawnsBitMask, uint64_t forbidenFiel
 	if (pieceColor == NOTATION::COLOR::color::white)
 	{
 		auto singleMovedPawns = pawnsBitMask <<= 8;
-		auto moveTable = singleMovedPawns & (~forbidenFields);
+		auto moveTable = singleMovedPawns & (~opponentPieces);
 		moveTables.push_back(MoveTable{MoveTable::Type::SinglePawnMoves, NOT_RELEVANT, moveTable});
 
 		auto doubleMovedPawns = (moveTable <<= 8) & LINE_4;
-		moveTable = doubleMovedPawns & (~forbidenFields);
+		moveTable = doubleMovedPawns & (~opponentPieces);
 		moveTables.push_back(MoveTable{MoveTable::Type::DoublePawnMoves, NOT_RELEVANT, moveTable});
 	}
 	else
 	{
 		auto singleMovedPawns = pawnsBitMask >>= 8;
-		auto moveTable = singleMovedPawns & (~forbidenFields);
+		auto moveTable = singleMovedPawns & (~opponentPieces);
 		moveTables.push_back(MoveTable{MoveTable::Type::SinglePawnMoves, NOT_RELEVANT, moveTable});
 
 		auto doubleMovedPawns = (moveTable >>= 8) & LINE_5;
-		moveTable = doubleMovedPawns & (~forbidenFields);
+		moveTable = doubleMovedPawns & (~opponentPieces);
 		moveTables.push_back(MoveTable{MoveTable::Type::DoublePawnMoves, NOT_RELEVANT, moveTable});
+	}
+}
+
+void MoveGeneratorV2::evaluatePawns(uint64_t pawnsBitMask, uint64_t opponentPieces, uint64_t checkBlockers)
+{
+	constexpr uint64_t LINE_4 = 0x00'00'00'00'FF'00'00'00ull;
+    constexpr uint64_t LINE_5 = 0x00'00'00'FF'00'00'00'00ull;
+
+	constexpr unsigned char NOT_RELEVANT = 0u;
+	if (pieceColor == NOTATION::COLOR::color::white)
+	{
+		auto singleMovedPawns = (pawnsBitMask <<= 8) & (~opponentPieces);
+		auto moveTable = singleMovedPawns & checkBlockers;
+		moveTables.push_back(MoveTable{MoveTable::Type::SinglePawnMoves, NOT_RELEVANT, moveTable});
+
+		auto doubleMovedPawns = (singleMovedPawns <<= 8) & LINE_4;
+		moveTable = doubleMovedPawns & (~opponentPieces) & checkBlockers;
+		moveTables.push_back(MoveTable{MoveTable::Type::DoublePawnMoves, NOT_RELEVANT, moveTable});
+	}
+	else
+	{
+		auto singleMovedPawns = (pawnsBitMask >>= 8) & (~opponentPieces);
+		auto moveTable = singleMovedPawns & checkBlockers;
+		moveTables.push_back(MoveTable{MoveTable::Type::SinglePawnMoves, NOT_RELEVANT, moveTable});
+
+		auto doubleMovedPawns = (singleMovedPawns >>= 8) & LINE_5;
+		moveTable = doubleMovedPawns & (~opponentPieces) & checkBlockers;
+		moveTables.push_back(MoveTable{MoveTable::Type::DoublePawnMoves, NOT_RELEVANT, moveTable});
+	}
+}
+
+void MoveGeneratorV2::evaluatePawnsBeatings(uint64_t pawnsToMoveToRightTop, uint64_t pawnsToMoveToLeftTop, uint64_t opponentPieces)
+{
+	constexpr unsigned char NOT_RELEVANT = 0u;
+
+    if (board.validEnPassant != -1)
+    {
+        opponentPieces |= (1ull << board.validEnPassant);
+    }
+
+    if (pieceColor == NOTATION::COLOR::color::white)
+	{
+		// to left beatings
+		auto beatingsCandidates = ((NOT_H_COL & pawnsToMoveToLeftTop) << 9);
+		auto moveTable = beatingsCandidates & opponentPieces;
+		moveTables.push_back(MoveTable{MoveTable::Type::PawnBeatingsLeft, NOT_RELEVANT, moveTable});
+		
+		beatingsCandidates = ((NOT_A_COL & pawnsToMoveToRightTop) << 7);
+		moveTable = beatingsCandidates & opponentPieces;
+		moveTables.push_back(MoveTable{MoveTable::Type::PawnBeatingsRight, NOT_RELEVANT, moveTable});
+	}
+	else
+	{
+		// to left beatings
+		auto beatingsCandidates = ((NOT_H_COL & pawnsToMoveToRightTop) >> 7);
+		auto moveTable = beatingsCandidates & opponentPieces;
+		moveTables.push_back(MoveTable{MoveTable::Type::PawnBeatingsLeft, NOT_RELEVANT, moveTable});
+		
+		beatingsCandidates = ((NOT_A_COL & pawnsToMoveToLeftTop) >> 9);
+		moveTable = beatingsCandidates & opponentPieces;
+		moveTables.push_back(MoveTable{MoveTable::Type::PawnBeatingsRight, NOT_RELEVANT, moveTable});
 	}
 }
 
@@ -126,21 +184,29 @@ void MoveGeneratorV2::calculateMoveTables()
     const auto pinnedFields = findPinned(board, pieceColor, kingPosition);
     const auto ownFields = getAllOccupiedPerColor(board, pieceColor);
     const auto oponentFields = getAllOccupiedPerColor(board, pieceColor+1);
-    const auto allFields = ownFields | oponentFields;
+    const auto allOccupiedFields = ownFields | oponentFields;
 
     if (kingAttackersCount)
     {
     	if (kingAttackersCount == 1)
     	{
-    		const auto forbidenFields = ownFields | (~possibleBlockersMask);
+    		const auto forbidenFieldsKnight = ownFields | (~possibleBlockersMask);
     		const auto notPinnedKnights = board.piecesBitSets[static_cast<unsigned char>(pieceColor)].knightsMask & (~pinnedFields.allPinned);
-        	evaluateKnights(notPinnedKnights, forbidenFields);
-        	evaluateKing(ownFields);  // tmp
+        	evaluateKnights(notPinnedKnights, forbidenFieldsKnight);
+        	evaluateKing(ownFields);
+
+        	const auto pawns = board.piecesBitSets[static_cast<unsigned char>(pieceColor)].pawnsMask;
+        	const auto pawnsToMoveVertically = pawns & (~(pinnedFields.allPinned ^ pinnedFields.verticallyPinned));
+
+	        evaluatePawns(pawnsToMoveVertically, allOccupiedFields, possibleBlockersMask);
+	        const auto pawnsToMoveToRightTop = pawns & (~(pinnedFields.allPinned ^ pinnedFields.diagonallyPinnedFromLeftBottom));
+	        const auto pawnsToMoveToLeftTop = pawns & (~(pinnedFields.allPinned ^ pinnedFields.diagonallyPinnedFromLeftBottom));
+            evaluatePawnsBeatings(pawnsToMoveToRightTop, pawnsToMoveToLeftTop, oponentFields & possibleBlockersMask);
         	return;
     	}
     	else
     	{
-    		evaluateKing(0ull);  // tmp
+    		evaluateKing(ownFields);
     		return;
     	}
     }
@@ -148,9 +214,14 @@ void MoveGeneratorV2::calculateMoveTables()
     {
     	const auto notPinnedKnights = board.piecesBitSets[static_cast<unsigned char>(pieceColor)].knightsMask & (~pinnedFields.allPinned);
         evaluateKnights(notPinnedKnights, ownFields);
-        evaluateKing(ownFields);  // tmp
-        const auto pawns = board.piecesBitSets[static_cast<unsigned char>(pieceColor)].pawnsMask & (~(pinnedFields.allPinned ^ pinnedFields.verticallyPinned)); // tmp. We can move vertically pined figures
-        evaluatePawns(pawns, allFields);
+        evaluateKing(ownFields);
+
+        const auto pawns = board.piecesBitSets[static_cast<unsigned char>(pieceColor)].pawnsMask;
+        const auto pawnsToMoveVertically = pawns & (~(pinnedFields.allPinned ^ pinnedFields.verticallyPinned));
+        evaluatePawns(pawnsToMoveVertically, allOccupiedFields);
+        const auto pawnsToMoveToRightTop = pawns & (~(pinnedFields.allPinned ^ pinnedFields.diagonallyPinnedFromLeftBottom));
+        const auto pawnsToMoveToLeftTop = pawns & (~(pinnedFields.allPinned ^ pinnedFields.diagonallyPinnedFromLeftBottom));
+        evaluatePawnsBeatings(pawnsToMoveToRightTop, pawnsToMoveToLeftTop, oponentFields);
         return;
     }
 }

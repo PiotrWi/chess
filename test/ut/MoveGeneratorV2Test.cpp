@@ -346,7 +346,7 @@ TEST(MoveGeneratorTestsV2, shouldEvaluateSinglePawnMoves)
 		"        "
 		"        "
 		"   ♟    "
-		"        ");
+        "        ", BLACK);
 		MoveGenerator::MoveGeneratorV2 sut(board, BLACK);
 		ASSERT_EQ(sut.getValidMoveCount(), 6u);
 	}
@@ -359,7 +359,7 @@ TEST(MoveGeneratorTestsV2, shouldEvaluateSinglePawnMoves)
 		"   ♙    "
 		"♙    ♙ ♙"
 		"♙    ♙  "
-		"    ♔   ");
+        "    ♔   ", BLACK);
 		MoveGenerator::MoveGeneratorV2 sut(board, BLACK);
 		ASSERT_EQ(sut.getValidMoveCount(), 7u);
 	}
@@ -389,7 +389,7 @@ TEST(MoveGeneratorTestsV2, shouldEvaluateDoublePawnMoves)
 			"        "
 			"        "
 			"        "
-			"        ");
+            "        ", BLACK);
 		MoveGenerator::MoveGeneratorV2 sut(board, BLACK);
 		ASSERT_EQ(sut.getValidMoveCount(), 9u);
 	}
@@ -432,7 +432,7 @@ TEST(MoveGeneratorTestsV2, shouldNotDoNotLegalMovesForPinnedPawns)
 			"       ♗"
 			"        "
 			"        "
-			"        ");
+            "        ", BLACK);
 		MoveGenerator::MoveGeneratorV2 sut(board, BLACK);
 		ASSERT_EQ(sut.getValidMoveCount(), 5u);
 	}
@@ -445,28 +445,309 @@ TEST(MoveGeneratorTestsV2, shouldNotDoNotLegalMovesForPinnedPawns)
 			"        "
 			"    ♖   "
 			"        "
-			"        ");
+            "        ", BLACK);
 		MoveGenerator::MoveGeneratorV2 sut(board, BLACK);
 		ASSERT_EQ(sut.getValidMoveCount(), 6u);
 	}
 }
-/*
 
-TEST_F(MoveGeneratorTests, shouldReturnInitialMoves)
+TEST(MoveGeneratorTestsV2, shouldPerformStandardBeatings)
 {
-    Board board = utils::createBoard(utils::InitialBoardString);
-	auto pawnInitialMoves = map(
-            {"a2a3", "a2a4", "b2b3", "b2b4", "c2c3", "c2c4", "d2d3",
-            "d2d4", "e2e3", "e2e4", "f2f3", "f2f4", "g2g3", "g2g4",
-            "h2h3", "h2h4"}, WHITE, board);
-
-	auto knightInitialMoves = map(
-            {"Nb1a3", "Nb1c3", "Ng1f3", "Ng1h3"}, WHITE, board);
-
-	ASSERT_THAT(sut.generate(board, WHITE),
-		::testing::UnorderedElementsAreArray(pawnInitialMoves + knightInitialMoves));
+	{
+		Board board = utils::createBoard(
+			"        "
+			"        "
+			"        "
+			"        "
+			"      ♜ "
+			"  ♜  ♙  "
+			"   ♙♔   "
+			"        ");
+		MoveGenerator::MoveGeneratorV2 sut(board, WHITE);
+		ASSERT_EQ(sut.getValidMoveCount(), 9u);
+	}
+	{
+		Board board = utils::createBoard(
+			"        "
+			"       ♜"
+			"♙       "
+			"        "
+			"♜       "
+			"       ♙"
+			"    ♔   "
+			"        ");
+		MoveGenerator::MoveGeneratorV2 sut(board, WHITE);
+		ASSERT_EQ(sut.getValidMoveCount(), 10u);
+	}
+	{
+		Board board = utils::createBoard(
+			"♚       "
+			"    ♟♟  "
+			"   ♗  ♗ "
+			"        "
+			"        "
+			"        "
+			"        "
+            "        ", BLACK);
+		MoveGenerator::MoveGeneratorV2 sut(board, BLACK);
+		ASSERT_EQ(sut.getValidMoveCount(), 8u);
+	}
+	{
+		Board board = utils::createBoard(
+			"♚       "
+			"        "
+			"        "
+			"        "
+			"        "
+			"♟      ♟"
+			"♖      ♖"
+            "        ", BLACK);
+		MoveGenerator::MoveGeneratorV2 sut(board, BLACK);
+		ASSERT_EQ(sut.getValidMoveCount(), 3u);
+	}
 }
 
+TEST(MoveGeneratorTestsV2, shouldPerformBeatingUntilNotExposeAKing)
+{
+	{
+		Board board = utils::createBoard(
+			"        "
+			"        "
+			"        "
+			"        "
+			"  ♝ ♝ ♝ "
+			"   ♙ ♙  "
+			"    ♔   "
+			"        ");
+		MoveGenerator::MoveGeneratorV2 sut(board, WHITE);
+		ASSERT_EQ(sut.getValidMoveCount(), 8u);
+	}
+	{
+		Board board = utils::createBoard(
+			"    ♚   "
+			"   ♟ ♟  "
+			"  ♗ ♗ ♗ "
+			"        "
+			"        "
+			"        "
+			"        "
+            "        ", BLACK);
+		MoveGenerator::MoveGeneratorV2 sut(board, BLACK);
+		ASSERT_EQ(sut.getValidMoveCount(), 5u);
+	}
+}
+
+TEST(MoveGeneratorTestsV2, pawnsShouldBeAbleToBlockCheck)
+{
+	{
+		Board board = utils::createBoard(
+			"        "
+			"        "
+			"        "
+			"        "
+			"      ♝ "
+			"        "
+			"    ♔♙  "
+			"        ");
+		MoveGenerator::MoveGeneratorV2 sut(board, WHITE);
+		ASSERT_EQ(sut.getValidMoveCount(), 6u);
+	}
+	{
+		Board board = utils::createBoard(
+			"        "
+			"        "
+			"        "
+			"        "
+			"    ♔ ♜ "
+			"        "
+			"     ♙  "
+			"        ");
+		MoveGenerator::MoveGeneratorV2 sut(board, WHITE);
+		ASSERT_EQ(sut.getValidMoveCount(), 7u);
+	}
+}
+
+TEST(MoveGeneratorTestsV2, pawnsShouldBeAbleToBeatCheckFigure)
+{
+	{
+		Board board = utils::createBoard(
+			"        "
+			"        "
+			"        "
+			"        "
+			"      ♝ "
+			"       ♙"
+			"    ♔   "
+			"        ");
+		MoveGenerator::MoveGeneratorV2 sut(board, WHITE);
+		ASSERT_EQ(sut.getValidMoveCount(), 7u);
+	}
+    {
+        Board board = utils::createBoard(
+            "        "
+            "        "
+            "        "
+            "        "
+            "  ♔  ♜  "
+            "      ♙ "
+            "        "
+            "        ");
+        MoveGenerator::MoveGeneratorV2 sut(board, WHITE);
+        ASSERT_EQ(sut.getValidMoveCount(), 7u);
+    }
+	{
+		Board board = utils::createBoard(
+			"        "
+			"        "
+			"        "
+			"        "
+			"    ♔ ♜ "
+			"     ♙  "
+			"        "
+			"        ");
+		MoveGenerator::MoveGeneratorV2 sut(board, WHITE);
+        ASSERT_EQ(sut.getValidMoveCount(), 7u);
+	}
+}
+
+TEST(MoveGeneratorTestsV2, pawnsShouldCorrectlyHandleEnPassant)
+{
+    {
+        Board board = utils::createBoard(
+            "        "
+            "   ♟ ♟  "
+            "        "
+            "    ♙   "
+            "        "
+            "        "
+            "        "
+            "♔       ", BLACK);
+        MoveApplier::applyMove(board, notations::coordinates::createExtendedMove("f7-f5", BLACK, board));  // en passant on f6
+        MoveGenerator::MoveGeneratorV2 sut(board, WHITE);
+        ASSERT_EQ(sut.getValidMoveCount(), 5u);
+    }
+    {
+        Board board = utils::createBoard(
+            "        "
+            "   ♟ ♟  "
+            "        "
+            "    ♙   "
+            "        "
+            "        "
+            "        "
+            "♔       ", BLACK);
+        MoveApplier::applyMove(board, notations::coordinates::createExtendedMove("d7-d5", BLACK, board));  // en passant on d6
+        MoveGenerator::MoveGeneratorV2 sut(board, WHITE);
+        ASSERT_EQ(sut.getValidMoveCount(), 5u);
+    }
+    {
+        Board board = utils::createBoard(
+            "        "
+            "   ♟ ♟  "
+            "        "
+            "    ♙   "
+            "    ♔   "
+            "        "
+            "        "
+            "        ", BLACK);
+        MoveApplier::applyMove(board, notations::coordinates::createExtendedMove("f7-f5", BLACK, board));  // en passant on f6
+        MoveGenerator::MoveGeneratorV2 sut(board, WHITE);
+        ASSERT_EQ(sut.getValidMoveCount(), 8u);
+    }
+    {
+        Board board = utils::createBoard(
+            "        "
+            "   ♟ ♟  "
+            "        "
+            "    ♙   "
+            "    ♔   "
+            "        "
+            "        "
+            "        ", BLACK);
+        MoveApplier::applyMove(board, notations::coordinates::createExtendedMove("d7-d5", BLACK, board));  // en passant on d6
+        MoveGenerator::MoveGeneratorV2 sut(board, WHITE);
+        ASSERT_EQ(sut.getValidMoveCount(), 8u);
+    }
+    {
+        Board board = utils::createBoard(
+            "♚       "
+            "        "
+            "        "
+            "        "
+            "    ♟   "
+            "        "
+            "   ♙ ♙  "
+            "        ", WHITE);
+        MoveApplier::applyMove(board, notations::coordinates::createExtendedMove("d2-d4", WHITE, board));  // en passant on f6
+        MoveGenerator::MoveGeneratorV2 sut(board, BLACK);
+        ASSERT_EQ(sut.getValidMoveCount(), 5u);
+    }
+    {
+        Board board = utils::createBoard(
+            "♚       "
+            "        "
+            "        "
+            "        "
+            "    ♟   "
+            "        "
+            "   ♙ ♙  "
+            "        ", WHITE);
+        MoveApplier::applyMove(board, notations::coordinates::createExtendedMove("f2-f4", WHITE, board));  // en passant on d6
+        MoveGenerator::MoveGeneratorV2 sut(board, BLACK);
+        ASSERT_EQ(sut.getValidMoveCount(), 5u);
+    }
+    {
+        Board board = utils::createBoard(
+            "        "
+            "        "
+            "        "
+            "    ♚   "
+            "    ♟   "
+            "        "
+            "   ♙ ♙  "
+            "        ", WHITE);
+        MoveApplier::applyMove(board, notations::coordinates::createExtendedMove("d2-d4", WHITE, board));  // en passant on f6
+        MoveGenerator::MoveGeneratorV2 sut(board, BLACK);
+        ASSERT_EQ(sut.getValidMoveCount(), 8u);
+    }
+    {
+        Board board = utils::createBoard(
+            "        "
+            "        "
+            "        "
+            "    ♚   "
+            "    ♟   "
+            "        "
+            "   ♙ ♙  "
+            "        ", WHITE);
+        MoveApplier::applyMove(board, notations::coordinates::createExtendedMove("f2-f4", WHITE, board));  // en passant on d6
+        MoveGenerator::MoveGeneratorV2 sut(board, BLACK);
+        ASSERT_EQ(sut.getValidMoveCount(), 8u);
+    }
+}
+
+////////////////////////////////////////////////////////////
+
+
+TEST(MoveGeneratorTestsV2, shouldReturnInitialMoves)
+{
+    Board board = utils::createBoard(utils::InitialBoardString);
+    //auto pawnInitialMoves = map(
+    //        {"a2a3", "a2a4", "b2b3", "b2b4", "c2c3", "c2c4", "d2d3",
+    //        "d2d4", "e2e3", "e2e4", "f2f3", "f2f4", "g2g3", "g2g4",
+    //        "h2h3", "h2h4"}, WHITE, board);
+
+    //auto knightInitialMoves = map(
+    //        {"Nb1a3", "Nb1c3", "Ng1f3", "Ng1h3"}, WHITE, board);
+
+    MoveGenerator::MoveGeneratorV2 sut(board, WHITE);
+    ASSERT_EQ(sut.getValidMoveCount(), 20u);
+
+//	ASSERT_THAT(sut.generate(board, WHITE),
+//		::testing::UnorderedElementsAreArray(pawnInitialMoves + knightInitialMoves));
+}
+
+/*
 TEST_F(MoveGeneratorTests, shouldCorectlyAnalyzePos_2)
 {
 	Board board = utils::createBoard(

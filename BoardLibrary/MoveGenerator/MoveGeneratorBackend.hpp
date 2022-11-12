@@ -508,7 +508,7 @@ void evaluateForCheckedPosition()
 }
 
 template <NOTATION::COLOR::color c>
-void evaluateNotCheckedPostions(Pinnes pinnes)
+void evaluateNotCheckedPostions(const Pinnes& pinnes)
 {
     evaluateForPawns<StrategyWithNoChecking<c>, c>(
             ~pinnes.allPinned & ctx.board->piecesBitSets[static_cast<unsigned char>(c)].pawnsMask);
