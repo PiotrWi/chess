@@ -31,6 +31,8 @@ private:
     void evaluatePawns(uint64_t pawnsBitMask, uint64_t opponentPieces);
     void evaluatePawns(uint64_t pawnsBitMask, uint64_t opponentPieces, uint64_t checkBlockers);
     void evaluatePawnsBeatings(uint64_t pawnsToMoveToRightTop, uint64_t pawnsToMoveToLeftTop, uint64_t opponentPieces);
+    void evaluateRocks(uint64_t rocksBitMask, uint64_t allOccupiedFields, uint64_t forbidenFields);
+    void evaluatePinnedRocks(uint64_t rocksBitMask, uint64_t allOccupiedFields, uint64_t forbidenFields);
 private:
     Board board;
 
@@ -59,6 +61,7 @@ private:
             DoublePawnMoves,
             PawnBeatingsRight,
             PawnBeatingsLeft,
+            RockMoves,
         } type;
         unsigned char sourceField;
         uint64_t bitField; 

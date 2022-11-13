@@ -83,13 +83,6 @@ void MoveGeneratorV2::evaluateKing(uint64_t forbidenFields)
     moveTables.push_back(MoveTable{MoveTable::Type::KingMoves, kingPosition, possibleMovesTable});
 }
 
-/*
-	In UTs it shall be checked:
-		- non beating
-			- we move pined pawns only if no check is caused then.
-			- in the situation king is checked by one attacker, we can move pawn to block it.
-		- beating (To be analyzed yet)
-*/
 void MoveGeneratorV2::evaluatePawns(uint64_t pawnsBitMask, uint64_t opponentPieces)
 {
 	constexpr uint64_t LINE_4 = 0x00'00'00'00'FF'00'00'00ull;
@@ -179,6 +172,32 @@ void MoveGeneratorV2::evaluatePawnsBeatings(uint64_t pawnsToMoveToRightTop, uint
 	}
 }
 
+void MoveGeneratorV2::evaluateRocks(uint64_t rocksBitMask, uint64_t allOccupiedFields, uint64_t forbidenFields)
+{
+    while (rocksBitMask)
+    {
+        unsigned char piecePosition = 63 - __builtin_clzll(rocksBitMask);
+
+        auto moveTable = rockMagicBb.getAttacksFor(piecePosition, allOccupiedFields) & (~forbidenFields);
+		moveTables.push_back(MoveTable{MoveTable::Type::RockMoves, piecePosition, moveTable});
+
+        rocksBitMask ^= (1ull << piecePosition);
+    }
+}
+
+void MoveGeneratorV2::evaluatePinnedRocks(uint64_t rocksBitMask, uint64_t allOccupiedFields, uint64_t forbidenFields)
+{
+	while (rocksBitMask)
+    {
+        unsigned char piecePosition = 63 - __builtin_clzll(rocksBitMask);
+
+        auto moveTable = rockMagicBb.getAttacksFor(piecePosition, allOccupiedFields) & (~forbidenFields) & PinnedRegister[piecePosition];
+		moveTables.push_back(MoveTable{MoveTable::Type::RockMoves, piecePosition, moveTable});
+
+        rocksBitMask ^= (1ull << piecePosition);
+    }
+}
+
 void MoveGeneratorV2::calculateMoveTables()
 {
     const auto pinnedFields = findPinned(board, pieceColor, kingPosition);
@@ -202,6 +221,12 @@ void MoveGeneratorV2::calculateMoveTables()
 	        const auto pawnsToMoveToRightTop = pawns & (~(pinnedFields.allPinned ^ pinnedFields.diagonallyPinnedFromLeftBottom));
 	        const auto pawnsToMoveToLeftTop = pawns & (~(pinnedFields.allPinned ^ pinnedFields.diagonallyPinnedFromLeftBottom));
             evaluatePawnsBeatings(pawnsToMoveToRightTop, pawnsToMoveToLeftTop, oponentFields & possibleBlockersMask);
+
+	        const auto rocks = board.piecesBitSets[static_cast<unsigned char>(pieceColor)].rocksMask;
+	        evaluateRocks(rocks & (~pinnedFields.allPinned), allOccupiedFields, ownFields | (~possibleBlockersMask));
+
+	        const auto horizontalyAndVerticallyPinned = pinnedFields.verticallyPinned | pinnedFields.horizontallyPinned;
+	        evaluatePinnedRocks(rocks & horizontalyAndVerticallyPinned, allOccupiedFields, ownFields | (~possibleBlockersMask));
         	return;
     	}
     	else
@@ -222,6 +247,12 @@ void MoveGeneratorV2::calculateMoveTables()
         const auto pawnsToMoveToRightTop = pawns & (~(pinnedFields.allPinned ^ pinnedFields.diagonallyPinnedFromLeftBottom));
         const auto pawnsToMoveToLeftTop = pawns & (~(pinnedFields.allPinned ^ pinnedFields.diagonallyPinnedFromLeftBottom));
         evaluatePawnsBeatings(pawnsToMoveToRightTop, pawnsToMoveToLeftTop, oponentFields);
+
+        const auto rocks = board.piecesBitSets[static_cast<unsigned char>(pieceColor)].rocksMask;
+        evaluateRocks(rocks & (~pinnedFields.allPinned), allOccupiedFields, ownFields);
+
+        const auto horizontalyAndVerticallyPinned = pinnedFields.verticallyPinned | pinnedFields.horizontallyPinned;
+        evaluatePinnedRocks(rocks & horizontalyAndVerticallyPinned, allOccupiedFields, ownFields);
         return;
     }
 }

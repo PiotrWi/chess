@@ -14,7 +14,7 @@ namespace
 
 constexpr NOTATION::COLOR::color WHITE = NOTATION::COLOR::color::white;
 constexpr NOTATION::COLOR::color BLACK = NOTATION::COLOR::color::black;
-/*
+
 const std::vector<ExtendedMove> operator+(const std::vector<ExtendedMove>& lhs,
                                   const std::vector<ExtendedMove>& rhs)
 {
@@ -39,7 +39,7 @@ std::vector<ExtendedMove> map(const char* (&&in)[N], NOTATION::COLOR::color c, c
     }
     return moves;
 }
-*/
+
 }  // namespace
 
 TEST(MoveGeneratorTestsV2, shouldCorrectlyHandleJustNotAttackedKingMoves)
@@ -726,25 +726,114 @@ TEST(MoveGeneratorTestsV2, pawnsShouldCorrectlyHandleEnPassant)
     }
 }
 
-////////////////////////////////////////////////////////////
+TEST(MoveGeneratorTestsV2, shouldFindRockMoves)
+{
+    {
+        Board board = utils::createBoard(
+            "       ♖"
+            "        "
+            "♖       "
+            "        "
+            "        "
+            "        "
+            "        "
+            "♔       ", WHITE);
+        MoveGenerator::MoveGeneratorV2 sut(board, WHITE);
+        ASSERT_EQ(sut.getValidMoveCount(), 30u);
+    }
+    {
+        Board board = utils::createBoard(
+            "   ♜   ♖"
+            "        "
+            "♖       "
+            "        "
+            "        "
+            "        "
+            "       ♜"
+            "♔       ", WHITE);
+        MoveGenerator::MoveGeneratorV2 sut(board, WHITE);
+        ASSERT_EQ(sut.getValidMoveCount(), 24u);
+    }
+}
 
+TEST(MoveGeneratorTestsV2, shouldCorrectlyHandlePinnedRocks)
+{
+    {
+        Board board = utils::createBoard(
+            "        "
+            "♜       "
+            "♖       "
+            "        "
+            "        "
+            "        "
+            "        "
+            "♔       ", WHITE);
+        MoveGenerator::MoveGeneratorV2 sut(board, WHITE);
+        ASSERT_EQ(sut.getValidMoveCount(), 8u);
+    }
+    {
+        Board board = utils::createBoard(
+            "        "
+            "        "
+            "        "
+            "        "
+            "        "
+            "  ♝     "
+            " ♖      "
+            "♔       ", WHITE);
+        MoveGenerator::MoveGeneratorV2 sut(board, WHITE);
+        ASSERT_EQ(sut.getValidMoveCount(), 2u);
+    }
+}
+
+TEST(MoveGeneratorTestsV2, rocksShouldBeAbleTOPreventCheck)
+{
+    {
+        Board board = utils::createBoard(
+            "        "
+            "        "
+            "♖       "
+            "        "
+            "        "
+            "♜       "
+            "        "
+            "♔       ", WHITE);
+        MoveGenerator::MoveGeneratorV2 sut(board, WHITE);
+        ASSERT_EQ(sut.getValidMoveCount(), 3u);
+    }
+    {
+        Board board = utils::createBoard(
+            "        "
+            "        "
+            "        "
+            "        "
+            "        "
+            "♜       "
+            "       ♖"
+            "♔       ", WHITE);
+        MoveGenerator::MoveGeneratorV2 sut(board, WHITE);
+        ASSERT_EQ(sut.getValidMoveCount(), 3u);
+    }
+}
+////////////////////////////////////////////////////////////
 
 TEST(MoveGeneratorTestsV2, shouldReturnInitialMoves)
 {
     Board board = utils::createBoard(utils::InitialBoardString);
-    //auto pawnInitialMoves = map(
-    //        {"a2a3", "a2a4", "b2b3", "b2b4", "c2c3", "c2c4", "d2d3",
-    //        "d2d4", "e2e3", "e2e4", "f2f3", "f2f4", "g2g3", "g2g4",
-    //        "h2h3", "h2h4"}, WHITE, board);
+    auto pawnInitialMoves = map(
+            {"a2a3", "a2a4", "b2b3", "b2b4", "c2c3", "c2c4", "d2d3",
+            "d2d4", "e2e3", "e2e4", "f2f3", "f2f4", "g2g3", "g2g4",
+            "h2h3", "h2h4"}, WHITE, board);
 
-    //auto knightInitialMoves = map(
-    //        {"Nb1a3", "Nb1c3", "Ng1f3", "Ng1h3"}, WHITE, board);
+    auto knightInitialMoves = map(
+            {"Nb1a3", "Nb1c3", "Ng1f3", "Ng1h3"}, WHITE, board);
 
+    auto allMoves = pawnInitialMoves + knightInitialMoves;
     MoveGenerator::MoveGeneratorV2 sut(board, WHITE);
-    ASSERT_EQ(sut.getValidMoveCount(), 20u);
+    ASSERT_EQ(sut.getValidMoveCount(), allMoves.size());
 
 //	ASSERT_THAT(sut.generate(board, WHITE),
-//		::testing::UnorderedElementsAreArray(pawnInitialMoves + knightInitialMoves));
+//		::testing::UnorderedElementsAreArray(allMoves));
 }
 
 /*
@@ -784,9 +873,9 @@ TEST_F(MoveGeneratorTests, shouldCorectlyAnalyzePos_2)
 
 	ASSERT_THAT(sut.generate(board, WHITE),
                 ::testing::UnorderedElementsAreArray(pawnMoves+knightMoves+rockMoves+bishopMoves+queenMoves+kingMoves));
-}
+}*/
 
-TEST_F(MoveGeneratorTests, shouldCorectlyAnalyzePosWithMoves)
+TEST(MoveGeneratorTestsV2, shouldCorectlyAnalyzePosWithMoves)
 {
 	Board board = utils::createBoard(
 		"    ♚   "
@@ -814,10 +903,14 @@ TEST_F(MoveGeneratorTests, shouldCorectlyAnalyzePosWithMoves)
 	auto kingMoves = map(
 		{"Ke1d1", "Ke1d2", "Ke1e2", "Ke1f2", "Ke1f1"}, WHITE, board);
 
-	ASSERT_THAT(sut.generate(board, WHITE),
-		::testing::UnorderedElementsAreArray(pawnMoves+rockMoves+kingMoves));
-}
+	auto allMoves = pawnMoves + rockMoves + kingMoves;
+    MoveGenerator::MoveGeneratorV2 sut(board, WHITE);
+    ASSERT_EQ(sut.getValidMoveCount(), allMoves.size());
 
+/*	ASSERT_THAT(sut.generate(board, WHITE),
+		::testing::UnorderedElementsAreArray(allMoves));*/
+}
+/*
 TEST_F(MoveGeneratorTests, shouldAllowCastles)
 {
 	Board board = utils::createBoard(
@@ -846,8 +939,9 @@ TEST_F(MoveGeneratorTests, shouldAllowCastles)
 	ASSERT_THAT(sut.generate(board, WHITE),
 		::testing::UnorderedElementsAreArray(pawnMoves+rockMoves+kingMoves));
 }
+*/
 
-TEST_F(MoveGeneratorTests, shouldPreventIllegalCasles)
+TEST(MoveGeneratorTestsV2, shouldPreventIllegalCasles)
 {
 	Board board = utils::createBoard(
 		"   ♜♚ ♜ "
@@ -870,10 +964,13 @@ TEST_F(MoveGeneratorTests, shouldPreventIllegalCasles)
 	auto kingMoves = map(
 		{"Ke1e2", "Ke1f2", "Ke1f1"}, WHITE, board);
 
-	ASSERT_THAT(sut.generate(board, WHITE),
-		::testing::UnorderedElementsAreArray(pawnMoves+rockMoves+kingMoves));
+	auto allMoves = pawnMoves + rockMoves + kingMoves;
+    MoveGenerator::MoveGeneratorV2 sut(board, WHITE);
+    ASSERT_EQ(sut.getValidMoveCount(), allMoves.size());
+	/*ASSERT_THAT(sut.generate(board, WHITE),
+		::testing::UnorderedElementsAreArray(pawnMoves+rockMoves+kingMoves));*/
 }
-
+/*
 TEST_F(MoveGeneratorTests, shouldPreventIllegalCasles_2)
 {
 	Board board = utils::createBoard(
