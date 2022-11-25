@@ -19,7 +19,7 @@ const char* CachedPlayer::act(const char *string)
     {
         be.applyMove(notations::coordinates::createExtendedMove(string, be.board.playerOnMove, be.board));
     }
-    auto move = full_search::evaluateIterative(be, cmg_, 8);
+    auto move = full_search::evaluateIterative(be, cmg_, 7);
     be.applyMove(move);
 
     cmg_.clear();

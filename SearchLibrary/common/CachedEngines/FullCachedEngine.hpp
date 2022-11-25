@@ -56,7 +56,7 @@ public:
 
     int getEvaluationValue(BoardEngine& be, unsigned int validMovesCount);
     void setBestMove(const BoardEngine& be,
-                       ExtendedMove& move,
+                       const ExtendedMove& move,
                        unsigned char depth);
 
     void setLowerBound(const BoardEngine &be, int value, unsigned char depth);

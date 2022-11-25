@@ -62,7 +62,7 @@ int FullCachedEngine::getEvaluationValue(BoardEngine& be, unsigned int validMove
 }
 
 void FullCachedEngine::setBestMove(const BoardEngine& be,
-                 ExtendedMove& move,
+                 const ExtendedMove& move,
                  unsigned char depth)
 {
     auto hash = be.getHash();

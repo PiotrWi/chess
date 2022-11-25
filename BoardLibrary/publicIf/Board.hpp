@@ -24,16 +24,16 @@ struct Board
     unsigned char getField(const unsigned char field) const noexcept;
     unsigned char getFieldForNonEmpty(const unsigned char field, NOTATION::COLOR::color c) const noexcept;
     unsigned char getField(const char* field) const noexcept;
-    void setPreviouslyEmptyField(const unsigned char field, unsigned char value);
-    void setField(const unsigned char field, unsigned char value);
-    void setField(const unsigned char field, unsigned char oldValue, unsigned char value);
-    void setField(const char* field, unsigned char val);
-    void clearField(const unsigned char field, unsigned char oldValue);
+    void setPreviouslyEmptyField(const unsigned char field, unsigned char value) noexcept;
+    void setField(const unsigned char field, unsigned char value) noexcept;
+    void setField(const unsigned char field, unsigned char oldValue, unsigned char value) noexcept;
+    void setField(const char* field, unsigned char val) noexcept;
+    void clearField(const unsigned char field, unsigned char oldValue) noexcept;
 
-    bool isCorrect() const;
+    bool isCorrect() const noexcept;
 private:
-    void cleanConcrete(const unsigned char field, unsigned char oldValue);
-    void setConcrete(const unsigned char field, unsigned char value);
+    void cleanConcrete(const unsigned char field, unsigned char oldValue) noexcept;
+    void setConcrete(const unsigned char field, unsigned char value) noexcept;
 
     constexpr static unsigned char WHITE_INDEX = 0;
     constexpr static unsigned char BLACK_INDEX = 1;
@@ -80,10 +80,10 @@ struct ExtendedMove
     unsigned char targetPiece;
 
     explicit operator Move() const;
-    static ExtendedMove whiteShortCaste();
-    static ExtendedMove whiteLongCaste();
-    static ExtendedMove blackShortCaste();
-    static ExtendedMove blackLongCaste();
+    static ExtendedMove whiteShortCaste() noexcept;
+    static ExtendedMove whiteLongCaste() noexcept;
+    static ExtendedMove blackShortCaste() noexcept;
+    static ExtendedMove blackLongCaste() noexcept;
 };
 
 bool operator==(const ExtendedMove& lfs, const ExtendedMove& rhs) noexcept;

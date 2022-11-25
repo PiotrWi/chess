@@ -15,18 +15,6 @@ namespace
 constexpr NOTATION::COLOR::color WHITE = NOTATION::COLOR::color::white;
 constexpr NOTATION::COLOR::color BLACK = NOTATION::COLOR::color::black;
 
-const std::vector<ExtendedMove> operator+(const std::vector<ExtendedMove>& lhs,
-                                  const std::vector<ExtendedMove>& rhs)
-{
-    std::vector<ExtendedMove> v;
-    v.reserve(lhs.size() + rhs.size());
-
-    v.insert(v.end(), lhs.begin(), lhs.end());
-    v.insert(v.end(), rhs.begin(), rhs.end());
-
-    return v;
-}
-
 template <size_t N>
 std::vector<ExtendedMove> map(const char* (&&in)[N], NOTATION::COLOR::color c, const Board& board)
 {
@@ -49,17 +37,8 @@ T noMove(T t)
 std::vector<ExtendedMove> consume_n(PreorderedMoves& pm, int n)
 {
 	std::vector<ExtendedMove> out;
-    std::generate_n(std::back_inserter(out), n, [&pm](){ return pm.get(); });
+    std::generate_n(std::back_inserter(out), n, [&pm](){ return *pm.get(); });
     return out;
-}
-
-std::vector<ExtendedMove> randomShuffle(std::vector<ExtendedMove> inOut)
-{
-    std::random_device rd;
-    std::mt19937 g(rd());
-
-    std::shuffle(inOut.begin(), inOut.end(), g);
-    return inOut;
 }
 
 void setHistoryDescending(NOTATION::COLOR::color c, const std::vector<ExtendedMove>& in)
@@ -86,6 +65,14 @@ public:
 	{
 		clearHistoryMove();
 	}
+
+	MoveGenerator::MoveGeneratorV2 getMoveGenerator(const Board& board, NOTATION::COLOR::color c)
+	{
+		MoveGenerator::MoveGeneratorV2 mg(board, c);
+		mg.getValidMoveCount();
+		return mg;
+	}
+
 	players::common::move_generators::CacheFullEntity emptyCacheEnity_;
 };
 
@@ -99,9 +86,9 @@ TEST_F(PreorderedMovesTests, shouldOrderInitialMoves)
             "d2d4", "e2e3", "e2e4", "f2f3", "f2f4", "g2g3", "g2g4",
             "h2h3", "h2h4", "Nb1a3", "Nb1c3", "Ng1f3", "Ng1h3"}, WHITE, board);
 
-
-    PreorderedMoves pm(NOTATION::COLOR::color::white, &emptyCacheEnity_, 5, noMove(initMoves));
-    ASSERT_THAT(consume_n(pm, pm.size()), ::testing::UnorderedElementsAreArray(initMoves));
+	auto mg = getMoveGenerator(board, NOTATION::COLOR::color::white);
+    PreorderedMoves pm(NOTATION::COLOR::color::white, &emptyCacheEnity_, 5, mg);
+    ASSERT_THAT(consume_n(pm, initMoves.size()), ::testing::UnorderedElementsAreArray(initMoves));
 }
 
 TEST_F(PreorderedMovesTests, shouldOrderInitialMovesAccordingToHistory)
@@ -111,9 +98,9 @@ TEST_F(PreorderedMovesTests, shouldOrderInitialMovesAccordingToHistory)
 	setHistoryDescending(NOTATION::COLOR::color::white, movesWithHistory);
 	auto movesWithNoHistory = map({"d2d4", "e2e3", "e2e4", "f2f3", "f2f4", "g2g3", "g2g4",
             "h2h3", "h2h4", "Nb1a3", "Nb1c3", "Ng1f3", "Ng1h3"}, WHITE, board);
-	auto allMoves = randomShuffle(movesWithHistory + movesWithNoHistory);
 
-    PreorderedMoves pm(NOTATION::COLOR::color::white, &emptyCacheEnity_, 5, noMove(allMoves));
+	auto mg = getMoveGenerator(board, NOTATION::COLOR::color::white);
+    PreorderedMoves pm(NOTATION::COLOR::color::white, &emptyCacheEnity_, 5, mg);
     ASSERT_THAT(consume_n(pm, movesWithHistory.size()), ::testing::ElementsAreArray(movesWithHistory));
     ASSERT_THAT(consume_n(pm, movesWithNoHistory.size()), ::testing::UnorderedElementsAreArray(movesWithNoHistory));
 }
@@ -130,11 +117,11 @@ TEST_F(PreorderedMovesTests, shouldOrderInitialMovesWithBestMoveSet)
 	setHistoryDescending(NOTATION::COLOR::color::white, movesWithHistory);
 	auto movesWithNoHistory = map({"d2d4", "e2e3", "e2e4", "f2f3", "f2f4", "g2g3", "g2g4",
             "h2h3", "h2h4", "Nb1a3", "Nb1c3", "Ng1f3", "Ng1h3"}, WHITE, board);
-	auto allMoves = randomShuffle(movesWithHistory + movesWithNoHistory + bestMove);
 	for (auto depth = 1u; depth <= 5; ++depth)
 	{
 		auto ce = setBestMove(bestMove[0], depth);
-	    PreorderedMoves pm(NOTATION::COLOR::color::white, &ce, 5, noMove(allMoves));
+		auto mg = getMoveGenerator(board, NOTATION::COLOR::color::white);
+	    PreorderedMoves pm(NOTATION::COLOR::color::white, &ce, 5, mg);
 
 	    ASSERT_THAT(consume_n(pm, bestMove.size()), ::testing::ElementsAreArray(bestMove));
 	    ASSERT_THAT(consume_n(pm, movesWithHistory.size()), ::testing::ElementsAreArray(movesWithHistory));
@@ -162,8 +149,8 @@ TEST_F(PreorderedMovesTests, shouldOrderBeatingsByMVVLVA)
     	"Nc6b8", "Nc6d8", "Nc6e7", "Nc6d4", "Nc6b4", "Nc6a5",
     	"Qg6f6", "Qg6h6", "Qg6g5", "Qg6g4", "Qg6g3", "Qg6f5", "Qg6e4", "Qg6d3", "Qg6c2", "Qg6b1", "Qg6h5"}, BLACK, board);
 
-	auto allMoves = randomShuffle(beatings) + randomShuffle(nonBeatings);
-	PreorderedMoves pm(NOTATION::COLOR::color::white, &emptyCacheEnity_, 5, noMove(allMoves));
+    auto mg = getMoveGenerator(board, BLACK);
+	PreorderedMoves pm(NOTATION::COLOR::color::white, &emptyCacheEnity_, 5, mg);
 
 	ASSERT_THAT(consume_n(pm, beatings.size()), ::testing::ElementsAreArray(beatings));
 	ASSERT_THAT(consume_n(pm, nonBeatings.size()), ::testing::UnorderedElementsAreArray(nonBeatings));
@@ -190,9 +177,9 @@ TEST_F(PreorderedMovesTests, shouldOrderBeatingsByMVVLVA_WithBestMoveSetAsBeatin
     	"Nc6b8", "Nc6d8", "Nc6e7", "Nc6d4", "Nc6b4", "Nc6a5",
     	"Qg6f6", "Qg6h6", "Qg6g5", "Qg6g4", "Qg6g3", "Qg6f5", "Qg6e4", "Qg6d3", "Qg6c2", "Qg6b1", "Qg6h5"}, BLACK, board);
 
-	auto allMoves = randomShuffle(beatings+bestMove) + randomShuffle(nonBeatings);
 	auto ce = setBestMove(bestMove[0], 3);
-	PreorderedMoves pm(NOTATION::COLOR::color::white, &ce, 5, noMove(allMoves));
+	auto mg = getMoveGenerator(board, NOTATION::COLOR::color::black);
+	PreorderedMoves pm(NOTATION::COLOR::color::white, &ce, 5, mg);
 
 	ASSERT_THAT(consume_n(pm, bestMove.size()), ::testing::ElementsAreArray(bestMove));
 	ASSERT_THAT(consume_n(pm, beatings.size()), ::testing::ElementsAreArray(beatings));
@@ -220,27 +207,27 @@ TEST_F(PreorderedMovesTests, shouldOrderBeatingsByMVVLVA_WithBestMoveSetAsNonBea
     	"Nc6b8", "Nc6d8", "Nc6e7", "Nc6d4", "Nc6b4", "Nc6a5",
     	"Qg6f6", "Qg6h6", "Qg6g5", "Qg6g4", "Qg6g3", "Qg6f5", "Qg6e4", "Qg6d3", "Qg6c2", "Qg6b1", "Qg6h5"}, BLACK, board);
     {
-		auto allMoves = randomShuffle(beatings) + randomShuffle(nonBeatings) + bestMove;
 		auto ce = setBestMove(bestMove[0], 3);
-		PreorderedMoves pm(NOTATION::COLOR::color::white, &ce, 5, noMove(allMoves));
+		auto mg = getMoveGenerator(board, NOTATION::COLOR::color::black);
+		PreorderedMoves pm(NOTATION::COLOR::color::white, &ce, 5, mg);
 
 		ASSERT_THAT(consume_n(pm, bestMove.size()), ::testing::ElementsAreArray(bestMove));
 		ASSERT_THAT(consume_n(pm, beatings.size()), ::testing::ElementsAreArray(beatings));
 		ASSERT_THAT(consume_n(pm, nonBeatings.size()), ::testing::UnorderedElementsAreArray(nonBeatings));
     }
     {
-		auto allMoves = randomShuffle(beatings) + bestMove + randomShuffle(nonBeatings);
 		auto ce = setBestMove(bestMove[0], 3);
-		PreorderedMoves pm(NOTATION::COLOR::color::white, &ce, 5, noMove(allMoves));
+		auto mg = getMoveGenerator(board, NOTATION::COLOR::color::black);
+		PreorderedMoves pm(NOTATION::COLOR::color::white, &ce, 5, mg);
 
 		ASSERT_THAT(consume_n(pm, bestMove.size()), ::testing::ElementsAreArray(bestMove));
 		ASSERT_THAT(consume_n(pm, beatings.size()), ::testing::ElementsAreArray(beatings));
 		ASSERT_THAT(consume_n(pm, nonBeatings.size()), ::testing::UnorderedElementsAreArray(nonBeatings));
     }
     {
-		auto allMoves = randomShuffle(beatings) + randomShuffle(nonBeatings + bestMove);
 		auto ce = setBestMove(bestMove[0], 3);
-		PreorderedMoves pm(NOTATION::COLOR::color::white, &ce, 5, noMove(allMoves));
+		auto mg = getMoveGenerator(board, NOTATION::COLOR::color::black);
+		PreorderedMoves pm(NOTATION::COLOR::color::white, &ce, 5, mg);
 
 		ASSERT_THAT(consume_n(pm, bestMove.size()), ::testing::ElementsAreArray(bestMove));
 		ASSERT_THAT(consume_n(pm, beatings.size()), ::testing::ElementsAreArray(beatings));

@@ -60,7 +60,7 @@ unsigned char Board::getField(const char* field) const noexcept
     return getField(NotationConversions::getFieldNum(field));
 }
 
-void Board::cleanConcrete(const unsigned char field, unsigned char oldValue)
+void Board::cleanConcrete(const unsigned char field, unsigned char oldValue) noexcept
 {
     switch (oldValue)
     {
@@ -106,7 +106,7 @@ void Board::cleanConcrete(const unsigned char field, unsigned char oldValue)
 #endif
 }
 
-void Board::setConcrete(const unsigned char field, unsigned char value)
+void Board::setConcrete(const unsigned char field, unsigned char value) noexcept
 {
     switch (value)
     {
@@ -149,7 +149,7 @@ void Board::setConcrete(const unsigned char field, unsigned char value)
     }
 }
 
-void Board::setField(const unsigned char field, unsigned char value)
+void Board::setField(const unsigned char field, unsigned char value) noexcept
 {
 #ifdef ASSERTSON
     assert(field < 64);
@@ -168,25 +168,25 @@ void Board::setField(const unsigned char field, unsigned char value)
     setConcrete(field, value);
 }
 
-void Board::setPreviouslyEmptyField(const unsigned char field, unsigned char value)
+void Board::setPreviouslyEmptyField(const unsigned char field, unsigned char value) noexcept
 {
 #ifdef ASSERTSON
     assert(field < 64);
 #endif
     setConcrete(field, value);
 }
-void Board::setField(const unsigned char field, unsigned char oldValue, unsigned char value)
+void Board::setField(const unsigned char field, unsigned char oldValue, unsigned char value) noexcept
 {
     cleanConcrete(field, oldValue);
     setConcrete(field, value);
 }
 
-void Board::setField(const char* field, unsigned char val)
+void Board::setField(const char* field, unsigned char val) noexcept
 {
     setField(NotationConversions::getFieldNum(field), val);
 }
 
-void Board::clearField(const unsigned char field, unsigned char oldValue)
+void Board::clearField(const unsigned char field, unsigned char oldValue) noexcept
 {
 #ifdef ASSERTSON
     assert(field < 64);
@@ -225,7 +225,7 @@ void initDefault(Board& board) noexcept
 
 }
 
-bool Board::isCorrect() const
+bool Board::isCorrect() const noexcept
 {
     uint64_t allOccupied = piecesBitSets[0].pawnsMask | piecesBitSets[0].queensMask | piecesBitSets[0].bishopsMask |
         piecesBitSets[0].knightsMask | piecesBitSets[0].kingsMask | piecesBitSets[0].rocksMask |
@@ -332,7 +332,7 @@ ExtendedMove::ExtendedMove(unsigned char sourceIn,
 #endif
 }
 
-ExtendedMove ExtendedMove::whiteShortCaste()
+ExtendedMove ExtendedMove::whiteShortCaste() noexcept
 {
     return ExtendedMove{NotationConversions::getFieldNum("e1"),
                         NotationConversions::getFieldNum("g1"),
@@ -341,7 +341,7 @@ ExtendedMove ExtendedMove::whiteShortCaste()
                         NOTATION::PIECES::KING | NOTATION::COLOR::WHITE, 0};
 }
 
-ExtendedMove ExtendedMove::whiteLongCaste()
+ExtendedMove ExtendedMove::whiteLongCaste() noexcept
 {
     return ExtendedMove{NotationConversions::getFieldNum("e1"),
                         NotationConversions::getFieldNum("c1"),
@@ -350,7 +350,7 @@ ExtendedMove ExtendedMove::whiteLongCaste()
                         NOTATION::PIECES::KING | NOTATION::COLOR::WHITE, 0};
 }
 
-ExtendedMove ExtendedMove::blackShortCaste()
+ExtendedMove ExtendedMove::blackShortCaste() noexcept
 {
     return ExtendedMove{NotationConversions::getFieldNum("e8"),
                         NotationConversions::getFieldNum("g8"),
@@ -359,7 +359,7 @@ ExtendedMove ExtendedMove::blackShortCaste()
                         NOTATION::PIECES::KING | NOTATION::COLOR::BLACK, 0};
 }
 
-ExtendedMove ExtendedMove::blackLongCaste()
+ExtendedMove ExtendedMove::blackLongCaste() noexcept
 {
     return ExtendedMove{NotationConversions::getFieldNum("e8"),
                         NotationConversions::getFieldNum("c8"),

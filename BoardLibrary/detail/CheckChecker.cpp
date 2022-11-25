@@ -99,8 +99,10 @@ AttackOut isCheckedBeforeMoveExtendeded(const Board& board,
         out.possibleBlockersMask |= diagonalAttacksFromField & attackersBBs;
     }
     
-    out.attackersNum = (bool)attackingPawn + (bool)attackingKnights + (bool)rockOrQueenAttackers + (bool)bishopOrQueenAttackers;
-    out.possibleBlockersMask |= (attackingPawn | attackingKnights | bishopOrQueenAttackers | rockOrQueenAttackers);
+    auto allAttackers = attackingPawn | attackingKnights | bishopOrQueenAttackers | rockOrQueenAttackers;
+    out.possibleBlockersMask |= (allAttackers);
+    out.attackersNum = __builtin_popcountll(allAttackers);
+
     return out;
 }
 

@@ -6,10 +6,14 @@
 #include <algorithm>
 #include <cstring>
 #include <vector>
+
+#include <optional>
+
 #include <common/CachedEngines/FullCachedEngine.hpp>
 
 #include <publicIf/NotationConversions.hpp>
 #include <common/Constants.hpp>
+#include <MoveGeneratorV2/MoveGeneratorV2.hpp>
 
 static unsigned history[2][64][64] = {};
 
@@ -38,36 +42,35 @@ public:
     PreorderedMoves(NOTATION::COLOR::color playerOnMove,
                     players::common::move_generators::CacheFullEntity* ce,
                     unsigned char depth,
-                    std::vector<ExtendedMove>&& moves);
+                    MoveGenerator::MoveGeneratorV2& mg);
 
-    unsigned size() const;
-    ExtendedMove& get();
+    std::optional<ExtendedMove> get();
 private:
-    ExtendedMove& getBestMove();
-    ExtendedMove& getBeatingPrepare();
-    ExtendedMove& getBeating();
-    ExtendedMove& getHistoryPrepare();
-    ExtendedMove& getHistory();
+    std::optional<ExtendedMove> getBestMove();
+    std::optional<ExtendedMove> getBeatingPrepare();
+    std::optional<ExtendedMove> getBeating();
+    std::optional<ExtendedMove> getHistoryPrepare();
+    std::optional<ExtendedMove> getHistory();
 
-    ExtendedMove& (PreorderedMoves::*currentGetterFunction)() = &PreorderedMoves::getBestMove;
+    std::optional<ExtendedMove>  (PreorderedMoves::*currentGetterFunction)() = &PreorderedMoves::getBestMove;
 
     decltype(history[0])& historyMoves_;
     players::common::move_generators::CacheFullEntity* ce_;
     unsigned char depth_;
-    int index;
-    int nonPromotionNorBeatingIndex = 0;
-    std::vector<ExtendedMove> moves_;
-    std::vector<ExtendedMove>::iterator end;
+    MoveGenerator::MoveGeneratorV2& mg_;
+    std::span<ExtendedMove> moves_;
+    std::span<ExtendedMove>::iterator it_;
+    std::optional<ExtendedMove> bestMove_ = std::nullopt;
 };
 
 class OnlyBeatingMoves
 {
 public:
-    OnlyBeatingMoves(std::vector<ExtendedMove>&& moves);
+    OnlyBeatingMoves(std::span<ExtendedMove>&& moves);
     unsigned int size() const;
     ExtendedMove& get();
 private:
-    std::vector<ExtendedMove> moves_;
+    std::span<ExtendedMove> moves_;
     int index;
     int nonPromotionNorBeatingIndex = 0;
 };
@@ -100,48 +103,27 @@ inline bool MVVLVA_Comparator::compare(const ExtendedMove& lhs, const ExtendedMo
 inline PreorderedMoves::PreorderedMoves(NOTATION::COLOR::color playerOnMove,
                     players::common::move_generators::CacheFullEntity* ce,
                     unsigned char depth,
-                    std::vector<ExtendedMove>&& moves)
+                    MoveGenerator::MoveGeneratorV2& mg)
                     : historyMoves_(history[((playerOnMove == NOTATION::COLOR::color::white) ? 0 : 1)])
                     , ce_(ce)
                     , depth_(depth)
-                    , index(0)
-                    , moves_(std::move(moves))
-                    , end(std::end(moves_)) {}
+                    , mg_(mg){}
 
-inline unsigned PreorderedMoves::size() const
-{
-    return moves_.size();
-}
-
-inline ExtendedMove& PreorderedMoves::get()
+inline std::optional<ExtendedMove> PreorderedMoves::get()
 {
     return (this->*currentGetterFunction)();
 }
 
-inline ExtendedMove& PreorderedMoves::getBestMove()
+inline std::optional<ExtendedMove> PreorderedMoves::getBestMove()
 {
     for (auto candidateDepth = depth_; candidateDepth > 0; --candidateDepth)
     {
         if (ce_->previousBestMoves[candidateDepth].isSet)
         {
-            auto moveIt = std::find(moves_.begin(),
-                                    end,
-                                    ce_->previousBestMoves[candidateDepth].move);
-            if (moveIt != end) // It could be cache miss.
-                                        // Then no move like this may exist in valid moves vec.
             {
-                auto isBeating = moveIt->flags & (ExtendedMove::beatingMask | ExtendedMove::promotionMask);
-                if (isBeating)
-                {
-                    *moveIt = moves_.front();
-                    ++index;
-                    currentGetterFunction = &PreorderedMoves::getBeatingPrepare;
-                    return ce_->previousBestMoves[candidateDepth].move;
-                }
-                *moveIt = moves_.back();
-                --end;
+                bestMove_ = ce_->previousBestMoves[candidateDepth].move;
                 currentGetterFunction = &PreorderedMoves::getBeatingPrepare;
-                return ce_->previousBestMoves[candidateDepth].move;
+                return bestMove_;
             }
         }
     }
@@ -149,48 +131,69 @@ inline ExtendedMove& PreorderedMoves::getBestMove()
     return (this->*currentGetterFunction)();
 }
 
-inline ExtendedMove& PreorderedMoves::getBeatingPrepare()
+inline std::optional<ExtendedMove> PreorderedMoves::getBeatingPrepare()
 {
-    auto firstNotBeatingIt = std::find_if(moves_.begin() + index,
-                                          end,
-        [](auto&& move) {
-            return !(move.flags & (ExtendedMove::beatingMask | ExtendedMove::promotionMask));
-    });
-    nonPromotionNorBeatingIndex = firstNotBeatingIt - moves_.begin();
-    std::sort(moves_.begin() + index, firstNotBeatingIt, MVVLVA_Comparator::compare);
+    moves_ = mg_.generateBeatingMoves();
+    it_ = moves_.begin();
+    if (bestMove_ and bestMove_->flags & (ExtendedMove::beatingMask | ExtendedMove::promotionMask))
+    {
+        auto bmIt = std::find(moves_.begin(), moves_.end(), *bestMove_);
+        if (bmIt != std::end(moves_))
+        {
+            std::swap(*bmIt, moves_.front());
+            ++it_;
+        }
+    } 
+    std::sort(it_, moves_.end(), MVVLVA_Comparator::compare);
 
     currentGetterFunction = &PreorderedMoves::getBeating;
     return (this->*currentGetterFunction)();
 }
 
-inline ExtendedMove& PreorderedMoves::getBeating()
+inline std::optional<ExtendedMove> PreorderedMoves::getBeating()
 {
-    if (index < nonPromotionNorBeatingIndex)
+    if (it_ != moves_.end())
     {
-        return moves_[index++];
+        auto& elem = *it_;
+        ++it_;
+        return elem;
     }
     currentGetterFunction = &PreorderedMoves::getHistoryPrepare;
     return (this->*currentGetterFunction)();
 }
 
-inline ExtendedMove& PreorderedMoves::getHistoryPrepare()
+inline std::optional<ExtendedMove> PreorderedMoves::getHistoryPrepare()
 {
-    std::sort(moves_.begin() + index,
-              end,
-              [&](auto& lhs, auto& rhs) {
+    moves_ = mg_.generateNonBeatingMoves();
+    it_ = moves_.begin();
+    if (bestMove_)
+    {
+        auto bmIt = std::find(moves_.begin(), moves_.end(), *bestMove_);
+        if (bmIt != moves_.end())
+        {
+            std::swap(*bmIt, moves_.front());
+            ++it_;
+        }
+    } 
+    std::sort(it_, moves_.end(), [&](auto& lhs, auto& rhs) {
         return historyMoves_[lhs.source][lhs.destination] > historyMoves_[rhs.source][rhs.destination];
     });
     currentGetterFunction = &PreorderedMoves::getHistory;
     return (this->*currentGetterFunction)();
 }
 
-inline ExtendedMove& PreorderedMoves::getHistory()
+inline std::optional<ExtendedMove> PreorderedMoves::getHistory()
 {
-
-    return moves_[index++];
+    if (it_ != moves_.end())
+    {
+        auto& elem = *it_;
+        ++it_;
+        return elem;
+    }
+    return {};
 }
 
-inline OnlyBeatingMoves::OnlyBeatingMoves(std::vector<ExtendedMove>&& moves)
+inline OnlyBeatingMoves::OnlyBeatingMoves(std::span<ExtendedMove>&& moves)
         : moves_(std::move(moves))
         , index(0)
 {
@@ -200,7 +203,7 @@ inline OnlyBeatingMoves::OnlyBeatingMoves(std::vector<ExtendedMove>&& moves)
                                               return !(move.flags & (ExtendedMove::beatingMask | ExtendedMove::promotionMask));
                                           });
     nonPromotionNorBeatingIndex = firstNotBeatingIt - moves_.begin();
-    std::stable_sort(moves_.begin(), firstNotBeatingIt, MVVLVA_Comparator::compare);
+    std::sort(moves_.begin(), firstNotBeatingIt, MVVLVA_Comparator::compare);
 }
 
 inline unsigned int OnlyBeatingMoves::size() const

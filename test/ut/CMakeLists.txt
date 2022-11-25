@@ -32,7 +32,9 @@ add_executable(ut
     CommandParserTest.cpp
     uciNotationTest.cpp
     seeTest.cpp
-    PreorderedMovesTests.cpp)
+    PreorderedMovesTests.cpp
+    PoolAllocatorTests.cpp
+)
 
 add_dependencies(ut googletest)
 target_link_libraries(ut gtest gmock gtest_main pthread BoardLibrary SearchLibrary StandardEvaluator dl UciApplication-lib)

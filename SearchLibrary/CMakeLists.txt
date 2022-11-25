@@ -8,4 +8,3 @@ add_library(SearchLibrary
         common/CachedEngines/FullCachedEngine.cpp
         common/Constants.hpp)
 
-#target_link_libraries(SearchLibrary BoardLibrary, StandardEvaluator)

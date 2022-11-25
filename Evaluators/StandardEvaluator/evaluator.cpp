@@ -3,6 +3,7 @@
 #include <Common/MatherialEvaluator.hpp>
 #include <Common/PawnStructureEvaluator.hpp>
 #include <Common/SquareTablesEvaluator.hpp>
+#include <MoveGeneratorV2/MoveGeneratorV2.hpp>
 
 #include <detail/bitboardslookups.hpp>
 #include <publicIf/NotationConversions.hpp>
@@ -85,7 +86,7 @@ SuareTableCoeffictients squareTables{
 
 int evaluateMoveCount(int playerOnMoveMovesCount, int oponentMovesCount)
 {
-    return (playerOnMoveMovesCount - oponentMovesCount) * 10;
+    return (playerOnMoveMovesCount - oponentMovesCount) * 2;
 }
 
 int evaluateDualBishop(const Board& board, NOTATION::COLOR::color playerOnMove)
@@ -121,7 +122,9 @@ int evaluatePosition(BoardEngine& be, unsigned int validMovesCount)
         return -10000000;
     }
 
-    auto oponentValidMoves = be .generateValidMoveCount(be.board.playerOnMove + 1);
+    // auto oponentValidMoves = be.generateValidMoveCount(be.board.playerOnMove + 1);
+    auto oponentValidMoves = be.getMoveGeneratorV2(be.board.playerOnMove + 1).getValidMoveCount();
+
     return matherial_evaluator::evaluate(be.board, be.board.playerOnMove, piecesValues)
         + evaluateMoveCount(validMovesCount, oponentValidMoves)
         + pawn_structure_evaluator::evaluatePawnStructure(be.board, be.board.playerOnMove, pawnStructureCoeffincients)

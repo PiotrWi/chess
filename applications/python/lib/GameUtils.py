@@ -39,7 +39,9 @@ avaiableEngines = {
         "UciWithCustomEvaluator": CommandAndOptions("CustomUciApplication", getAppCommand(), {"customEvaluator": getLibLocation(), "evaluatorConfig": getConfigLocation()}),
         "UciApplication": CommandAndOptions("UciApplication", getAppCommand(), {}),
         "Stockfish1400": CommandAndOptions("Stockfish1400", "stockfish", {"UCI_LimitStrength": "true", "UCI_Elo": 1400}),
-        "Stockfish1700": CommandAndOptions("Stockfish1700", "stockfish", {"UCI_LimitStrength": "true", "UCI_Elo": 1700})
+        "Stockfish1700": CommandAndOptions("Stockfish1700", "stockfish", {"UCI_LimitStrength": "true", "UCI_Elo": 1700}),
+        "Stockfish1900": CommandAndOptions("Stockfish1900", "stockfish", {"UCI_LimitStrength": "true", "UCI_Elo": 1900})
+
         }
 
 
