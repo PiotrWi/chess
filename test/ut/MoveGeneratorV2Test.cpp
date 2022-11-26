@@ -2140,3 +2140,28 @@ TEST(MoveGeneratorTestsV2, Custom_8)
     ASSERT_THAT(sut.generateBeatingMoves(), ::testing::UnorderedElementsAreArray(allBeating));
     ASSERT_THAT(sut.generateNonBeatingMoves(), ::testing::UnorderedElementsAreArray(allNotBeating));
 }
+
+TEST(MoveGeneratorTestsV2, shallNotExposeKingWhileEnPasantBeating)
+{
+    Board board = utils::createBoard(
+        "        "
+        "        "
+        "        "
+        "        "
+        "♖♟♙    ♚"
+        "        "
+        "       ♔"
+        "        ", BLACK);
+    utils::setValidEnPassant(board, "c3");
+    auto kingMoves = map(
+        {"Kh4g4", "Kh4h5", "Kh4g5"}, BLACK, board);
+    auto pawnMoves = map({"b4b3"}, BLACK, board);
+
+    auto allNotBeating = kingMoves + pawnMoves;
+
+    MoveGenerator::MoveGeneratorV2 sut(board, BLACK);
+    sut.getValidMoveCount();
+    // ASSERT_EQ(sut.getValidMoveCount(), allMoves.size());
+    ASSERT_THAT(sut.generateBeatingMoves(), std::vector<ExtendedMove>());
+    ASSERT_THAT(sut.generateNonBeatingMoves(), ::testing::UnorderedElementsAreArray(allNotBeating));
+}

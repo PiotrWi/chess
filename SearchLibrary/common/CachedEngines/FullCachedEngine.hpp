@@ -63,9 +63,6 @@ public:
     void setUpperBound(const BoardEngine &be, int value, unsigned char depth);
     void setLowerUpperBound(const BoardEngine &be, int valueMin, int valueMax, unsigned char depth);
 
-    void makeOlder();
-    void clearOlderThan(unsigned char age);
-
     void clear();
 private:
     containers::HashMap<CacheFullEntity, uint64_t , 22u> cache_;

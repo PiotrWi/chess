@@ -63,6 +63,13 @@ T noMove(T t)
     return t;
 }
 
+MoveGenerator::MoveGeneratorV2 getMoveGenerator(const Board& board, NOTATION::COLOR::color c)
+{
+    MoveGenerator::MoveGeneratorV2 mg(board, c);
+    mg.getValidMoveCount();
+    return mg;
+}
+
 }
 
 static void PerformanceTest_MoveOrdering(benchmark::State& state)
@@ -88,12 +95,12 @@ static void PerformanceTest_MoveOrdering(benchmark::State& state)
 
 	auto ce = setBestMove(bestMove[0], 3);
 	auto allMoves = randomShuffle(beatings) + randomShuffle(nonBeatings + bestMove);
-	PreorderedMoves pm(NOTATION::COLOR::color::white, &ce, 5, std::move(allMoves));
 
     for (auto _ : state)
     {
-        PreorderedMoves pm(NOTATION::COLOR::color::white, &ce, 5, noMove(allMoves));
-        for (auto i = 0u; i <pm.size(); ++i)
+        auto mg = getMoveGenerator(board, NOTATION::COLOR::color::white);
+        PreorderedMoves pm(NOTATION::COLOR::color::white, &ce, 5, mg);
+        for (auto i = 0u; i <allMoves.size(); ++i)
         {
         	benchmark::DoNotOptimize(pm.get());
         }

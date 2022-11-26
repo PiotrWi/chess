@@ -29,7 +29,7 @@ int evaluateMax(BoardEngine& be,
                 int beta);
 
 ExtendedMove bestMove;
-std::atomic_bool interrupt_flag = false;
+std::atomic_int interrupt_flag = 0;
 
 
 int evaluatePosition(BoardEngine& be, players::common::move_generators::FullCachedEngine& moveGenerator, unsigned int validMoves)
@@ -105,7 +105,7 @@ int evaluateMax(BoardEngine& be,
                 int beta)
 {
     ++nodes;
-    if (interrupt_flag.load(std::memory_order_relaxed))
+    if (interrupt_flag.load(std::memory_order_relaxed) == 0)
     {
         return alfa;
     }
@@ -180,7 +180,7 @@ int evaluateMax(BoardEngine& be,
 
             setHistoryMove(be.board.playerOnMove, move, depth);
 
-            if (SaveMove and interrupt_flag.load(std::memory_order_relaxed) == false) bestMove = move;
+            if (SaveMove and interrupt_flag.load(std::memory_order_relaxed) != 0) bestMove = move;
             return beta;
         }
         if (nextAlfa > alfa)
@@ -197,7 +197,7 @@ int evaluateMax(BoardEngine& be,
     else
     {
         cachedEngine.setBestMove(be, greatestMove, depth);
-        if (SaveMove and interrupt_flag.load(std::memory_order_relaxed) == false) bestMove = greatestMove;
+        if (SaveMove and interrupt_flag.load(std::memory_order_relaxed) != 0) bestMove = greatestMove;
         cachedEngine.setLowerUpperBound(be, alfa, beta, depth);
     }
     return alfa;
@@ -208,16 +208,20 @@ int evaluateMax(BoardEngine& be,
 namespace full_search
 {
 
+// TODO: To do this correctly
+// interrupt_flag as int is workaround.
+// It shall solve a problem when searching ends faster than timer.
+
 inline void interrupt()
 {
-    interrupt_flag = true;
+    --interrupt_flag;
 }
 
 inline ExtendedMove evaluate(BoardEngine be,
               players::common::move_generators::FullCachedEngine& cachedEngine,
               unsigned char depth)
 {
-    interrupt_flag = false;
+    ++interrupt_flag;
     int alfa = -10000000;
     int beta = 10000000;
     clearHistoryMove();
@@ -244,7 +248,7 @@ constexpr auto InitialBeta = mateValue + 1;
                        unsigned char maxDepth)
 {
     bestMove = {};
-    interrupt_flag = false;
+    ++interrupt_flag;
     int alpha = InitialAlpha;
     int beta = InitialBeta;
     clearHistoryMove();

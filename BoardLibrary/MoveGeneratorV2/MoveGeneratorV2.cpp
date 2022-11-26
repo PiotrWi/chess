@@ -134,14 +134,8 @@ void MoveGeneratorV2::evaluatePawnsBeatings(uint64_t pawnsToMoveToRightTop, uint
 {
 	constexpr unsigned char NOT_RELEVANT = 0u;
 
-    if (board.validEnPassant != -1)
-    {
-        opponentPieces |= (1ull << board.validEnPassant);
-    }
-
     if (pieceColor == NOTATION::COLOR::color::white)
 	{
-		// to left beatings
 		auto beatingsCandidates = ((NOT_H_COL & pawnsToMoveToLeftTop) << 9);
 		auto moveTable = beatingsCandidates & opponentPieces;
 		if (moveTable) moveTables[moveTablesN++] = MoveTable{MoveTable::Type::PawnBeatingsLeft, NOT_RELEVANT, moveTable};
@@ -152,7 +146,6 @@ void MoveGeneratorV2::evaluatePawnsBeatings(uint64_t pawnsToMoveToRightTop, uint
 	}
 	else
 	{
-		// to left beatings
 		auto beatingsCandidates = ((NOT_H_COL & pawnsToMoveToRightTop) >> 7);
 		auto moveTable = beatingsCandidates & opponentPieces;
 		if (moveTable) moveTables[moveTablesN++] = MoveTable{MoveTable::Type::PawnBeatingsLeft, NOT_RELEVANT, moveTable};
@@ -160,6 +153,83 @@ void MoveGeneratorV2::evaluatePawnsBeatings(uint64_t pawnsToMoveToRightTop, uint
 		beatingsCandidates = ((NOT_A_COL & pawnsToMoveToLeftTop) >> 9);
 		moveTable = beatingsCandidates & opponentPieces;
 		if (moveTable) moveTables[moveTablesN++] = MoveTable{MoveTable::Type::PawnBeatingsRight, NOT_RELEVANT, moveTable};
+	}
+}
+
+// TODO: There is a mistake with left and right for sure
+// 			it shall be solved some day
+//
+// TODO: Can be more effective if we consider just rock and queen checks in horizontal
+void MoveGeneratorV2::evaluateEnPassant(uint64_t pawnsToMoveToRightTop, uint64_t pawnsToMoveToLeftTop)
+{
+	if (board.validEnPassant == -1)
+	{
+		return;
+	}
+	uint64_t validEnPassantMask = 1ull << board.validEnPassant;
+	constexpr unsigned char NOT_RELEVANT = 0u;
+
+	auto checkIfUnderCheckAfterEnPassant = [](auto color, auto boardCopy, auto whitePawn, auto blackPawn)
+	{
+		boardCopy.piecesBitSets[NOTATION::COLOR::WHITE].pawnsMask ^= whitePawn;
+		boardCopy.piecesBitSets[NOTATION::COLOR::BLACK].pawnsMask ^= blackPawn;
+		return CheckChecker::isCheckOn(boardCopy, color);
+	};
+
+    if (pieceColor == NOTATION::COLOR::color::white)
+	{
+		// to left beatings
+		auto beatingsCandidates = ((NOT_H_COL & pawnsToMoveToLeftTop) << 9);
+		auto moveTable = beatingsCandidates & validEnPassantMask;
+		if (moveTable)
+		{
+			auto whiteBeatingPawnLocation = beatingsCandidates >> 9;
+			auto blackPawnLocation = beatingsCandidates >> 8;
+
+			if (not checkIfUnderCheckAfterEnPassant(pieceColor, board, whiteBeatingPawnLocation, blackPawnLocation))
+			{
+				moveTables[moveTablesN++] = MoveTable{MoveTable::Type::PawnBeatingsLeft, NOT_RELEVANT, moveTable};
+			}
+		}
+		
+		beatingsCandidates = ((NOT_A_COL & pawnsToMoveToRightTop) << 7);
+		moveTable = beatingsCandidates & validEnPassantMask;
+		if (moveTable)
+		{
+			auto whiteBeatingPawnLocation = beatingsCandidates >> 7;
+			auto blackPawnLocation = beatingsCandidates >> 8;
+			if (not checkIfUnderCheckAfterEnPassant(pieceColor, board, whiteBeatingPawnLocation, blackPawnLocation))
+			{
+				moveTables[moveTablesN++] = MoveTable{MoveTable::Type::PawnBeatingsRight, NOT_RELEVANT, moveTable};
+			}
+		}
+	}
+	else
+	{
+		// to left beatings
+		auto beatingsCandidates = ((NOT_H_COL & pawnsToMoveToRightTop) >> 7);
+		auto moveTable = beatingsCandidates & validEnPassantMask;
+		if (moveTable)
+		{
+			auto blackBeatingPawnLocation = beatingsCandidates << 7;
+			auto whitePawnLocation = beatingsCandidates << 8;
+			if (not checkIfUnderCheckAfterEnPassant(pieceColor, board, whitePawnLocation, blackBeatingPawnLocation))
+			{
+				moveTables[moveTablesN++] = MoveTable{MoveTable::Type::PawnBeatingsLeft, NOT_RELEVANT, moveTable};
+			}
+		} 
+		
+		beatingsCandidates = ((NOT_A_COL & pawnsToMoveToLeftTop) >> 9);
+		moveTable = beatingsCandidates & validEnPassantMask;
+		if (moveTable)
+		{
+			auto blackBeatingPawnLocation = beatingsCandidates << 9;
+			auto whitePawnLocation = beatingsCandidates << 8;
+			if (not checkIfUnderCheckAfterEnPassant(pieceColor, board, whitePawnLocation, blackBeatingPawnLocation))
+			{
+				moveTables[moveTablesN++] = MoveTable{MoveTable::Type::PawnBeatingsRight, NOT_RELEVANT, moveTable};
+			}
+		}
 	}
 }
 
@@ -326,7 +396,9 @@ void MoveGeneratorV2::calculateMoveTables()
 	        evaluatePawns(pawnsToMoveVertically, allOccupiedFields, possibleBlockersMask);
 	        const auto pawnsToMoveToRightTop = pawns & (~(pinnedFields.allPinned ^ pinnedFields.diagonallyPinnedFromLeftTop));
 	        const auto pawnsToMoveToLeftTop = pawns & (~(pinnedFields.allPinned ^ pinnedFields.diagonallyPinnedFromLeftBottom));
-            evaluatePawnsBeatings(pawnsToMoveToRightTop, pawnsToMoveToLeftTop, oponentFields & possibleBlockersMask);
+
+            evaluatePawnsBeatings(pawnsToMoveToRightTop, pawnsToMoveToLeftTop, (oponentFields  & possibleBlockersMask));
+        	evaluateEnPassant(pawnsToMoveToRightTop, pawnsToMoveToLeftTop);
 
 	        const auto rocks = board.piecesBitSets[static_cast<unsigned char>(pieceColor)].rocksMask;
 	        evaluateRocks(rocks & (~pinnedFields.allPinned), allOccupiedFields, ownFields | (~possibleBlockersMask));
@@ -360,9 +432,11 @@ void MoveGeneratorV2::calculateMoveTables()
 
         const auto pawnsToMoveVertically = pawns & (~(pinnedFields.allPinned ^ pinnedFields.verticallyPinned));
         evaluatePawns(pawnsToMoveVertically, allOccupiedFields);
+
         const auto pawnsToMoveToRightTop = pawns & (~(pinnedFields.allPinned ^ pinnedFields.diagonallyPinnedFromLeftTop));
         const auto pawnsToMoveToLeftTop = pawns & (~(pinnedFields.allPinned ^ pinnedFields.diagonallyPinnedFromLeftBottom));
         evaluatePawnsBeatings(pawnsToMoveToRightTop, pawnsToMoveToLeftTop, oponentFields);
+        evaluateEnPassant(pawnsToMoveToRightTop, pawnsToMoveToLeftTop);
 
         const auto rocks = board.piecesBitSets[static_cast<unsigned char>(pieceColor)].rocksMask;
         evaluateRocks(rocks & (~pinnedFields.allPinned), allOccupiedFields, ownFields);

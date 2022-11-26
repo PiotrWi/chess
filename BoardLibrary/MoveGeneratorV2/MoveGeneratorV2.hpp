@@ -38,6 +38,7 @@ private:
     void evaluatePawns(uint64_t pawnsBitMask, const uint64_t opponentPieces);
     void evaluatePawns(uint64_t pawnsBitMask, const uint64_t opponentPieces, const uint64_t checkBlockers);
     void evaluatePawnsBeatings(uint64_t pawnsToMoveToRightTop, uint64_t pawnsToMoveToLeftTop, uint64_t opponentPieces);
+    void evaluateEnPassant(uint64_t pawnsToMoveToRightTop, uint64_t pawnsToMoveToLeftTop);
     void evaluateRocks(uint64_t rocksBitMask, const uint64_t allOccupiedFields, const uint64_t forbidenFields);
     void evaluatePinnedRocks(uint64_t rocksBitMask, const uint64_t allOccupiedFields, const uint64_t forbidenFields);
     void evaluateBishops(uint64_t rocksBitMask, const uint64_t allOccupiedFields, const uint64_t forbidenFields);

@@ -6,7 +6,7 @@
 Some assumptions:
 1. Not thread safe.
 2. Does not perform object construction/deletion. It just allocates the memory.
-3. Does not return memory until destructor is called.
+3. Does not free memory until destructor is called.
 */
 template <typename T>
 struct PoolAllocator
@@ -37,7 +37,7 @@ public:
 		if (availablePools_ == nullptr)
 		{
 			availablePools_ = new AllocationPool();
-			std::cout << "Created new pool: " << availablePools_ << std::endl;
+			// std::cout << "Created new pool: " << availablePools_ << std::endl;
 		}
 		for (AllocationPool* current = availablePools_; current != nullptr; current = current->next)
 		{
@@ -47,7 +47,7 @@ public:
 				{
 					unsigned char freeBit = __builtin_ffsll(current->allocationMask[i]) - 1;
 					current->allocationMask[i] ^= (1ull <<freeBit);
-					std::cout << "Put to (pool, word, bit): " << current << " " << i << " " << (int)freeBit  << std::endl;
+					// std::cout << "Put to (pool, word, bit): " << current << " " << i << " " << (int)freeBit  << std::endl;
 
 					auto freeField = i * 64 + freeBit;
 					current->nodes_[freeField].poolParrent_ = current;
@@ -67,13 +67,13 @@ public:
 		AllocationPool* toBeRemoved = (((typename AllocationPool::ptr_type)(in))->poolParrent_);
 		if (isFull(toBeRemoved))
 		{
-			std::cout << "Moving to availablePools_: " << toBeRemoved << std::endl;
+			// std::cout << "Moving to availablePools_: " << toBeRemoved << std::endl;
 			moveToAvaiable(toBeRemoved);
 		}
 		unsigned index = ((typename AllocationPool::ptr_type)(in)) - toBeRemoved->nodes_;
 		auto wordIndex = (index >> 6);
 		auto bit = index & 0b111111;
-		std::cout << "Clearing (pool, word, bit): " <<  toBeRemoved << " " << wordIndex << " " << (int)bit  << std::endl;
+		// std::cout << "Clearing (pool, word, bit): " <<  toBeRemoved << " " << wordIndex << " " << (int)bit  << std::endl;
 
 		toBeRemoved->allocationMask[wordIndex] ^= (1ull << bit);
 	}
@@ -82,11 +82,13 @@ public:
 	{
 		deleteNext(availablePools_);
 		deleteNext(fullyAllocatedPools_);
+		availablePools_ = nullptr;
+		fullyAllocatedPools_ = nullptr;
 	}
 
 	~PoolAllocator()
 	{
-		std::cout << "Deleting" << std::endl;
+		// std::cout << "Deleting" << std::endl;
 		deleteNext(availablePools_);
 		deleteNext(fullyAllocatedPools_);
 	}
@@ -99,7 +101,7 @@ private:
 
 	void moveTofullyAllocated(AllocationPool* in)
 	{
-		std::cout << "Moving to fullyAllocatedPools_: " << in << std::endl;
+		// std::cout << "Moving to fullyAllocatedPools_: " << in << std::endl;
 
 		availablePools_ = in->next;
 		if (fullyAllocatedPools_ != nullptr)
@@ -108,7 +110,7 @@ private:
 		}
 		in->next = fullyAllocatedPools_;
 		fullyAllocatedPools_ = in;
-		std::cout << "Moved: " << in << std::endl;
+		// std::cout << "Moved: " << in << std::endl;
 	}
 
 	void moveToAvaiable(AllocationPool* in)
@@ -127,7 +129,7 @@ private:
 		if (in != nullptr)
 		{
 			deleteNext(in->next);
-			std::cout << "Deleting a pool: " << in << std::endl;
+			// std::cout << "Deleting a pool: " << in << std::endl;
 			delete in;
 		}
 	}

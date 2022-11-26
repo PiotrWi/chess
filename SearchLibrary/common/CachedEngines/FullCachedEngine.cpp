@@ -45,18 +45,18 @@ CacheFullEntity* FullCachedEngine::get(const BoardEngine &be)
     auto hash = be.getHash();
 
     CacheFullEntity* elem;
-    cache_.getOrCreate(hash, hash, elem);
+    cache_.getOrCreate(hash, elem);
     return elem;
 }
 
 int FullCachedEngine::getEvaluationValue(BoardEngine& be, unsigned int validMovesCount)
 {
     auto hash = be.getHash();
-    auto elem = cachedEvaluators_.get(hash, hash);
+    auto elem = cachedEvaluators_.get(hash);
     if (!elem)
     {
         auto val = evaluatePositionHandler(be, validMovesCount);
-        return *cachedEvaluators_.store(hash, hash, val);
+        return *cachedEvaluators_.store(hash, val);
     }
     return *elem;
 }
@@ -66,7 +66,7 @@ void FullCachedEngine::setBestMove(const BoardEngine& be,
                  unsigned char depth)
 {
     auto hash = be.getHash();
-    CacheFullEntity* elem = cache_.get(hash, hash);
+    CacheFullEntity* elem = cache_.get(hash);
 
     elem->previousBestMoves[depth].isSet = true;
     elem->previousBestMoves[depth].move = move;
@@ -75,7 +75,7 @@ void FullCachedEngine::setBestMove(const BoardEngine& be,
 void FullCachedEngine::setLowerBound(const BoardEngine &be, int value, unsigned char depth)
 {
     auto hash = be.getHash();
-    CacheFullEntity* elem = cache_.get(hash, hash);
+    CacheFullEntity* elem = cache_.get(hash);
     elem->previousEvaluations[depth].visitedBefore = true;
     elem->previousEvaluations[depth].lowerValue = value;
 }
@@ -83,7 +83,7 @@ void FullCachedEngine::setLowerBound(const BoardEngine &be, int value, unsigned 
 void FullCachedEngine::setUpperBound(const BoardEngine &be, int value, unsigned char depth)
 {
     auto hash = be.getHash();
-    CacheFullEntity* elem = cache_.get(hash, hash);
+    CacheFullEntity* elem = cache_.get(hash);
     elem->previousEvaluations[depth].visitedBefore = true;
     elem->previousEvaluations[depth].higherValue = value;
 }
@@ -91,22 +91,10 @@ void FullCachedEngine::setUpperBound(const BoardEngine &be, int value, unsigned 
 void FullCachedEngine::setLowerUpperBound(const BoardEngine &be, int valueMin, int valueMax, unsigned char depth)
 {
     auto hash = be.getHash();
-    CacheFullEntity* elem = cache_.get(hash, hash);
+    CacheFullEntity* elem = cache_.get(hash);
     elem->previousEvaluations[depth].visitedBefore = true;
     elem->previousEvaluations[depth].lowerValue = valueMin;
     elem->previousEvaluations[depth].higherValue = valueMax;
-}
-
-void FullCachedEngine::makeOlder()
-{
-    cache_.increaseAge();
-    cachedEvaluators_.increaseAge();
-}
-
-void FullCachedEngine::clearOlderThan(unsigned char age)
-{
-    cache_.removeOlderThan(age);
-    cachedEvaluators_.removeOlderThan(age);
 }
 
 void FullCachedEngine::clear()
