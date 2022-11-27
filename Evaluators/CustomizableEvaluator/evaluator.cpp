@@ -106,7 +106,6 @@ int evaluatePosition(BoardEngine& be, unsigned int validMovesCount)
         return -10000000;
     }
 
-    // auto oponentValidMoves = be.generateValidMoveCount(be.board.playerOnMove + 1);
     auto oponentValidMoves = be.getMoveGeneratorV2(be.board.playerOnMove + 1).getValidMoveCount();
 
     return matherial_evaluator::evaluate(be.board, be.board.playerOnMove, piecesValues)

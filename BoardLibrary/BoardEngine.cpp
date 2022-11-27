@@ -5,7 +5,6 @@
 #include <iostream>
 #include <detail/MoveValidator.hpp>
 #include <publicIf/BoardIO.hpp>
-#include <MoveGenerator/MoveGenerator.hpp>
 #include <detail/CheckChecker.hpp>
 #include <hashing/zobrist.hpp>
 #include <notations/coordinationnotation.hpp>
@@ -76,26 +75,6 @@ bool BoardEngine::are3Repeatitions()
 Result BoardEngine::getREsultWithoutRepeatitionCheck(bool availableMoves) const
 {
     return resultEvaluator.getResultNoRepeatitions(availableMoves);
-}
-
-unsigned BoardEngine::generateValidMoveCount()
-{
-    return MoveGenerator::MoveGenerator::getMoveCount(board);
-}
-
-unsigned BoardEngine::generateValidMoveCount(NOTATION::COLOR::color c)
-{
-    return MoveGenerator::MoveGenerator::getMoveCount(board, c);
-}
-
-std::vector<ExtendedMove> BoardEngine::generateMoves()
-{
-    return MoveGenerator::MoveGenerator::generate(board);
-}
-
-std::vector<ExtendedMove> BoardEngine::generateMovesFor(NOTATION::COLOR::color color)
-{
-    return MoveGenerator::MoveGenerator::generate(board, color);
 }
 
 void BoardEngine::applyMove(const ExtendedMove& move)

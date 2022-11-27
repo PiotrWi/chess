@@ -2,7 +2,6 @@
 
 #include <notations/uci.hpp>
 #include <BoardEngine.hpp>
-#include <publicIf/BoardIO.hpp>
 
 #include <common/searchingAlgorithms/FullSearchingImplementation.hpp>
 
@@ -36,7 +35,6 @@ static void PerformanceTest_Stability2(benchmark::State& state)
         auto move = notations::uci::createExtendedMove(moveStr, be.board.playerOnMove, be.board);
         be.applyMove(move);
     }
-    std::cout << be.board << std::endl;
     for (auto _ : state)
     {
         benchmark::DoNotOptimize(full_search::evaluateIterative(be, cachedEngine, 10));

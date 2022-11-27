@@ -33,15 +33,8 @@ public:
     bool are3Repeatitions();
     Result getREsultWithoutRepeatitionCheck(bool availableMoves) const;
 
-// MovesGeneration
-    unsigned generateValidMoveCount();
-    unsigned generateValidMoveCount(NOTATION::COLOR::color);
-    std::vector<ExtendedMove> generateMoves();
-    std::vector<ExtendedMove> generateMovesFor(NOTATION::COLOR::color);
-
 // MovesGenerationV2
     MoveGenerator::MoveGeneratorV2 getMoveGeneratorV2(NOTATION::COLOR::color c);
-
 
     Board board;
     ResultEvaluator resultEvaluator;

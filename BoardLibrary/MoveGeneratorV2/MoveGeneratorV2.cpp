@@ -239,7 +239,7 @@ void MoveGeneratorV2::evaluateRocks(uint64_t rocksBitMask, const uint64_t allOcc
     {
         unsigned char piecePosition = 63 - __builtin_clzll(rocksBitMask);
 
-        auto moveTable = rockMagicBb.getAttacksFor(piecePosition, allOccupiedFields) & (~forbidenFields);
+        auto moveTable = rockBb.getAttacksFor(piecePosition, allOccupiedFields) & (~forbidenFields);
 		if (moveTable) moveTables[moveTablesN++] = MoveTable{MoveTable::Type::RockMoves, piecePosition, moveTable};
 
         rocksBitMask ^= (1ull << piecePosition);
@@ -252,7 +252,7 @@ void MoveGeneratorV2::evaluatePinnedRocks(uint64_t rocksBitMask, const uint64_t 
     {
         unsigned char piecePosition = 63 - __builtin_clzll(rocksBitMask);
 
-        auto moveTable = rockMagicBb.getAttacksFor(piecePosition, allOccupiedFields) & (~forbidenFields) & PinnedRegister[piecePosition];
+        auto moveTable = rockBb.getAttacksFor(piecePosition, allOccupiedFields) & (~forbidenFields) & PinnedRegister[piecePosition];
 		if (moveTable) moveTables[moveTablesN++] = MoveTable{MoveTable::Type::RockMoves, piecePosition, moveTable};
 
         rocksBitMask ^= (1ull << piecePosition);
@@ -265,7 +265,7 @@ void MoveGeneratorV2::evaluateBishops(uint64_t bishopsBitMask, const uint64_t al
     {
         unsigned char piecePosition = 63 - __builtin_clzll(bishopsBitMask);
 
-        auto moveTable = bishopMagicBb.getAttacksFor(piecePosition, allOccupiedFields) & (~forbidenFields);
+        auto moveTable = bishopBb.getAttacksFor(piecePosition, allOccupiedFields) & (~forbidenFields);
 		if (moveTable) moveTables[moveTablesN++] = MoveTable{MoveTable::Type::BishopMoves, piecePosition, moveTable};
 
         bishopsBitMask ^= (1ull << piecePosition);
@@ -278,7 +278,7 @@ void MoveGeneratorV2::evaluatePinnedBishops(uint64_t bishopsBitMask, const uint6
     {
         unsigned char piecePosition = 63 - __builtin_clzll(bishopsBitMask);
 
-        auto moveTable = bishopMagicBb.getAttacksFor(piecePosition, allOccupiedFields) & (~forbidenFields) & PinnedRegister[piecePosition];
+        auto moveTable = bishopBb.getAttacksFor(piecePosition, allOccupiedFields) & (~forbidenFields) & PinnedRegister[piecePosition];
 		if (moveTable) moveTables[moveTablesN++] = MoveTable{MoveTable::Type::BishopMoves, piecePosition, moveTable};
 
         bishopsBitMask ^= (1ull << piecePosition);
@@ -291,8 +291,8 @@ void MoveGeneratorV2::evaluateQueen(uint64_t queensMask, const uint64_t allOccup
     {
         unsigned char  piecePosition = 63 - __builtin_clzll(queensMask);
 
-        uint64_t moveTable = (rockMagicBb.getAttacksFor(piecePosition, allOccupiedFields)
-                | bishopMagicBb.getAttacksFor(piecePosition, allOccupiedFields)) & (~forbidenFields);;
+        uint64_t moveTable = (rockBb.getAttacksFor(piecePosition, allOccupiedFields)
+                | bishopBb.getAttacksFor(piecePosition, allOccupiedFields)) & (~forbidenFields);;
 
 		if (moveTable) moveTables[moveTablesN++] = {MoveTable::Type::QueenMoves, piecePosition, moveTable};
 
@@ -306,8 +306,8 @@ void MoveGeneratorV2::evaluatePinnedQueen(uint64_t queensMask, const uint64_t al
     {
         unsigned char  piecePosition = 63 - __builtin_clzll(queensMask);
 
-        uint64_t moveTable = (rockMagicBb.getAttacksFor(piecePosition, allOccupiedFields)
-                | bishopMagicBb.getAttacksFor(piecePosition, allOccupiedFields)) & (~forbidenFields) & PinnedRegister[piecePosition];;
+        uint64_t moveTable = (rockBb.getAttacksFor(piecePosition, allOccupiedFields)
+                | bishopBb.getAttacksFor(piecePosition, allOccupiedFields)) & (~forbidenFields) & PinnedRegister[piecePosition];;
 
 		if (moveTable) moveTables[moveTablesN++] = MoveTable{MoveTable::Type::QueenMoves, piecePosition, moveTable};
 

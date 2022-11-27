@@ -31,12 +31,7 @@ target_link_libraries(UciApplication
     StandardEvaluator
     dl)
 
-add_executable(MagicBbGenerator
-    MagicBbGenerator/main.cpp)
-target_link_libraries(MagicBbGenerator BoardLibrary)
-
 add_dependencies(applications UciApplication)
-add_dependencies(applications MagicBbGenerator)
 add_dependencies(applications ConsolleApplication)
 
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin/)

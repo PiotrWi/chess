@@ -21,8 +21,6 @@ add_library(BoardLibrary
     publicIf/Result.hpp
     publicIf/Board.hpp
     publicIf/BoardIO.hpp
-    MoveGenerator/MoveGenerator.hpp
-    MoveGenerator/MoveGenerator.cpp
     MoveGeneratorV2/MoveGeneratorV2.cpp
     publicIf/NotationConversions.hpp
     notations/common.hpp
@@ -33,12 +31,11 @@ add_library(BoardLibrary
     notations/LongAlgebraicNotation.cpp
     hashing/zobrist.hpp
     hashing/Zobrish.cpp
-    MoveGenerator/MoveGeneratorContext.hpp
-    MoveGenerator/Strategy.hpp
-    MoveGenerator/MoveGeneratorBackend.hpp
     notations/uci.hpp
     notations/uci.cpp
     detail/BitBoardsUtils.h
     notations/fen.h
     notations/fen.cpp
-    detail/bitboardslookups.cpp)
+    detail/bitboardslookups.cpp
+    detail/PextBitBoards.cpp
+)
