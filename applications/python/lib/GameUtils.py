@@ -39,7 +39,10 @@ avaiableEngines = {
         "UciWithCustomEvaluator": CommandAndOptions("CustomUciApplication", getAppCommand(), {"customEvaluator": getLibLocation(), "evaluatorConfig": getConfigLocation()}),
         "UciApplication": CommandAndOptions("UciApplication", getAppCommand(), {}),
         "Stockfish1400": CommandAndOptions("Stockfish1400", "stockfish", {"UCI_LimitStrength": "true", "UCI_Elo": 1400}),
-        "Stockfish1700": CommandAndOptions("Stockfish1700", "stockfish", {"UCI_LimitStrength": "true", "UCI_Elo": 1700})
+        "Stockfish1700": CommandAndOptions("Stockfish1700", "stockfish", {"UCI_LimitStrength": "true", "UCI_Elo": 1700}),
+        "Stockfish1800": CommandAndOptions("Stockfish1800", "stockfish", {"UCI_LimitStrength": "true", "UCI_Elo": 1800}),
+        "Stockfish1900": CommandAndOptions("Stockfish1900", "stockfish", {"UCI_LimitStrength": "true", "UCI_Elo": 1900})
+
         }
 
 
@@ -78,8 +81,8 @@ class SingleGameHandler:
         self.white_engine = chess.engine.UciProtocol()
         self.black_engine = chess.engine.UciProtocol()
         self.board = chess.Board()
-        self.white_clock = Clock(60.0, 1.0)
-        self.black_clock = Clock(60.0, 1.0)
+        self.white_clock = Clock(30.0, 0.5)
+        self.black_clock = Clock(30.0, 0.5)
 
     async def _open_engines(self):
         t1, self.white_engine = await chess.engine.popen_uci(self.white_command)
@@ -124,8 +127,11 @@ class SingleGameHandler:
                 if self._is_game_over():
                     break
                 await self._play_single_move(self.black_engine, self.black_clock)
-        except ZeroDivisionError as err:
+        except Exception as err:
             print('Exception occurred:', err)
+            print('Return draw. Not very clever...:P')
+            await self._close_engines()
+            return "1/2-1/2"
 
         await self._close_engines()
         return self.get_result()
@@ -229,7 +235,7 @@ class AdjustCoefficients:
 
     def _play_reference_game(self):
         s = StrengthComarator(12, self.first_engine, self.second_engine)
-        asyncio.run(s.start_play(150))
+        asyncio.run(s.start_play(50))
         self._set_current_best(s.get_first_engine_points())
 
     def _modify_current_best_config(self):
@@ -242,7 +248,7 @@ class AdjustCoefficients:
     def _play_test_game(self):
         self.first_engine.options["evaluatorConfig"] = self.checked_config_location
         s = StrengthComarator(12, self.first_engine, self.second_engine)
-        asyncio.run(s.start_play(150))
+        asyncio.run(s.start_play(50))
         return s.get_first_engine_points()
 
     def _save_best_config(self):
@@ -262,10 +268,3 @@ class AdjustCoefficients:
                 self._save_best_config()
                 self._set_current_best(result)
 
-
-asyncio.set_event_loop_policy(chess.engine.EventLoopPolicy())
-ac = AdjustCoefficients(avaiableEngines["UciWithCustomEvaluator"], avaiableEngines["Stockfish1700"])
-ac.adjust()
-
-#s = StrengthComarator(12, avaiableEngines["UciApplication"], avaiableEngines["Stockfish1700"])
-#asyncio.run(s.start_play(150))

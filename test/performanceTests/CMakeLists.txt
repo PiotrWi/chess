@@ -8,8 +8,10 @@ add_executable(pt
         main.cpp
         ../utils/BoardGenerationUtils.cpp
         FullSearchTest.cpp
-        MoveGeneratorTests.cpp
-        PreorderedMovesTests.cpp)
+        MoveGeneratorV2Tests.cpp
+        PreorderedMovesTests.cpp
+        StabilityBasedTests.cpp
+        )
 
 add_dependencies(pt googletest)
 add_dependencies(pt googlebenchmark)

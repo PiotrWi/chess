@@ -5,7 +5,7 @@ add_custom_target(evaluators)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin/)
 
 include_directories(
-    ${PROJECT_SOURCE_DIR}/Commonx)
+    ${PROJECT_SOURCE_DIR}/Common)
 
 add_subdirectory(StandardEvaluator)
 add_dependencies(evaluators StandardEvaluator)

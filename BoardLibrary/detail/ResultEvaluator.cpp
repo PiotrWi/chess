@@ -5,14 +5,14 @@
 #include <vector>
 
 #include <detail/CheckChecker.hpp>
-#include <MoveGenerator/MoveGenerator.hpp>
+#include <MoveGeneratorV2/MoveGeneratorV2.hpp>
 #include <publicIf/Notation.hpp>
 
-Node::Node() {}
+Node::Node() noexcept {}
 
 Node::Node(const Board& b,
 		unsigned char rT,
-		unsigned char noSignificant)
+		unsigned char noSignificant) noexcept
 	: board(b)
 	, repeatedTime(rT)
 	, noSignificantMoves_(noSignificant)
@@ -94,7 +94,9 @@ Result ResultEvaluator::evaluate(bool movesAvailable)
 Result ResultEvaluator::evaluate()
 {
     auto& board = boardsToEvaluate.back().board;
-    return evaluate(not MoveGenerator::MoveGenerator().generate(board, board.playerOnMove).empty());
+    auto validMoves = MoveGenerator::MoveGeneratorV2(board, board.playerOnMove).getValidMoveCount();
+
+    return evaluate(validMoves);
 }
 
 bool ResultEvaluator::isDrawByRepeatitions()

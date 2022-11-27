@@ -56,15 +56,12 @@ public:
 
     int getEvaluationValue(BoardEngine& be, unsigned int validMovesCount);
     void setBestMove(const BoardEngine& be,
-                       ExtendedMove& move,
+                       const ExtendedMove& move,
                        unsigned char depth);
 
     void setLowerBound(const BoardEngine &be, int value, unsigned char depth);
     void setUpperBound(const BoardEngine &be, int value, unsigned char depth);
     void setLowerUpperBound(const BoardEngine &be, int valueMin, int valueMax, unsigned char depth);
-
-    void makeOlder();
-    void clearOlderThan(unsigned char age);
 
     void clear();
 private:

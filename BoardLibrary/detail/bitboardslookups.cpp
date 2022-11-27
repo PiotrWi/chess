@@ -2,9 +2,6 @@
 
 #include <iostream>
 
-BishopFlexiMagicBB bishopMagicBb = {};
-RockFlexiMagicBB rockMagicBb = {};
-
 std::vector<unsigned> extractSetBitIndexes(uint64_t in)
 {
     std::vector<unsigned> out;
@@ -138,6 +135,11 @@ uint64_t evaluateDiagonalAttacks(uint64_t blockers, uint piecePosition)
     }
     return attacks;
 }
+
+#ifndef USE_PEXT
+
+BishopFlexiMagicBB bishopBb = {};
+RockFlexiMagicBB rockBb = {};
 
 BishopMagicBitBoards::BishopMagicBitBoards()
 {
@@ -295,7 +297,8 @@ lookup[63].magicMultiplier = 1134696402530308ull;
 }
 
 RockMagicBitBoards::RockMagicBitBoards()
-{lookup[0].relevantBlockers = 282578800148862ull;
+{
+    lookup[0].relevantBlockers = 282578800148862ull;
     lookup[0].magicMultiplier = 9979976911964603521ull;
     lookup[1].relevantBlockers = 565157600297596ull;
     lookup[1].magicMultiplier = 6525718128876324996ull;
@@ -895,3 +898,5 @@ RockFlexiMagicBB::RockFlexiMagicBB()
         }
     }
 }
+
+#endif 

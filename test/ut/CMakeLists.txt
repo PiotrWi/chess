@@ -20,7 +20,7 @@ add_executable(ut
     MaterialEvaluatorTest.cpp
     SearchingBasicTests.cpp
     MoveApplierTest.cpp
-    MoveGeneratorTest.cpp
+    MoveGeneratorV2Test.cpp
     MoveValidatorTest.cpp
     pinnedchecktest.cpp
     ResultEvaluatorTest.cpp
@@ -31,7 +31,9 @@ add_executable(ut
     CommandParserTest.cpp
     uciNotationTest.cpp
     seeTest.cpp
-    PreorderedMovesTests.cpp)
+    PreorderedMovesTests.cpp
+    PoolAllocatorTests.cpp
+)
 
 add_dependencies(ut googletest)
 target_link_libraries(ut gtest gmock gtest_main pthread BoardLibrary SearchLibrary StandardEvaluator dl UciApplication-lib)

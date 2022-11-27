@@ -63,6 +63,7 @@ RUN_BENCHMARK_FOR_DEPTH_N_ITERATIVE_SEARCH(6)
 RUN_BENCHMARK_FOR_DEPTH_N_ITERATIVE_SEARCH(7)
 RUN_BENCHMARK_FOR_DEPTH_N_ITERATIVE_SEARCH(8)
 RUN_BENCHMARK_FOR_DEPTH_N_ITERATIVE_SEARCH(9)
+RUN_BENCHMARK_FOR_DEPTH_N_ITERATIVE_SEARCH(10)
 
 #define RUN_BENCHMARK_FOR_BLACK_DEPTH_N_CUSTOM(Depth) static void PerformanceTest_##Depth##_custom (benchmark::State& state) \
 {                                                                                       \
@@ -76,8 +77,7 @@ RUN_BENCHMARK_FOR_DEPTH_N_ITERATIVE_SEARCH(9)
                 "♙.♝♙.♙♙♙"                                                              \
                 "♖...♔..♖"                                                              \
                 , WHITE);                                                               \
-    BoardEngine be;                                                                     \
-    be.board = board;                                                                   \
+    BoardEngine be(board);                                                              \
     players::common::move_generators::FullCachedEngine mg;                              \
     for (auto _ : state)                                                                \
     {                                                                                   \
@@ -91,6 +91,8 @@ RUN_BENCHMARK_FOR_BLACK_DEPTH_N_CUSTOM(6)
 RUN_BENCHMARK_FOR_BLACK_DEPTH_N_CUSTOM(7)
 RUN_BENCHMARK_FOR_BLACK_DEPTH_N_CUSTOM(8)
 RUN_BENCHMARK_FOR_BLACK_DEPTH_N_CUSTOM(9)
+RUN_BENCHMARK_FOR_BLACK_DEPTH_N_CUSTOM(10)
+
 /* To slow
 RUN_BENCHMARK_FOR_DEPTH_N_ITERATIVE_SEARCH(10)
 RUN_BENCHMARK_FOR_DEPTH_N_ITERATIVE_SEARCH(11)
@@ -108,8 +110,7 @@ RUN_BENCHMARK_FOR_DEPTH_N_ITERATIVE_SEARCH(11)
                 "♙.♝♙.♙♙♙"                                                                              \
                 "♖...♔..♖"                                                                              \
                 , WHITE);                                                                               \
-    BoardEngine be;                                                                                     \
-    be.board = board;                                                                                   \
+    BoardEngine be(board);                                                                              \
     players::common::move_generators::FullCachedEngine mg;                                              \
     for (auto _ : state)                                                                                \
     {                                                                                                   \

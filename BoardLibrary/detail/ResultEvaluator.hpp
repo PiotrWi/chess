@@ -8,10 +8,10 @@
 
 struct Node
 {
-    Node();
+    Node() noexcept;
     Node(const Board&,
          unsigned char,
-         unsigned char);
+         unsigned char) noexcept;
 
     Board board;
     unsigned char repeatedTime = 0u;

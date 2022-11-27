@@ -7,6 +7,7 @@
 #include <cstring>
 #include <vector>
 #include <common/CachedEngines/FullCachedEngine.hpp>
+#include <optional>
 
 #include <publicIf/NotationConversions.hpp>
 #include <common/Constants.hpp>
@@ -28,7 +29,7 @@ int evaluateMax(BoardEngine& be,
                 int beta);
 
 ExtendedMove bestMove;
-std::atomic_bool interrupt_flag = false;
+std::atomic_int interrupt_flag = 0;
 
 
 int evaluatePosition(BoardEngine& be, players::common::move_generators::FullCachedEngine& moveGenerator, unsigned int validMoves)
@@ -55,12 +56,13 @@ int quiescenceSearch(BoardEngine& be,
 
     if (depth == 0) // terminate quiescence
     {
-        return cachedEngine.getEvaluationValue(be, be.generateValidMoveCount());
+        auto validMoves = be.getMoveGeneratorV2(be.board.playerOnMove).getValidMoveCount(MoveGenerator::NotCheckedTag{});
+        return cachedEngine.getEvaluationValue(be, validMoves);
     }
+    auto mg = be.getMoveGeneratorV2(be.board.playerOnMove);
+    auto validMoves = mg.getValidMoveCount();
 
-    auto moves = be.generateMoves();
-    auto validMoves = moves.size();
-
+    auto moves = mg.generateBeatingMoves();
     auto orderedMoves = OnlyBeatingMoves(std::move(moves));
     auto stablePosition = orderedMoves.size() == 0;
     if (stablePosition)
@@ -103,7 +105,7 @@ int evaluateMax(BoardEngine& be,
                 int beta)
 {
     ++nodes;
-    if (interrupt_flag.load(std::memory_order_relaxed))
+    if (interrupt_flag.load(std::memory_order_relaxed) == 0)
     {
         return alfa;
     }
@@ -116,10 +118,10 @@ int evaluateMax(BoardEngine& be,
         return quiescenceSearch(be, cachedEngine, 6/*Quinesence limit*/, alfa, beta);
     }
 
-    auto cache = cachedEngine.get(be);
-    auto moves = be.generateMoves();
+    auto mg = be.getMoveGeneratorV2(be.board.playerOnMove);
+    auto validMoves = mg.getValidMoveCount();
 
-    auto gameResult = be.getResult(not moves.empty());
+    auto gameResult = be.getResult(validMoves);
     if(gameResult == Result::draw)
     {
         return 0;
@@ -129,6 +131,7 @@ int evaluateMax(BoardEngine& be,
         return -10000000;
     }
 
+    auto cache = cachedEngine.get(be);
     for (auto i = depth; i < MAX_DEPTH; ++i) {
         if (cache->previousEvaluations[i].visitedBefore)
         {
@@ -151,10 +154,10 @@ int evaluateMax(BoardEngine& be,
             be.board.playerOnMove,
             cache,
             depth,
-            std::move(moves));
-    for (auto i = 0u; i < orderedMoves.size(); ++i)
+            mg);
+    while (auto moveOpt = orderedMoves.get())
     {
-        auto move = orderedMoves.get();
+        const auto& move = *moveOpt;
         be.applyMove(move);
         if (pvFound)
         {
@@ -177,7 +180,7 @@ int evaluateMax(BoardEngine& be,
 
             setHistoryMove(be.board.playerOnMove, move, depth);
 
-            if (SaveMove and interrupt_flag.load(std::memory_order_relaxed) == false) bestMove = move;
+            if (SaveMove and interrupt_flag.load(std::memory_order_relaxed) != 0) bestMove = move;
             return beta;
         }
         if (nextAlfa > alfa)
@@ -187,16 +190,16 @@ int evaluateMax(BoardEngine& be,
             alfa = nextAlfa;
         }
     }
-    cachedEngine.setBestMove(be, greatestMove, depth);
     if (not pvFound)
     {
         cachedEngine.setUpperBound(be, alfa, depth);
     }
     else
     {
+        cachedEngine.setBestMove(be, greatestMove, depth);
+        if (SaveMove and interrupt_flag.load(std::memory_order_relaxed) != 0) bestMove = greatestMove;
         cachedEngine.setLowerUpperBound(be, alfa, beta, depth);
     }
-    if (SaveMove and interrupt_flag.load(std::memory_order_relaxed) == false) bestMove = greatestMove;
     return alfa;
 }
 
@@ -205,16 +208,20 @@ int evaluateMax(BoardEngine& be,
 namespace full_search
 {
 
+// TODO: To do this correctly
+// interrupt_flag as int is workaround.
+// It shall solve a problem when searching ends faster than timer.
+
 inline void interrupt()
 {
-    interrupt_flag = true;
+    --interrupt_flag;
 }
 
 inline ExtendedMove evaluate(BoardEngine be,
               players::common::move_generators::FullCachedEngine& cachedEngine,
               unsigned char depth)
 {
-    interrupt_flag = false;
+    ++interrupt_flag;
     int alfa = -10000000;
     int beta = 10000000;
     clearHistoryMove();
@@ -241,7 +248,7 @@ constexpr auto InitialBeta = mateValue + 1;
                        unsigned char maxDepth)
 {
     bestMove = {};
-    interrupt_flag = false;
+    ++interrupt_flag;
     int alpha = InitialAlpha;
     int beta = InitialBeta;
     clearHistoryMove();

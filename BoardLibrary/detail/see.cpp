@@ -45,7 +45,7 @@ int seeImpl(Board board, NOTATION::COLOR::color playerColor, unsigned char field
     }
 
     auto allPieces = getAllOccupiedFields(board);
-    uint64_t bishopAttackers = bishopMagicBb.getAttacksFor(field, allPieces) & board.piecesBitSets[static_cast<unsigned char>(playerColor)].bishopsMask;
+    uint64_t bishopAttackers = bishopBb.getAttacksFor(field, allPieces) & board.piecesBitSets[static_cast<unsigned char>(playerColor)].bishopsMask;
     if (bishopAttackers)
     {
         unsigned char bishopOnMOve = NOTATION::PIECES::BISHOP | static_cast<unsigned char>(playerColor);
@@ -54,7 +54,7 @@ int seeImpl(Board board, NOTATION::COLOR::color playerColor, unsigned char field
         return std::max(0, PiecesValuesTable[move.targetPiece] - seeImpl(board, ++playerColor, field, bishopOnMOve));
     }
 
-    uint64_t rockAttackers = rockMagicBb.getAttacksFor(field, allPieces) & board.piecesBitSets[static_cast<unsigned char>(playerColor)].rocksMask;
+    uint64_t rockAttackers = rockBb.getAttacksFor(field, allPieces) & board.piecesBitSets[static_cast<unsigned char>(playerColor)].rocksMask;
     if (rockAttackers)
     {
         unsigned char rockOnMOve = NOTATION::PIECES::ROCK | static_cast<unsigned char>(playerColor);
@@ -63,7 +63,7 @@ int seeImpl(Board board, NOTATION::COLOR::color playerColor, unsigned char field
         return std::max(0, PiecesValuesTable[move.targetPiece] - seeImpl(board, ++playerColor, field, rockOnMOve));
     }
 
-    uint64_t queenAttackers = (bishopMagicBb.getAttacksFor(field, allPieces) | rockMagicBb.getAttacksFor(field, allPieces)) 
+    uint64_t queenAttackers = (bishopBb.getAttacksFor(field, allPieces) | rockBb.getAttacksFor(field, allPieces)) 
         & board.piecesBitSets[static_cast<unsigned char>(playerColor)].queensMask;
     if (queenAttackers)
     {

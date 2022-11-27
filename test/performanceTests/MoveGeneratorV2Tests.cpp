@@ -1,10 +1,10 @@
 #include <benchmark/benchmark.h>
 
-#include <MoveGenerator/MoveGenerator.hpp>
+#include <MoveGeneratorV2/MoveGeneratorV2.hpp>
 
 #include <utils/BoardGenerationUtils.hpp>
 
-static void PerformanceTest_MoveGenerator(benchmark::State& state)
+static void PerformanceTest_MoveGeneratorV2(benchmark::State& state)
 {
     Board board = utils::createBoard(
                 "♜♞..♚♝.."
@@ -21,9 +21,12 @@ static void PerformanceTest_MoveGenerator(benchmark::State& state)
     {
         for (auto i = 0; i < 10; ++i)
         {
-            benchmark::DoNotOptimize(MoveGenerator::MoveGenerator::generate(board));
+            MoveGenerator::MoveGeneratorV2 sut(board, NOTATION::COLOR::color::white);
+            benchmark::DoNotOptimize(sut.getValidMoveCount());
+            benchmark::DoNotOptimize(sut.generateBeatingMoves());
+
             benchmark::ClobberMemory();
         }
     }
 }
-BENCHMARK(PerformanceTest_MoveGenerator);               
+BENCHMARK(PerformanceTest_MoveGeneratorV2);               

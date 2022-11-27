@@ -7,6 +7,7 @@
 
 #include <detail/MoveApplier.hpp>
 #include <detail/ResultEvaluator.hpp>
+#include <MoveGeneratorV2/MoveGeneratorV2.hpp>
 
 class BoardEngine
 {
@@ -32,11 +33,8 @@ public:
     bool are3Repeatitions();
     Result getREsultWithoutRepeatitionCheck(bool availableMoves) const;
 
-// MovesGeneration
-    unsigned generateValidMoveCount();
-    unsigned generateValidMoveCount(NOTATION::COLOR::color);
-    std::vector<ExtendedMove> generateMoves();
-    std::vector<ExtendedMove> generateMovesFor(NOTATION::COLOR::color);
+// MovesGenerationV2
+    MoveGenerator::MoveGeneratorV2 getMoveGeneratorV2(const NOTATION::COLOR::color c) const;
 
     Board board;
     ResultEvaluator resultEvaluator;

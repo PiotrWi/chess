@@ -1,9 +1,11 @@
 #pragma once
 
 #include <iostream>
+#include <memory>
 #include <utility>
 #include <vector>
 #include <cassert>
+#include "PoolAllocator.hpp"
 
 namespace containers
 {
@@ -16,20 +18,17 @@ class HashMap
         TKey key;
         TValue val;
         Node *next;
-        unsigned char age;
 
         Node (const TKey& keyIn, const TValue& valIn, Node* nextIn)
             : key(keyIn)
             , val(valIn)
             , next(nextIn)
-            , age(0)
         {}
 
         Node (const TKey& keyIn, TValue&& valIn, Node* nextIn)
                 : key(keyIn)
                 , val(std::move(valIn))
                 , next(nextIn)
-                , age(0)
         {}
 
         ~Node()
@@ -65,67 +64,25 @@ public:
         {
             if (elem != nullptr)
             {
-                delete elem;
                 elem = nullptr;
             }
         }
+        allocator_.clearAll();
     }
 
     ~HashMap()
     {
-        for (auto elem : table)
-        {
-            if (elem != nullptr)
-            {
-                delete elem;
-            }
-        }
+        // No need to clear POD types. Allocator does it for us.
     }
 
-    void increaseAge()
+    TValue* get(const TKey& key)
     {
-        for (auto* elem : table)
-        {
-            for (auto* internalElem = elem; internalElem != nullptr; ++internalElem)
-            {
-                ++(internalElem->age);
-            }
-        }
-    }
-
-    void removeOlderThan(unsigned char maxAge)
-    {
-        for (auto*& elem : table)
-        {
-            if (elem and elem->age > maxAge)
-            {
-                delete elem;
-            }
-            if (!elem)
-            {
-                continue;
-            }
-            for (auto* prev = elem; prev->next != nullptr; prev = prev->next)
-            {
-                if ((prev->next->age) > maxAge)
-                {
-                    auto* tmp = prev->next;
-                    prev->next = prev->next->next;
-                    delete tmp;
-                }
-            }
-        }
-    }
-
-    TValue* get(uint64_t hash, const TKey& key)
-    {
-        auto index = hash & hashMask;
+        auto index = key & hashMask;
         Node* node = table[index];
         while (node != nullptr)
         {
             if (node->key == key)
             {
-                node->age = 0;
                 return &(node->val);
             }
             node = node->next;
@@ -133,40 +90,46 @@ public:
         return nullptr;
     }
 
-    bool getOrCreate(uint64_t hash, const TKey& key, TValue*& out)
+    bool getOrCreate(const TKey& key, TValue*& out)
     {
-        auto index = hash & hashMask;
+        auto index = key & hashMask;
         Node* node = table[index];
         while (node != nullptr)
         {
             if (node->key == key)
             {
-                node->age = 0;
                 out = &(node->val);
                 return false;
             }
             node = node->next;
         }
-        table[index] = new Node{key, {}, table[index]};
+        node = allocator_.allocate();
+        std::construct_at(node, key, TValue{}, table[index]);
+        table[index] = node;
         out = &(table[index]->val);
         return true;
     }
 
-    TValue* store(uint64_t hash, const TKey& key, const TValue& val)
+    TValue* store(const TKey& key, const TValue& val)
     {
-        auto index = hash & hashMask;
-        table[index] = new Node{key, val, table[index]};
+        auto index = key & hashMask;
+        auto* node = allocator_.allocate();
+        std::construct_at(node, key, val, table[index]);
+        table[index] = node;
         return &(table[index]->val);
     }
 
-    TValue* store(uint64_t hash, const TKey& key, const TValue&& val)
+    TValue* store(const TKey& key, const TValue&& val)
     {
-        auto index = hash & hashMask;
-        table[index] = new Node{key, std::move(val), table[index]};
+        auto index = key & hashMask;
+        auto* node = allocator_.allocate();
+        std::construct_at(node, key, val, table[index]);
+        table[index] = node;
         return &(table[index]->val);
     }
 
 private:
+    PoolAllocator<Node> allocator_;
     std::vector<Node*> table;
     static constexpr uint64_t hashMask = (1 << THashWidth) - 1;
 };

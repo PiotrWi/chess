@@ -4,6 +4,8 @@
 #include <cstdint>
 #include <vector>
 
+#include <immintrin.h>
+
 constexpr uint64_t NOT_H_COL = 0x7f'7f'7f'7f'7f'7f'7f'7full;
 constexpr uint64_t NOT_HG_COL = 0x3f'3f'3f'3f'3f'3f'3f'3full;
 constexpr uint64_t NOT_A_COL = 0xfe'fe'fe'fe'fe'fe'fe'feull;
@@ -64,77 +66,7 @@ struct BitBoardsConstants
 inline uint64_t verticalRevelancyMask = 0x7E'7E'7E'7E'7E'7E'7E'7E;
 inline uint64_t horizontalRevelancyMask = 0x00'FF'FF'FF'FF'FF'FF'00;
 
-template<unsigned TSIZE>
-struct MagicBitBoard
-{
-    uint64_t relevantBlockers;
-    uint64_t magicMultiplier;
-    uint64_t attacks[TSIZE];
-};
 
-struct BishopMagicBitBoards
-{
-    constexpr static unsigned relevantBitsNum = 9;
-    MagicBitBoard<512> lookup[64];
-public:
-    BishopMagicBitBoards();
-    inline uint64_t getAttacksFor(uint8_t fieldNum, uint64_t allpieces) const
-    {
-        auto& l = lookup[fieldNum];
-        unsigned key = ((l.relevantBlockers & allpieces) * l.magicMultiplier) >> (64u - relevantBitsNum);
-        return l.attacks[key];
-    }
-};
-
-struct RockMagicBitBoards
-{
-    constexpr static unsigned relevantBitsNum = 12;
-    MagicBitBoard<4096u> lookup[64];
-public:
-    inline uint64_t getAttacksFor(uint8_t fieldNum, uint64_t allpieces) const
-    {
-        auto& l = lookup[fieldNum];
-        unsigned key = ((l.relevantBlockers  & allpieces) * l.magicMultiplier) >> (64u - relevantBitsNum);
-        return l.attacks[key];
-    }
-    RockMagicBitBoards();
-};
-
-struct FlexiMagicBB
-{
-    uint64_t relevantBlockers;
-    uint8_t relevantBitsNum;
-    uint64_t magicMultiplier;
-    uint64_t* attacks;
-};
-
-struct BishopFlexiMagicBB
-{
-    uint64_t attacks[6656];
-    FlexiMagicBB lookup[64];
-public:
-    BishopFlexiMagicBB();
-    inline uint64_t getAttacksFor(uint8_t fieldNum, uint64_t allpieces) const
-    {
-        auto& l = lookup[fieldNum];
-        unsigned key = ((l.relevantBlockers & allpieces) * l.magicMultiplier) >> (64u - lookup[fieldNum].relevantBitsNum);
-        return l.attacks[key];
-    }
-};
-
-struct RockFlexiMagicBB
-{
-    uint64_t attacks[102400];
-    FlexiMagicBB lookup[64];
-public:
-    inline uint64_t getAttacksFor(uint8_t fieldNum, uint64_t allpieces) const
-    {
-        auto& l = lookup[fieldNum];
-        unsigned key = ((l.relevantBlockers  & allpieces) * l.magicMultiplier) >> (64u - lookup[fieldNum].relevantBitsNum);
-        return l.attacks[key];
-    }
-    RockFlexiMagicBB();
-};
 
 constexpr uint64_t getOppositePawnsAttackingFieldForWhite(uint64_t fieldBitMask)
 {
@@ -277,10 +209,129 @@ constexpr std::array<BitBoardsConstants, 64> createLookups()
 
 std::vector<unsigned> extractSetBitIndexes(uint64_t in);
 
+
+
 uint64_t evaluateLineAttacks(uint64_t blockers, unsigned piecePosition);
 uint64_t evaluateDiagonalAttacks(uint64_t blockers, unsigned piecePosition);
 
 static constexpr std::array<BitBoardsConstants, 64> bitBoardLookup = createLookups();
 
-extern BishopFlexiMagicBB bishopMagicBb;
-extern RockFlexiMagicBB rockMagicBb;
+#ifndef USE_PEXT
+
+template<unsigned TSIZE>
+struct MagicBitBoard
+{
+    uint64_t relevantBlockers;
+    uint64_t magicMultiplier;
+    uint64_t attacks[TSIZE];
+};
+
+struct BishopMagicBitBoards
+{
+    constexpr static unsigned relevantBitsNum = 9;
+    MagicBitBoard<512> lookup[64];
+public:
+    BishopMagicBitBoards();
+    inline uint64_t getAttacksFor(uint8_t fieldNum, uint64_t allpieces) const
+    {
+        auto& l = lookup[fieldNum];
+        unsigned key = ((l.relevantBlockers & allpieces) * l.magicMultiplier) >> (64u - relevantBitsNum);
+        return l.attacks[key];
+    }
+};
+
+struct RockMagicBitBoards
+{
+    constexpr static unsigned relevantBitsNum = 12;
+    MagicBitBoard<4096u> lookup[64];
+public:
+    inline uint64_t getAttacksFor(uint8_t fieldNum, uint64_t allpieces) const
+    {
+        auto& l = lookup[fieldNum];
+        unsigned key = ((l.relevantBlockers  & allpieces) * l.magicMultiplier) >> (64u - relevantBitsNum);
+        return l.attacks[key];
+    }
+    RockMagicBitBoards();
+};
+
+struct FlexiMagicBB
+{
+    uint64_t relevantBlockers;
+    uint8_t relevantBitsNum;
+    uint64_t magicMultiplier;
+    uint64_t* attacks;
+};
+
+struct BishopFlexiMagicBB
+{
+    uint64_t attacks[6656];
+    FlexiMagicBB lookup[64];
+public:
+    BishopFlexiMagicBB();
+    inline uint64_t getAttacksFor(uint8_t fieldNum, uint64_t allpieces) const
+    {
+        auto& l = lookup[fieldNum];
+        unsigned key = ((l.relevantBlockers & allpieces) * l.magicMultiplier) >> (64u - lookup[fieldNum].relevantBitsNum);
+        return l.attacks[key];
+    }
+};
+
+struct RockFlexiMagicBB
+{
+    uint64_t attacks[102400];
+    FlexiMagicBB lookup[64];
+public:
+    inline uint64_t getAttacksFor(uint8_t fieldNum, uint64_t allpieces) const
+    {
+        auto& l = lookup[fieldNum];
+        unsigned key = ((l.relevantBlockers  & allpieces) * l.magicMultiplier) >> (64u - lookup[fieldNum].relevantBitsNum);
+        return l.attacks[key];
+    }
+    RockFlexiMagicBB();
+};
+
+extern BishopFlexiMagicBB bishopBb;
+extern RockFlexiMagicBB rockBb;
+
+#endif 
+
+#ifdef USE_PEXT
+
+struct PextForField
+{
+    uint64_t relevantBlockers;
+    uint8_t relevantBitsNum;
+    uint64_t* attacks;
+};
+
+struct BishopPextBB
+{
+    uint64_t attacks[5248];
+    PextForField lookup[64];
+public:
+    BishopPextBB();
+    inline uint64_t getAttacksFor(uint8_t fieldNum, uint64_t allpieces) const
+    {
+        auto& l = lookup[fieldNum];
+        unsigned key = _pext_u64(allpieces, l.relevantBlockers);
+        return l.attacks[key];
+    }
+};
+
+struct RockPextBB
+{
+    uint64_t attacks[102400];
+    PextForField lookup[64];
+public:
+    RockPextBB();
+    inline uint64_t getAttacksFor(uint8_t fieldNum, uint64_t allpieces) const
+    {
+        auto& l = lookup[fieldNum];
+        unsigned key = _pext_u64(allpieces, l.relevantBlockers);
+        return l.attacks[key];
+    }
+};
+extern BishopPextBB bishopBb;
+extern RockPextBB rockBb;
+
+#endif

@@ -6,6 +6,7 @@
 
 #include <detail/bitboardslookups.hpp>
 #include <publicIf/NotationConversions.hpp>
+#include <MoveGeneratorV2/MoveGeneratorV2.hpp>
 
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
@@ -105,7 +106,8 @@ int evaluatePosition(BoardEngine& be, unsigned int validMovesCount)
         return -10000000;
     }
 
-    auto oponentValidMoves = be.generateValidMoveCount(be.board.playerOnMove + 1);
+    auto oponentValidMoves = be.getMoveGeneratorV2(be.board.playerOnMove + 1).getValidMoveCount();
+
     return matherial_evaluator::evaluate(be.board, be.board.playerOnMove, piecesValues)
         + evaluateMoveCount(validMovesCount, oponentValidMoves)
         + pawn_structure_evaluator::evaluatePawnStructure(be.board, be.board.playerOnMove, pawnStructureCoeffincients)

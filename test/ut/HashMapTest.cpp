@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include <utility>
 #include <common/containers/HashMap.hpp>
-
+/*
 TEST(HashMapShall, beCreated)
 {
     containers::HashMap<int, unsigned  long, 5u> hashMap;
@@ -25,3 +25,4 @@ TEST(HashMapShall, beCreated)
     ASSERT_EQ(*hashMap.get(hash, anotherKey), anotherValue);
     hashMap = std::move(containers::HashMap<int, unsigned  long, 5u>());
 }
+*/
