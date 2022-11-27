@@ -1,7 +1,6 @@
 #pragma once
 
 #include <span>
-#include <vector>
 #include <boost/container/small_vector.hpp>
 #include <publicIf/Board.hpp>
 
@@ -47,7 +46,6 @@ private:
     void evaluatePinnedQueen(uint64_t queensMask, const uint64_t allOccupiedFields, const uint64_t forbidenFields);
     void evaluateCasles(const uint64_t allOccupiedFields);
 
-
 private:
     Board board;
 
@@ -81,7 +79,6 @@ private:
 
     TBeatingVector beatingMoves;
     TNormalVector normalMoves;
-
 };
 
 }  // namespace MoveGenerator

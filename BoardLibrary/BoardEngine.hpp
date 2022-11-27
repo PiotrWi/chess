@@ -34,7 +34,7 @@ public:
     Result getREsultWithoutRepeatitionCheck(bool availableMoves) const;
 
 // MovesGenerationV2
-    MoveGenerator::MoveGeneratorV2 getMoveGeneratorV2(NOTATION::COLOR::color c);
+    MoveGenerator::MoveGeneratorV2 getMoveGeneratorV2(const NOTATION::COLOR::color c) const;
 
     Board board;
     ResultEvaluator resultEvaluator;

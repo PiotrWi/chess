@@ -152,7 +152,7 @@ uint64_t BoardEngine::getHash(NOTATION::COLOR::color c) const
     return hash::switchColor(hash_);
 }
 
-MoveGenerator::MoveGeneratorV2 BoardEngine::getMoveGeneratorV2(NOTATION::COLOR::color c)
+MoveGenerator::MoveGeneratorV2 BoardEngine::getMoveGeneratorV2(const NOTATION::COLOR::color c) const
 {
     return MoveGenerator::MoveGeneratorV2(board, c);
 }

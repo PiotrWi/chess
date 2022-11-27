@@ -14,8 +14,6 @@ struct Pinnes
     uint64_t diagonallyPinnedFromLeftBottom = 0ull;
     uint64_t diagonallyPinnedFromLeftTop = 0ull;
     uint64_t allPinned = 0ull;
-    // spliting it slows donw a little.
-    // Maybe it is not worth to check if Move gen 2 is faster (it shall be because all pawns are evaluated toghether.).
 };
 
 static Pinnes findPinned(const Board& board, NOTATION::COLOR::color c, unsigned char fieldPosition)
