@@ -19,7 +19,7 @@ constexpr int KnightValue = 300;
 constexpr int BishopValue = 300;
 constexpr int RockValue = 500;
 constexpr int QueenValue = 900;
-constexpr int KingValue = 900;
+constexpr int KingValue = 10000;
 constexpr int PiecesValuesTable[] = {0, 0, PawnValue, PawnValue, RockValue, RockValue, KnightValue, KnightValue, BishopValue, BishopValue, QueenValue, QueenValue, KingValue, KingValue};
 
 int see(ExtendedMove& move, Board board, NOTATION::COLOR::color playerColor);

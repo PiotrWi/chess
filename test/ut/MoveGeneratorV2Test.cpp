@@ -2158,10 +2158,41 @@ TEST(MoveGeneratorTestsV2, shallNotExposeKingWhileEnPasantBeating)
     auto pawnMoves = map({"b4b3"}, BLACK, board);
 
     auto allNotBeating = kingMoves + pawnMoves;
+    auto allMoves = allNotBeating;
 
     MoveGenerator::MoveGeneratorV2 sut(board, BLACK);
-    sut.getValidMoveCount();
-    // ASSERT_EQ(sut.getValidMoveCount(), allMoves.size());
+    ASSERT_EQ(sut.getValidMoveCount(), allMoves.size());
     ASSERT_THAT(sut.generateBeatingMoves(), std::vector<ExtendedMove>());
+    ASSERT_THAT(sut.generateNonBeatingMoves(), ::testing::UnorderedElementsAreArray(allNotBeating));
+}
+
+TEST(MoveGeneratorTestsV2, Custom_9)
+{
+    Board board = utils::createBoard(
+            "        "
+            "        "
+            "        "
+            "♚♟      "
+            "♟ ♙     "
+            " ♗    ♔ "
+            "♙♙♙     "
+            "        ", BLACK);
+
+
+    auto pawnMoves = map({"a4a3", "b5b4"}, BLACK, board);
+    auto kingMoves = map(
+        {"Ka5a6", "Ka5b6", "Ka5b4"}, BLACK, board);
+    auto allNotBeating = pawnMoves + kingMoves;
+
+    auto pawnBeatingMoves = map(
+        {"a4xb3", "b5xc4"}, BLACK, board);
+    auto allBeating = pawnBeatingMoves;
+
+    auto allMoves = allBeating + allNotBeating;
+
+    MoveGenerator::MoveGeneratorV2 sut(board, BLACK);
+
+    ASSERT_EQ(sut.getValidMoveCount(), allMoves.size());
+    ASSERT_THAT(sut.generateBeatingMoves(), ::testing::UnorderedElementsAreArray(allBeating));
     ASSERT_THAT(sut.generateNonBeatingMoves(), ::testing::UnorderedElementsAreArray(allNotBeating));
 }

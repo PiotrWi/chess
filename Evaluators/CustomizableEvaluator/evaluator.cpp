@@ -16,7 +16,7 @@ namespace
 {
 
 matherial_evaluator::VALUES_TYPE piecesValues;
-PawnStructureCoefficients pawnStructureCoeffincients = {-50,-50};
+PawnStructureCoefficients pawnStructureCoeffincients = {-50,-50, 50};
 SuareTableCoeffictients squareTables;
 
 int singleMoveValue = 10;
@@ -54,6 +54,7 @@ void init(const char* configurationFileLocation)
 
         pawnStructureCoeffincients.multiplePawnInRank =  tree.get<int>("COEFFICIENTS.PAWN_STRUCTURE.DOUBLED_PAWN_PENALITY");
         pawnStructureCoeffincients.isolatedPawn =  tree.get<int>("COEFFICIENTS.PAWN_STRUCTURE.ISOLATED_PAWN_PENALITY");
+        pawnStructureCoeffincients.passedPawn =  tree.get<int>("COEFFICIENTS.PAWN_STRUCTURE.PASSED_PAWN");
 
         singleMoveValue = tree.get<int>("COEFFICIENTS.MOBILITY.MOVE_COUNT");
         dualBishopPremium = tree.get<int>("COEFFICIENTS.DUAL_BISHOP_PREMIUM");

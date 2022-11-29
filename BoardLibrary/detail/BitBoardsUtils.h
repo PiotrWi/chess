@@ -3,7 +3,7 @@
 #include <publicIf/Board.hpp>
 
 
-constexpr int getOccupiedBitIndex(uint64_t& bitMask)
+constexpr int getOccupiedBitIndex(const uint64_t& bitMask)
 {
     return 63 - __builtin_clzll(bitMask);
 }

@@ -15,6 +15,8 @@
 #include <common/Constants.hpp>
 #include <MoveGeneratorV2/MoveGeneratorV2.hpp>
 
+#include <detail/sse.hpp>
+
 static unsigned history[2][64][64] = {};
 
 inline void setHistoryMove(const NOTATION::COLOR::color player, const ExtendedMove& move, unsigned char depth);
@@ -72,7 +74,6 @@ public:
 private:
     std::span<ExtendedMove> moves_;
     int index;
-    int nonPromotionNorBeatingIndex = 0;
 };
 
 inline void setHistoryMove(const NOTATION::COLOR::color player, const ExtendedMove& move, unsigned char depth)
@@ -193,25 +194,63 @@ inline std::optional<ExtendedMove> PreorderedMoves::getHistory()
     return {};
 }
 
+
 inline OnlyBeatingMoves::OnlyBeatingMoves(std::span<ExtendedMove>&& moves)
         : moves_(std::move(moves))
         , index(0)
 {
-    auto firstNotBeatingIt = std::find_if(moves_.begin(),
-                                          moves_.end(),
-                                          [](auto&& move) {
-                                              return !(move.flags & (ExtendedMove::beatingMask | ExtendedMove::promotionMask));
-                                          });
-    nonPromotionNorBeatingIndex = firstNotBeatingIt - moves_.begin();
-    std::sort(moves_.begin(), firstNotBeatingIt, MVVLVA_Comparator::compare);
+    std::sort(moves_.begin(), moves_.end(), MVVLVA_Comparator::compare);
 }
 
 inline unsigned int OnlyBeatingMoves::size() const
 {
-    return nonPromotionNorBeatingIndex;
+    return moves_.size();
 }
 
 inline ExtendedMove& OnlyBeatingMoves::get()
 {
     return moves_[index++];
+}
+
+/*Suprizingly, gives no adventage at all.*/
+/* Maybe recapturing? */
+class OnlyBeatingMovesSeeVersion
+{
+public:
+    OnlyBeatingMovesSeeVersion(std::span<ExtendedMove>&& moves, const Board& b);
+    unsigned int size() const;
+    ExtendedMove& get();
+private:
+    std::span<ExtendedMove> moves_;
+    boost::container::small_vector<std::pair<int, std::span<ExtendedMove>::iterator>, 30> sortedBySee;
+    int index;
+};
+
+inline bool operator<(const std::pair<int, std::span<ExtendedMove>::iterator>& lhs, const std::pair<int, std::span<ExtendedMove>::iterator>& rhs)
+{
+    return lhs.first < rhs.first;
+}
+
+inline OnlyBeatingMovesSeeVersion::OnlyBeatingMovesSeeVersion(std::span<ExtendedMove>&& moves, const Board& b)
+        : moves_(std::move(moves))
+        , index(0)
+{
+    // std::sort(moves_.begin(), moves_.end(), MVVLVA_Comparator::compare);
+    for (auto it = moves_.begin(); it != moves_.end(); ++it)
+    {
+        sortedBySee.emplace_back(see(*it, b, b.playerOnMove), it);
+    }
+    std::sort(sortedBySee.rbegin(), sortedBySee.rend());
+}
+
+inline unsigned int OnlyBeatingMovesSeeVersion::size() const
+{
+    auto it = std::find_if(sortedBySee.begin(), sortedBySee.end(), [&](auto&& elem) { return elem.first <= 0; } );
+    return it - sortedBySee.begin();
+    // return moves_.size();
+}
+
+inline ExtendedMove& OnlyBeatingMovesSeeVersion::get()
+{
+    return *sortedBySee[index++].second;
 }

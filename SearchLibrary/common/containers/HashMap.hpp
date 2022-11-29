@@ -19,19 +19,19 @@ class HashMap
         TValue val;
         Node *next;
 
-        Node (const TKey& keyIn, const TValue& valIn, Node* nextIn)
+        Node (const TKey& keyIn, const TValue& valIn, Node* nextIn) noexcept
             : key(keyIn)
             , val(valIn)
             , next(nextIn)
         {}
 
-        Node (const TKey& keyIn, TValue&& valIn, Node* nextIn)
+        Node (const TKey& keyIn, TValue&& valIn, Node* nextIn) noexcept
                 : key(keyIn)
                 , val(std::move(valIn))
                 , next(nextIn)
         {}
 
-        ~Node()
+        ~Node() noexcept
         {
             delete next;
         }
@@ -58,7 +58,7 @@ public:
         in.table = {};
     }
 
-    void clear()
+    void clear() noexcept
     {
         for (auto*& elem : table)
         {
@@ -75,7 +75,7 @@ public:
         // No need to clear POD types. Allocator does it for us.
     }
 
-    TValue* get(const TKey& key)
+    TValue* get(const TKey& key) noexcept
     {
         auto index = key & hashMask;
         Node* node = table[index];

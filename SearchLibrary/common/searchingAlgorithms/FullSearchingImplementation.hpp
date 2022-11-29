@@ -64,6 +64,8 @@ int quiescenceSearch(BoardEngine& be,
 
     auto moves = mg.generateBeatingMoves();
     auto orderedMoves = OnlyBeatingMoves(std::move(moves));
+    // auto orderedMoves = OnlyBeatingMovesSeeVersion(std::move(moves), be.board);
+
     auto stablePosition = orderedMoves.size() == 0;
     if (stablePosition)
     {
@@ -115,7 +117,7 @@ int evaluateMax(BoardEngine& be,
         {
             return 0;
         }
-        return quiescenceSearch(be, cachedEngine, 6/*Quinesence limit*/, alfa, beta);
+        return quiescenceSearch(be, cachedEngine, 8/*Quinesence limit*/, alfa, beta);
     }
 
     auto mg = be.getMoveGeneratorV2(be.board.playerOnMove);

@@ -9,7 +9,7 @@ namespace MoveGenerator
 
 struct NotCheckedTag {};
 
-using TBeatingVector = boost::container::small_vector<ExtendedMove, 50>;
+using TBeatingVector = boost::container::small_vector<ExtendedMove, 32>;
 using TNormalVector = boost::container::small_vector<ExtendedMove, 200>;
 
 /*

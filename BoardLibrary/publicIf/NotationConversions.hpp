@@ -6,7 +6,11 @@
 namespace NotationConversions
 {
 
-NOTATION::COLOR::color switchColor(const NOTATION::COLOR::color c);
+constexpr NOTATION::COLOR::color switchColor(const NOTATION::COLOR::color c)
+{
+    auto colorNum = static_cast<unsigned char>(c);
+    return NOTATION::COLOR::color(colorNum ^ NOTATION::COLOR::COLOR_MASK);
+}
 
 constexpr unsigned char getColumnNum(unsigned char field)
 {
