@@ -1,7 +1,6 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
-#include <iostream>  // tmp
 #include <vector>
 
 #include <detail/MoveApplier.hpp>
@@ -80,7 +79,7 @@ TEST(MoveGeneratorTestsV2, shouldCorrectlyHandleJustNotAttackedKingMoves)
 {
     {
         Board board = utils::createBoard(
-        "        "
+        "       ♚"
         "        "
         "        "
         "        "
@@ -107,7 +106,7 @@ TEST(MoveGeneratorTestsV2, shouldCorrectlyHandleJustNotAttackedKingMoves)
         "        "
         "        "
         "        "
-        "        ");
+        "♚       ");
         auto kingMoves = map({"Kh8g8", "Kh8g7", "Kh8h7"}, WHITE, board);
         auto allNotBeating = kingMoves;
         auto allMoves = allNotBeating;
@@ -120,7 +119,7 @@ TEST(MoveGeneratorTestsV2, shouldCorrectlyHandleJustNotAttackedKingMoves)
     }
     {
         Board board = utils::createBoard(
-        "        "
+        "       ♚"
         "        "
         "        "
         "        "
@@ -140,7 +139,7 @@ TEST(MoveGeneratorTestsV2, shouldCorrectlyHandleJustNotAttackedKingMoves)
     }
     {
         Board board = utils::createBoard(
-        "        "
+        "       ♚"
         "        "
         "        "
         "        "
@@ -160,7 +159,7 @@ TEST(MoveGeneratorTestsV2, shouldCorrectlyHandleJustNotAttackedKingMoves)
     }
     {
         Board board = utils::createBoard(
-        "        "
+        "       ♚"
         "        "
         "        "
         "        "
@@ -184,7 +183,7 @@ TEST(MoveGeneratorTestsV2, shouldCorrectlyHandleNotPinnedKnightNoCheck)
 {
     {
         Board board = utils::createBoard(
-        "        "
+        "       ♚"
         "        "
         "    ♘   "
         "        "
@@ -212,7 +211,7 @@ TEST(MoveGeneratorTestsV2, shouldCorrectlyHandleNotPinnedKnightNoCheck)
         "        "
         "        "
         "        "
-        "        ");
+        "♚       ");
         auto kingMoves = map({"Kh8h7", "Kh8g7"}, WHITE, board);
         auto knightMoves = map({"Ng8e7", "Ng8f6", "Ng8h6"}, WHITE, board);
         auto allNotBeating = kingMoves + knightMoves;
@@ -226,7 +225,7 @@ TEST(MoveGeneratorTestsV2, shouldCorrectlyHandleNotPinnedKnightNoCheck)
     }
     {
         Board board = utils::createBoard(
-        "        "
+        "       ♚"
         "        "
         "        "
         "        "
@@ -251,7 +250,7 @@ TEST(MoveGeneratorTestsV2, shouldNotMovePinnedKnight)
 {
     {
         Board board = utils::createBoard(
-        "    ♜   "
+        "    ♜  ♚"
         "        "
         "    ♘   "
         "        "
@@ -278,7 +277,7 @@ TEST(MoveGeneratorTestsV2, shouldNotMovePinnedKnight)
         "        "
         "        "
         "        "
-        "        ");
+        "♚       ");
         auto kingMoves = map({"Kh8h7", "Kh8g7"}, WHITE, board);
         auto allNotBeating = kingMoves;
         auto allMoves = allNotBeating;
@@ -291,7 +290,7 @@ TEST(MoveGeneratorTestsV2, shouldNotMovePinnedKnight)
     }
     {
         Board board = utils::createBoard(
-        "        "
+        "♚       "
         "        "
         "        "
         "        "
@@ -315,7 +314,7 @@ TEST(MoveGeneratorTestsV2, shouldBeAbleToPreventCheckByKnight)
 {
     {
         Board board = utils::createBoard(
-        "    ♜♘  "
+        "♚   ♜♘  "
         "        "
         "        "
         "        "
@@ -343,7 +342,7 @@ TEST(MoveGeneratorTestsV2, shouldBeAbleToPreventCheckByKnight)
         "        "
         "        "
         "        "
-        "        ");
+        "♚       ");
         auto kingMoves = map({"Kh8h7", "Kh8g7"}, WHITE, board);
         auto knightMoves = map({"Nc7e8"}, WHITE, board);
         auto knightBeatingMoves = map({"Nc7xa8"}, WHITE, board);
@@ -360,7 +359,7 @@ TEST(MoveGeneratorTestsV2, shouldBeAbleToPreventCheckByKnight)
     }
     {
         Board board = utils::createBoard(
-        "        "
+        "♚       "
         "        "
         "        "
         "        "
@@ -388,7 +387,7 @@ TEST(MoveGeneratorTestsV2, canMoveOnlyKingWhenThereAre2Attackers)
 {
     {
         Board board = utils::createBoard(
-        "    ♜♘  "
+        "♚   ♜♘  "
         "        "
         "        "
         "        "
@@ -414,7 +413,7 @@ TEST(MoveGeneratorTestsV2, canMoveOnlyKingWhenThereAre2Attackers)
         "        "
         "        "
         "        "
-        "        ");
+        "♚       ");
         auto kingMoves = map({"Kh8h7"}, WHITE, board);
         auto kingBeatingMoves = map({"Kh8xg7"}, WHITE, board);
 
@@ -436,7 +435,7 @@ TEST(MoveGeneratorTestsV2, canMoveOnlyKingWhenThereAre2Attackers)
         "        "
         "        "
         "        "
-        "        ");
+        "♚       ");
         auto kingMoves = map({"Kh8h7"}, WHITE, board);
         auto allNotBeating = kingMoves;
         auto allMoves = allNotBeating;
@@ -456,7 +455,7 @@ TEST(MoveGeneratorTestsV2, canMoveOnlyKingWhenThereAre2Attackers)
         "        "
         "        "
         "        "
-        "        ");
+        "♚       ");
         auto kingMoves = map({"Kh8h7"}, WHITE, board);
         auto allNotBeating = kingMoves;
         auto allMoves = allNotBeating;
@@ -469,7 +468,7 @@ TEST(MoveGeneratorTestsV2, canMoveOnlyKingWhenThereAre2Attackers)
     }
     {
         Board board = utils::createBoard(
-        "        "
+        "       ♚"
         "        "
         "        "
         "        "
@@ -500,7 +499,7 @@ TEST(MoveGeneratorTestsV2, shouldEvaluateSinglePawnMoves)
         "   ♙    "
         "        "
         "        "
-        "    ♔   ");
+        "♚   ♔   ");
         auto kingMoves = map({"Ke1d1", "Ke1d2", "Ke1e2", "Ke1f2", "Ke1f1"}, WHITE, board);
         auto pawnMoves = map({"d4d5"}, WHITE, board);
         auto allNotBeating = kingMoves + pawnMoves;

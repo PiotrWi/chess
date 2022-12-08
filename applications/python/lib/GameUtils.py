@@ -81,8 +81,8 @@ class SingleGameHandler:
         self.white_engine = chess.engine.UciProtocol()
         self.black_engine = chess.engine.UciProtocol()
         self.board = chess.Board()
-        self.white_clock = Clock(30.0, 0.5)
-        self.black_clock = Clock(30.0, 0.5)
+        self.white_clock = Clock(60.0, 1.0)
+        self.black_clock = Clock(60.0, 1.0)
 
     async def _open_engines(self):
         t1, self.white_engine = await chess.engine.popen_uci(self.white_command)
@@ -235,7 +235,7 @@ class AdjustCoefficients:
 
     def _play_reference_game(self):
         s = StrengthComarator(12, self.first_engine, self.second_engine)
-        asyncio.run(s.start_play(50))
+        asyncio.run(s.start_play(200))
         self._set_current_best(s.get_first_engine_points())
 
     def _modify_current_best_config(self):
@@ -248,7 +248,7 @@ class AdjustCoefficients:
     def _play_test_game(self):
         self.first_engine.options["evaluatorConfig"] = self.checked_config_location
         s = StrengthComarator(12, self.first_engine, self.second_engine)
-        asyncio.run(s.start_play(50))
+        asyncio.run(s.start_play(200))
         return s.get_first_engine_points()
 
     def _save_best_config(self):

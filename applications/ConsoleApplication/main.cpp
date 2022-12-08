@@ -1,6 +1,3 @@
-#include <BoardEngine.hpp>
-
-#include <cassert>
 #include <cstring>
 #include <iostream>
 #include <HumanPlayer/HumanPlayer.hpp>

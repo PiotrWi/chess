@@ -7,7 +7,7 @@
 class ConsoleApplication
 {
 public:
-    ConsoleApplication();
+    ConsoleApplication() = default;
 
     void setWhitePlayer(std::unique_ptr<IPlayer>&&);
     void setBlackPlayer(std::unique_ptr<IPlayer>&&);

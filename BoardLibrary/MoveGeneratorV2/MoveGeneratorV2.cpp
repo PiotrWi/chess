@@ -37,15 +37,11 @@ unsigned MoveGeneratorV2::getValidMoveCount()
 
 void MoveGeneratorV2::evaluateKnights(uint64_t knightsBitMask, const uint64_t forbidenFields)
 {
-    while (knightsBitMask)
+    for (; knightsBitMask; knightsBitMask = _blsr_u64(knightsBitMask))
     {
-        unsigned char knightIndex = 63 - __builtin_clzll(knightsBitMask);
-        auto knightBitMask = 1ull << knightIndex;
-
+        unsigned char knightIndex = _tzcnt_u64(knightsBitMask);
         auto moveTable = bitBoardLookup[knightIndex].knightsMovePossibilities & ~forbidenFields;
-        if (moveTable) moveTables[moveTablesN++] = MoveTable{MoveTable::Type::KnightMoves, knightIndex, moveTable};
-
-        knightsBitMask ^= knightBitMask;
+        moveTables[moveTablesN++] = MoveTable{MoveTable::Type::KnightMoves, knightIndex, moveTable};
     }
 };
 
@@ -57,17 +53,15 @@ void MoveGeneratorV2::evaluateKing(const uint64_t forbidenFields)
     // check if king is checked after king move
     {
 	    board.piecesBitSets[(int)pieceColor].kingsMask ^= (1ull << kingPosition);
-	    while (pseudoPossibleMovesTable)
+        for (; pseudoPossibleMovesTable; pseudoPossibleMovesTable = _blsr_u64(pseudoPossibleMovesTable))
 	    {
-	    	unsigned char kingDestinationIndex = 63 - __builtin_clzll(pseudoPossibleMovesTable);
+	    	unsigned char kingDestinationIndex = _tzcnt_u64(pseudoPossibleMovesTable);
 	        auto kingDestinationBitMask = 1ull << kingDestinationIndex;
 
-	        if (not CheckChecker::isAttackedOn(board, pieceColor, kingDestinationIndex))
+	        if (not CheckChecker::isAttackedBySliders(board, pieceColor, kingDestinationIndex))
 	        {
 	        	possibleMovesTable |= kingDestinationBitMask;
 	        }
-
-	        pseudoPossibleMovesTable ^= kingDestinationBitMask;
 	    }
 		board.piecesBitSets[(int)pieceColor].kingsMask ^= (1ull << kingPosition);
 	}
@@ -84,21 +78,21 @@ void MoveGeneratorV2::evaluatePawns(uint64_t pawnsBitMask, const uint64_t oppone
 	{
 		auto singleMovedPawns = pawnsBitMask <<= 8;
 		auto moveTable = singleMovedPawns & (~opponentPieces);
-		if (moveTable) moveTables[moveTablesN++] = MoveTable{MoveTable::Type::SinglePawnMoves, NOT_RELEVANT, moveTable};
+		moveTables[moveTablesN++] = MoveTable{MoveTable::Type::SinglePawnMoves, NOT_RELEVANT, moveTable};
 
 		auto doubleMovedPawns = (moveTable <<= 8) & LINE_4;
 		moveTable = doubleMovedPawns & (~opponentPieces);
-		if (moveTable) moveTables[moveTablesN++] = MoveTable{MoveTable::Type::DoublePawnMoves, NOT_RELEVANT, moveTable};
+		moveTables[moveTablesN++] = MoveTable{MoveTable::Type::DoublePawnMoves, NOT_RELEVANT, moveTable};
 	}
 	else
 	{
 		auto singleMovedPawns = pawnsBitMask >>= 8;
 		auto moveTable = singleMovedPawns & (~opponentPieces);
-		if (moveTable) moveTables[moveTablesN++] = MoveTable{MoveTable::Type::SinglePawnMoves, NOT_RELEVANT, moveTable};
+		moveTables[moveTablesN++] = MoveTable{MoveTable::Type::SinglePawnMoves, NOT_RELEVANT, moveTable};
 
 		auto doubleMovedPawns = (moveTable >>= 8) & LINE_5;
 		moveTable = doubleMovedPawns & (~opponentPieces);
-		if (moveTable) moveTables[moveTablesN++] = MoveTable{MoveTable::Type::DoublePawnMoves, NOT_RELEVANT, moveTable};
+		moveTables[moveTablesN++] = MoveTable{MoveTable::Type::DoublePawnMoves, NOT_RELEVANT, moveTable};
 	}
 }
 
@@ -112,21 +106,21 @@ void MoveGeneratorV2::evaluatePawns(uint64_t pawnsBitMask, const uint64_t oppone
 	{
 		auto singleMovedPawns = (pawnsBitMask <<= 8) & (~opponentPieces);
 		auto moveTable = singleMovedPawns & checkBlockers;
-		if (moveTable) moveTables[moveTablesN++] = MoveTable{MoveTable::Type::SinglePawnMoves, NOT_RELEVANT, moveTable};
+		moveTables[moveTablesN++] = MoveTable{MoveTable::Type::SinglePawnMoves, NOT_RELEVANT, moveTable};
 
 		auto doubleMovedPawns = (singleMovedPawns <<= 8) & LINE_4;
 		moveTable = doubleMovedPawns & (~opponentPieces) & checkBlockers;
-		if (moveTable) moveTables[moveTablesN++] = MoveTable{MoveTable::Type::DoublePawnMoves, NOT_RELEVANT, moveTable};
+		moveTables[moveTablesN++] = MoveTable{MoveTable::Type::DoublePawnMoves, NOT_RELEVANT, moveTable};
 	}
 	else
 	{
 		auto singleMovedPawns = (pawnsBitMask >>= 8) & (~opponentPieces);
 		auto moveTable = singleMovedPawns & checkBlockers;
-		if (moveTable) moveTables[moveTablesN++] = MoveTable{MoveTable::Type::SinglePawnMoves, NOT_RELEVANT, moveTable};
+		moveTables[moveTablesN++] = MoveTable{MoveTable::Type::SinglePawnMoves, NOT_RELEVANT, moveTable};
 
 		auto doubleMovedPawns = (singleMovedPawns >>= 8) & LINE_5;
 		moveTable = doubleMovedPawns & (~opponentPieces) & checkBlockers;
-		if (moveTable) moveTables[moveTablesN++] = MoveTable{MoveTable::Type::DoublePawnMoves, NOT_RELEVANT, moveTable};
+		moveTables[moveTablesN++] = MoveTable{MoveTable::Type::DoublePawnMoves, NOT_RELEVANT, moveTable};
 	}
 }
 
@@ -138,21 +132,21 @@ void MoveGeneratorV2::evaluatePawnsBeatings(uint64_t pawnsToMoveToRightTop, uint
 	{
 		auto beatingsCandidates = ((NOT_H_COL & pawnsToMoveToLeftTop) << 9);
 		auto moveTable = beatingsCandidates & opponentPieces;
-		if (moveTable) moveTables[moveTablesN++] = MoveTable{MoveTable::Type::PawnBeatingsLeft, NOT_RELEVANT, moveTable};
+		moveTables[moveTablesN++] = MoveTable{MoveTable::Type::PawnBeatingsLeft, NOT_RELEVANT, moveTable};
 		
 		beatingsCandidates = ((NOT_A_COL & pawnsToMoveToRightTop) << 7);
 		moveTable = beatingsCandidates & opponentPieces;
-		if (moveTable) moveTables[moveTablesN++] = MoveTable{MoveTable::Type::PawnBeatingsRight, NOT_RELEVANT, moveTable};
+		moveTables[moveTablesN++] = MoveTable{MoveTable::Type::PawnBeatingsRight, NOT_RELEVANT, moveTable};
 	}
 	else
 	{
 		auto beatingsCandidates = ((NOT_H_COL & pawnsToMoveToRightTop) >> 7);
 		auto moveTable = beatingsCandidates & opponentPieces;
-		if (moveTable) moveTables[moveTablesN++] = MoveTable{MoveTable::Type::PawnBeatingsLeft, NOT_RELEVANT, moveTable};
+		moveTables[moveTablesN++] = MoveTable{MoveTable::Type::PawnBeatingsLeft, NOT_RELEVANT, moveTable};
 		
 		beatingsCandidates = ((NOT_A_COL & pawnsToMoveToLeftTop) >> 9);
 		moveTable = beatingsCandidates & opponentPieces;
-		if (moveTable) moveTables[moveTablesN++] = MoveTable{MoveTable::Type::PawnBeatingsRight, NOT_RELEVANT, moveTable};
+		moveTables[moveTablesN++] = MoveTable{MoveTable::Type::PawnBeatingsRight, NOT_RELEVANT, moveTable};
 	}
 }
 
@@ -235,83 +229,71 @@ void MoveGeneratorV2::evaluateEnPassant(uint64_t pawnsToMoveToRightTop, uint64_t
 
 void MoveGeneratorV2::evaluateRocks(uint64_t rocksBitMask, const uint64_t allOccupiedFields, const uint64_t forbidenFields)
 {
-    while (rocksBitMask)
+    for (; rocksBitMask; rocksBitMask = _blsr_u64(rocksBitMask))
     {
-        unsigned char piecePosition = 63 - __builtin_clzll(rocksBitMask);
+        unsigned char piecePosition = _tzcnt_u64(rocksBitMask);
 
         auto moveTable = rockBb.getAttacksFor(piecePosition, allOccupiedFields) & (~forbidenFields);
-		if (moveTable) moveTables[moveTablesN++] = MoveTable{MoveTable::Type::RockMoves, piecePosition, moveTable};
-
-        rocksBitMask ^= (1ull << piecePosition);
+		moveTables[moveTablesN++] = MoveTable{MoveTable::Type::RockMoves, piecePosition, moveTable};
     }
 }
 
 void MoveGeneratorV2::evaluatePinnedRocks(uint64_t rocksBitMask, const uint64_t allOccupiedFields, const uint64_t forbidenFields)
 {
-	while (rocksBitMask)
+    for (; rocksBitMask; rocksBitMask = _blsr_u64(rocksBitMask))
     {
-        unsigned char piecePosition = 63 - __builtin_clzll(rocksBitMask);
+        unsigned char piecePosition = _tzcnt_u64(rocksBitMask);
 
         auto moveTable = rockBb.getAttacksFor(piecePosition, allOccupiedFields) & (~forbidenFields) & PinnedRegister[piecePosition];
-		if (moveTable) moveTables[moveTablesN++] = MoveTable{MoveTable::Type::RockMoves, piecePosition, moveTable};
-
-        rocksBitMask ^= (1ull << piecePosition);
+		moveTables[moveTablesN++] = MoveTable{MoveTable::Type::RockMoves, piecePosition, moveTable};
     }
 }
 
 void MoveGeneratorV2::evaluateBishops(uint64_t bishopsBitMask, const uint64_t allOccupiedFields, const uint64_t forbidenFields)
 {
-    while (bishopsBitMask)
+    for (; bishopsBitMask; bishopsBitMask = _blsr_u64(bishopsBitMask))
     {
-        unsigned char piecePosition = 63 - __builtin_clzll(bishopsBitMask);
+        unsigned char piecePosition = _tzcnt_u64(bishopsBitMask);
 
         auto moveTable = bishopBb.getAttacksFor(piecePosition, allOccupiedFields) & (~forbidenFields);
-		if (moveTable) moveTables[moveTablesN++] = MoveTable{MoveTable::Type::BishopMoves, piecePosition, moveTable};
-
-        bishopsBitMask ^= (1ull << piecePosition);
+		moveTables[moveTablesN++] = MoveTable{MoveTable::Type::BishopMoves, piecePosition, moveTable};
     }
 }
 
 void MoveGeneratorV2::evaluatePinnedBishops(uint64_t bishopsBitMask, const uint64_t allOccupiedFields, const uint64_t forbidenFields)
 {
-    while (bishopsBitMask)
+    for (; bishopsBitMask; bishopsBitMask = _blsr_u64(bishopsBitMask))
     {
-        unsigned char piecePosition = 63 - __builtin_clzll(bishopsBitMask);
+        unsigned char piecePosition = _tzcnt_u64(bishopsBitMask);
 
         auto moveTable = bishopBb.getAttacksFor(piecePosition, allOccupiedFields) & (~forbidenFields) & PinnedRegister[piecePosition];
-		if (moveTable) moveTables[moveTablesN++] = MoveTable{MoveTable::Type::BishopMoves, piecePosition, moveTable};
-
-        bishopsBitMask ^= (1ull << piecePosition);
+		moveTables[moveTablesN++] = MoveTable{MoveTable::Type::BishopMoves, piecePosition, moveTable};
     }
 }
 
 void MoveGeneratorV2::evaluateQueen(uint64_t queensMask, const uint64_t allOccupiedFields, const uint64_t forbidenFields)
 {
-    while (queensMask)
+    for (; queensMask; queensMask = _blsr_u64(queensMask))
     {
-        unsigned char  piecePosition = 63 - __builtin_clzll(queensMask);
+        unsigned char  piecePosition = _tzcnt_u64(queensMask);
 
         uint64_t moveTable = (rockBb.getAttacksFor(piecePosition, allOccupiedFields)
                 | bishopBb.getAttacksFor(piecePosition, allOccupiedFields)) & (~forbidenFields);;
 
-		if (moveTable) moveTables[moveTablesN++] = {MoveTable::Type::QueenMoves, piecePosition, moveTable};
-
-        queensMask ^= (1ull << piecePosition);
+		moveTables[moveTablesN++] = {MoveTable::Type::QueenMoves, piecePosition, moveTable};
     }
 }
 
 void MoveGeneratorV2::evaluatePinnedQueen(uint64_t queensMask, const uint64_t allOccupiedFields, const uint64_t forbidenFields)
 {
-    while (queensMask)
+    for (; queensMask; queensMask = _blsr_u64(queensMask))
     {
-        unsigned char  piecePosition = 63 - __builtin_clzll(queensMask);
+        unsigned char  piecePosition = _tzcnt_u64(queensMask);
 
         uint64_t moveTable = (rockBb.getAttacksFor(piecePosition, allOccupiedFields)
                 | bishopBb.getAttacksFor(piecePosition, allOccupiedFields)) & (~forbidenFields) & PinnedRegister[piecePosition];;
 
-		if (moveTable) moveTables[moveTablesN++] = MoveTable{MoveTable::Type::QueenMoves, piecePosition, moveTable};
-
-        queensMask ^= (1ull << piecePosition);
+		moveTables[moveTablesN++] = MoveTable{MoveTable::Type::QueenMoves, piecePosition, moveTable};
     }
 }
 
@@ -371,7 +353,6 @@ void MoveGeneratorV2::evaluateCasles(const uint64_t allOccupiedFields)
 	        if (castleMask) moveTables[moveTablesN++] = MoveTable{MoveTable::Type::Castle, 60, castleMask};
 	    }
     }
-
 }
 
 void MoveGeneratorV2::calculateMoveTables()
@@ -381,6 +362,11 @@ void MoveGeneratorV2::calculateMoveTables()
     const auto oponentFields = getAllOccupiedPerColor(board, pieceColor+1);
     const auto allOccupiedFields = ownFields | oponentFields;
 
+    const auto forbidenForKing = ownFields
+            | getAllFieldsAttackedByPawns(board, pieceColor+1)
+            | getAllFieldsAttackedByKing(board, pieceColor+1)
+            | getAllFieldsAttackedByKnights(board, pieceColor+1);
+
     if (kingAttackersCount)
     {
     	if (kingAttackersCount == 1)
@@ -388,7 +374,7 @@ void MoveGeneratorV2::calculateMoveTables()
     		const auto forbidenFieldsKnight = ownFields | (~possibleBlockersMask);
     		const auto notPinnedKnights = board.piecesBitSets[static_cast<unsigned char>(pieceColor)].knightsMask & (~pinnedFields.allPinned);
         	evaluateKnights(notPinnedKnights, forbidenFieldsKnight);
-        	evaluateKing(ownFields);
+        	evaluateKing(forbidenForKing);
 
         	const auto pawns = board.piecesBitSets[static_cast<unsigned char>(pieceColor)].pawnsMask;
         	const auto pawnsToMoveVertically = pawns & (~(pinnedFields.allPinned ^ pinnedFields.verticallyPinned));
@@ -397,7 +383,7 @@ void MoveGeneratorV2::calculateMoveTables()
 	        const auto pawnsToMoveToRightTop = pawns & (~(pinnedFields.allPinned ^ pinnedFields.diagonallyPinnedFromLeftTop));
 	        const auto pawnsToMoveToLeftTop = pawns & (~(pinnedFields.allPinned ^ pinnedFields.diagonallyPinnedFromLeftBottom));
 
-            evaluatePawnsBeatings(pawnsToMoveToRightTop, pawnsToMoveToLeftTop, (oponentFields  & possibleBlockersMask));
+            evaluatePawnsBeatings(pawnsToMoveToRightTop, pawnsToMoveToLeftTop, (oponentFields & possibleBlockersMask));
         	evaluateEnPassant(pawnsToMoveToRightTop, pawnsToMoveToLeftTop);
 
 	        const auto rocks = board.piecesBitSets[static_cast<unsigned char>(pieceColor)].rocksMask;
@@ -419,7 +405,7 @@ void MoveGeneratorV2::calculateMoveTables()
     	}
     	else
     	{
-    		evaluateKing(ownFields);
+    		evaluateKing(forbidenForKing);
     		return;
     	}
     }
@@ -428,7 +414,7 @@ void MoveGeneratorV2::calculateMoveTables()
 		const auto pawns = board.piecesBitSets[static_cast<unsigned char>(pieceColor)].pawnsMask;
     	const auto notPinnedKnights = board.piecesBitSets[static_cast<unsigned char>(pieceColor)].knightsMask & (~pinnedFields.allPinned);
         evaluateKnights(notPinnedKnights, ownFields);
-        evaluateKing(ownFields);
+        evaluateKing(forbidenForKing);
 
         const auto pawnsToMoveVertically = pawns & (~(pinnedFields.allPinned ^ pinnedFields.verticallyPinned));
         evaluatePawns(pawnsToMoveVertically, allOccupiedFields);
@@ -504,23 +490,20 @@ void fillPawnBeatingsMoves(TBeatingVector& beatingMoves,
 	TNormalVector& normalMoves, uint64_t bitField, Board& board)
 {
 	auto destinationsNonPromotions = bitField & (~PROMOTION_LINE);
-	while (destinationsNonPromotions)
+    for (; destinationsNonPromotions; destinationsNonPromotions = _blsr_u64(destinationsNonPromotions))
 	{
-		unsigned char destination = 63 - __builtin_clzll(destinationsNonPromotions);
+		unsigned char destination = _tzcnt_u64(destinationsNonPromotions);
 		unsigned char source = destination + FromTargetToSourceDiff;
 
-		ExtendedMove m = createPawnBeatingMove<c>(board, source, destination);
-		beatingMoves.push_back(m);
-		destinationsNonPromotions ^= (1ull << destination);
+		beatingMoves.emplace_back( createPawnBeatingMove<c>(board, source, destination));
 	}
     auto destinationsPromotions = bitField & PROMOTION_LINE;
-	while (destinationsPromotions)
+    for (; destinationsPromotions; destinationsPromotions = _blsr_u64(destinationsPromotions))
 	{
-		unsigned char destination = 63 - __builtin_clzll(destinationsPromotions);
+		unsigned char destination = _tzcnt_u64(destinationsPromotions);
 		unsigned char source = destination + FromTargetToSourceDiff;
 
 		fillPawnBeatingPromotionMoves<c>(beatingMoves, normalMoves, board, source, destination);
-		destinationsPromotions ^= (1ull << destination);
 	}
 }
 
@@ -530,10 +513,9 @@ void fillPawnPromotions(TBeatingVector& beatingMoves, TNormalVector& normalMoves
     constexpr unsigned char pawn = NOTATION::PIECES::PAWN | static_cast<unsigned char>(c);
 	constexpr unsigned char c_bin = static_cast<unsigned char>(c);
 	constexpr unsigned char MASK = ExtendedMove::pawnMoveMask | ExtendedMove::promotionMask;
-
-	while (bitField)
+    for (; bitField; bitField = _blsr_u64(bitField))
 	{
-		unsigned char destination = 63 - __builtin_clzll(bitField);
+		unsigned char destination = _tzcnt_u64(bitField);
 		unsigned char source = destination + FromTargetToSourceDiff;
 
 		beatingMoves.emplace_back(source, destination, MASK, NOTATION::PIECES::QUEEN | c_bin, pawn, 0);
@@ -541,8 +523,6 @@ void fillPawnPromotions(TBeatingVector& beatingMoves, TNormalVector& normalMoves
 		normalMoves.emplace_back(source, destination, MASK, NOTATION::PIECES::BISHOP | c_bin, pawn, 0);
 		normalMoves.emplace_back(source, destination, MASK, NOTATION::PIECES::ROCK | c_bin, pawn, 0);
 		normalMoves.emplace_back(source, destination, MASK, NOTATION::PIECES::KNIGHT | c_bin, pawn, 0);
-
-		bitField ^= (1ull << destination);
 	}
 }
 
@@ -550,14 +530,11 @@ void fillRockBeating(TBeatingVector& beatingMoves, const Board& board, unsigned 
 {
 	constexpr unsigned char MASK = ExtendedMove::beatingMask | ExtendedMove::rockMoveMask;
 	const unsigned char sourcePiece = sourceFigure | static_cast<unsigned char>(c);
-
-    	while (validDestinations)
-		{
-			unsigned char destination = 63 - __builtin_clzll(validDestinations);
-    		ExtendedMove m = ExtendedMove(source, destination, MASK, 0, sourcePiece, board.getFieldForNonEmpty(destination, c+1));
-    		beatingMoves.push_back(m);
-    		validDestinations ^= (1ull << destination);
-		}
+    for (; validDestinations; validDestinations = _blsr_u64(validDestinations))
+    {
+        unsigned char destination = _tzcnt_u64(validDestinations);
+        beatingMoves.emplace_back(source, destination, MASK, 0, sourcePiece, board.getFieldForNonEmpty(destination, c+1));
+    }
 }
 
 void fillClassicBeating(TBeatingVector& beatingMoves, const Board& board, unsigned char sourceFigure, NOTATION::COLOR::color c, unsigned char source, uint64_t validDestinations)
@@ -565,18 +542,15 @@ void fillClassicBeating(TBeatingVector& beatingMoves, const Board& board, unsign
 	constexpr unsigned char MASK = ExtendedMove::beatingMask;
 	const unsigned char sourcePiece = sourceFigure | static_cast<unsigned char>(c);
 
-    	while (validDestinations)
-		{
-			unsigned char destination = 63 - __builtin_clzll(validDestinations);
-    		ExtendedMove m = ExtendedMove(source, destination, MASK, 0, sourcePiece, board.getFieldForNonEmpty(destination, c+1));
-    		beatingMoves.push_back(m);
-    		validDestinations ^= (1ull << destination);
-		}
+    for (; validDestinations; validDestinations = _blsr_u64(validDestinations))
+    {
+        unsigned char destination = _tzcnt_u64(validDestinations);
+        beatingMoves.emplace_back(source, destination, MASK, 0, sourcePiece, board.getFieldForNonEmpty(destination, c+1));
+    }
 }
 
 std::span<ExtendedMove> MoveGeneratorV2::generateBeatingMoves()
 {
-	beatingMoves.reserve(20);
 	const auto oponentFields = getAllOccupiedPerColor(board, pieceColor+1);
 
 	for (auto* mtPtr= moveTables; mtPtr != moveTables + moveTablesN; ++mtPtr)
@@ -588,12 +562,10 @@ std::span<ExtendedMove> MoveGeneratorV2::generateBeatingMoves()
         	const unsigned char king = NOTATION::PIECES::KING | static_cast<unsigned char>(pieceColor);
 
         	auto destinations = mt.bitField & oponentFields;
-        	while (destinations)
+            for (; destinations; destinations = _blsr_u64(destinations))
     		{
-    			unsigned char destination = 63 - __builtin_clzll(destinations);
-        		ExtendedMove m = ExtendedMove(mt.sourceField, destination, MASK, 0, king, board.getFieldForNonEmpty(destination, pieceColor+1));
-        		beatingMoves.push_back(m);
-        		destinations ^= (1ull << destination);
+    			unsigned char destination = _tzcnt_u64(destinations);
+        		beatingMoves.emplace_back(mt.sourceField, destination, MASK, 0, king, board.getFieldForNonEmpty(destination, pieceColor+1));
     		}
     		continue;
 		}
@@ -651,15 +623,12 @@ void fillPawn(TNormalVector& normalMoves, uint64_t destinations)
     constexpr unsigned char pawn = NOTATION::PIECES::PAWN | static_cast<unsigned char>(c);
 	constexpr unsigned char MASK = ExtendedMove::pawnMoveMask;
 
-	while (destinations)
-	{
-		unsigned char destination = 63 - __builtin_clzll(destinations);
+    for (; destinations; destinations = _blsr_u64(destinations))
+    {
+		unsigned char destination = _tzcnt_u64(destinations);
 		unsigned char source = destination + FromTargetToSourceDiff;
 
-    	ExtendedMove m = ExtendedMove(source, destination, MASK, 0, pawn, 0);
-		normalMoves.push_back(m);
-
-		destinations ^= (1ull << destination);
+		normalMoves.emplace_back(source, destination, MASK, 0, pawn, 0);
 	}
 }
 
@@ -669,61 +638,63 @@ void addCastling(TNormalVector& normalMoves, unsigned char source, unsigned char
     constexpr unsigned char MASK = ExtendedMove::kingMoveMask | ExtendedMove::castlingMask;
     constexpr unsigned char king = NOTATION::PIECES::KING | static_cast<unsigned char>(c);
 
-    ExtendedMove m = ExtendedMove(source, destination, MASK, 0, king, 0);
-    normalMoves.emplace_back(m);
+    normalMoves.emplace_back(source, destination, MASK, 0, king, 0);
 }
 
-void fillRockMove(TNormalVector& normalMoves, unsigned char sourceFigure, NOTATION::COLOR::color c, unsigned char source, uint64_t validDestinations)
+template<NOTATION::COLOR::color c>
+void fillRockMove(TNormalVector& normalMoves, unsigned char source, uint64_t validDestinations)
 {
-	const unsigned char sourcePiece = sourceFigure | static_cast<unsigned char>(c);
-
-	while (validDestinations)
-	{
-		unsigned char destination = 63 - __builtin_clzll(validDestinations);
-		ExtendedMove m = ExtendedMove(source, destination, ExtendedMove::rockMoveMask, 0, sourcePiece, 0);
-		normalMoves.push_back(m);
-		validDestinations ^= (1ull << destination);
+	constexpr unsigned char sourcePiece = NOTATION::PIECES::ROCK | static_cast<unsigned char>(c);
+    for (; validDestinations; validDestinations = _blsr_u64(validDestinations))
+    {
+		unsigned char destination = _tzcnt_u64(validDestinations);
+		normalMoves.emplace_back(source, destination, ExtendedMove::rockMoveMask, 0, sourcePiece, 0);
 	}
 }
 
-void fillNormalMove(TNormalVector& normalMoves, unsigned char sourceFigure, NOTATION::COLOR::color c, unsigned char source, uint64_t validDestinations)
+inline void fillNormalMove(TNormalVector& normalMoves, unsigned char sourceFigure, NOTATION::COLOR::color c, unsigned char source, uint64_t validDestinations)
 {
 	const unsigned char sourcePiece = sourceFigure | static_cast<unsigned char>(c);
-
-	while (validDestinations)
+    for (; validDestinations; validDestinations = _blsr_u64(validDestinations))
 	{
-		unsigned char destination = 63 - __builtin_clzll(validDestinations);
-		ExtendedMove m = ExtendedMove(source, destination, 0, 0, sourcePiece, 0);
-		normalMoves.push_back(m);
-		validDestinations ^= (1ull << destination);
+		unsigned char destination = _tzcnt_u64(validDestinations);
+		normalMoves.emplace_back(source, destination, 0, 0, sourcePiece, 0);
 	}
 }
 
 std::span<ExtendedMove> MoveGeneratorV2::generateNonBeatingMoves()
 {
+    if (pieceColor == NOTATION::COLOR::color::white)
+    {
+        return generateNonBeatingMovesImpl<NOTATION::COLOR::color::white>();
+    }
+    return generateNonBeatingMovesImpl<NOTATION::COLOR::color::black>();
+}
+
+template<NOTATION::COLOR::color TColor>
+std::span<ExtendedMove> MoveGeneratorV2::generateNonBeatingMovesImpl()
+{
 	const auto emptyFields = ~getAllOccupiedFields(board);
 
 	for (auto* mtPtr= moveTables; mtPtr != moveTables + moveTablesN; ++mtPtr)
 	{
-		const auto mt = *mtPtr;
+		const auto& mt = *mtPtr;
 		if (mt.type == MoveTable::Type::KingMoves)
 		{
         	constexpr unsigned char MASK = ExtendedMove::kingMoveMask;
-        	const unsigned char king = NOTATION::PIECES::KING | static_cast<unsigned char>(pieceColor);
+            constexpr unsigned char king = NOTATION::PIECES::KING | static_cast<unsigned char>(TColor);
 
         	auto destinations = mt.bitField & emptyFields;
-        	while (destinations)
+            for (; destinations; destinations = _blsr_u64(destinations))
     		{
-    			unsigned char destination = 63 - __builtin_clzll(destinations);
-        		ExtendedMove m = ExtendedMove(mt.sourceField, destination, MASK, 0, king, 0);
-        		normalMoves.push_back(m);
-        		destinations ^= (1ull << destination);
+    			unsigned char destination = _tzcnt_u64(destinations);
+        		normalMoves.emplace_back(mt.sourceField, destination, MASK, 0, king, 0);
     		}
     		continue;
 		}
 		if (mt.type == MoveTable::Type::SinglePawnMoves)  // nonPromotions
 		{
-			if (pieceColor == NOTATION::COLOR::color::white)
+			if constexpr (TColor == NOTATION::COLOR::color::white)
 			{
 				fillPawn<NOTATION::COLOR::color::white, -8>(normalMoves, mt.bitField & 0x00'FF'FF'FF'FF'FF'FF'FFull);
 			}
@@ -735,7 +706,7 @@ std::span<ExtendedMove> MoveGeneratorV2::generateNonBeatingMoves()
 		}
 		if (mt.type == MoveTable::Type::DoublePawnMoves)  // nonPromotions
 		{
-			if (pieceColor == NOTATION::COLOR::color::white)
+			if constexpr (TColor == NOTATION::COLOR::color::white)
 			{
 				fillPawn<NOTATION::COLOR::color::white, -16>(normalMoves, mt.bitField);
 			}
@@ -747,7 +718,7 @@ std::span<ExtendedMove> MoveGeneratorV2::generateNonBeatingMoves()
 		}
 		if (mt.type == MoveTable::Type::Castle)
 		{
-			if (pieceColor == NOTATION::COLOR::color::white)
+			if constexpr (TColor == NOTATION::COLOR::color::white)
 			{
 				if (mt.bitField & (1ull << 2))
 				{
@@ -773,15 +744,14 @@ std::span<ExtendedMove> MoveGeneratorV2::generateNonBeatingMoves()
 		}
 		if (mt.type == MoveTable::Type::RockMoves)
 		{
-			fillRockMove(normalMoves, static_cast<unsigned char>(mt.type), pieceColor, mt.sourceField, mt.bitField & emptyFields);
+			fillRockMove<TColor>(normalMoves, mt.sourceField, mt.bitField & emptyFields);
 		}
 		if ((mt.type == MoveTable::Type::KnightMoves) | (mt.type == MoveTable::Type::BishopMoves) | (mt.type == MoveTable::Type::QueenMoves)) 
 		{
-			fillNormalMove(normalMoves, static_cast<unsigned char>(mt.type), pieceColor, mt.sourceField, mt.bitField & emptyFields);
+			fillNormalMove(normalMoves, static_cast<unsigned char>(mt.type), TColor, mt.sourceField, mt.bitField & emptyFields);
 		}
 	}
 	return normalMoves;
 }
-
 
 }  // namespace MoveGenerator

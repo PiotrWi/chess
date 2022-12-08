@@ -9,9 +9,14 @@ namespace CheckChecker
 
 unsigned char findKing(const Board& board, const NOTATION::COLOR::color c) noexcept;
 
+bool isAttackedBySliders(const Board& board,
+                                 NOTATION::COLOR::color playerColor,
+                                 unsigned char field) noexcept;
+
 bool isAttackedOn(const Board& board,
 		NOTATION::COLOR::color playerColor,
 		unsigned char field) noexcept;
+
 bool isCheckOn(const Board& board,
 		const NOTATION::COLOR::color kingColor) noexcept;
 
@@ -32,8 +37,8 @@ struct AttackOut
         Moving any not pined piece (other than king obviouslu) to this field removed a check.
     */
     uint64_t possibleBlockersMask = 0ull;
-
 };
+
 AttackOut isCheckedBeforeMoveExtendeded(const Board& board,
         NOTATION::COLOR::color playerColor,
         unsigned char fieldPosition) noexcept;

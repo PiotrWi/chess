@@ -1,7 +1,6 @@
 #include "CheckChecker.hpp"
 
 #include <algorithm>
-#include <array>
 #include <publicIf/Board.hpp>
 #include <publicIf/NotationConversions.hpp>
 
@@ -11,29 +10,42 @@
 namespace CheckChecker
 {
 
+bool isAttackedBySliders(const Board& board,
+                                 NOTATION::COLOR::color playerColor,
+                                 unsigned char field) noexcept
+{
+    auto oppositeColorNum = static_cast<unsigned char>(playerColor + 1);
+
+    auto allPieces = getAllOccupiedFields(board);
+
+    auto OppositeQueenAndRock =
+            board.piecesBitSets[oppositeColorNum].queensMask
+            | board.piecesBitSets[oppositeColorNum].rocksMask;
+
+    uint64_t rockOrQueenAttackers = rockBb.getAttacksFor(field, allPieces) & OppositeQueenAndRock;
+
+    auto OppositeQueenAndBishop =
+            board.piecesBitSets[oppositeColorNum].queensMask
+            | board.piecesBitSets[oppositeColorNum].bishopsMask;
+    uint64_t bishopOrQueenAttackers = bishopBb.getAttacksFor(field, allPieces) & OppositeQueenAndBishop;
+
+    return rockOrQueenAttackers | bishopOrQueenAttackers;
+}
+
 bool isAttackedOn(const Board& board,
 		NOTATION::COLOR::color playerColor,
 		unsigned char fieldPosition) noexcept
 {
-    const auto& lookup = bitBoardLookup[fieldPosition];
-
     auto oppositeColorNum = static_cast<unsigned char>(playerColor + 1);
     auto allOppositePawns = board.piecesBitSets[oppositeColorNum].pawnsMask;
-    uint64_t attackingPawn;
-    if (playerColor == NOTATION::COLOR::color::white)
-    {
-        attackingPawn = lookup.OppositePawnsAttackingFieldForWhite & allOppositePawns;
-    }
-    else
-    {
-        attackingPawn = lookup.OppositePawnsAttackingFieldForBlack & allOppositePawns;
-    }
-
-    auto allOppositeKnights = board.piecesBitSets[oppositeColorNum].knightsMask;
-    auto attackingKnights = allOppositeKnights & lookup.knightsMovePossibilities;
+    auto attackingPawn = allOppositePawns & getPawnAttacks(playerColor, fieldPosition);
+    const auto& lookup = bitBoardLookup[fieldPosition];
 
     auto oppositeKing = board.piecesBitSets[oppositeColorNum].kingsMask;
     auto attackingKings = oppositeKing & lookup.kingMovePossibilities;
+
+    auto allOppositeKnights = board.piecesBitSets[oppositeColorNum].knightsMask;
+    auto attackingKnights = allOppositeKnights & lookup.knightsMovePossibilities;
 
     auto allPieces = getAllOccupiedFields(board);
 
@@ -55,21 +67,13 @@ AttackOut isCheckedBeforeMoveExtendeded(const Board& board,
         NOTATION::COLOR::color playerColor,
         unsigned char fieldPosition) noexcept
 {
-    const auto& lookup = bitBoardLookup[fieldPosition];
     AttackOut out;
 
     auto oppositeColorNum = static_cast<unsigned char>(playerColor + 1);
     auto allOppositePawns = board.piecesBitSets[oppositeColorNum].pawnsMask;
-    uint64_t attackingPawn;
-    if (playerColor == NOTATION::COLOR::color::white)
-    {
-        attackingPawn = lookup.OppositePawnsAttackingFieldForWhite & allOppositePawns;
-    }
-    else
-    {
-        attackingPawn = lookup.OppositePawnsAttackingFieldForBlack & allOppositePawns;
-    }
+    auto attackingPawn = allOppositePawns & getPawnAttacks(playerColor, fieldPosition);
 
+    const auto& lookup = bitBoardLookup[fieldPosition];
     auto allOppositeKnights = board.piecesBitSets[oppositeColorNum].knightsMask;
     auto attackingKnights = allOppositeKnights & lookup.knightsMovePossibilities;
 
@@ -82,7 +86,7 @@ AttackOut isCheckedBeforeMoveExtendeded(const Board& board,
     uint64_t rockOrQueenAttackers = lineAttacksFromField & OppositeQueenAndRock;
     if (rockOrQueenAttackers)
     {
-        auto attackerField = 63 - __builtin_clzll(rockOrQueenAttackers);
+        auto attackerField = _tzcnt_u64(rockOrQueenAttackers);
         uint64_t attackersBBs = rockBb.getAttacksFor(attackerField, allPieces);
         out.possibleBlockersMask |= lineAttacksFromField & attackersBBs;
     }
@@ -94,7 +98,7 @@ AttackOut isCheckedBeforeMoveExtendeded(const Board& board,
     uint64_t bishopOrQueenAttackers = diagonalAttacksFromField & OppositeQueenAndBishop;
     if (bishopOrQueenAttackers)
     {
-        auto attackerField = 63 - __builtin_clzll(bishopOrQueenAttackers);
+        auto attackerField = _tzcnt_u64(bishopOrQueenAttackers);
         uint64_t attackersBBs = bishopBb.getAttacksFor(attackerField, allPieces);
         out.possibleBlockersMask |= diagonalAttacksFromField & attackersBBs;
     }
@@ -109,12 +113,12 @@ AttackOut isCheckedBeforeMoveExtendeded(const Board& board,
 
 unsigned char findKing(const Board& board, const NOTATION::COLOR::color c) noexcept
 {
-    return 63 - __builtin_clzll(board.piecesBitSets[static_cast<unsigned char>(c)].kingsMask);
+    return _tzcnt_u64(board.piecesBitSets[static_cast<unsigned char>(c)].kingsMask);
 }
 
 bool isCheckOn(const Board& board, const NOTATION::COLOR::color c) noexcept
 {
-    unsigned char kingPos = 63 - __builtin_clzll(board.piecesBitSets[static_cast<unsigned char>(c)].kingsMask);
+    unsigned char kingPos = _tzcnt_u64(board.piecesBitSets[static_cast<unsigned char>(c)].kingsMask);
 
     return isAttackedOn(board, c, kingPos);
 }

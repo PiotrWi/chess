@@ -29,6 +29,8 @@ public:
     std::span<ExtendedMove> generateNonBeatingMoves();
 
 private:
+    template<NOTATION::COLOR::color TColor>
+    std::span<ExtendedMove> generateNonBeatingMovesImpl();
     void initialize();
     void calculateMoveTables();
     void calculateMoveCount();
@@ -49,7 +51,7 @@ private:
 private:
     Board board;
 
-    const NOTATION::COLOR::color pieceColor;
+    NOTATION::COLOR::color pieceColor;
     unsigned char kingPosition;
     unsigned char kingAttackersCount;
     uint64_t possibleBlockersMask;

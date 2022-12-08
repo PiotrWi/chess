@@ -30,7 +30,7 @@ private:
 public:
 	using value_type = T;
 
-	PoolAllocator() noexcept {};
+	PoolAllocator() noexcept = default;
 
 	T* allocate()
 	{

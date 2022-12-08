@@ -37,6 +37,7 @@ public:
     MoveGenerator::MoveGeneratorV2 getMoveGeneratorV2(const NOTATION::COLOR::color c) const;
 
     Board board;
+    ExtendedMove lastMove = {};
     ResultEvaluator resultEvaluator;
     uint64_t hash_ = 0lu;
 };

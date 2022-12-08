@@ -2,7 +2,6 @@
 #include <UciApplication/CommandParser.hpp>
 
 #include <iostream>
-#include <cstring>
 
 namespace
 {

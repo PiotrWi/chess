@@ -24,7 +24,7 @@ static void PerformanceTest_MoveGeneratorV2(benchmark::State& state)
             MoveGenerator::MoveGeneratorV2 sut(board, NOTATION::COLOR::color::white);
             benchmark::DoNotOptimize(sut.getValidMoveCount());
             benchmark::DoNotOptimize(sut.generateBeatingMoves());
-
+            benchmark::DoNotOptimize(sut.generateNonBeatingMoves());
             benchmark::ClobberMemory();
         }
     }

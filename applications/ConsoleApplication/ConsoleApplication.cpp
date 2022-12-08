@@ -6,10 +6,6 @@
 
 #include <notations/coordinationnotation.hpp>
 
-ConsoleApplication::ConsoleApplication()
-    {}
-
-
 void ConsoleApplication::setWhitePlayer(std::unique_ptr<IPlayer>&& player)
 {
     whitePlayer_ = std::move(player);

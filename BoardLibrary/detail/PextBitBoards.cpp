@@ -94,7 +94,7 @@ BishopPextBB::BishopPextBB()
                 {
                     blockers |= (1ull << bitIndexes[k]);
                 }
-            };
+            }
             auto currentAttacks = evaluateDiagonalAttacks(blockers, i);
             auto key = _pext_u64(blockers, lookup[i].relevantBlockers);
             lookup[i].attacks[key] = currentAttacks;
@@ -191,7 +191,7 @@ RockPextBB::RockPextBB()
                 {
                     blockers |= (1ull << bitIndexes[k]);
                 }
-            };
+            }
             auto currentAttacks = evaluateLineAttacks(blockers, i);
             auto key = _pext_u64(blockers, lookup[i].relevantBlockers);
             lookup[i].attacks[key] = currentAttacks;

@@ -61,17 +61,7 @@ int quiescenceSearch(BoardEngine& be,
     }
     auto mg = be.getMoveGeneratorV2(be.board.playerOnMove);
     auto validMoves = mg.getValidMoveCount();
-
-    auto moves = mg.generateBeatingMoves();
-    auto orderedMoves = OnlyBeatingMoves(std::move(moves));
-    // auto orderedMoves = OnlyBeatingMovesSeeVersion(std::move(moves), be.board);
-
-    auto stablePosition = orderedMoves.size() == 0;
-    if (stablePosition)
-    {
-        return cachedEngine.getEvaluationValue(be, validMoves) ;
-    }
-
+    
     int stand_pat = evaluatePosition(be, cachedEngine, validMoves);
     if( stand_pat >= beta )
         return beta;
@@ -79,11 +69,18 @@ int quiescenceSearch(BoardEngine& be,
         alfa = stand_pat;
 
     auto memorial = be.getMemorial();
-    auto nextAlfa = -1000000;
+    int nextAlfa;
 
-    for (auto i = 0u; i < orderedMoves.size(); ++i)
+    auto moves = mg.generateBeatingMoves();
+    // auto orderedMoves = OnlyBeatingMoves(std::move(moves), be.lastMove);
+    auto orderedMoves = OnlyBeatingMovesSeeVersion(std::move(moves), be.board, be.lastMove, alfa-stand_pat);
+
+    // for (auto i = 0u; i < orderedMoves.size(); ++i)
+    while (auto moveOpt = orderedMoves.get())
     {
-        auto move = orderedMoves.get();
+        // auto move = orderedMoves.get();
+        const auto& move = *moveOpt;
+
         be.applyMove(move);
         nextAlfa = -quiescenceSearch(be, cachedEngine, depth - 1, -beta, -alfa);
         be.undoMove(memorial);
@@ -96,6 +93,7 @@ int quiescenceSearch(BoardEngine& be,
             alfa = nextAlfa;
         }
     }
+
     return alfa;
 }
 
@@ -143,20 +141,20 @@ int evaluateMax(BoardEngine& be,
                 return alfa;
             alfa = std::max(alfa, cache->previousEvaluations[i].lowerValue);
             beta = std::min(beta, cache->previousEvaluations[i].higherValue);
-            break;
         }
     }
 
     auto memorial = be.getMemorial();
     ExtendedMove greatestMove;
-    auto nextAlfa = -1000000;
+    int nextAlfa;
     auto pvFound = false;
 
     auto orderedMoves = PreorderedMoves(
             be.board.playerOnMove,
             cache,
             depth,
-            mg);
+            mg
+            );
     while (auto moveOpt = orderedMoves.get())
     {
         const auto& move = *moveOpt;

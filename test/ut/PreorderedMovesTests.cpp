@@ -2,11 +2,9 @@
 #include <gmock/gmock.h>
 
 #include <vector>
-#include <random>
 
 #include <common/searchingAlgorithms/MoveOrdering.hpp>
 #include <utils/BoardGenerationUtils.hpp>
-#include <notations/coordinationnotation.hpp>
 #include <notations/LongAlgebraicNotation.hpp>
 
 namespace
@@ -26,12 +24,6 @@ std::vector<ExtendedMove> map(const char* (&&in)[N], NOTATION::COLOR::color c, c
         moves.emplace_back(notations::long_algebraic::createExtendedMove(in[i], c, board));
     }
     return moves;
-}
-
-template <typename T>
-T noMove(T t)
-{
-	return t;
 }
 
 std::vector<ExtendedMove> consume_n(PreorderedMoves& pm, int n)

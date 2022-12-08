@@ -1,7 +1,7 @@
 #include "sse.hpp"
 
 template<NOTATION::COLOR::color playerColor>
-int seeImpl(Board& board, unsigned char field, unsigned char pieceOnField);
+auto seeImpl(Board& board, unsigned char field, unsigned char pieceOnField) -> int;
 
 int see(ExtendedMove& move, Board board, NOTATION::COLOR::color playerColor)
 {
@@ -22,28 +22,10 @@ int see(ExtendedMove& move, Board board, NOTATION::COLOR::color playerColor)
 }
 
 template<NOTATION::COLOR::color playerColor>
-uint64_t getPawnsAttackingFields(const BitBoardsConstants& lookup);
-
-template<>
-uint64_t getPawnsAttackingFields<NOTATION::COLOR::color::black>(const BitBoardsConstants& lookup)
+auto seeImpl(Board& board, unsigned char field, unsigned char pieceOnField) -> int
 {
-    return lookup.OppositePawnsAttackingFieldForWhite;
-}
-
-template<>
-uint64_t getPawnsAttackingFields<NOTATION::COLOR::color::white>(const BitBoardsConstants& lookup)
-{
-    return lookup.OppositePawnsAttackingFieldForBlack;
-}
-
-
-template<NOTATION::COLOR::color playerColor>
-int seeImpl(Board& board, unsigned char field, unsigned char pieceOnField)
-{
-    const auto& lookup = bitBoardLookup[field];
-
     const auto& allPawns = board.piecesBitSets[static_cast<unsigned char>(playerColor)].pawnsMask;
-    const auto& pawnsAttacking = allPawns & getPawnsAttackingFields<playerColor>(lookup);
+    const auto& pawnsAttacking = allPawns & getPawnAttacks(playerColor+1, field);  // It is simetrical.
     if (pawnsAttacking)
     {
         constexpr unsigned char pawnOnMove = NOTATION::PIECES::PAWN | static_cast<unsigned char>(playerColor);
@@ -51,6 +33,7 @@ int seeImpl(Board& board, unsigned char field, unsigned char pieceOnField)
         return std::max(0, PiecesValuesTable[pieceOnField] - seeImpl<NotationConversions::switchColor(playerColor)>(board, field, pawnOnMove));
     }
 
+    const auto& lookup = bitBoardLookup[field];
     const auto& attackingKnights = board.piecesBitSets[static_cast<unsigned char>(playerColor)].knightsMask
         & lookup.knightsMovePossibilities;
     if (attackingKnights)

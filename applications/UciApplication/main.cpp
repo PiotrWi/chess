@@ -38,7 +38,7 @@ struct CommandVisitor
         eventPropagator.enqueue(q);
         isDone_ = true;
     }
-    bool isDone()
+    bool isDone() const
     {
         return isDone_;
     }

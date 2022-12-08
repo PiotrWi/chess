@@ -33,7 +33,7 @@ public:
         auto eventId = TEvent::ID;
 
         auto fcnWrapper = [fcn](EVENT& ev){
-            TEvent& concreteEv = dynamic_cast<TEvent&>(ev);
+            auto& concreteEv = dynamic_cast<TEvent&>(ev);
             fcn(concreteEv);
         };
 

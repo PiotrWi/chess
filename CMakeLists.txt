@@ -18,10 +18,10 @@ project(chess LANGUAGES CXX)
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     add_definitions(-DASSERTSON)
     add_definitions(-DUSE_PEXT)
-    SET(CMAKE_CXX_FLAGS  "-Og -g -Wall -Wextra -Werror -std=c++20 -mbmi2 -fuse-ld=gold -lrt")
+    SET(CMAKE_CXX_FLAGS  "-Og -g -Wall -Wextra -Werror -std=c++20 -mbmi2 -mavx -march=haswell -fuse-ld=gold -lrt")
 else()
     add_definitions(-DUSE_PEXT)
-    SET(CMAKE_CXX_FLAGS  "-Ofast -Wall -Wextra -Werror -std=c++20 -mbmi2 -flto -fuse-ld=gold -m64 -lrt")
+    SET(CMAKE_CXX_FLAGS  "-Ofast -Wall -Wextra -Werror -std=c++20 -mbmi2 -mavx -march=haswell -msse4.1 -flto -fuse-ld=gold -m64 -lrt")
 endif()
 
 # end of section flags

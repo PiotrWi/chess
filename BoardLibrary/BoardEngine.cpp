@@ -120,6 +120,7 @@ auto oldBoard = board;
         }
     }
 #endif
+    lastMove = move;
 }
 
 MoveApplier::SimpleMoveMemorial BoardEngine::applyUndoableSimpleMove(const ExtendedMove& move)

@@ -1,15 +1,12 @@
 #pragma once
 
 #include <array>
+#include <detail//BitBoardsUtils.h>
 #include <cstdint>
 #include <vector>
 
 #include <immintrin.h>
 
-constexpr uint64_t NOT_H_COL = 0x7f'7f'7f'7f'7f'7f'7f'7full;
-constexpr uint64_t NOT_HG_COL = 0x3f'3f'3f'3f'3f'3f'3f'3full;
-constexpr uint64_t NOT_A_COL = 0xfe'fe'fe'fe'fe'fe'fe'feull;
-constexpr uint64_t NOT_AB_COL = 0xfc'fc'fc'fc'fc'fc'fc'fcull;
 
 constexpr uint64_t onlyLeftFrom[8] =
 {
@@ -49,8 +46,6 @@ constexpr uint64_t ranks[8] =
 
 struct BitBoardsConstants
 {
-    uint64_t OppositePawnsAttackingFieldForWhite;
-    uint64_t OppositePawnsAttackingFieldForBlack;
     uint64_t knightsMovePossibilities;
     uint64_t kingMovePossibilities;
     uint64_t topRay;
@@ -62,23 +57,6 @@ struct BitBoardsConstants
     uint64_t bottomLeft;
     uint64_t bottomRight;
 };
-
-inline uint64_t verticalRevelancyMask = 0x7E'7E'7E'7E'7E'7E'7E'7E;
-inline uint64_t horizontalRevelancyMask = 0x00'FF'FF'FF'FF'FF'FF'00;
-
-
-
-constexpr uint64_t getOppositePawnsAttackingFieldForWhite(uint64_t fieldBitMask)
-{
-    return (NOT_A_COL & fieldBitMask) << 7
-        | (NOT_H_COL & fieldBitMask) << 9;
-}
-
-constexpr uint64_t getOppositePawnsAttackingFieldForBlack(uint64_t fieldBitMask)
-{
-    return (NOT_A_COL & fieldBitMask) >> 9
-        | (NOT_H_COL & fieldBitMask) >> 7;
-}
 
 constexpr uint64_t getknightsMovePossibilities(uint64_t fieldBitMask)
 {
@@ -188,8 +166,6 @@ constexpr std::array<BitBoardsConstants, 64> createLookups()
     for (unsigned int field = 0; field < 64; ++field)
     {
         uint64_t fieldBitMask = (1ull << field);
-        lookups[field].OppositePawnsAttackingFieldForWhite = getOppositePawnsAttackingFieldForWhite(fieldBitMask);
-        lookups[field].OppositePawnsAttackingFieldForBlack = getOppositePawnsAttackingFieldForBlack(fieldBitMask);
 
         lookups[field].knightsMovePossibilities = getknightsMovePossibilities(fieldBitMask);
         lookups[field].kingMovePossibilities = getKingMovePossibilities(fieldBitMask);
@@ -208,8 +184,6 @@ constexpr std::array<BitBoardsConstants, 64> createLookups()
 }
 
 std::vector<unsigned> extractSetBitIndexes(uint64_t in);
-
-
 
 uint64_t evaluateLineAttacks(uint64_t blockers, unsigned piecePosition);
 uint64_t evaluateDiagonalAttacks(uint64_t blockers, unsigned piecePosition);
