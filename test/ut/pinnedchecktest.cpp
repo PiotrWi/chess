@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include <detail/PinnedMovesChecker.hpp>
+#include "PositionAnalyzers/PinnedMovesChecker.hpp"
 #include <utils/BoardGenerationUtils.hpp>
 #include <publicIf/NotationConversions.hpp>
 

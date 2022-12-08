@@ -5,8 +5,8 @@ add_library(BoardLibrary
     BoardEngine.cpp
     detail/Board.cpp
     detail/BoardIO.cpp
-    detail/CheckChecker.hpp
-    detail/CheckChecker.cpp
+        PositionAnalyzers/CheckChecker.hpp
+        PositionAnalyzers/CheckChecker.cpp
     detail/MoveValidator.hpp
     detail/MoveValidator.cpp
     detail/NotationConversions.cpp
@@ -14,9 +14,9 @@ add_library(BoardLibrary
     detail/ResultEvaluator.cpp
     detail/MoveApplier.hpp
     detail/MoveApplier.cpp
-    detail/PinnedMovesChecker.hpp
+        PositionAnalyzers/PinnedMovesChecker.hpp
     detail/bitboardslookups.hpp
-    detail/see.cpp
+        PositionAnalyzers/see.cpp
     publicIf/Notation.hpp
     publicIf/Result.hpp
     publicIf/Board.hpp

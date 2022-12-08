@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <vector>
 
-#include <detail/CheckChecker.hpp>
+#include "PositionAnalyzers/CheckChecker.hpp"
 #include <MoveGeneratorV2/MoveGeneratorV2.hpp>
 #include <publicIf/Notation.hpp>
 

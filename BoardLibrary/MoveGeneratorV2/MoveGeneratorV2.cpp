@@ -2,8 +2,8 @@
 
 #include <numeric>
 
-#include <detail/CheckChecker.hpp>
-#include <detail/PinnedMovesChecker.hpp>
+#include "PositionAnalyzers/CheckChecker.hpp"
+#include "PositionAnalyzers/PinnedMovesChecker.hpp"
 
 namespace MoveGenerator
 {
@@ -17,19 +17,22 @@ MoveGeneratorV2::MoveGeneratorV2(const Board& board, const NOTATION::COLOR::colo
 
 unsigned MoveGeneratorV2::getValidMoveCount(NotCheckedTag)
 {
-	kingPosition = CheckChecker::findKing(board, pieceColor);
-	kingAttackersCount = 0;
-	calculateMoveTables();
-	calculateMoveCount();
-	return moveCount;
+    kingPosition = CheckChecker::findKing(board, pieceColor);
+    kingAttackersCount = 0;
+    possibleBlockersMask = 0;
+    fieldsSeenByOpponent = getFieldsSeenByOpponent(board, pieceColor, kingPosition);
+    calculateMoveTables();
+    calculateMoveCount();
+    return moveCount;
 }
 
 unsigned MoveGeneratorV2::getValidMoveCount()
 {
 	kingPosition = CheckChecker::findKing(board, pieceColor);
-	auto out = CheckChecker::isCheckedBeforeMoveExtendeded(board, pieceColor, kingPosition);
-	kingAttackersCount = out.attackersNum;
+	auto out = analyzePosition(board, pieceColor, kingPosition);
+	kingAttackersCount = out.kingAttackersNum;
 	possibleBlockersMask = out.possibleBlockersMask;
+    fieldsSeenByOpponent = out.fieldsSeenByOpponent;
 	calculateMoveTables();
 	calculateMoveCount();
 	return moveCount;
@@ -48,24 +51,8 @@ void MoveGeneratorV2::evaluateKnights(uint64_t knightsBitMask, const uint64_t fo
 void MoveGeneratorV2::evaluateKing(const uint64_t forbidenFields)
 {
     auto pseudoPossibleMovesTable = bitBoardLookup[kingPosition].kingMovePossibilities & ~forbidenFields;
-    uint64_t possibleMovesTable = 0ull;
 
-    // check if king is checked after king move
-    {
-	    board.piecesBitSets[(int)pieceColor].kingsMask ^= (1ull << kingPosition);
-        for (; pseudoPossibleMovesTable; pseudoPossibleMovesTable = _blsr_u64(pseudoPossibleMovesTable))
-	    {
-	    	unsigned char kingDestinationIndex = _tzcnt_u64(pseudoPossibleMovesTable);
-	        auto kingDestinationBitMask = 1ull << kingDestinationIndex;
-
-	        if (not CheckChecker::isAttackedBySliders(board, pieceColor, kingDestinationIndex))
-	        {
-	        	possibleMovesTable |= kingDestinationBitMask;
-	        }
-	    }
-		board.piecesBitSets[(int)pieceColor].kingsMask ^= (1ull << kingPosition);
-	}
-    if (possibleMovesTable) moveTables[moveTablesN++] = MoveTable{MoveTable::Type::KingMoves, kingPosition, possibleMovesTable};
+    if (pseudoPossibleMovesTable) moveTables[moveTablesN++] = MoveTable{MoveTable::Type::KingMoves, kingPosition, pseudoPossibleMovesTable};
 }
 
 void MoveGeneratorV2::evaluatePawns(uint64_t pawnsBitMask, const uint64_t opponentPieces)
@@ -312,7 +299,7 @@ void MoveGeneratorV2::evaluateCasles(const uint64_t allOccupiedFields)
 	            && ! CheckChecker::isAttackedOn(board, NOTATION::COLOR::color::white, 3)
 	            && ! CheckChecker::isAttackedOn(board, NOTATION::COLOR::color::white, 2))
 	        {
-	        	castleMask |=  (1ull << 2);
+	        	castleMask |= (1ull << 2);
 	        }
 
 	        if (board.castlingRights & WHITE_SHORT_BIT
@@ -323,7 +310,7 @@ void MoveGeneratorV2::evaluateCasles(const uint64_t allOccupiedFields)
 	        {
 	            castleMask |=  (1ull << 6);
 	        }
-       		if (castleMask) moveTables[moveTablesN++] = MoveTable{MoveTable::Type::Castle, 4, castleMask};
+       		moveTables[moveTablesN++] = MoveTable{MoveTable::Type::Castle, 4, castleMask};
 	    }
     }
     else
@@ -350,7 +337,7 @@ void MoveGeneratorV2::evaluateCasles(const uint64_t allOccupiedFields)
 	        {
 	            castleMask |=  (1ull << 62);
 	        }
-	        if (castleMask) moveTables[moveTablesN++] = MoveTable{MoveTable::Type::Castle, 60, castleMask};
+	        moveTables[moveTablesN++] = MoveTable{MoveTable::Type::Castle, 60, castleMask};
 	    }
     }
 }
@@ -359,13 +346,10 @@ void MoveGeneratorV2::calculateMoveTables()
 {
     const auto pinnedFields = findPinned(board, pieceColor, kingPosition);
     const auto ownFields = getAllOccupiedPerColor(board, pieceColor);
-    const auto oponentFields = getAllOccupiedPerColor(board, pieceColor+1);
+    oponentFields = getAllOccupiedPerColor(board, pieceColor+1);
     const auto allOccupiedFields = ownFields | oponentFields;
 
-    const auto forbidenForKing = ownFields
-            | getAllFieldsAttackedByPawns(board, pieceColor+1)
-            | getAllFieldsAttackedByKing(board, pieceColor+1)
-            | getAllFieldsAttackedByKnights(board, pieceColor+1);
+    const auto forbidenForKing = ownFields | fieldsSeenByOpponent;
 
     if (kingAttackersCount)
     {
@@ -454,7 +438,7 @@ void MoveGeneratorV2::calculateMoveCount()
 }
 
 template <NOTATION::COLOR::color c>
-ExtendedMove createPawnBeatingMove(Board& board, unsigned char source, unsigned char destination)
+ExtendedMove createPawnBeatingMove(const Board& board, unsigned char source, unsigned char destination)
 {
     constexpr unsigned char pawn = NOTATION::PIECES::PAWN | static_cast<unsigned char>(c);
 
@@ -471,7 +455,7 @@ ExtendedMove createPawnBeatingMove(Board& board, unsigned char source, unsigned 
 
 template <NOTATION::COLOR::color c>
 void fillPawnBeatingPromotionMoves(TBeatingVector& beatingMoves,
-	TNormalVector& normalMoves, Board& board, unsigned char source, unsigned char destination)
+	TNormalVector& normalMoves, const Board& board, unsigned char source, unsigned char destination)
 {
     constexpr unsigned char pawn = NOTATION::PIECES::PAWN | static_cast<unsigned char>(c);
 	constexpr unsigned char c_bin = static_cast<unsigned char>(c);
@@ -486,8 +470,7 @@ void fillPawnBeatingPromotionMoves(TBeatingVector& beatingMoves,
 }
 
 template <NOTATION::COLOR::color c, uint64_t PROMOTION_LINE, signed char FromTargetToSourceDiff>
-void fillPawnBeatingsMoves(TBeatingVector& beatingMoves,
-	TNormalVector& normalMoves, uint64_t bitField, Board& board)
+void MoveGeneratorV2::fillPawnBeatingsMoves(uint64_t bitField)
 {
 	auto destinationsNonPromotions = bitField & (~PROMOTION_LINE);
     for (; destinationsNonPromotions; destinationsNonPromotions = _blsr_u64(destinationsNonPromotions))
@@ -551,8 +534,6 @@ void fillClassicBeating(TBeatingVector& beatingMoves, const Board& board, unsign
 
 std::span<ExtendedMove> MoveGeneratorV2::generateBeatingMoves()
 {
-	const auto oponentFields = getAllOccupiedPerColor(board, pieceColor+1);
-
 	for (auto* mtPtr= moveTables; mtPtr != moveTables + moveTablesN; ++mtPtr)
 	{
 		const auto mt = *mtPtr;
@@ -573,11 +554,11 @@ std::span<ExtendedMove> MoveGeneratorV2::generateBeatingMoves()
 		{
 			if (pieceColor == NOTATION::COLOR::color::white)
 			{
-				fillPawnBeatingsMoves<NOTATION::COLOR::color::white, 0xFF'00'00'00'00'00'00'00ull, -7>(beatingMoves, normalMoves, mt.bitField, board);
+				fillPawnBeatingsMoves<NOTATION::COLOR::color::white, 0xFF'00'00'00'00'00'00'00ull, -7>(mt.bitField);
 			}
 			else
 			{
-				fillPawnBeatingsMoves<NOTATION::COLOR::color::black, 0x00'00'00'00'00'00'00'FFull, 9>(beatingMoves, normalMoves, mt.bitField, board);
+				fillPawnBeatingsMoves<NOTATION::COLOR::color::black, 0x00'00'00'00'00'00'00'FFull, 9>(mt.bitField);
 			}
 			continue;
 		}
@@ -585,11 +566,11 @@ std::span<ExtendedMove> MoveGeneratorV2::generateBeatingMoves()
 		{
 			if (pieceColor == NOTATION::COLOR::color::white)
 			{
-				fillPawnBeatingsMoves<NOTATION::COLOR::color::white, 0xFF'00'00'00'00'00'00'00ull, -9>(beatingMoves, normalMoves, mt.bitField, board);
+				fillPawnBeatingsMoves<NOTATION::COLOR::color::white, 0xFF'00'00'00'00'00'00'00ull, -9>(mt.bitField);
 			}
 			else
 			{
-				fillPawnBeatingsMoves<NOTATION::COLOR::color::black, 0x00'00'00'00'00'00'00'FFull, 7>(beatingMoves, normalMoves, mt.bitField, board);
+				fillPawnBeatingsMoves<NOTATION::COLOR::color::black, 0x00'00'00'00'00'00'00'FFull, 7>(mt.bitField);
 			}
 			continue;
 		}

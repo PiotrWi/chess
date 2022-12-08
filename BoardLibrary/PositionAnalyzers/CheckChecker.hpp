@@ -1,6 +1,6 @@
 #pragma once
 
-#include <publicIf/Notation.hpp>
+#include "publicIf/Notation.hpp"
 
 struct Board;
 
@@ -43,3 +43,31 @@ AttackOut isCheckedBeforeMoveExtendeded(const Board& board,
         NOTATION::COLOR::color playerColor,
         unsigned char fieldPosition) noexcept;
 }
+
+struct PositionAnalyzeOut
+{
+    /*
+        Number of pieces attacking the king.
+        In practive:
+            0: King not attacked
+            1: King attacked by single piece.
+                There is a possibility to remove a check by: beat an attacker or block it.
+                Naturally, king can be moved to another piece.
+            2: King is attacked by 2 pieces. Then, only king can be moved.
+    */
+    unsigned char kingAttackersNum = 0;
+    /*
+        Valid in situation when attackersNum==1. In other situation, no sense to read it.
+        Moving any not pined piece (other than king obviouslu) to this field removed a check.
+    */
+    uint64_t possibleBlockersMask = 0ull;
+    uint64_t fieldsSeenByOpponent = 0ull;
+};
+
+uint64_t getFieldsSeenByOpponent(const Board& board,
+                                   NOTATION::COLOR::color playerColor,
+                                   unsigned char kingField) noexcept;
+
+PositionAnalyzeOut analyzePosition(const Board& board,
+    NOTATION::COLOR::color playerColor,
+    unsigned char kingField) noexcept;

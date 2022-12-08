@@ -5,7 +5,7 @@
 #include <iostream>
 #include <detail/MoveValidator.hpp>
 #include <publicIf/BoardIO.hpp>
-#include <detail/CheckChecker.hpp>
+#include "PositionAnalyzers/CheckChecker.hpp"
 #include <hashing/zobrist.hpp>
 #include <notations/coordinationnotation.hpp>
 

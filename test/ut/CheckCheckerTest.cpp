@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 
 #include <publicIf/Board.hpp>
-#include <detail/CheckChecker.hpp>
+#include "PositionAnalyzers/CheckChecker.hpp"
 #include <publicIf/NotationConversions.hpp>
 #include <utils/BoardGenerationUtils.hpp>
 

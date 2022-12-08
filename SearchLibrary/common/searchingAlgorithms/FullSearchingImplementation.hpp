@@ -60,7 +60,7 @@ int quiescenceSearch(BoardEngine& be,
         return cachedEngine.getEvaluationValue(be, validMoves);
     }
     auto mg = be.getMoveGeneratorV2(be.board.playerOnMove);
-    auto validMoves = mg.getValidMoveCount();
+    auto validMoves = mg.getValidMoveCount(MoveGenerator::NotCheckedTag{});
     
     int stand_pat = evaluatePosition(be, cachedEngine, validMoves);
     if( stand_pat >= beta )

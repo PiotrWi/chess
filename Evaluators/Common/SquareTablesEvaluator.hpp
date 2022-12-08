@@ -16,7 +16,7 @@ struct SuareTableCoeffictients
     int black_queen[64];
 };
 
-unsigned char reverseLookup[64] ={ 
+constexpr unsigned char reverseLookup[64] ={
 	56, 57, 58, 59, 60, 61, 61, 63,
 	48, 49, 50, 51, 52, 53, 54, 55,
 	40, 41, 42, 43, 44, 45, 46, 47,
@@ -27,7 +27,7 @@ unsigned char reverseLookup[64] ={
 	0, 1, 2, 3, 4, 5, 6, 7
 };
 
-void reverseTable(int sourceTable[], int targetTable[])
+constexpr void reverseTable(int sourceTable[], int targetTable[])
 {
 	for (auto i = 0; i < 64; ++i)
 	{
@@ -38,20 +38,13 @@ void reverseTable(int sourceTable[], int targetTable[])
 namespace square_tables_evaluator
 {
 
-int getOccupiedBitIndexAndClearIt(uint64_t& bitMask)
-{
-    auto index = 63 - __builtin_clzll(bitMask);
-    auto bitMaskOfIndex = 1ull << index;
-    bitMask ^= bitMaskOfIndex;
-    return index;
-}
-
-int evalSingle(const int coeffincients[64], uint64_t bitMask)
+int evalSingle(const int (&coeffincients)[64], uint64_t bitMask)
 {
     int eval = 0;
-    while (bitMask)
+
+    for (; bitMask; bitMask = _blsr_u64(bitMask))
     {
-        auto index = getOccupiedBitIndexAndClearIt(bitMask);
+        unsigned char index = _tzcnt_u64(bitMask);
         eval += coeffincients[index];
     }
     return eval;

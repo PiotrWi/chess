@@ -31,7 +31,6 @@ public:
 private:
     template<NOTATION::COLOR::color TColor>
     std::span<ExtendedMove> generateNonBeatingMovesImpl();
-    void initialize();
     void calculateMoveTables();
     void calculateMoveCount();
     void evaluateKnights(uint64_t knightsBitMask, const uint64_t forbidenFields);
@@ -49,13 +48,17 @@ private:
     void evaluateCasles(const uint64_t allOccupiedFields);
 
 private:
-    Board board;
+    template <NOTATION::COLOR::color c, uint64_t PROMOTION_LINE, signed char FromTargetToSourceDiff>
+    void fillPawnBeatingsMoves(uint64_t bitField);
+private:
+    const Board& board;
 
     NOTATION::COLOR::color pieceColor;
     unsigned char kingPosition;
     unsigned char kingAttackersCount;
     uint64_t possibleBlockersMask;
-
+    uint64_t oponentFields;
+    uint64_t fieldsSeenByOpponent;
     unsigned int moveCount;
 
     struct MoveTable
@@ -74,7 +77,8 @@ private:
             Castle = 0b10101,
         } type;
         unsigned char sourceField;
-        uint64_t bitField; 
+        uint64_t bitField;
+
     };
     unsigned int moveTablesN = 0;
     MoveTable moveTables[21];

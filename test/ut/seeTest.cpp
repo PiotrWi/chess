@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
-#include <detail/sse.hpp>
+#include "PositionAnalyzers/sse.hpp"
 #include <notations/LongAlgebraicNotation.hpp>
 #include <utils/BoardGenerationUtils.hpp>
 

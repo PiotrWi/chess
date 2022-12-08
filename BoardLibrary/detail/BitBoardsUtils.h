@@ -88,16 +88,21 @@ constexpr uint64_t getPawnAttacks(const NOTATION::COLOR::color c, const unsigned
     return ((NOT_H_COL & fieldBitMap) >> 7) | ((NOT_A_COL & fieldBitMap) >> 9);
 }
 
-constexpr uint64_t getAllFieldsAttackedByPawns(const Board& board, NOTATION::COLOR::color c)
+constexpr uint64_t getAllFieldsAttackedByPawns(const uint64_t pawns, NOTATION::COLOR::color c)
 {
-    auto colorNum = static_cast<unsigned char>(c);
-    uint64_t pawns = board.piecesBitSets[colorNum].pawnsMask;
-
     if (c == NOTATION::COLOR::color::white)
     {
         return ((NOT_H_COL & pawns) << 9) | ((NOT_A_COL & pawns) << 7);
     }
     return ((NOT_H_COL & pawns) >> 7) | ((NOT_A_COL & pawns) >> 9);
+}
+
+constexpr uint64_t getAllFieldsAttackedByPawns(const Board& board, NOTATION::COLOR::color c)
+{
+    auto colorNum = static_cast<unsigned char>(c);
+    uint64_t pawns = board.piecesBitSets[colorNum].pawnsMask;
+
+    return getAllFieldsAttackedByPawns(pawns, c);
 }
 
 constexpr uint64_t getAllFieldsAttackedByKing(const Board& board, NOTATION::COLOR::color c)
@@ -110,10 +115,8 @@ constexpr uint64_t getAllFieldsAttackedByKing(const Board& board, NOTATION::COLO
     return out;
 }
 
-constexpr uint64_t getAllFieldsAttackedByKnights(const Board& board, NOTATION::COLOR::color c)
+constexpr uint64_t getAllFieldsAttackedByKnights(uint64_t fieldBitMask)
 {
-    auto fieldBitMask = board.piecesBitSets[static_cast<unsigned char>(c)].knightsMask;
-
     return (NOT_HG_COL & fieldBitMask) << 10
            | (NOT_HG_COL & fieldBitMask) >> 6
            | (NOT_H_COL & fieldBitMask) >> 15
@@ -122,4 +125,11 @@ constexpr uint64_t getAllFieldsAttackedByKnights(const Board& board, NOTATION::C
            | (NOT_AB_COL & fieldBitMask) >> 10
            | (NOT_A_COL & fieldBitMask) << 15
            | (NOT_A_COL & fieldBitMask) >> 17;
+}
+
+constexpr uint64_t getAllFieldsAttackedByKnights(const Board& board, NOTATION::COLOR::color c)
+{
+    auto fieldBitMask = board.piecesBitSets[static_cast<unsigned char>(c)].knightsMask;
+
+    return getAllFieldsAttackedByKnights(fieldBitMask);
 }

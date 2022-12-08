@@ -15,7 +15,7 @@
 #include <common/Constants.hpp>
 #include <MoveGeneratorV2/MoveGeneratorV2.hpp>
 
-#include <detail/sse.hpp>
+#include "PositionAnalyzers/sse.hpp"
 
 static unsigned history[2][64][64] = {};
 

@@ -3,7 +3,7 @@
 #include <publicIf/Board.hpp>
 #include <detail/MoveApplier.hpp>
 #include <publicIf/NotationConversions.hpp>
-#include <detail/CheckChecker.hpp>
+#include "PositionAnalyzers/CheckChecker.hpp"
 
 namespace
 {
