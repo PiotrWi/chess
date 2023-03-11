@@ -1,10 +1,10 @@
 #include <gtest/gtest.h>
 
-#include <publicIf/Board.hpp>
-#include "publicIf/BoardIO.hpp"
-#include <detail/MoveApplier.hpp>
-#include <publicIf/NotationConversions.hpp>
-#include <detail/ResultEvaluator.hpp>
+#include "core/Board.hpp"
+#include "core/BoardIO.hpp"
+#include "MoveApplier/MoveApplier.hpp"
+#include "core/NotationConversions.hpp"
+#include "ResultEvaluator/ResultEvaluator.hpp"
 
 #include <utils/BoardGenerationUtils.hpp>
 #include <notations/coordinationnotation.hpp>

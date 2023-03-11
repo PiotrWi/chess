@@ -2,7 +2,7 @@
 
 #include <span>
 #include <boost/container/small_vector.hpp>
-#include <publicIf/Board.hpp>
+#include "core/Board.hpp"
 
 namespace MoveGenerator
 {

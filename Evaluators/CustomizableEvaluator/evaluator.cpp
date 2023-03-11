@@ -4,8 +4,8 @@
 #include <Common/PawnStructureEvaluator.hpp>
 #include <Common/SquareTablesEvaluator.hpp>
 
-#include <detail/bitboardslookups.hpp>
-#include <publicIf/NotationConversions.hpp>
+#include "core/bitboards/bitboardslookups.hpp"
+#include "core/NotationConversions.hpp"
 #include <MoveGeneratorV2/MoveGeneratorV2.hpp>
 
 #include <boost/property_tree/ptree.hpp>

@@ -5,7 +5,7 @@
 #include <Common/SquareTablesEvaluator.hpp>
 #include <Common/KingSafety.hpp>
 
-#include <publicIf/NotationConversions.hpp>
+#include "core/NotationConversions.hpp"
 
 #include <immintrin.h>
 

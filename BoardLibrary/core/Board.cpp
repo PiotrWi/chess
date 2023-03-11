@@ -1,7 +1,7 @@
-#include "publicIf/Board.hpp"
+#include "core/Board.hpp"
 
 #include <ostream>
-#include <publicIf/NotationConversions.hpp>
+#include "core/NotationConversions.hpp"
 
 #include <cassert>
 

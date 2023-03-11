@@ -1,4 +1,4 @@
-#include "bitboardslookups.hpp"
+#include "core/bitboards/bitboardslookups.hpp"
 
 #ifdef USE_PEXT
 

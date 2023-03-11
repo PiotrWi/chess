@@ -2,11 +2,11 @@
 
 #include <vector>
 
-#include <publicIf/Board.hpp>
-#include <publicIf/Result.hpp>
+#include "core/Board.hpp"
+#include "ResultEvaluator/Result.hpp"
 
-#include <detail/MoveApplier.hpp>
-#include <detail/ResultEvaluator.hpp>
+#include "MoveApplier/MoveApplier.hpp"
+#include "ResultEvaluator/ResultEvaluator.hpp"
 #include <MoveGeneratorV2/MoveGeneratorV2.hpp>
 
 class BoardEngine

@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include <utils/BoardGenerationUtils.hpp>
-#include <detail/MoveApplier.hpp>
+#include "MoveApplier/MoveApplier.hpp"
 #include <notations/coordinationnotation.hpp>
 #include <Common/MatherialEvaluator.hpp>
 

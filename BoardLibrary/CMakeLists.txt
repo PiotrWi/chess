@@ -3,26 +3,26 @@ cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
 add_library(BoardLibrary
     BoardEngine.hpp
     BoardEngine.cpp
-    detail/Board.cpp
-    detail/BoardIO.cpp
+        core/Board.cpp
+        core/BoardIO.cpp
         PositionAnalyzers/CheckChecker.hpp
         PositionAnalyzers/CheckChecker.cpp
-    detail/MoveValidator.hpp
-    detail/MoveValidator.cpp
-    detail/NotationConversions.cpp
-    detail/ResultEvaluator.hpp
-    detail/ResultEvaluator.cpp
-    detail/MoveApplier.hpp
-    detail/MoveApplier.cpp
+        MoveValidator/MoveValidator.hpp
+        MoveValidator/MoveValidator.cpp
+        core/NotationConversions.cpp
+        ResultEvaluator/ResultEvaluator.hpp
+        ResultEvaluator/ResultEvaluator.cpp
+        MoveApplier/MoveApplier.hpp
+        MoveApplier/MoveApplier.cpp
         PositionAnalyzers/PinnedMovesChecker.hpp
-    detail/bitboardslookups.hpp
+        core/bitboards/bitboardslookups.hpp
         PositionAnalyzers/see.cpp
-    publicIf/Notation.hpp
-    publicIf/Result.hpp
-    publicIf/Board.hpp
-    publicIf/BoardIO.hpp
+        core/Notation.hpp
+        ResultEvaluator/Result.hpp
+        core/Board.hpp
+        core/BoardIO.hpp
     MoveGeneratorV2/MoveGeneratorV2.cpp
-    publicIf/NotationConversions.hpp
+        core/NotationConversions.hpp
     notations/common.hpp
     notations/common.cpp
     notations/coordinationnotation.hpp
@@ -33,9 +33,9 @@ add_library(BoardLibrary
     hashing/Zobrish.cpp
     notations/uci.hpp
     notations/uci.cpp
-    detail/BitBoardsUtils.h
+        core/bitboards/BitBoardsUtils.h
     notations/fen.h
     notations/fen.cpp
-    detail/bitboardslookups.cpp
-    detail/PextBitBoards.cpp
-)
+        core/bitboards/bitboardslookups.cpp
+        core/bitboards/PextBitBoards.cpp
+        core/bitboards/FromToBits.hpp)

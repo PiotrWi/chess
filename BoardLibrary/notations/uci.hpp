@@ -5,7 +5,7 @@
 #include <iosfwd>
 #include <string>
 #include <vector>
-#include <publicIf/Board.hpp>
+#include "core/Board.hpp"
 
 namespace notations
 {

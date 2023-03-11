@@ -99,10 +99,11 @@ static void PerformanceTest_MoveOrdering(benchmark::State& state)
     for (auto _ : state)
     {
         auto mg = getMoveGenerator(board, NOTATION::COLOR::color::white);
-        PreorderedMoves pm(NOTATION::COLOR::color::white, &ce, 5, mg);
+        PreorderedMoves pm(NOTATION::COLOR::color::white, &ce, 5, mg, {}, board);
         for (auto i = 0u; i <allMoves.size(); ++i)
         {
-        	benchmark::DoNotOptimize(pm.get());
+            auto moves = pm.get();
+        	benchmark::DoNotOptimize(moves);
         }
     }
 }

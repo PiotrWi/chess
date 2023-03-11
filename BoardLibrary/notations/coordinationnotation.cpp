@@ -4,7 +4,7 @@
 #include <ostream>
 
 #include "common.hpp"
-#include <publicIf/NotationConversions.hpp>
+#include "core/NotationConversions.hpp"
 
 namespace notations
 {

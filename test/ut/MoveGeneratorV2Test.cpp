@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#include <detail/MoveApplier.hpp>
+#include "MoveApplier/MoveApplier.hpp"
 #include <MoveGeneratorV2/MoveGeneratorV2.hpp>
 #include <utils/BoardGenerationUtils.hpp>
 #include <notations/coordinationnotation.hpp>

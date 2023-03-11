@@ -9,7 +9,7 @@
 #include <common/CachedEngines/FullCachedEngine.hpp>
 #include <optional>
 
-#include <publicIf/NotationConversions.hpp>
+#include "core/NotationConversions.hpp"
 #include <common/Constants.hpp>
 
 #include "MoveOrdering.hpp"
@@ -72,13 +72,10 @@ int quiescenceSearch(BoardEngine& be,
     int nextAlfa;
 
     auto moves = mg.generateBeatingMoves();
-    // auto orderedMoves = OnlyBeatingMoves(std::move(moves), be.lastMove);
     auto orderedMoves = OnlyBeatingMovesSeeVersion(std::move(moves), be.board, be.lastMove, alfa-stand_pat);
 
-    // for (auto i = 0u; i < orderedMoves.size(); ++i)
     while (auto moveOpt = orderedMoves.get())
     {
-        // auto move = orderedMoves.get();
         const auto& move = *moveOpt;
 
         be.applyMove(move);
@@ -91,6 +88,7 @@ int quiescenceSearch(BoardEngine& be,
         if (nextAlfa > alfa)
         {
             alfa = nextAlfa;
+            orderedMoves.setMargin(alfa-stand_pat);
         }
     }
 
@@ -149,11 +147,15 @@ int evaluateMax(BoardEngine& be,
     int nextAlfa;
     auto pvFound = false;
 
+    // auto cacheCpy = *cache;
     auto orderedMoves = PreorderedMoves(
             be.board.playerOnMove,
+            //&cacheCpy,
             cache,
             depth,
-            mg
+            mg,
+            be.lastMove,
+            be.board
             );
     while (auto moveOpt = orderedMoves.get())
     {
@@ -175,8 +177,8 @@ int evaluateMax(BoardEngine& be,
 
         if (beta <= nextAlfa)
         {
-            cachedEngine.setBestMove(be, move, depth);
-            cachedEngine.setLowerBound(be, nextAlfa, depth);
+            cache->setBestMove(move, depth);
+            cache->setLowerBound(nextAlfa, depth);
 
             setHistoryMove(be.board.playerOnMove, move, depth);
 
@@ -192,13 +194,13 @@ int evaluateMax(BoardEngine& be,
     }
     if (not pvFound)
     {
-        cachedEngine.setUpperBound(be, alfa, depth);
+        cache->setUpperBound(alfa, depth);
     }
     else
     {
-        cachedEngine.setBestMove(be, greatestMove, depth);
+        cache->setBestMove(greatestMove, depth);
         if (SaveMove and interrupt_flag.load(std::memory_order_relaxed) != 0) bestMove = greatestMove;
-        cachedEngine.setLowerUpperBound(be, alfa, beta, depth);
+        cache->setLowerUpperBound(alfa, beta, depth);
     }
     return alfa;
 }
@@ -270,8 +272,10 @@ constexpr auto InitialBeta = mateValue + 1;
         {
             val = evaluateMax<true>(be, cachedEngine, depth, beta - 1, InitialBeta);
             if (val <= alpha)
+            {
                 std::cout << "Unstable" << std::endl;
-            val = evaluateMax<true>(be, cachedEngine, depth, InitialAlpha, InitialBeta);
+                val = evaluateMax<true>(be, cachedEngine, depth, InitialAlpha, InitialBeta);
+            }
         }
         alpha = val - 30;
         beta = val + 30;

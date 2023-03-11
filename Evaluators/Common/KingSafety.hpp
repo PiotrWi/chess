@@ -1,7 +1,7 @@
 #pragma once
 
-#include <publicIf/Board.hpp>
-#include <publicIf/NotationConversions.hpp>
+#include "core/Board.hpp"
+#include "core/NotationConversions.hpp"
 
 namespace king_safety
 {

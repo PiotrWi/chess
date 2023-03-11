@@ -1,6 +1,6 @@
 #pragma once
 
-#include "publicIf/Board.hpp"
+#include "core/Board.hpp"
 #include <cstdint>
 
 class ResultEvaluator;

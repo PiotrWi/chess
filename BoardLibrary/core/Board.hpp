@@ -1,7 +1,7 @@
 #pragma once
 
 #include <iosfwd>
-#include <publicIf/Notation.hpp>
+#include "Notation.hpp"
 
 struct Board
 {

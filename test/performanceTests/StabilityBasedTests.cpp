@@ -18,7 +18,8 @@ static void PerformanceTest_Stability1(benchmark::State& state)
     }
     for (auto _ : state)
     {
-        benchmark::DoNotOptimize(full_search::evaluateIterative(be, cachedEngine, 20));
+        auto move = full_search::evaluateIterative(be, cachedEngine, 20);
+        benchmark::DoNotOptimize(move);
     }
 }
 
@@ -37,7 +38,8 @@ static void PerformanceTest_Stability2(benchmark::State& state)
     }
     for (auto _ : state)
     {
-        benchmark::DoNotOptimize(full_search::evaluateIterative(be, cachedEngine, 10));
+        auto move = full_search::evaluateIterative(be, cachedEngine, 10);
+        benchmark::DoNotOptimize(move);
     }
 }
 BENCHMARK(PerformanceTest_Stability2); 

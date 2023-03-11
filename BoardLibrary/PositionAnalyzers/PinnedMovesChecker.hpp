@@ -1,9 +1,10 @@
 #pragma once
 
-#include "publicIf/Board.hpp"
-#include "publicIf/NotationConversions.hpp"
-#include "detail/bitboardslookups.hpp"
-#include "detail/BitBoardsUtils.h"
+#include "core/Board.hpp"
+#include "core/NotationConversions.hpp"
+#include "core/bitboards/bitboardslookups.hpp"
+#include "core/bitboards/BitBoardsUtils.h"
+#include "core/bitboards/FromToBits.hpp"
 
 static uint64_t PinnedRegister[64];
 
@@ -38,7 +39,7 @@ static Pinnes findPinned(const Board& board, NOTATION::COLOR::color c, unsigned 
         if (northOpponentRocks != 0)
         {
             auto rockPosition = __builtin_ffsll(northOpponentRocks) - 1;
-            auto rockRay = bitBoardLookup[rockPosition].bottomRay;
+            auto rockRay = fromToBits[rockPosition][fieldPosition];
             auto allPinedPieces = northRay & rockRay;
             if (HAS_ONE_BIT_SET(allPinedPieces)) {
                 pinnes.verticallyPinned |= (allPinedPieces & ownPieces);
@@ -55,7 +56,7 @@ static Pinnes findPinned(const Board& board, NOTATION::COLOR::color c, unsigned 
         if (rightOpponentRocks != 0)
         {
             auto rockPosition = __builtin_ffsll(rightOpponentRocks) - 1;
-            auto rockRay = bitBoardLookup[rockPosition].leftRay;
+            auto rockRay = fromToBits[rockPosition][fieldPosition];
             auto allPinedPieces = rightRay & rockRay;
             if (HAS_ONE_BIT_SET(allPinedPieces)) {
                 pinnes.horizontallyPinned |= (allPinedPieces & ownPieces);
@@ -72,7 +73,7 @@ static Pinnes findPinned(const Board& board, NOTATION::COLOR::color c, unsigned 
         if (leftOpponentRocks != 0)
         {
             auto rockPosition = (63 - __builtin_clzll(leftOpponentRocks));
-            auto rockRay = bitBoardLookup[rockPosition].rightRay;
+            auto rockRay = fromToBits[rockPosition][fieldPosition];
             auto allPinedPieces = leftRay & rockRay;
             if (HAS_ONE_BIT_SET(allPinedPieces)) {
                 pinnes.horizontallyPinned |= (allPinedPieces & ownPieces);
@@ -89,7 +90,7 @@ static Pinnes findPinned(const Board& board, NOTATION::COLOR::color c, unsigned 
         if (bottomOpponentRocks != 0)
         {
             auto rockPosition = (63 - __builtin_clzll(bottomOpponentRocks));
-            auto rockRay = bitBoardLookup[rockPosition].topRay;
+            auto rockRay = fromToBits[rockPosition][fieldPosition];
             auto allPinedPieces = bottomRay & rockRay;
             if (HAS_ONE_BIT_SET(allPinedPieces)) {
                 pinnes.verticallyPinned |= (allPinedPieces & ownPieces);;

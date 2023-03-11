@@ -3,7 +3,13 @@
 #include <vector>
 #include <common/Constants.hpp>
 #include <BoardEngine.hpp>
-#include <common/containers/HashMap.hpp>
+#include <non_std/containers/HashMap.hpp>
+#include <non_std/containers/FixedSizeHashTableOpenHashingWithAge.hpp>
+
+struct PassTrhoughtHash
+{
+    uint64_t operator()(uint64_t in) {return in;}
+};
 
 namespace players
 {
@@ -38,7 +44,15 @@ struct CacheFullEntity
 
     PreviousBestMove previousBestMoves[MAX_DEPTH] = {};
     PreviousEvaluations previousEvaluations[MAX_DEPTH] = {};
+
+    void setBestMove(const ExtendedMove& move, unsigned char depth);
+    void setLowerBound(int value, unsigned char depth);
+    void setUpperBound(int value, unsigned char depth);
+    void setLowerUpperBound(int valueMin, int valueMax, unsigned char depth);
 };
+
+using TCacheType = non_std::containers::HashMap<CacheFullEntity, uint64_t , 22u>;
+// using TCacheType = non_std::containers::FixedSizeHashTableOpenHashingWithAge<uint64_t, CacheFullEntity, PassTrhoughtHash>;
 
 class FullCachedEngine
 {
@@ -52,21 +66,14 @@ public:
     FullCachedEngine(FullCachedEngine&&) = delete;
     FullCachedEngine operator=(FullCachedEngine&&) = delete;
 
-    CacheFullEntity* get(const BoardEngine& be);
+    TCacheType::pointer get(const BoardEngine& be);
 
     int getEvaluationValue(BoardEngine& be, unsigned int validMovesCount);
-    void setBestMove(const BoardEngine& be,
-                       const ExtendedMove& move,
-                       unsigned char depth);
-
-    void setLowerBound(const BoardEngine &be, int value, unsigned char depth);
-    void setUpperBound(const BoardEngine &be, int value, unsigned char depth);
-    void setLowerUpperBound(const BoardEngine &be, int valueMin, int valueMax, unsigned char depth);
 
     void clear();
 private:
-    containers::HashMap<CacheFullEntity, uint64_t , 22u> cache_;
-    containers::HashMap<int, uint64_t, 22u> cachedEvaluators_;
+    TCacheType cache_;
+    non_std::containers::HashMap<int, uint64_t, 22u> cachedEvaluators_;
 
     TEvaluatePositionHandler evaluatePositionHandler;
     TInitHandler initHandler;

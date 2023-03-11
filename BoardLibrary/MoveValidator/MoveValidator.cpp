@@ -1,8 +1,8 @@
 #include "MoveValidator.hpp"
 
-#include <publicIf/Board.hpp>
-#include <detail/MoveApplier.hpp>
-#include <publicIf/NotationConversions.hpp>
+#include "core/Board.hpp"
+#include "MoveApplier/MoveApplier.hpp"
+#include "core/NotationConversions.hpp"
 #include "PositionAnalyzers/CheckChecker.hpp"
 
 namespace

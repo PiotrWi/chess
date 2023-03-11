@@ -3,8 +3,8 @@
 #include <stdint.h>
 #include <vector>
 
-#include <publicIf/Board.hpp>
-#include <publicIf/Result.hpp>
+#include "core/Board.hpp"
+#include "Result.hpp"
 
 struct Node
 {

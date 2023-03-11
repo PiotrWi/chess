@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 
-#include <publicIf/Board.hpp>
-#include <detail/MoveValidator.hpp>
+#include "core/Board.hpp"
+#include "MoveValidator/MoveValidator.hpp"
 
 #include <utils/BoardGenerationUtils.hpp>
 #include <notations/coordinationnotation.hpp>

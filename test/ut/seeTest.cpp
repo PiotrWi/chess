@@ -200,3 +200,51 @@ TEST(seeTest, shallCorreactlyAnalyzePawnDefendedByBishopAndReatackedByBishop)
     auto move = notations::long_algebraic::createExtendedMove("Bf2xd4", WHITE, board);
     ASSERT_EQ(see(move, board, WHITE), PawnValue);
 }
+
+TEST(seeTest, shallCorreactlyAnalyzeComplicatedPos1)
+{
+    auto board = utils::createBoard(
+            "       ♝"
+            "   ♞    "
+            "   ♟ ♟  "
+            "    ♛   "
+            "  ♘♙ ♙  "
+            "      ♗ "
+            "    ♔   "
+            "        ", WHITE);
+
+    auto move = notations::long_algebraic::createExtendedMove("f4xe5", WHITE, board);
+    ASSERT_EQ(see(move, board, WHITE), 800);
+}
+
+TEST(seeTest, shallCorreactlyAnalyzeComplicatedPos2)
+{
+    auto board = utils::createBoard(
+            "       ♝"
+            "   ♞    "
+            "   ♟ ♟  "
+            "    ♛   "
+            "  ♘♙ ♙♘ "
+            "   ♘  ♗ "
+            "    ♔   "
+            "        ", WHITE);
+
+    auto move = notations::long_algebraic::createExtendedMove("f4xe5", WHITE, board);
+    ASSERT_EQ(see(move, board, WHITE), 900);
+}
+
+TEST(seeTest, shallCorreactlyAnalyzePositionWithNegativeVal)
+{
+    auto board = utils::createBoard(
+            "        "
+            "        "
+            "    ♚   "
+            "    ♟   "
+            "    ♔   "
+            "        "
+            "        "
+            "        ", WHITE);
+
+    auto move = notations::long_algebraic::createExtendedMove("Ke4xe5", WHITE, board);
+    ASSERT_EQ(see(move, board, WHITE), PawnValue - KingValue);
+}

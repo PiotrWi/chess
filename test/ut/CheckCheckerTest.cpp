@@ -1,8 +1,8 @@
 #include <gtest/gtest.h>
 
-#include <publicIf/Board.hpp>
+#include "core/Board.hpp"
 #include "PositionAnalyzers/CheckChecker.hpp"
-#include <publicIf/NotationConversions.hpp>
+#include "core/NotationConversions.hpp"
 #include <utils/BoardGenerationUtils.hpp>
 
 /* PAWN based */

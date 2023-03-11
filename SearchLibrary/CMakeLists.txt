@@ -6,5 +6,5 @@ add_library(SearchLibrary
         common/searchingAlgorithms/FullSearchingImplementation.hpp
         common/CachedEngines/FullCachedEngine.hpp
         common/CachedEngines/FullCachedEngine.cpp
-        common/Constants.hpp)
+        common/Constants.hpp common/searchingAlgorithms/MVVLVA.hpp common/searchingAlgorithms/OnlyBeatingMoves.hpp common/containers/OpenHashTable.hpp)
 

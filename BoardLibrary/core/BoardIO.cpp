@@ -1,5 +1,5 @@
-#include "publicIf/BoardIO.hpp"
-#include <publicIf/NotationConversions.hpp>
+#include "core/BoardIO.hpp"
+#include "core/NotationConversions.hpp"
 
 #include <map>
 #include <ostream>

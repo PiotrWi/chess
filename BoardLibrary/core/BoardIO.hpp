@@ -1,6 +1,6 @@
 #pragma once
 
 #include <iosfwd>
-#include <publicIf/Board.hpp>
+#include "core/Board.hpp"
 
 std::ostream& operator<<(std::ostream&, const Board&) noexcept;

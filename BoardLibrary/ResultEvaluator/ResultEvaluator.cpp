@@ -4,8 +4,8 @@
 #include <vector>
 
 #include "PositionAnalyzers/CheckChecker.hpp"
-#include <MoveGeneratorV2/MoveGeneratorV2.hpp>
-#include <publicIf/Notation.hpp>
+#include "MoveGeneratorV2/MoveGeneratorV2.hpp"
+#include "core/Notation.hpp"
 
 Node::Node() noexcept {}
 

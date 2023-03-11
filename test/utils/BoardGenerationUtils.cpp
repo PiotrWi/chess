@@ -1,7 +1,8 @@
 #include "BoardGenerationUtils.hpp"
-#include <publicIf/NotationConversions.hpp>
+#include "core/NotationConversions.hpp"
 
 #include <cstring>
+#include <string>
 #include <utility>
 
 namespace
@@ -99,6 +100,21 @@ void revokeCastlingRights(Board& board, unsigned char rightBit)
 void setValidEnPassant(Board& board, const char* posStr)
 {
     board.validEnPassant = NotationConversions::getFieldNum(posStr);
+}
+
+uint64_t convertToUint64(const std::string& s)
+{
+    uint64_t out = {};
+    for (unsigned int i = 0; i < 64; ++i)
+    {
+        if (s[i] == 'x')
+        {
+            auto row = 7 - (i / 8);
+            auto col = i & 0b111;
+            out |= 1ull << ((row << 3) | col);
+        }
+    }
+    return out;
 }
 
 }  // namespace utils

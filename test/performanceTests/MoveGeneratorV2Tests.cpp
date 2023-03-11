@@ -22,7 +22,8 @@ static void PerformanceTest_MoveGeneratorV2_justMoveCount(benchmark::State& stat
         for (auto i = 0; i < 10; ++i)
         {
             MoveGenerator::MoveGeneratorV2 sut(board, NOTATION::COLOR::color::white);
-            benchmark::DoNotOptimize(sut.getValidMoveCount());
+            auto moveCount = sut.getValidMoveCount();
+            benchmark::DoNotOptimize(moveCount);
             benchmark::ClobberMemory();
         }
     }
@@ -47,8 +48,10 @@ static void PerformanceTest_MoveGeneratorV2_MoveCountAndBeatings(benchmark::Stat
         for (auto i = 0; i < 10; ++i)
         {
             MoveGenerator::MoveGeneratorV2 sut(board, NOTATION::COLOR::color::white);
-            benchmark::DoNotOptimize(sut.getValidMoveCount());
-            benchmark::DoNotOptimize(sut.generateBeatingMoves());
+            auto moveCount = sut.getValidMoveCount();
+            benchmark::DoNotOptimize(moveCount);
+            auto beatingMoves = sut.generateBeatingMoves();
+            benchmark::DoNotOptimize(beatingMoves);
             benchmark::ClobberMemory();
         }
     }
@@ -73,9 +76,12 @@ static void PerformanceTest_MoveGeneratorV2(benchmark::State& state)
         for (auto i = 0; i < 10; ++i)
         {
             MoveGenerator::MoveGeneratorV2 sut(board, NOTATION::COLOR::color::white);
-            benchmark::DoNotOptimize(sut.getValidMoveCount());
-            benchmark::DoNotOptimize(sut.generateBeatingMoves());
-            benchmark::DoNotOptimize(sut.generateNonBeatingMoves());
+            auto moveCount = sut.getValidMoveCount();
+            benchmark::DoNotOptimize(moveCount);
+            auto beatingMoves = sut.generateBeatingMoves();
+            benchmark::DoNotOptimize(beatingMoves);
+            auto nonBeatingMoves = sut.generateBeatingMoves();
+            benchmark::DoNotOptimize(nonBeatingMoves);
             benchmark::ClobberMemory();
         }
     }

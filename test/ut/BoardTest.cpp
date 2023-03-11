@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 
-#include <publicIf/Board.hpp>
-#include <publicIf/NotationConversions.hpp>
+#include "core/Board.hpp"
+#include "core/NotationConversions.hpp"
 
 #include <utils/BoardGenerationUtils.hpp>
 

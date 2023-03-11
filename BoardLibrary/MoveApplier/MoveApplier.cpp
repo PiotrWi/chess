@@ -1,7 +1,7 @@
 #include "MoveApplier.hpp"
 
-#include <publicIf/NotationConversions.hpp>
-#include <hashing/zobrist.hpp>
+#include "core/NotationConversions.hpp"
+#include "hashing/zobrist.hpp"
 
 namespace
 {

@@ -3,8 +3,8 @@
 #include <boost/serialization/strong_typedef.hpp>
 #include <tuple>
 
-#include <publicIf/Notation.hpp>
-#include <publicIf/NotationConversions.hpp>
+#include "core/Notation.hpp"
+#include "core/NotationConversions.hpp"
 #include <Common/Positions.hpp>
 
 BOOST_STRONG_TYPEDEF(int, TPawnValue)

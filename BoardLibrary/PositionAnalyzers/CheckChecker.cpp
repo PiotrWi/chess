@@ -1,36 +1,15 @@
 #include "CheckChecker.hpp"
 
 #include <algorithm>
-#include "publicIf/Board.hpp"
-#include "publicIf/NotationConversions.hpp"
+#include "core/Board.hpp"
+#include "core/NotationConversions.hpp"
 
-#include "detail/BitBoardsUtils.h"
-#include "detail/bitboardslookups.hpp"
+#include "core/bitboards/BitBoardsUtils.h"
+#include "core/bitboards/bitboardslookups.hpp"
+#include "core/bitboards/FromToBits.hpp"
 
 namespace CheckChecker
 {
-
-bool isAttackedBySliders(const Board& board,
-                                 NOTATION::COLOR::color playerColor,
-                                 unsigned char field) noexcept
-{
-    auto oppositeColorNum = static_cast<unsigned char>(playerColor + 1);
-
-    auto allPieces = getAllOccupiedFields(board);
-
-    auto OppositeQueenAndRock =
-            board.piecesBitSets[oppositeColorNum].queensMask
-            | board.piecesBitSets[oppositeColorNum].rocksMask;
-
-    uint64_t rockOrQueenAttackers = rockBb.getAttacksFor(field, allPieces) & OppositeQueenAndRock;
-
-    auto OppositeQueenAndBishop =
-            board.piecesBitSets[oppositeColorNum].queensMask
-            | board.piecesBitSets[oppositeColorNum].bishopsMask;
-    uint64_t bishopOrQueenAttackers = bishopBb.getAttacksFor(field, allPieces) & OppositeQueenAndBishop;
-
-    return rockOrQueenAttackers | bishopOrQueenAttackers;
-}
 
 bool isAttackedOn(const Board& board,
 		NOTATION::COLOR::color playerColor,
@@ -61,53 +40,6 @@ bool isAttackedOn(const Board& board,
     uint64_t bishopOrQueenAttackers = bishopBb.getAttacksFor(fieldPosition, allPieces) & OppositeQueenAndBishop;
 
     return attackingPawn | attackingKnights | attackingKings | rockOrQueenAttackers | bishopOrQueenAttackers;
-}
-
-AttackOut isCheckedBeforeMoveExtendeded(const Board& board,
-        NOTATION::COLOR::color playerColor,
-        unsigned char fieldPosition) noexcept
-{
-    AttackOut out;
-
-    auto oppositeColorNum = static_cast<unsigned char>(playerColor + 1);
-    auto allOppositePawns = board.piecesBitSets[oppositeColorNum].pawnsMask;
-    auto attackingPawn = allOppositePawns & getPawnAttacks(playerColor, fieldPosition);
-
-    const auto& lookup = bitBoardLookup[fieldPosition];
-    auto allOppositeKnights = board.piecesBitSets[oppositeColorNum].knightsMask;
-    auto attackingKnights = allOppositeKnights & lookup.knightsMovePossibilities;
-
-    auto allPieces = getAllOccupiedFields(board);
-
-    auto OppositeQueenAndRock =
-            board.piecesBitSets[oppositeColorNum].queensMask
-            | board.piecesBitSets[oppositeColorNum].rocksMask;
-    uint64_t lineAttacksFromField = rockBb.getAttacksFor(fieldPosition, allPieces);
-    uint64_t rockOrQueenAttackers = lineAttacksFromField & OppositeQueenAndRock;
-    if (rockOrQueenAttackers)
-    {
-        auto attackerField = _tzcnt_u64(rockOrQueenAttackers);
-        uint64_t attackersBBs = rockBb.getAttacksFor(attackerField, allPieces);
-        out.possibleBlockersMask |= lineAttacksFromField & attackersBBs;
-    }
-
-    auto OppositeQueenAndBishop =
-            board.piecesBitSets[oppositeColorNum].queensMask
-            | board.piecesBitSets[oppositeColorNum].bishopsMask;
-    uint64_t diagonalAttacksFromField = bishopBb.getAttacksFor(fieldPosition, allPieces);
-    uint64_t bishopOrQueenAttackers = diagonalAttacksFromField & OppositeQueenAndBishop;
-    if (bishopOrQueenAttackers)
-    {
-        auto attackerField = _tzcnt_u64(bishopOrQueenAttackers);
-        uint64_t attackersBBs = bishopBb.getAttacksFor(attackerField, allPieces);
-        out.possibleBlockersMask |= diagonalAttacksFromField & attackersBBs;
-    }
-    
-    auto allAttackers = attackingPawn | attackingKnights | bishopOrQueenAttackers | rockOrQueenAttackers;
-    out.possibleBlockersMask |= (allAttackers);
-    out.attackersNum = __builtin_popcountll(allAttackers);
-
-    return out;
 }
 
 
@@ -206,17 +138,14 @@ PositionAnalyzeOut analyzePosition(const Board& board,
         auto OppositeQueenAndBishop = board.piecesBitSets[oppositeColorNum].queensMask | board.piecesBitSets[oppositeColorNum].bishopsMask;
         for (; OppositeQueenAndBishop; OppositeQueenAndBishop = _blsr_u64(OppositeQueenAndBishop))
         {
-            // TODO: Double calculation is not efficient
             auto attackerField = _tzcnt_u64(OppositeQueenAndBishop);
             uint64_t attackersBBs = bishopBb.getAttacksFor(attackerField, allPiecesNoKing);
             out.fieldsSeenByOpponent |= attackersBBs;
-            attackersBBs = bishopBb.getAttacksFor(attackerField, allPieces);
             if (attackersBBs & kingBitField)
             {
                 ++out.kingAttackersNum;
-                uint64_t kingDiagonals = bishopBb.getAttacksFor(kingField, allPieces);
-                out.possibleBlockersMask |= kingDiagonals & attackersBBs;
-                out.possibleBlockersMask |= (1ull << attackerField);
+                uint64_t kingDiagonals = fromToBits[kingField][attackerField];
+                out.possibleBlockersMask |= kingDiagonals;
             }
         }
 
@@ -224,17 +153,14 @@ PositionAnalyzeOut analyzePosition(const Board& board,
         auto OppositeQueenAndRock = board.piecesBitSets[oppositeColorNum].queensMask | board.piecesBitSets[oppositeColorNum].rocksMask;
         for (; OppositeQueenAndRock; OppositeQueenAndRock = _blsr_u64(OppositeQueenAndRock))
         {
-            // TODO: Double calculation is not efficient
             auto attackerField = _tzcnt_u64(OppositeQueenAndRock);
             uint64_t attackersBBs = rockBb.getAttacksFor(attackerField, allPiecesNoKing);
             out.fieldsSeenByOpponent |= attackersBBs;
-            attackersBBs = rockBb.getAttacksFor(attackerField, allPieces);
             if (attackersBBs & kingBitField)
             {
                 ++out.kingAttackersNum;
-                uint64_t kingLines = rockBb.getAttacksFor(kingField, allPieces);
-                out.possibleBlockersMask |= kingLines & attackersBBs;
-                out.possibleBlockersMask |= (1ull << attackerField);
+                uint64_t kingDiagonals = fromToBits[kingField][attackerField];
+                out.possibleBlockersMask |= kingDiagonals ;
             }
         }
     }

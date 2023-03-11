@@ -1,7 +1,7 @@
 #pragma once
 
 #include <cstddef>
-#include <publicIf/Notation.hpp>
+#include "core/Notation.hpp"
 
 namespace NotationConversions
 {

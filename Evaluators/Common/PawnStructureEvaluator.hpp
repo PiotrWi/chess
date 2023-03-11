@@ -1,8 +1,8 @@
 #pragma once
 
-#include <publicIf/Notation.hpp>
-#include <publicIf/NotationConversions.hpp>
-#include <detail/bitboardslookups.hpp>
+#include "core/Notation.hpp"
+#include "core/NotationConversions.hpp"
+#include "core/bitboards/bitboardslookups.hpp"
 
 struct PawnStructureCoefficients
 {

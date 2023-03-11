@@ -1,6 +1,6 @@
 #pragma once
 
-#include <publicIf/Notation.hpp>
+#include "core/Notation.hpp"
 
 constexpr unsigned int MAX_DEPTH = 14;
 

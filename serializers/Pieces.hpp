@@ -1,6 +1,6 @@
 #pragma once
 
-#include <publicIf/Notation.hpp>
+#include "core/Notation.hpp"
 
 class Piece
 {

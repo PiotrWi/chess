@@ -1,20 +1,17 @@
 #pragma once
 
-#include <BoardEngine.hpp>
+#include "MVVLVA.hpp"
 
-#include <atomic>
 #include <algorithm>
 #include <cstring>
 #include <vector>
-
 #include <optional>
 
+#include <BoardEngine.hpp>
 #include <common/CachedEngines/FullCachedEngine.hpp>
-
-#include <publicIf/NotationConversions.hpp>
+#include <core/NotationConversions.hpp>
 #include <common/Constants.hpp>
 #include <MoveGeneratorV2/MoveGeneratorV2.hpp>
-
 #include "PositionAnalyzers/sse.hpp"
 
 static unsigned history[2][64][64] = {};
@@ -39,21 +36,7 @@ TIterator getMinimumRecaptureMove(TIterator it, TIterator end, unsigned char des
     }
     return currentLow;
 }
-class MVVLVA_Comparator // Most valuable victim less valuable aggressor
-{
-    static constexpr int weights[7][7]{
-        // NOTHING  // PAWN,    ROCK,   KNIGHT,     BISHOP,     QUEEN,  KING
-        {0,         0,          0,      0,          0,          0,      0}, //NOTHING
-        {0,         106,        506,    306,        306,        906,    5000}, //PAWN
-        {0,         101,        501,    301,        301,        901,    5000}, //ROCK
-        {0,         105,        505,    305,        305,        905,    5000}, //KNIGHT
-        {0,         104,        504,    304,        304,        904,    5000}, //BISHOP
-        {0,         100,        500,    300,        300,        900,    5000}, //QUEEN
-        {0,         107,        507,    307,        307,        907,    5000}, //KING
-    };
-public:
-    static bool compare(const ExtendedMove& lhs, const ExtendedMove& rhs);
-};
+
 
 class PreorderedMoves
 {
@@ -61,12 +44,16 @@ public:
     PreorderedMoves(NOTATION::COLOR::color playerOnMove,
                     players::common::move_generators::CacheFullEntity* ce,
                     unsigned char depth,
-                    MoveGenerator::MoveGeneratorV2& mg);
+                    MoveGenerator::MoveGeneratorV2& mg,
+                    const ExtendedMove& lastMove,
+                    const Board& board);
 
     std::optional<ExtendedMove> get();
 private:
     std::optional<ExtendedMove> getBestMove();
     std::optional<ExtendedMove> getBeatingPrepare();
+    std::optional<ExtendedMove> getRecaptureMove();
+    std::optional<ExtendedMove> sortBeatingMoves();
     std::optional<ExtendedMove> getBeating();
     std::optional<ExtendedMove> getHistoryPrepare();
     std::optional<ExtendedMove> getHistory();
@@ -80,24 +67,8 @@ private:
     std::span<ExtendedMove> moves_;
     std::span<ExtendedMove>::iterator it_;
     std::optional<ExtendedMove> bestMove_ = std::nullopt;
-};
-
-class OnlyBeatingMoves
-{
-public:
-    OnlyBeatingMoves(std::span<ExtendedMove>&& moves, const ExtendedMove& lastMove);
-    unsigned int size() const;
-    const ExtendedMove& get();
-private:
-    const ExtendedMove& getRecaptureMove();
-    const ExtendedMove& prepareMove();
-    const ExtendedMove& getMove();
-
-    std::span<ExtendedMove> moves_;
-    const ExtendedMove& (OnlyBeatingMoves::*currentGetterFunction)() = &OnlyBeatingMoves::getRecaptureMove;
-
-    int index;
     const ExtendedMove& lastMove_;
+    const Board& board_;
 };
 
 inline void setHistoryMove(const NOTATION::COLOR::color player, const ExtendedMove& move, unsigned char depth)
@@ -114,25 +85,33 @@ inline void clearHistoryMove()
     memset(history, 0, sizeof(history[0][0][0]) * 2 * 64 * 64);
 }
 
-inline bool MVVLVA_Comparator::compare(const ExtendedMove& lhs, const ExtendedMove& rhs)
+struct MoveWithSeeAndMvvlva
 {
-    auto lhsVal = (lhs.flags & ExtendedMove::promotionMask) ? FIGURES_VALUE::QUEEN : 0;
-    lhsVal += weights[lhs.sourcePiece >> 1][lhs.targetPiece >> 1];
+    int seeVal = 0;
+    int mvvlvaVal = 0;
+    ExtendedMove move;
+};
 
-    auto rhsVal = (rhs.flags & ExtendedMove::promotionMask) ? FIGURES_VALUE::QUEEN : 0;
-    rhsVal += weights[rhs.sourcePiece >> 1][rhs.targetPiece >> 1];
-
-    return lhsVal > rhsVal;
+inline bool operator<(const MoveWithSeeAndMvvlva& lhs, const MoveWithSeeAndMvvlva& rhs)
+{
+    if (lhs.seeVal == rhs.seeVal)
+        return lhs.mvvlvaVal < rhs.mvvlvaVal;
+    return lhs.seeVal < rhs.seeVal;
 }
 
 inline PreorderedMoves::PreorderedMoves(NOTATION::COLOR::color playerOnMove,
                     players::common::move_generators::CacheFullEntity* ce,
                     unsigned char depth,
-                    MoveGenerator::MoveGeneratorV2& mg)
+                    MoveGenerator::MoveGeneratorV2& mg,
+                    const ExtendedMove& lastMove,
+                    const Board& board)
                     : historyMoves_(history[((playerOnMove == NOTATION::COLOR::color::white) ? 0 : 1)])
                     , ce_(ce)
                     , depth_(depth)
-                    , mg_(mg){}
+                    , mg_(mg)
+                    , lastMove_(lastMove)
+                    , board_(board)
+                    {}
 
 inline std::optional<ExtendedMove> PreorderedMoves::get()
 {
@@ -169,6 +148,37 @@ inline std::optional<ExtendedMove> PreorderedMoves::getBeatingPrepare()
             ++it_;
         }
     } 
+
+    currentGetterFunction = &PreorderedMoves::sortBeatingMoves;
+    // currentGetterFunction = &PreorderedMoves::getRecaptureMove;
+    return (this->*currentGetterFunction)();
+}
+
+inline std::optional<ExtendedMove> PreorderedMoves::getRecaptureMove()
+{
+    if (lastMove_.flags & (ExtendedMove::beatingMask | ExtendedMove::promotionMask))
+    {
+        auto recapture = getMinimumRecaptureMove(it_, moves_.end(), lastMove_.destination);
+        if (recapture != moves_.end())
+        {
+            std::swap(*recapture, *it_);
+            ++it_;
+            currentGetterFunction = &PreorderedMoves::sortBeatingMoves;
+            return *moves_.begin();
+        }
+    }
+    currentGetterFunction = &PreorderedMoves::sortBeatingMoves;
+    return (this->*currentGetterFunction)();
+}
+
+inline bool operator<(const std::pair<int, std::span<ExtendedMove>::iterator>& lhs, const std::pair<int, std::span<ExtendedMove>::iterator>& rhs)
+{
+    return lhs.first < rhs.first;
+}
+
+
+inline std::optional<ExtendedMove> PreorderedMoves::sortBeatingMoves()
+{
     std::sort(it_, moves_.end(), MVVLVA_Comparator::compare);
 
     currentGetterFunction = &PreorderedMoves::getBeating;
@@ -218,59 +228,12 @@ inline std::optional<ExtendedMove> PreorderedMoves::getHistory()
     return {};
 }
 
-
-inline OnlyBeatingMoves::OnlyBeatingMoves(std::span<ExtendedMove>&& moves, const ExtendedMove& lastMove)
-        : moves_(std::move(moves))
-        , index(0)
-        , lastMove_(lastMove)
-{
-}
-
-inline unsigned int OnlyBeatingMoves::size() const
-{
-    return moves_.size();
-}
-
-inline const ExtendedMove& OnlyBeatingMoves::getRecaptureMove()
-{
-    if (lastMove_.flags & (ExtendedMove::beatingMask | ExtendedMove::promotionMask))
-    {
-        auto recapture = getMinimumRecaptureMove(moves_.begin(), moves_.end(), lastMove_.destination);
-        if (recapture != moves_.end())
-        {
-            std::swap(*recapture, *moves_.begin());
-            currentGetterFunction = &OnlyBeatingMoves::prepareMove;
-            ++index;
-            return *moves_.begin();
-        }
-    }
-    currentGetterFunction = &OnlyBeatingMoves::prepareMove;
-    return (this->*currentGetterFunction)();
-}
-
-inline const ExtendedMove& OnlyBeatingMoves::prepareMove()
-{
-    std::sort(moves_.begin() + index, moves_.end(), MVVLVA_Comparator::compare);
-    currentGetterFunction = &OnlyBeatingMoves::getMove;
-    return (this->*currentGetterFunction)();
-}
-
-inline const ExtendedMove& OnlyBeatingMoves::getMove()
-{
-    return moves_[index++];
-}
-
-inline const ExtendedMove& OnlyBeatingMoves::get()
-{
-    return (this->*currentGetterFunction)();
-}
-
 class OnlyBeatingMovesSeeVersion
 {
 public:
     OnlyBeatingMovesSeeVersion(std::span<ExtendedMove>&& moves, const Board& b, const ExtendedMove& lastMove, int trigger);
-    unsigned int size() const;
     std::optional<ExtendedMove> get();
+    void setMargin(int trigger) { margin_ = trigger; };
 private:
     std::optional<ExtendedMove> getRecaptureMove();
     std::optional<ExtendedMove> prepareMove();
@@ -278,17 +241,11 @@ private:
 
     std::optional<ExtendedMove> (OnlyBeatingMovesSeeVersion::*currentGetterFunction)() = &OnlyBeatingMovesSeeVersion::getRecaptureMove;
     std::span<ExtendedMove> moves_;
-    boost::container::small_vector<std::pair<int, std::span<ExtendedMove>::iterator>, 30> sortedBySee;
     int index;
     const Board& board_;
     const ExtendedMove& lastMove_;
-    const int margin_;
+    int margin_;
 };
-
-inline bool operator<(const std::pair<int, std::span<ExtendedMove>::iterator>& lhs, const std::pair<int, std::span<ExtendedMove>::iterator>& rhs)
-{
-    return lhs.first < rhs.first;
-}
 
 inline OnlyBeatingMovesSeeVersion::OnlyBeatingMovesSeeVersion(std::span<ExtendedMove>&& moves, const Board& b, const ExtendedMove& lastMove, int margin)
         : moves_(std::move(moves))
@@ -301,11 +258,6 @@ inline OnlyBeatingMovesSeeVersion::OnlyBeatingMovesSeeVersion(std::span<Extended
     {
         return;
     }
-}
-
-inline unsigned int OnlyBeatingMovesSeeVersion::size() const
-{
-    return sortedBySee.size();
 }
 
 inline std::optional<ExtendedMove> OnlyBeatingMovesSeeVersion::get()
@@ -333,25 +285,18 @@ inline std::optional<ExtendedMove> OnlyBeatingMovesSeeVersion::getRecaptureMove(
 
 inline std::optional<ExtendedMove> OnlyBeatingMovesSeeVersion::prepareMove()
 {
-    for (auto it = moves_.begin() + index; it != moves_.end(); ++it)
-    {
-        auto seeVal = see(*it, board_, board_.playerOnMove);
-        if (seeVal >= (margin_ - 250))
-        {
-            sortedBySee.emplace_back(seeVal, it);
-        }
-    }
-    index = 0;
-    std::sort(sortedBySee.rbegin(), sortedBySee.rend());
+    std::sort(moves_.begin() + index, moves_.end(), MVVLVA_Comparator::compare);
     currentGetterFunction = &OnlyBeatingMovesSeeVersion::getMove;
     return (this->*currentGetterFunction)();
 }
 
 inline std::optional<ExtendedMove> OnlyBeatingMovesSeeVersion::getMove()
 {
-    if (index < (int)sortedBySee.size())
+    for (; index < (int)moves_.size(); ++index)
     {
-        return *sortedBySee[index++].second;
+        auto seeVal = see(moves_[index], board_, board_.playerOnMove);
+        if (seeVal >= (margin_ - 250))
+            return moves_[index++];
     }
     return {};
 }

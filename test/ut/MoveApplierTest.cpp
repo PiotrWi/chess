@@ -1,9 +1,9 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
-#include <detail/MoveApplier.hpp>
+#include "MoveApplier/MoveApplier.hpp"
 #include <hashing/zobrist.hpp>
-#include <publicIf/BoardIO.hpp>
+#include "core/BoardIO.hpp"
 #include <utils/BoardGenerationUtils.hpp>
 #include <notations/coordinationnotation.hpp>
 #include <notations/LongAlgebraicNotation.hpp>

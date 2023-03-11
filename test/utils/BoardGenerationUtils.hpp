@@ -1,6 +1,6 @@
 #pragma once
 
-#include <publicIf/Board.hpp>
+#include "core/Board.hpp"
 
 namespace utils
 {
@@ -11,5 +11,7 @@ Board createBoard(const char* position,
         NOTATION::COLOR::color playerOnMove = NOTATION::COLOR::color::white);
 void revokeCastlingRights(Board& board, unsigned char rightBit);
 void setValidEnPassant(Board& board, const char* posStr);
+
+uint64_t convertToUint64(const std::string& s);
 
 }  // namespace utils

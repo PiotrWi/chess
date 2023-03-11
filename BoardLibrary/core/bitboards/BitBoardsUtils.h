@@ -1,6 +1,6 @@
 #pragma once
 
-#include <publicIf/Board.hpp>
+#include "core/Board.hpp"
 #include <immintrin.h>
 
 constexpr uint64_t NOT_H_COL = 0x7f'7f'7f'7f'7f'7f'7f'7full;
@@ -10,7 +10,7 @@ constexpr uint64_t NOT_AB_COL = 0xfc'fc'fc'fc'fc'fc'fc'fcull;
 
 constexpr int getOccupiedBitIndex(const uint64_t& bitMask)
 {
-    return 63 - __builtin_clzll(bitMask);
+    return __builtin_ia32_tzcnt_u64(bitMask);
 }
 
 constexpr uint64_t getAllOccupiedFields(const Board& board)

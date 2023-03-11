@@ -2,7 +2,7 @@
 
 #include "PositionAnalyzers/PinnedMovesChecker.hpp"
 #include <utils/BoardGenerationUtils.hpp>
-#include <publicIf/NotationConversions.hpp>
+#include "core/NotationConversions.hpp"
 
 TEST(PinnedCheckShall, doNotFindPinWhileThereIsNo)
 {

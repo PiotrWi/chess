@@ -1,7 +1,7 @@
 #include <string>
 
 #include <notations/uci.hpp>
-#include <publicIf/NotationConversions.hpp>
+#include "core/NotationConversions.hpp"
 
 #include <gtest/gtest.h>
 

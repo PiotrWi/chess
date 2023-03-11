@@ -2,7 +2,7 @@
 
 #include <cassert>
 #include <iostream>
-#include <publicIf/BoardIO.hpp>
+#include "core/BoardIO.hpp"
 
 #include <notations/coordinationnotation.hpp>
 

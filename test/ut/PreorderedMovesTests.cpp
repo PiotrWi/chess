@@ -79,7 +79,7 @@ TEST_F(PreorderedMovesTests, shouldOrderInitialMoves)
             "h2h3", "h2h4", "Nb1a3", "Nb1c3", "Ng1f3", "Ng1h3"}, WHITE, board);
 
 	auto mg = getMoveGenerator(board, NOTATION::COLOR::color::white);
-    PreorderedMoves pm(NOTATION::COLOR::color::white, &emptyCacheEnity_, 5, mg);
+    PreorderedMoves pm(NOTATION::COLOR::color::white, &emptyCacheEnity_, 5, mg, {}, board);
     ASSERT_THAT(consume_n(pm, initMoves.size()), ::testing::UnorderedElementsAreArray(initMoves));
 }
 
@@ -92,7 +92,7 @@ TEST_F(PreorderedMovesTests, shouldOrderInitialMovesAccordingToHistory)
             "h2h3", "h2h4", "Nb1a3", "Nb1c3", "Ng1f3", "Ng1h3"}, WHITE, board);
 
 	auto mg = getMoveGenerator(board, NOTATION::COLOR::color::white);
-    PreorderedMoves pm(NOTATION::COLOR::color::white, &emptyCacheEnity_, 5, mg);
+    PreorderedMoves pm(NOTATION::COLOR::color::white, &emptyCacheEnity_, 5, mg, {}, board);
     ASSERT_THAT(consume_n(pm, movesWithHistory.size()), ::testing::ElementsAreArray(movesWithHistory));
     ASSERT_THAT(consume_n(pm, movesWithNoHistory.size()), ::testing::UnorderedElementsAreArray(movesWithNoHistory));
 }
@@ -113,7 +113,7 @@ TEST_F(PreorderedMovesTests, shouldOrderInitialMovesWithBestMoveSet)
 	{
 		auto ce = setBestMove(bestMove[0], depth);
 		auto mg = getMoveGenerator(board, NOTATION::COLOR::color::white);
-	    PreorderedMoves pm(NOTATION::COLOR::color::white, &ce, 5, mg);
+	    PreorderedMoves pm(NOTATION::COLOR::color::white, &ce, 5, mg, {}, board);
 
 	    ASSERT_THAT(consume_n(pm, bestMove.size()), ::testing::ElementsAreArray(bestMove));
 	    ASSERT_THAT(consume_n(pm, movesWithHistory.size()), ::testing::ElementsAreArray(movesWithHistory));
@@ -142,7 +142,7 @@ TEST_F(PreorderedMovesTests, shouldOrderBeatingsByMVVLVA)
     	"Qg6f6", "Qg6h6", "Qg6g5", "Qg6g4", "Qg6g3", "Qg6f5", "Qg6e4", "Qg6d3", "Qg6c2", "Qg6b1", "Qg6h5"}, BLACK, board);
 
     auto mg = getMoveGenerator(board, BLACK);
-	PreorderedMoves pm(NOTATION::COLOR::color::white, &emptyCacheEnity_, 5, mg);
+	PreorderedMoves pm(NOTATION::COLOR::color::white, &emptyCacheEnity_, 5, mg, {}, board);
 
 	ASSERT_THAT(consume_n(pm, beatings.size()), ::testing::ElementsAreArray(beatings));
 	ASSERT_THAT(consume_n(pm, nonBeatings.size()), ::testing::UnorderedElementsAreArray(nonBeatings));
@@ -171,7 +171,7 @@ TEST_F(PreorderedMovesTests, shouldOrderBeatingsByMVVLVA_WithBestMoveSetAsBeatin
 
 	auto ce = setBestMove(bestMove[0], 3);
 	auto mg = getMoveGenerator(board, NOTATION::COLOR::color::black);
-	PreorderedMoves pm(NOTATION::COLOR::color::white, &ce, 5, mg);
+	PreorderedMoves pm(NOTATION::COLOR::color::white, &ce, 5, mg, {}, board);
 
 	ASSERT_THAT(consume_n(pm, bestMove.size()), ::testing::ElementsAreArray(bestMove));
 	ASSERT_THAT(consume_n(pm, beatings.size()), ::testing::ElementsAreArray(beatings));
@@ -201,7 +201,7 @@ TEST_F(PreorderedMovesTests, shouldOrderBeatingsByMVVLVA_WithBestMoveSetAsNonBea
     {
 		auto ce = setBestMove(bestMove[0], 3);
 		auto mg = getMoveGenerator(board, NOTATION::COLOR::color::black);
-		PreorderedMoves pm(NOTATION::COLOR::color::white, &ce, 5, mg);
+		PreorderedMoves pm(NOTATION::COLOR::color::white, &ce, 5, mg, {}, board);
 
 		ASSERT_THAT(consume_n(pm, bestMove.size()), ::testing::ElementsAreArray(bestMove));
 		ASSERT_THAT(consume_n(pm, beatings.size()), ::testing::ElementsAreArray(beatings));
@@ -210,7 +210,7 @@ TEST_F(PreorderedMovesTests, shouldOrderBeatingsByMVVLVA_WithBestMoveSetAsNonBea
     {
 		auto ce = setBestMove(bestMove[0], 3);
 		auto mg = getMoveGenerator(board, NOTATION::COLOR::color::black);
-		PreorderedMoves pm(NOTATION::COLOR::color::white, &ce, 5, mg);
+		PreorderedMoves pm(NOTATION::COLOR::color::white, &ce, 5, mg, {}, board);
 
 		ASSERT_THAT(consume_n(pm, bestMove.size()), ::testing::ElementsAreArray(bestMove));
 		ASSERT_THAT(consume_n(pm, beatings.size()), ::testing::ElementsAreArray(beatings));
@@ -219,7 +219,7 @@ TEST_F(PreorderedMovesTests, shouldOrderBeatingsByMVVLVA_WithBestMoveSetAsNonBea
     {
 		auto ce = setBestMove(bestMove[0], 3);
 		auto mg = getMoveGenerator(board, NOTATION::COLOR::color::black);
-		PreorderedMoves pm(NOTATION::COLOR::color::white, &ce, 5, mg);
+		PreorderedMoves pm(NOTATION::COLOR::color::white, &ce, 5, mg, {}, board);
 
 		ASSERT_THAT(consume_n(pm, bestMove.size()), ::testing::ElementsAreArray(bestMove));
 		ASSERT_THAT(consume_n(pm, beatings.size()), ::testing::ElementsAreArray(beatings));

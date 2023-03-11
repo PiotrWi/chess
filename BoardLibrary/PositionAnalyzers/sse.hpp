@@ -6,11 +6,11 @@
 #pragma once
 
 #include <algorithm>
-#include "publicIf/Board.hpp"
-#include "publicIf/NotationConversions.hpp"
-#include "detail/MoveApplier.hpp"
-#include "detail/bitboardslookups.hpp"
-#include "detail/BitBoardsUtils.h"
+#include "core/Board.hpp"
+#include "core/NotationConversions.hpp"
+#include "MoveApplier/MoveApplier.hpp"
+#include "core/bitboards/bitboardslookups.hpp"
+#include "core/bitboards/BitBoardsUtils.h"
 
 // It is bad
 // These values shall be somehow global and configurable. It need to be chaned in further development.

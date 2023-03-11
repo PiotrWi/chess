@@ -1,6 +1,6 @@
 #include "zobrist.hpp"
 
-#include <publicIf/Board.hpp>
+#include "core/Board.hpp"
 #include <random>
 
 namespace

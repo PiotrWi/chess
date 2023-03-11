@@ -1,12 +1,24 @@
 #pragma once
 
 #include <array>
-#include <detail//BitBoardsUtils.h>
+#include "BitBoardsUtils.h"
 #include <cstdint>
 #include <vector>
-
 #include <immintrin.h>
 
+struct BitBoardsConstants
+{
+    uint64_t knightsMovePossibilities;
+    uint64_t kingMovePossibilities;
+    uint64_t topRay;
+    uint64_t bottomRay;
+    uint64_t leftRay;
+    uint64_t rightRay;
+    uint64_t topLeft;
+    uint64_t topRight;
+    uint64_t bottomLeft;
+    uint64_t bottomRight;
+};
 
 constexpr uint64_t onlyLeftFrom[8] =
 {
@@ -42,20 +54,6 @@ constexpr uint64_t ranks[8] =
         0x20'20'20'20'20'20'20'20ull, // F
         0x40'40'40'40'40'40'40'40ull, // G
         0x80'80'80'80'80'80'80'80ull, // H
-};
-
-struct BitBoardsConstants
-{
-    uint64_t knightsMovePossibilities;
-    uint64_t kingMovePossibilities;
-    uint64_t topRay;
-    uint64_t bottomRay;
-    uint64_t leftRay;
-    uint64_t rightRay;
-    uint64_t topLeft;
-    uint64_t topRight;
-    uint64_t bottomLeft;
-    uint64_t bottomRight;
 };
 
 constexpr uint64_t getknightsMovePossibilities(uint64_t fieldBitMask)

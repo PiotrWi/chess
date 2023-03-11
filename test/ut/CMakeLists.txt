@@ -34,7 +34,7 @@ add_executable(ut
     PreorderedMovesTests.cpp
     PoolAllocatorTests.cpp
     BinOperatorsTests.cpp
-        BitBoardsUtilsTests.cpp)
+        BitBoardsUtilsTests.cpp FromToBitsTests.cpp)
 
 add_dependencies(ut googletest)
 target_link_libraries(ut gtest gmock gtest_main pthread BoardLibrary SearchLibrary StandardEvaluator dl UciApplication-lib)
