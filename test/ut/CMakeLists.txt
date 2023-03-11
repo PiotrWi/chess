@@ -15,8 +15,6 @@ add_executable(ut
     CheckCheckerTest.cpp
     fentest.cpp
     FullSearchTest.cpp
-    HashMapTest.cpp
-    HashTableTest.cpp
     MaterialEvaluatorTest.cpp
     SearchingBasicTests.cpp
     MoveApplierTest.cpp
@@ -32,9 +30,9 @@ add_executable(ut
     uciNotationTest.cpp
     seeTest.cpp
     PreorderedMovesTests.cpp
-    PoolAllocatorTests.cpp
     BinOperatorsTests.cpp
-        BitBoardsUtilsTests.cpp FromToBitsTests.cpp)
+    BitBoardsUtilsTests.cpp
+    FromToBitsTests.cpp)
 
 add_dependencies(ut googletest)
 target_link_libraries(ut gtest gmock gtest_main pthread BoardLibrary SearchLibrary StandardEvaluator dl UciApplication-lib)
