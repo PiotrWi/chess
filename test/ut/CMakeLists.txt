@@ -1,5 +1,8 @@
 cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
 
+find_package(GTest)
+include_directories(${gtest_INCLUDE_DIRS})
+
 get_target_property(UCI_APP_INCLUDES UciApplication-lib INCLUDE_DIRECTORIES)
 
 include_directories(${GTEST_INSTALATION_DIR}/include
@@ -34,8 +37,16 @@ add_executable(ut
     BitBoardsUtilsTests.cpp
     FromToBitsTests.cpp)
 
-add_dependencies(ut googletest)
-target_link_libraries(ut gtest gmock gtest_main pthread BoardLibrary SearchLibrary StandardEvaluator dl UciApplication-lib)
+target_link_libraries(ut
+        ${GTEST_LIBRARIES}
+        ${GTEST_MAIN_LIBRARIES}
+        GTest::gmock_main
+        pthread
+        BoardLibrary
+        SearchLibrary
+        StandardEvaluator
+        dl
+        UciApplication-lib)
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin/)
 
 add_test(

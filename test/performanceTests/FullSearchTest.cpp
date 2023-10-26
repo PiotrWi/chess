@@ -5,9 +5,9 @@
 
 #include <BoardEngine.hpp>
 #include <notations/coordinationnotation.hpp>
-#include <common/CachedEngines/FullCachedEngine.hpp>
+#include <CachedEngines/FullCachedEngine.hpp>
 
-#include <common/searchingAlgorithms/FullSearchingImplementation.hpp>
+#include <searchingAlgorithms/FullSearchingImplementation.hpp>
 #include <utils/BoardGenerationUtils.hpp>
 
 namespace

@@ -1,4 +1,4 @@
-#include <common/searchingAlgorithms/FullSearchingImplementation.hpp>
+#include <searchingAlgorithms/FullSearchingImplementation.hpp>
 
 #include <gtest/gtest.h>
 

@@ -2,7 +2,7 @@
 
 #include <IPLayer.hpp>
 #include <BoardEngine.hpp>
-#include <common/CachedEngines/FullCachedEngine.hpp>
+#include <CachedEngines/FullCachedEngine.hpp>
 
 class CachedPlayer
     : public IPlayer

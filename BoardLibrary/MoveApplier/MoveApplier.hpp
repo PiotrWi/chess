@@ -17,6 +17,9 @@ struct SimpleMoveMemorial
 void applyMove(Board& board, const ExtendedMove& move);
 void applyMove(Board&, uint64_t& /*in_out*/positionHash, const ExtendedMove&);
 
+void applyNullMove(Board&, uint64_t& /*in_out*/positionHash);
+void undoNullMove(Board&, uint64_t& /*in_out*/positionHash);
+
 SimpleMoveMemorial applyTmpMoveSimple(Board&, uint64_t& /*in_out*/positionHash, const ExtendedMove&);
 
 template <class TResultEvaluator>

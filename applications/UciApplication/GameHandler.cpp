@@ -2,7 +2,7 @@
 #include <UciApplication/EventsPropagator.hpp>
 #include <notations/uci.hpp>
 #include <notations/fen.h>
-#include <common/searchingAlgorithms/FullSearchingImplementation.hpp>
+#include <searchingAlgorithms/FullSearchingImplementation.hpp>
 #include <utils/Timer.hpp>
 #include <utils/DebugWrapper.hpp>
 #include <thread>
@@ -10,6 +10,11 @@
 
 std::unique_ptr<GameHandler> handler;
 std::map <std::string, std::string> options;
+
+void sendInfo(int alpha, unsigned depth)
+{
+    debug << "info depth " + std::to_string(depth) + " score cp " + std::to_string(alpha);
+}
 
 void onPositionProcHandler(POSSITION& event)
 {
@@ -58,7 +63,7 @@ void GameHandler::onGo(GO& goEvent)
     debug.logInDebug("starting for us:" + std::to_string(remainingTime));
     createTimer2(remainingTime, onStopProccessing);
 
-    auto move = full_search::evaluateIterative(be, cachedEngine, 20);
+    auto move = full_search::evaluateIterative(be, cachedEngine, 20, sendInfo);
     debug.logInDebug("Nodes per second: " + std::to_string(statistics.getNodesPerSecondLastCalculation()));
     emitBestMove(move.operator Move());
 }

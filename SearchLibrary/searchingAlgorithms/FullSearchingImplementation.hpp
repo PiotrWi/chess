@@ -1,16 +1,16 @@
 #pragma once
 
-#include <BoardEngine.hpp>
+#include "BoardEngine.hpp"
 
 #include <atomic>
 #include <algorithm>
 #include <cstring>
 #include <vector>
-#include <common/CachedEngines/FullCachedEngine.hpp>
+#include <CachedEngines/FullCachedEngine.hpp>
 #include <optional>
 
 #include "core/NotationConversions.hpp"
-#include <common/Constants.hpp>
+#include "Constants.hpp"
 
 #include "MoveOrdering.hpp"
 #include "Statisctic.hpp"
@@ -103,6 +103,7 @@ int evaluateMax(BoardEngine& be,
                 int beta)
 {
     ++nodes;
+
     if (interrupt_flag.load(std::memory_order_relaxed) == 0)
     {
         return alfa;
@@ -147,10 +148,8 @@ int evaluateMax(BoardEngine& be,
     int nextAlfa;
     auto pvFound = false;
 
-    // auto cacheCpy = *cache;
     auto orderedMoves = PreorderedMoves(
             be.board.playerOnMove,
-            //&cacheCpy,
             cache,
             depth,
             mg,
@@ -245,9 +244,10 @@ constexpr auto InitialBeta = mateValue + 1;
  *
  * NOTE: Iterative searching for the best move.
  */
-    inline ExtendedMove evaluateIterative(BoardEngine be,
-                       players::common::move_generators::FullCachedEngine& cachedEngine,
-                       unsigned char maxDepth)
+inline ExtendedMove evaluateIterative(BoardEngine be,
+    players::common::move_generators::FullCachedEngine& cachedEngine,
+    unsigned char maxDepth,
+    void (*sendInfo)(int alpha, unsigned depth) = nullptr)
 {
     bestMove = {};
     ++interrupt_flag;
@@ -256,7 +256,7 @@ constexpr auto InitialBeta = mateValue + 1;
     clearHistoryMove();
     auto calculateStatistics = SinglePerrioadRaiiWrapper(statistics, nodes);
 
-    for (auto depth = 2u; depth <= maxDepth && depth < MAX_DEPTH; depth+=1)
+    for (auto depth = 2u; depth <= maxDepth && depth < MAX_DEPTH && interrupt_flag; depth+=1)
     {
         auto val = evaluateMax<true>(be, cachedEngine, depth, alpha, beta);
         if (val <= alpha)
@@ -277,6 +277,9 @@ constexpr auto InitialBeta = mateValue + 1;
                 val = evaluateMax<true>(be, cachedEngine, depth, InitialAlpha, InitialBeta);
             }
         }
+
+        if (sendInfo) { sendInfo(val, depth); }
+
         alpha = val - 30;
         beta = val + 30;
     }

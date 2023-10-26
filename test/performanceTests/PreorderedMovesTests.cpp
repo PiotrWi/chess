@@ -3,7 +3,7 @@
 #include <vector>
 #include <random>
 
-#include <common/searchingAlgorithms/MoveOrdering.hpp>
+#include <searchingAlgorithms/MoveOrdering.hpp>
 
 #include <utils/BoardGenerationUtils.hpp>
 #include <notations/coordinationnotation.hpp>

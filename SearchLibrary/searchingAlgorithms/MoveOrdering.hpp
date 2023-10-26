@@ -7,11 +7,11 @@
 #include <vector>
 #include <optional>
 
-#include <BoardEngine.hpp>
-#include <common/CachedEngines/FullCachedEngine.hpp>
-#include <core/NotationConversions.hpp>
-#include <common/Constants.hpp>
-#include <MoveGeneratorV2/MoveGeneratorV2.hpp>
+#include "BoardEngine.hpp"
+#include <CachedEngines/FullCachedEngine.hpp>
+#include "core/NotationConversions.hpp"
+#include "Constants.hpp"
+#include "MoveGeneratorV2/MoveGeneratorV2.hpp"
 #include "PositionAnalyzers/sse.hpp"
 
 static unsigned history[2][64][64] = {};

@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include <common/searchingAlgorithms/FullSearchingImplementation.hpp>
+#include <searchingAlgorithms/FullSearchingImplementation.hpp>
 
 #include <utils/BoardGenerationUtils.hpp>
 #include <notations/coordinationnotation.hpp>

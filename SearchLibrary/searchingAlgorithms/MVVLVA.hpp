@@ -1,8 +1,8 @@
 #pragma once
 
-#include <core/Board.hpp>
+#include "core/Board.hpp"
 #include "MVVLVA.hpp"
-#include <common/Constants.hpp>
+#include "Constants.hpp"
 
 class MVVLVA_Comparator // Most valuable victim less valuable aggressor
 {

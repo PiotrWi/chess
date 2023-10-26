@@ -159,10 +159,22 @@ void applyEnPassantRules(Board& board, uint64_t& positionHash, const ExtendedMov
 namespace MoveApplier
 {
 
-void applyMove(Board& board, const ExtendedMove& move)
+void applyMove(Board &board, const ExtendedMove &move)
 {
     uint64_t nop;
     applyMove(board, nop, move);
+}
+
+void applyNullMove(Board & board, uint64_t &positionHash)
+{
+    ++board.playerOnMove;
+    positionHash = hash::switchColor(positionHash);
+}
+
+void undoNullMove(Board & board, uint64_t &positionHash)
+{
+    ++board.playerOnMove;
+    positionHash = hash::switchColor(positionHash);
 }
 
 void applyMove(Board& board, uint64_t& positionHash, const ExtendedMove& move)

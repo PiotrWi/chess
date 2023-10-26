@@ -77,6 +77,19 @@ Result BoardEngine::getREsultWithoutRepeatitionCheck(bool availableMoves) const
     return resultEvaluator.getResultNoRepeatitions(availableMoves);
 }
 
+void BoardEngine::applyNullMove(const ExtendedMove&)
+{
+    nullMoveTmp = {};
+    std::swap(nullMoveTmp, lastMove);
+    MoveApplier::applyNullMove(board, hash_);
+}
+
+void BoardEngine::undoNullMove(const ExtendedMove&)
+{
+    std::swap(nullMoveTmp, lastMove);
+    MoveApplier::applyNullMove(board, hash_);
+}
+
 void BoardEngine::applyMove(const ExtendedMove& move)
 {
 #ifdef ASSERTSON

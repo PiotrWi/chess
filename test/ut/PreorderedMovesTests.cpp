@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#include <common/searchingAlgorithms/MoveOrdering.hpp>
+#include <searchingAlgorithms/MoveOrdering.hpp>
 #include <utils/BoardGenerationUtils.hpp>
 #include <notations/LongAlgebraicNotation.hpp>
 

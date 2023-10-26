@@ -3,7 +3,7 @@
 #include <notations/uci.hpp>
 #include <BoardEngine.hpp>
 
-#include <common/searchingAlgorithms/FullSearchingImplementation.hpp>
+#include <searchingAlgorithms/FullSearchingImplementation.hpp>
 
 static void PerformanceTest_Stability1(benchmark::State& state)
 {

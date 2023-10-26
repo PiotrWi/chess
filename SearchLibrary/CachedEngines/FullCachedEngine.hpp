@@ -1,10 +1,10 @@
 #pragma once
 
 #include <vector>
-#include <common/Constants.hpp>
-#include <BoardEngine.hpp>
-#include <non_std/containers/HashMap.hpp>
-#include <non_std/containers/FixedSizeHashTableOpenHashingWithAge.hpp>
+#include "Constants.hpp"
+#include "BoardEngine.hpp"
+#include "non_std/containers/HashMap.hpp"
+#include "non_std/containers/FixedSizeHashTableOpenHashingWithAge.hpp"
 
 struct PassTrhoughtHash
 {

@@ -21,6 +21,9 @@ public:
     bool isChecked() const;
 
     MoveApplier::SimpleMoveMemorial getMemorial() const;
+    void applyNullMove(const ExtendedMove&);
+    void undoNullMove(const ExtendedMove&);
+
     void applyMove(const ExtendedMove&);
     MoveApplier::SimpleMoveMemorial applyUndoableSimpleMove(const ExtendedMove&);
     void undoMove(MoveApplier::SimpleMoveMemorial);
@@ -37,6 +40,7 @@ public:
     MoveGenerator::MoveGeneratorV2 getMoveGeneratorV2(const NOTATION::COLOR::color c) const;
 
     Board board;
+    ExtendedMove nullMoveTmp = {};
     ExtendedMove lastMove = {};
     ResultEvaluator resultEvaluator;
     uint64_t hash_ = 0lu;

@@ -48,8 +48,6 @@ add_subdirectory(applications)
 
 enable_testing()
 add_subdirectory(externals/non_std)
-add_subdirectory(externals/gtest)
-add_subdirectory(externals/benchmark)
 
 add_subdirectory(test)
 

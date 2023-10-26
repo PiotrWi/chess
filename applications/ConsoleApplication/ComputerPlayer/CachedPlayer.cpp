@@ -1,7 +1,7 @@
 #include "CachedPlayer.hpp"
 #include <cstring>
 #include <notations/coordinationnotation.hpp>
-#include <common/searchingAlgorithms/FullSearchingImplementation.hpp>
+#include <searchingAlgorithms/FullSearchingImplementation.hpp>
 
 CachedPlayer::CachedPlayer() {}
 CachedPlayer::CachedPlayer(const char* customEvaluatorLocation, const char* customEvaluatorConfigurationLocation)
