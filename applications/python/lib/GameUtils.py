@@ -5,12 +5,16 @@ import chess
 import chess.engine
 import time
 import random
-from enum import Enum
 import xml.etree.ElementTree as ET
 from datetime import datetime
 random.seed(datetime.now())
 import shutil
 import os
+
+import sqlite3
+
+dbcon = sqlite3.connect("../../ml-poc/positions.db")
+dbcursor = dbcon.cursor()
 
 class CommandAndOptions:
     name = ""
@@ -84,6 +88,7 @@ class SingleGameHandler:
         self.white_clock = Clock(60.0, 1.0)
         self.black_clock = Clock(60.0, 1.0)
 
+
     async def _open_engines(self):
         t1, self.white_engine = await chess.engine.popen_uci(self.white_command)
         t2, self.black_engine = await chess.engine.popen_uci(self.black_command)
@@ -123,9 +128,13 @@ class SingleGameHandler:
             await self._configure_engines()
 
             while not self._is_game_over():
+                dbcursor.execute("""insert or ignore into positions values("{}", NULL, NULL, NULL)""".format(self.board.fen()))
+                dbcon.commit()
                 await self._play_single_move(self.white_engine, self.white_clock)
                 if self._is_game_over():
                     break
+                dbcursor.execute("""insert or ignore into positions values("{}", NULL, NULL, NULL)""".format(self.board.fen()))
+                dbcon.commit()
                 await self._play_single_move(self.black_engine, self.black_clock)
         except Exception as err:
             print('Exception occurred:', err)
@@ -152,6 +161,7 @@ class StrengthComarator:
         self.n_first_engine_as_black = 0
         self.n_first_engine_score = 0.0
         self.n_second_engine_score = 0.0
+
 
     def _init_new_run(self, n_games_per_color):
         self.n_first_engine_as_white = n_games_per_color

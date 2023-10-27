@@ -35,11 +35,11 @@ struct CacheFullEntity
     {
         PreviousEvaluations()
             : visitedBefore(false)
-            , lowerValue(-10000001)
-            , higherValue(10000001) {}
+            , lowerValue(-20001)
+            , higherValue(20001) {}
         bool visitedBefore = false;
-        int lowerValue = -10000001;
-        int higherValue = 10000001;
+        short lowerValue = -20001;
+        short higherValue = 20001;
     };
 
     PreviousBestMove previousBestMoves[MAX_DEPTH] = {};

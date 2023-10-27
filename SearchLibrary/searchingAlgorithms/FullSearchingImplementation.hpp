@@ -17,6 +17,7 @@
 
 static unsigned long long nodes;
 static Statistic statistics;
+constexpr short mateValue = 20000;
 
 namespace
 {
@@ -25,8 +26,8 @@ template <bool SaveMove>
 int evaluateMax(BoardEngine& be,
                 players::common::move_generators::FullCachedEngine& cachedEngine,
                 unsigned char depth,
-                int alfa,
-                int beta);
+                short alfa,
+                short beta);
 
 ExtendedMove bestMove;
 std::atomic_int interrupt_flag = 0;
@@ -45,8 +46,8 @@ int evaluatePosition(BoardEngine& be, players::common::move_generators::FullCach
 int quiescenceSearch(BoardEngine& be,
                      players::common::move_generators::FullCachedEngine& cachedEngine,
                      unsigned char depth,
-                     int alfa,
-                     int beta)
+                     short alfa,
+                     short beta)
 {
     ++nodes;
     if (be.isChecked())
@@ -99,8 +100,8 @@ template <bool SaveMove>
 int evaluateMax(BoardEngine& be,
                 players::common::move_generators::FullCachedEngine& cachedEngine,
                 unsigned char depth,
-                int alfa,
-                int beta)
+                short alfa,
+                short beta)
 {
     ++nodes;
 
@@ -127,7 +128,7 @@ int evaluateMax(BoardEngine& be,
     }
     if ((gameResult == Result::whiteWon) | (gameResult == Result::blackWon))
     {
-        return -10000000;
+        return -mateValue;
     }
 
     auto cache = cachedEngine.get(be);
@@ -218,23 +219,22 @@ inline void interrupt()
     --interrupt_flag;
 }
 
+constexpr short InitialAlpha = -mateValue - 1;
+constexpr short InitialBeta = mateValue + 1;
+
 inline ExtendedMove evaluate(BoardEngine be,
               players::common::move_generators::FullCachedEngine& cachedEngine,
               unsigned char depth)
 {
     ++interrupt_flag;
-    int alfa = -10000000;
-    int beta = 10000000;
+    short alfa = -mateValue;
+    short beta = mateValue;
     clearHistoryMove();
     auto calculateStatistics = SinglePerrioadRaiiWrapper(statistics, nodes);
 
     evaluateMax<true>(be, cachedEngine, depth, alfa, beta);
     return bestMove;
 }
-
-constexpr auto mateValue = 10000000;
-constexpr auto InitialAlpha = -mateValue - 1;
-constexpr auto InitialBeta = mateValue + 1;
 
 /**
  * @brief
@@ -251,8 +251,8 @@ inline ExtendedMove evaluateIterative(BoardEngine be,
 {
     bestMove = {};
     ++interrupt_flag;
-    int alpha = InitialAlpha;
-    int beta = InitialBeta;
+    short alpha = InitialAlpha;
+    short beta = InitialBeta;
     clearHistoryMove();
     auto calculateStatistics = SinglePerrioadRaiiWrapper(statistics, nodes);
 
