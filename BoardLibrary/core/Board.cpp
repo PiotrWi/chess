@@ -235,7 +235,9 @@ bool Board::isCorrect() const noexcept
                            piecesBitSets[0].knightsMask ^ piecesBitSets[0].kingsMask ^ piecesBitSets[0].rocksMask ^
                            piecesBitSets[1].pawnsMask ^ piecesBitSets[1].queensMask ^ piecesBitSets[1].bishopsMask ^
                            piecesBitSets[1].knightsMask ^ piecesBitSets[1].kingsMask ^ piecesBitSets[1].rocksMask;
-    return allOccupied == sanityCheck;
+
+    bool kingExist = piecesBitSets[0].kingsMask && piecesBitSets[1].kingsMask;
+    return (allOccupied == sanityCheck) && kingExist;
 }
 
 ///////////////////////////////////

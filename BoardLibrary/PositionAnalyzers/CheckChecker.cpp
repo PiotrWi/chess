@@ -1,6 +1,7 @@
 #include "CheckChecker.hpp"
 
 #include <algorithm>
+#include <cassert>
 #include "core/Board.hpp"
 #include "core/NotationConversions.hpp"
 
@@ -15,6 +16,10 @@ bool isAttackedOn(const Board& board,
 		NOTATION::COLOR::color playerColor,
 		unsigned char fieldPosition) noexcept
 {
+#ifdef ASSERTSON
+    assert(fieldPosition < 64);
+#endif
+
     auto oppositeColorNum = static_cast<unsigned char>(playerColor + 1);
     auto allOppositePawns = board.piecesBitSets[oppositeColorNum].pawnsMask;
     auto attackingPawn = allOppositePawns & getPawnAttacks(playerColor, fieldPosition);

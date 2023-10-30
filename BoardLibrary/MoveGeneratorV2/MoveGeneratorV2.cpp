@@ -154,6 +154,7 @@ void MoveGeneratorV2::evaluateEnPassant(uint64_t pawnsToMoveToRightTop, uint64_t
 	{
 		boardCopy.piecesBitSets[NOTATION::COLOR::WHITE].pawnsMask ^= whitePawn;
 		boardCopy.piecesBitSets[NOTATION::COLOR::BLACK].pawnsMask ^= blackPawn;
+        // what about new pawn loc?
 		return CheckChecker::isCheckOn(boardCopy, color);
 	};
 
@@ -164,7 +165,7 @@ void MoveGeneratorV2::evaluateEnPassant(uint64_t pawnsToMoveToRightTop, uint64_t
 		auto moveTable = beatingsCandidates & validEnPassantMask;
 		if (moveTable)
 		{
-			auto whiteBeatingPawnLocation = beatingsCandidates >> 9;
+			auto whiteBeatingPawnLocation = moveTable >> 9;
 			auto blackPawnLocation = beatingsCandidates >> 8;
 
 			if (not checkIfUnderCheckAfterEnPassant(pieceColor, board, whiteBeatingPawnLocation, blackPawnLocation))
@@ -177,7 +178,7 @@ void MoveGeneratorV2::evaluateEnPassant(uint64_t pawnsToMoveToRightTop, uint64_t
 		moveTable = beatingsCandidates & validEnPassantMask;
 		if (moveTable)
 		{
-			auto whiteBeatingPawnLocation = beatingsCandidates >> 7;
+			auto whiteBeatingPawnLocation = moveTable >> 7;
 			auto blackPawnLocation = beatingsCandidates >> 8;
 			if (not checkIfUnderCheckAfterEnPassant(pieceColor, board, whiteBeatingPawnLocation, blackPawnLocation))
 			{
@@ -192,8 +193,8 @@ void MoveGeneratorV2::evaluateEnPassant(uint64_t pawnsToMoveToRightTop, uint64_t
 		auto moveTable = beatingsCandidates & validEnPassantMask;
 		if (moveTable)
 		{
-			auto blackBeatingPawnLocation = beatingsCandidates << 7;
-			auto whitePawnLocation = beatingsCandidates << 8;
+			auto blackBeatingPawnLocation = moveTable << 7;
+			auto whitePawnLocation = validEnPassantMask << 8;
 			if (not checkIfUnderCheckAfterEnPassant(pieceColor, board, whitePawnLocation, blackBeatingPawnLocation))
 			{
 				moveTables[moveTablesN++] = MoveTable{MoveTable::Type::PawnBeatingsLeft, NOT_RELEVANT, moveTable};
@@ -204,8 +205,8 @@ void MoveGeneratorV2::evaluateEnPassant(uint64_t pawnsToMoveToRightTop, uint64_t
 		moveTable = beatingsCandidates & validEnPassantMask;
 		if (moveTable)
 		{
-			auto blackBeatingPawnLocation = beatingsCandidates << 9;
-			auto whitePawnLocation = beatingsCandidates << 8;
+			auto blackBeatingPawnLocation = moveTable << 9;
+			auto whitePawnLocation = validEnPassantMask << 8;
 			if (not checkIfUnderCheckAfterEnPassant(pieceColor, board, whitePawnLocation, blackBeatingPawnLocation))
 			{
 				moveTables[moveTablesN++] = MoveTable{MoveTable::Type::PawnBeatingsRight, NOT_RELEVANT, moveTable};

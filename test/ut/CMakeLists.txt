@@ -35,7 +35,8 @@ add_executable(ut
     PreorderedMovesTests.cpp
     BinOperatorsTests.cpp
     BitBoardsUtilsTests.cpp
-    FromToBitsTests.cpp)
+    FromToBitsTests.cpp
+        mt/FenBasedTests.cpp)
 
 target_link_libraries(ut
         ${GTEST_LIBRARIES}

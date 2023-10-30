@@ -100,7 +100,7 @@ auto oldBoard = board;
     MoveApplier::applyMove(board, hash_, move, resultEvaluator);
 
 #ifdef ASSERTSON
-    if (hash::hash(board) != hash_)
+    if (hash::hash(board) != hash_ or !board.isCorrect())
     {
         std::cout << "Internal consistency error!";
         std::cout << hash::hash(board) << " " << hash_ << std::endl;
