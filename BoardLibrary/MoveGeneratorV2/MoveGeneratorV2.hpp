@@ -12,9 +12,6 @@ struct NotCheckedTag {};
 using TBeatingVector = boost::container::small_vector<ExtendedMove, 32>;
 using TNormalVector = boost::container::small_vector<ExtendedMove, 200>;
 
-/*
-* Name is temporary until it is proven the nev version has better performance
-*/
 class MoveGeneratorV2
 {
 public:
@@ -37,8 +34,8 @@ private:
     void evaluateKing(const uint64_t forbidenFields);
     void evaluatePawns(uint64_t pawnsBitMask, const uint64_t opponentPieces);
     void evaluatePawns(uint64_t pawnsBitMask, const uint64_t opponentPieces, const uint64_t checkBlockers);
-    void evaluatePawnsBeatings(uint64_t pawnsToMoveToRightTop, uint64_t pawnsToMoveToLeftTop, uint64_t opponentPieces);
-    void evaluateEnPassant(uint64_t pawnsToMoveToRightTop, uint64_t pawnsToMoveToLeftTop);
+    void evaluatePawnsBeatings(uint64_t pawnsMovingOnRightTopDiagonal, uint64_t pawnsToMoveToLeftTop, uint64_t opponentPieces);
+    void evaluateEnPassant(uint64_t pawnsMovingOnRightTopDiagonal, uint64_t pawnsToMoveToLeftTop);
     void evaluateRocks(uint64_t rocksBitMask, const uint64_t allOccupiedFields, const uint64_t forbidenFields);
     void evaluatePinnedRocks(uint64_t rocksBitMask, const uint64_t allOccupiedFields, const uint64_t forbidenFields);
     void evaluateBishops(uint64_t rocksBitMask, const uint64_t allOccupiedFields, const uint64_t forbidenFields);
@@ -69,8 +66,8 @@ private:
             KingMoves = 0b10000,
             SinglePawnMoves = 0b10001,
             DoublePawnMoves = 0b10010,
-            PawnBeatingsRight = 0b10011,
-            PawnBeatingsLeft =  0b10100,
+            PawnBeatingsToRight = 0b10011,
+            PawnBeatingsToLeft =  0b10100,
             RockMoves = NOTATION::PIECES::ROCK,
             BishopMoves = NOTATION::PIECES::BISHOP,
             QueenMoves = NOTATION::PIECES::QUEEN,

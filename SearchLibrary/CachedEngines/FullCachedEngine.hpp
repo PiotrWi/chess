@@ -46,9 +46,9 @@ struct CacheFullEntity
     PreviousEvaluations previousEvaluations[MAX_DEPTH] = {};
 
     void setBestMove(const ExtendedMove& move, unsigned char depth);
-    void setLowerBound(int value, unsigned char depth);
-    void setUpperBound(int value, unsigned char depth);
-    void setLowerUpperBound(int valueMin, int valueMax, unsigned char depth);
+    void setLowerBound(short value, unsigned char depth);
+    void setUpperBound(short value, unsigned char depth);
+    void setLowerUpperBound(short valueMin, short valueMax, unsigned char depth);
 };
 
 using TCacheType = non_std::containers::HashMap<CacheFullEntity, uint64_t , 22u>;

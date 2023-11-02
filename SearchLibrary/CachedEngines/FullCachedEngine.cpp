@@ -17,19 +17,19 @@ void CacheFullEntity::setBestMove(const ExtendedMove& move, unsigned char depth)
     previousBestMoves[depth].move = move;
 }
 
-void CacheFullEntity::setLowerBound(int value, unsigned char depth)
+void CacheFullEntity::setLowerBound(short value, unsigned char depth)
 {
     previousEvaluations[depth].visitedBefore = true;
     previousEvaluations[depth].lowerValue = value;
 }
 
-void CacheFullEntity::setUpperBound(int value, unsigned char depth)
+void CacheFullEntity::setUpperBound(short value, unsigned char depth)
 {
     previousEvaluations[depth].visitedBefore = true;
     previousEvaluations[depth].higherValue = value;
 }
 
-void CacheFullEntity::setLowerUpperBound(int valueMin, int valueMax, unsigned char depth)
+void CacheFullEntity::setLowerUpperBound(short valueMin, short valueMax, unsigned char depth)
 {
     previousEvaluations[depth].visitedBefore = true;
     previousEvaluations[depth].lowerValue = valueMin;

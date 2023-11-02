@@ -1697,15 +1697,17 @@ TEST(MoveGeneratorTestsV2, shouldCorectlyAnalyzePosWithCheck)
 
     auto kingMoves = map(
         {"Kg3h3", "Kg3h2"}, WHITE, board);
-    auto allMoves = pawnBeatingMoves + knightMoves + rockMoves + kingMoves + bishopMoves;
+
+    auto allNotBeating = knightMoves + rockMoves + bishopMoves + kingMoves;
+    auto allMoves = pawnBeatingMoves + allNotBeating;
 
     MoveGenerator::MoveGeneratorV2 sut(board, WHITE);
     ASSERT_EQ(sut.getValidMoveCount(), allMoves.size());
     ASSERT_THAT(sut.generateBeatingMoves(), ::testing::UnorderedElementsAreArray(pawnBeatingMoves));
-    // ASSERT_THAT(sut.generate(board, WHITE),
-    //     ::testing::UnorderedElementsAreArray(pawnMoves+knightMoves+bishopMoves+rockMoves+kingMoves));
+    ASSERT_THAT(sut.generateNonBeatingMoves(),
+         ::testing::UnorderedElementsAreArray(allNotBeating));
 }
-/*
+
 TEST(MoveGeneratorTestsV2, shouldFindInitialMovesForBlack)
 {
     Board board = utils::createBoard(utils::InitialBoardString, BLACK);
@@ -1718,11 +1720,15 @@ TEST(MoveGeneratorTestsV2, shouldFindInitialMovesForBlack)
     auto knightInitialMoves = map(
             {"Nb8a6", "Nb8c6", "Ng8f6", "Ng8h6"}, BLACK, board);
 
-    ASSERT_THAT(sut.generate(board, BLACK),
-        ::testing::UnorderedElementsAreArray(pawnInitialMoves + knightInitialMoves));
+    MoveGenerator::MoveGeneratorV2 sut(board, BLACK);
+
+    auto allMoves = pawnInitialMoves + knightInitialMoves;
+    ASSERT_EQ(sut.getValidMoveCount(), allMoves.size());
+    ASSERT_THAT(sut.generateBeatingMoves(), std::vector<ExtendedMove>());
+    ASSERT_THAT(sut.generateNonBeatingMoves(), allMoves);
 }
 
-
+/*
 TEST(MoveGeneratorTestsV2, shouldCorectlyAnalyzePosForBlack)
 {
     Board board = utils::createBoard(
