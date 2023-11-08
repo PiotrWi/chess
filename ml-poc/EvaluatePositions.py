@@ -43,11 +43,11 @@ class PositionEvaluation:
 
         workers = []
         tasks = []
-        for i in range(6):
+        for i in range(5):
             workers.append(PositionEvaluationWorker(connection, cursor, index_refetence, not_evaluated_positions))
             tasks.append(asyncio.create_task(workers[i].run()))
 
-        for i in range(6):
+        for i in range(5):
             await tasks[i]
 
 

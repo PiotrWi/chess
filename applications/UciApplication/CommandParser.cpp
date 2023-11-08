@@ -87,6 +87,8 @@ TCommandLineOptionsVariant CommandParser::parseCommand(const std::string& comman
     {
         return QUIT{};
     }
+    // setoption option name customEvaluator value /home/pioter/proj/chess/bin/libmlEvaluator.so
+    // setoption option name evaluatorConfig value /home/pioter/proj/chess/ml-poc/chess500r100r1rDO.tf
     if (command.find("setoption") != std::string::npos)
     {
         std::string word;

@@ -12,3 +12,6 @@ add_dependencies(evaluators StandardEvaluator)
 
 add_subdirectory(CustomizableEvaluator)
 add_dependencies(evaluators CustomizableEvaluator)
+
+add_subdirectory(MlEvaluator)
+add_dependencies(evaluators mlEvaluator)
