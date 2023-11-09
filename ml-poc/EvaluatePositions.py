@@ -34,7 +34,34 @@ class PositionEvaluationWorker:
                 t1, engine = await chess.engine.popen_uci(get_app_command())
                 print('Exception occurred for fen: {}, ex: {}'.format(fen, err))
 
+
+def has_beating_move(board):
+    for move in board.legal_moves:
+        if board.piece_at(move.to_square) is not None:
+            return True
+    return False
+
+
+def has_promotion_move(board):
+    for move in board.legal_moves:
+        if move.promotion is not None:
+            return True
+    return False
+
+
 class PositionEvaluation:
+    def fill_is_position_stable(self):
+        connection = sqlite3.connect("positions.db")
+        cursor = connection.cursor()
+        not_evaluated_positions = cursor.execute("select * from positions where isStable is NULL;").fetchall()
+        for record in not_evaluated_positions:
+            fen = record[0]
+            board = chess.Board(fen)
+            is_stable = (not board.is_check()) and (not has_beating_move(board)) and not (has_promotion_move(board))
+            cursor.execute("""UPDATE positions set isStable={} where position == "{}";""".format(is_stable, fen))
+            connection.commit()
+
+
     async def evaluate_positions_with_no_scores(self):
         connection = sqlite3.connect("positions.db")
         cursor = connection.cursor()
@@ -53,4 +80,5 @@ class PositionEvaluation:
 
 asyncio.set_event_loop_policy(chess.engine.EventLoopPolicy())
 pe = PositionEvaluation()
+pe.fill_is_position_stable()
 asyncio.run(pe.evaluate_positions_with_no_scores())

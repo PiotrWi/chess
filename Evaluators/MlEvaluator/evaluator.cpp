@@ -50,7 +50,7 @@ void insertPieces(std::vector<int>& data, uint64_t bitset)
 
 void init(const char* )
 {
-    model = new cppflow::model("/home/pioter/proj/chess/ml-poc/chess5x1000r1rDO.tf");
+    model = new cppflow::model("/home/pioter/proj/chess/ml-poc/chess500r100r1rDO.tf");
     // model = new cppflow::model(configurationFile);
 
     /*for (auto&& operation : model->get_operations())
@@ -91,7 +91,7 @@ int evaluatePosition(BoardEngine& be, unsigned int)
     insertPieces(data, be.board.piecesBitSets[1].kingsMask);
 
     auto tensor = cppflow::tensor(data, std::vector<int64_t>{1, static_cast<int64_t>(data.size())});
-    auto out = (*model)({{"serving_default_dense_20_input:0", tensor}}, {"StatefulPartitionedCall:0"});
+    auto out = (*model)({{"serving_default_dense_6_input:0", tensor}}, {"StatefulPartitionedCall:0"});
     return static_cast<int>(out[0].get_data<float>()[0]);
 }
 
