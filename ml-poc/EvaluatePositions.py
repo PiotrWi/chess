@@ -31,7 +31,7 @@ class PositionEvaluationWorker:
                 self.db_cursor.execute("""UPDATE positions set evaluation={} where position == "{}";""".format(result.info["score"].relative.score(), fen))
                 self.db_connection.commit()
             except Exception as err:
-                t1, engine = await chess.engine.popen_uci(get_app_command())
+                #t1, engine = await chess.engine.popen_uci(get_app_command())
                 print('Exception occurred for fen: {}, ex: {}'.format(fen, err))
 
 
@@ -70,11 +70,11 @@ class PositionEvaluation:
 
         workers = []
         tasks = []
-        for i in range(3):
+        for i in range(7):
             workers.append(PositionEvaluationWorker(connection, cursor, index_refetence, not_evaluated_positions))
             tasks.append(asyncio.create_task(workers[i].run()))
 
-        for i in range(3):
+        for i in range(7):
             await tasks[i]
 
 
