@@ -89,6 +89,7 @@ BoardEngine initByFen(std::string fenStr)
     }
     ++++strPos;
 
+    b.castlingRights = 0;
     if (fenStr[strPos] != '-')
     {
         while (fenStr[strPos] != ' ')
@@ -105,7 +106,7 @@ BoardEngine initByFen(std::string fenStr)
                     b.castlingRights |= NOTATION::CASTLING_RIGHTS::WHITE_SHORT_BIT;
                     break;
                 case 'Q':
-                    b.castlingRights |= NOTATION::CASTLING_RIGHTS::BLACK_SHORT_BIT;
+                    b.castlingRights |= NOTATION::CASTLING_RIGHTS::WHITE_LONG_BIT;
                     break;
             }
             ++strPos;

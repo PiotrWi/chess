@@ -46,8 +46,30 @@ TEST(FenShall, COrrectlyReadPosition_1)
                                              " ♙      "
                                              "       ♟"
                                              "     ♔♖ ", NOTATION::COLOR::color::black);
-
+    utils::revokeCastlingRights(expectedBoard, NOTATION::CASTLING_RIGHTS::CASTLING_MASK);
 
     auto be = notations::fen::initByFen(std::string("8/8/5k2/2p1p3/4pb2/1P6/7p/5KR1 b - - 1 77"));
     ASSERT_EQ(expectedBoard, be.board);
+}
+
+TEST(FenShall, CorrectlyReadNoCastlingRights)
+{
+    auto be = notations::fen::initByFen(std::string("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w - - 0 1"));
+
+    ASSERT_EQ(0, be.board.castlingRights);
+}
+
+TEST(FenShall, CorrectlyReadPartialCastlingRights)
+{
+    auto be = notations::fen::initByFen(std::string("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w Kq - 0 1"));
+
+    ASSERT_EQ(NOTATION::CASTLING_RIGHTS::WHITE_SHORT_BIT | NOTATION::CASTLING_RIGHTS::BLACK_LONG_BIT,
+        be.board.castlingRights);
+}
+
+TEST(FenShall, CorrectlyReadWhiteLongCastlingRight)
+{
+    auto be = notations::fen::initByFen(std::string("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w Q - 0 1"));
+
+    ASSERT_EQ(NOTATION::CASTLING_RIGHTS::WHITE_LONG_BIT, be.board.castlingRights);
 }

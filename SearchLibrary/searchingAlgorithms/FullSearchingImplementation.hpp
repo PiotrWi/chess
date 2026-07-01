@@ -31,6 +31,10 @@ int evaluateMax(BoardEngine& be,
 ExtendedMove bestMove;
 std::atomic_int interrupt_flag = 0;
 
+// Kept strictly below the 10000000 mate constant (and the +-10000001 TT/window sentinels) for
+// any depth up to MAX_DEPTH, so a mate score can never collide with those bounds.
+constexpr int MateScoreBase = 10000000 - MAX_DEPTH;
+
 
 int evaluatePosition(BoardEngine& be, players::common::move_generators::FullCachedEngine& moveGenerator, unsigned int validMoves)
 {
@@ -127,7 +131,7 @@ int evaluateMax(BoardEngine& be,
     }
     if ((gameResult == Result::whiteWon) | (gameResult == Result::blackWon))
     {
-        return -10000000;
+        return -(MateScoreBase + depth);
     }
 
     auto cache = cachedEngine.get(be);
@@ -147,6 +151,7 @@ int evaluateMax(BoardEngine& be,
     ExtendedMove greatestMove;
     int nextAlfa;
     auto pvFound = false;
+    auto anyMoveSearched = false;
 
     auto orderedMoves = PreorderedMoves(
             be.board.playerOnMove,
@@ -159,6 +164,11 @@ int evaluateMax(BoardEngine& be,
     while (auto moveOpt = orderedMoves.get())
     {
         const auto& move = *moveOpt;
+        if (not anyMoveSearched)
+        {
+            greatestMove = move;
+            anyMoveSearched = true;
+        }
         be.applyMove(move);
         if (pvFound)
         {
@@ -194,6 +204,7 @@ int evaluateMax(BoardEngine& be,
     if (not pvFound)
     {
         cache->setUpperBound(alfa, depth);
+        if (SaveMove and interrupt_flag.load(std::memory_order_relaxed) != 0) bestMove = greatestMove;
     }
     else
     {
@@ -264,7 +275,6 @@ inline ExtendedMove evaluateIterative(BoardEngine be,
             val = evaluateMax<true>(be, cachedEngine, depth, InitialAlpha, alpha + 1);
             if(val >= beta)
             {
-                std::cout << "Unstable" << std::endl;
                 val = evaluateMax<true>(be, cachedEngine, depth, InitialAlpha, InitialBeta);
             }
         }
@@ -273,7 +283,6 @@ inline ExtendedMove evaluateIterative(BoardEngine be,
             val = evaluateMax<true>(be, cachedEngine, depth, beta - 1, InitialBeta);
             if (val <= alpha)
             {
-                std::cout << "Unstable" << std::endl;
                 val = evaluateMax<true>(be, cachedEngine, depth, InitialAlpha, InitialBeta);
             }
         }

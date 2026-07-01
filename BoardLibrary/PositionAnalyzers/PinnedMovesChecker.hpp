@@ -167,7 +167,7 @@ static Pinnes findPinned(const Board& board, NOTATION::COLOR::color c, unsigned 
                 pinnes.diagonallyPinnedFromLeftTop |= (allPinedPieces & ownPieces);
                 auto pinnedPiecePosition = _tzcnt_u64(allPinedPieces);
                 PinnedRegister[pinnedPiecePosition] =
-                        (lookup.bottomRight & bitBoardLookup[bishopPosition].topRight) | (1ull << bishopPosition);
+                        (lookup.bottomRight & bishopRay) | (1ull << bishopPosition);
             }
         }
     }
